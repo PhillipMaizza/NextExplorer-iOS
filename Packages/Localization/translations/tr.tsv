@@ -1254,3 +1254,21 @@ emptyState.dropHintFinder	Dosyaları buraya Finder'dan da sürükleyebilirsiniz.
 settings.rowDefaultSort	Varsayılan Sıralama
 settings.rowSortOrder	Sıra
 settings.defaultSortFooter	Sıralamadığınız klasörler bu sırayla açılır. Sıraladığınız bir klasör, bu sunucuda oturum açmış her cihazda kendi sırasını korur.
+settings.sectionSecurity	Güvenlik
+settings.rowRequireSignIn	Oturum Açmayı İste
+lock.title	NextExplorer kilitli
+lock.subtitle	Dosyalarını açmak için yeniden oturum aç.
+lock.signIn	Oturum Aç
+lock.otherAccount	Bu başka bir hesap. Kilidi açmak için %@ olarak oturum aç veya oturumu kapat.
+requireSignIn.footer	Uygulamadan çıktığında bu hesap kilitlenir ve oturumu sona erer. Kilidi açmak yeni bir oturum açma gerektirir; oturum açman istiyorsa güvenlik anahtarınla.
+requireSignIn.sectionLock	Kilitle
+requireSignIn.appStart	Uygulama açılınca
+requireSignIn.immediately	Hemen
+requireSignIn.thirtySeconds	30 saniye sonra
+requireSignIn.oneMinute	1 dakika sonra
+requireSignIn.fiveMinutes	5 dakika sonra
+requireSignIn.keepOfflineFiles	Çevrimdışı Dosyaları Koru
+requireSignIn.keepOfflineFilesFooter	Kapalıyken kilitleme bu hesabın çevrimdışı dosyalarını ve önbelleğe alınmış klasörlerini de bu cihazdan kaldırır.
+shareUpload.locked	NextExplorer kilitli. Uygulamayı aç, yeniden oturum aç ve sonra tekrar paylaş.
+requireSignIn.navigationTitle	Oturum Açmayı İste
+requireSignIn.toggle	Oturum Açmayı İste

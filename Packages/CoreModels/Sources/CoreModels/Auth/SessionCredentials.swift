@@ -16,10 +16,13 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
     public var username: String?
     /// Shown for the account when the server has no username for it, as with some single sign on users.
     public var email: String?
+    public var requireSignIn: RequireSignIn?
+    public var isLocked: Bool
 
     /// The Keychain blob keeps the names earlier releases wrote, so stored sessions still read.
     private enum CodingKeys: String, CodingKey {
         case serverBaseURL, authMode, cookieName, cookieValue, cookieDomain, cookiePath, expiresAt, username, email
+        case requireSignIn, isLocked
         case isCookieSecure = "cookieIsSecure"
     }
 
@@ -33,7 +36,9 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         isCookieSecure: Bool,
         expiresAt: Date?,
         username: String?,
-        email: String? = nil
+        email: String? = nil,
+        requireSignIn: RequireSignIn? = nil,
+        isLocked: Bool = false
     ) {
         self.serverBaseURL = serverBaseURL
         self.authMode = authMode
@@ -45,6 +50,31 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         self.expiresAt = expiresAt
         self.username = username
         self.email = email
+        self.requireSignIn = requireSignIn
+        self.isLocked = isLocked
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        serverBaseURL = try container.decode(URL.self, forKey: .serverBaseURL)
+        authMode = try container.decode(AuthMode.self, forKey: .authMode)
+        cookieName = try container.decode(String.self, forKey: .cookieName)
+        cookieValue = try container.decode(String.self, forKey: .cookieValue)
+        cookieDomain = try container.decode(String.self, forKey: .cookieDomain)
+        cookiePath = try container.decode(String.self, forKey: .cookiePath)
+        isCookieSecure = try container.decode(Bool.self, forKey: .isCookieSecure)
+        expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
+        username = try container.decodeIfPresent(String.self, forKey: .username)
+        email = try container.decodeIfPresent(String.self, forKey: .email)
+        requireSignIn = try? container.decodeIfPresent(RequireSignIn.self, forKey: .requireSignIn)
+        isLocked = (try? container.decodeIfPresent(Bool.self, forKey: .isLocked)) ?? false
+    }
+
+    public var locked: SessionCredentials {
+        var copy = self
+        copy.cookieValue = ""
+        copy.isLocked = true
+        return copy
     }
 
     /// Stable identity of the account this session belongs to, so the multi-server switcher can
@@ -52,7 +82,11 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
     /// two accounts on the same server are still distinct. Not persisted: derived, so it survives
     /// an older stored blob that predates it.
     public var accountID: String {
-        serverBaseURL.absoluteString + "|" + (username ?? "")
+        Self.accountID(serverURL: serverBaseURL, username: username)
+    }
+
+    public static func accountID(serverURL: URL, username: String?) -> String {
+        serverURL.absoluteString + "|" + (username ?? "")
     }
 
     /// The `Cookie` header value that speaks for this account alone, for a request that must not

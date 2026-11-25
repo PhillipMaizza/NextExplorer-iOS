@@ -1290,3 +1290,21 @@ emptyState.dropHintFinder	Finder에서 파일을 여기로 드래그할 수도 �
 settings.rowDefaultSort	기본 정렬
 settings.rowSortOrder	순서
 settings.defaultSortFooter	정렬하지 않은 폴더는 이 순서로 열립니다. 정렬한 폴더는 이 서버에 로그인된 모든 기기에서 자체 순서를 유지합니다.
+settings.sectionSecurity	보안
+settings.rowRequireSignIn	로그인 요구
+lock.title	NextExplorer가 잠겨 있습니다
+lock.subtitle	파일을 열려면 다시 로그인하세요.
+lock.signIn	로그인
+lock.otherAccount	다른 계정입니다. 잠금을 해제하려면 %@(으)로 로그인하거나 로그아웃하세요.
+requireSignIn.footer	앱을 떠나면 이 계정이 잠기고 세션이 끝납니다. 잠금을 해제하려면 다시 로그인해야 하며, 로그인에서 요구하면 보안 키도 사용합니다.
+requireSignIn.sectionLock	잠금
+requireSignIn.appStart	앱을 시작할 때
+requireSignIn.immediately	즉시
+requireSignIn.thirtySeconds	30초 후
+requireSignIn.oneMinute	1분 후
+requireSignIn.fiveMinutes	5분 후
+requireSignIn.keepOfflineFiles	오프라인 파일 유지
+requireSignIn.keepOfflineFilesFooter	끄면 잠글 때 이 계정의 오프라인 파일과 캐시된 폴더도 이 기기에서 제거됩니다.
+shareUpload.locked	NextExplorer가 잠겨 있습니다. 앱을 열고 다시 로그인한 다음 다시 공유하세요.
+requireSignIn.navigationTitle	로그인 요구
+requireSignIn.toggle	로그인 요구

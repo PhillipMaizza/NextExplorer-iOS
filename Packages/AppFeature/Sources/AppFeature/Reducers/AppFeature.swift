@@ -18,6 +18,7 @@ public struct AppFeature {
         case loading
         case unauthenticated(LoginFormFeature)
         case authenticated(AuthenticatedFeature)
+        case locked(LockFeature)
     }
 
     @ObservableState
@@ -51,6 +52,7 @@ public struct AppFeature {
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// Every signed-in account, for the Settings switcher. Rebuilt after any account change.
         @Shared(.inMemory(AccountSummary.sharedKey)) public var accounts: [AccountSummary] = []
+        public var leftAt: Date?
 
         public init(destination: Destination.State = .loading) {
             self.destination = destination
@@ -66,6 +68,11 @@ public struct AppFeature {
         var currentAccountID: String? {
             guard case let .authenticated(authenticated) = destination else { return nil }
             return authenticated.accountID
+        }
+
+        var shouldCoverWhenInactive: Bool {
+            guard case .authenticated = destination else { return false }
+            return accounts.contains { $0.requireSignIn != nil }
         }
 
         var currentServerURL: URL? {
@@ -96,6 +103,11 @@ public struct AppFeature {
         case incomingFiles([URL])
         /// The user tapped an "upload finished" notification: open the folder the files went to.
         case uploadNotificationTapped(UploadNotificationTaps.Tap)
+        case appLeft
+        case appReturned
+        case lockShown(AccountSummary)
+        case accountsLocked([SessionCredentials])
+        case lockedAccountSignedOut(SessionCredentials?)
         case destination(Destination.Action)
     }
 
@@ -113,16 +125,17 @@ public struct AppFeature {
     @Dependency(\.clientCertificateClient) var clientCertificateClient
     @Dependency(\.uploadDefaults) var uploadDefaults
     @Dependency(\.shareUploads) var shareUploads
+    @Dependency(\.date) var date
 
     public init() {}
 
-    private var accountCacheWipe: AccountCacheWipe {
+    var accountCacheWipe: AccountCacheWipe {
         .fromDependencies
     }
 
     /// Points the active account at its own folder of saved files and remembers it as their owner,
     /// so removing the account removes them.
-    private func beginDownloadScope(
+    func beginDownloadScope(
         _ state: inout State,
         accountID: String,
         serverURL: URL,
@@ -145,7 +158,7 @@ public struct AppFeature {
     }
 
     /// The second pass of an account wipe, run once the account's screens are gone.
-    private var finishAccountWipes: Effect<Action> {
+    var finishAccountWipes: Effect<Action> {
         let accountCacheWipe = accountCacheWipe
         let authClient = authClient
         return .run { _ in await accountCacheWipe.finishPending(authClient: authClient) }
@@ -153,7 +166,7 @@ public struct AppFeature {
 
     /// Stops the offline sync and the Save to Device queue of the account the app is leaving, so
     /// neither keeps running behind the next account nor shows its progress there.
-    private func stopOfflineWork(leaving accountID: String?) -> Effect<Action> {
+    func stopOfflineWork(leaving accountID: String?) -> Effect<Action> {
         guard let accountID else { return .none }
         return .concatenate(
             .send(.destination(.authenticated(.mainTab(.offline(.accountDeactivated(scope: accountID)))))),
@@ -208,16 +221,28 @@ public struct AppFeature {
             case .onAppear:
                 let authClient = authClient
                 let localDownloadStore = localDownloadStore
+                let accountCacheWipe = accountCacheWipe
                 return .run { send in
-                    let credentials = await authClient.restoreSession()
+                    let locked = await (try? authClient.lockSessions { $0.requireSignIn != nil }) ?? []
+                    let credentials = await authClient.restoreSession().map { restored in
+                        restored.requireSignIn == nil ? restored : restored.locked
+                    }
                     let scope = credentials.flatMap { localDownloadStore.ownerScope($0.accountID) }
                     await send(.sessionRestoreResponse(credentials, recordedDownloadScope: scope))
+                    await Self.endLockedSessions(locked, authClient: authClient, accountCacheWipe: accountCacheWipe)
                 }
 
             case let .sessionRestoreResponse(credentials, recordedScope):
                 guard let credentials else {
                     withAnimation(DSMotion.contentReveal) {
                         state.destination = .unauthenticated(.init())
+                    }
+                    return refreshAccounts
+                }
+                if credentials.isLocked {
+                    let account = AccountSummary(credentials, isActive: true)
+                    withAnimation(DSMotion.contentReveal) {
+                        state.destination = .locked(LockFeature.State(account: account))
                     }
                     return refreshAccounts
                 }
@@ -328,6 +353,13 @@ public struct AppFeature {
 
             case let .activateAccount(credentials):
                 let leavingAccountID = state.currentAccountID
+                if credentials.isLocked {
+                    return .concatenate(
+                        stopOfflineWork(leaving: leavingAccountID),
+                        .send(.lockShown(AccountSummary(credentials, isActive: true))),
+                        refreshAccounts
+                    )
+                }
                 state.clearAccountSharedState()
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
@@ -377,7 +409,7 @@ public struct AppFeature {
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
-                let accountID = AuthenticatedFeature.State.accountID(serverURL: serverURL, username: user.username)
+                let accountID = SessionCredentials.accountID(serverURL: serverURL, username: user.username)
                 CacheAccountScope.set(accountID)
                 pendingAccountWipes.remove(accountID)
                 let recordOwner = beginDownloadScope(
@@ -438,6 +470,17 @@ public struct AppFeature {
                 // UploadFolderRouting opens the folder.
                 return .none
 
+            case let .destination(.authenticated(.mainTab(.delegate(.requireSignInChanged(accountID, requireSignIn))))):
+                let authClient = authClient
+                return .concatenate(
+                    .run { _ in try? await authClient.setRequireSignIn(accountID, requireSignIn) },
+                    refreshAccounts
+                )
+
+            case .appLeft, .appReturned, .lockShown, .accountsLocked, .lockedAccountSignedOut,
+                 .destination(.locked(.delegate)):
+                return reduceLock(into: &state, action: action)
+
             case .destination:
                 return .none
 
@@ -466,7 +509,7 @@ public struct AppFeature {
                 let user = added.user
                 let serverURL = added.serverURL
                 state.clearAccountSharedState()
-                let accountID = AuthenticatedFeature.State.accountID(serverURL: serverURL, username: user.username)
+                let accountID = SessionCredentials.accountID(serverURL: serverURL, username: user.username)
                 let leavingAccountID = state.currentAccountID
                 CacheAccountScope.set(accountID)
                 pendingAccountWipes.remove(accountID)
@@ -506,7 +549,7 @@ public struct AppFeature {
     /// account that leaves the device takes its mTLS identity with it.
     /// `serverURL` is the server just signed in to, kept even before its session shows up in
     /// the stored list.
-    private func pruneClientCertificates(keeping serverURL: URL? = nil) -> Effect<Action> {
+    func pruneClientCertificates(keeping serverURL: URL? = nil) -> Effect<Action> {
         let authClient = authClient
         let clientCertificateClient = clientCertificateClient
         let uploadDefaults = uploadDefaults
@@ -527,7 +570,7 @@ public struct AppFeature {
     }
 
     /// Rebuilds the published account list from the current stored sessions.
-    private var refreshAccounts: Effect<Action> {
+    var refreshAccounts: Effect<Action> {
         let authClient = authClient
         return .run { send in
             let sessions = await authClient.listSessions()
@@ -537,20 +580,12 @@ public struct AppFeature {
     }
 
     private static func summaries(_ sessions: [SessionCredentials], activeID: String?) -> [AccountSummary] {
-        sessions.map {
-            AccountSummary(
-                id: $0.accountID,
-                username: $0.username ?? "",
-                serverURL: $0.serverBaseURL,
-                isActive: $0.accountID == activeID,
-                email: $0.email
-            )
-        }
+        sessions.map { AccountSummary($0, isActive: $0.accountID == activeID) }
     }
 
     /// Full teardown to the login screen: no account left signed in. Clears every cache and
     /// per-session state so nothing leaks into the next sign in.
-    private func teardownToLogin(_ state: inout State, removesClientCertificates: Bool) -> Effect<Action> {
+    func teardownToLogin(_ state: inout State, removesClientCertificates: Bool) -> Effect<Action> {
         state.clearAccountSharedState()
         state.$downloadScope.withLock { $0 = "" }
         CacheAccountScope.set("")

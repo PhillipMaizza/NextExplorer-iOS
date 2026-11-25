@@ -26,6 +26,7 @@ public struct ShareUploadFeature {
         /// Signed in; checking the server answers before anything can be uploaded.
         case checking
         case signedOut
+        case locked
         /// The keychain holds a session this process could not read, which is not the same as
         /// being signed out: opening the app once usually repairs it.
         case sessionUnreadable
@@ -118,7 +119,7 @@ public struct ShareUploadFeature {
 
         /// Several accounts are signed in: the account row becomes a picker.
         public var canChooseAccount: Bool {
-            accounts.count > 1 && [.checking, .ready, .signedOut, .certificateRequired, .certificateRejected]
+            accounts.count > 1 && [.checking, .ready, .signedOut, .locked, .certificateRequired, .certificateRejected]
                 .contains(phase)
         }
 
@@ -152,7 +153,8 @@ public struct ShareUploadFeature {
             case .checking, .ready, .preparing, .handingOff: .upload
             case .partiallyPrepared: .uploadReady
             case .failed: .retry
-            case .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected: canOpenApp ? .openApp : nil
+            case .signedOut, .locked, .sessionUnreadable, .certificateRequired, .certificateRejected:
+                canOpenApp ? .openApp : nil
             case .loading, .nothingToUpload, .started: nil
             }
         }
@@ -160,7 +162,8 @@ public struct ShareUploadFeature {
         public func secondaryAction(canOpenApp: Bool) -> Control? {
             switch phase {
             case .partiallyPrepared: .retryFailed
-            case .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected: canOpenApp ? .retry : nil
+            case .signedOut, .locked, .sessionUnreadable, .certificateRequired, .certificateRejected:
+                canOpenApp ? .retry : nil
             case .loading, .checking, .nothingToUpload, .ready, .preparing, .handingOff, .started, .failed: nil
             }
         }
@@ -404,6 +407,10 @@ public struct ShareUploadFeature {
                 state.notice = nil
                 // Picking an account is a choice in itself: it never uploads on its own.
                 state.shouldUploadWithoutAsking = false
+                guard !credentials.isLocked else {
+                    state.phase = .locked
+                    return .cancel(id: CancelID.folder)
+                }
                 state.phase = .checking
                 // This extension's own cookie jar only: the app's active account stays as it is.
                 if let cookie = credentials.httpCookie {
@@ -419,6 +426,10 @@ public struct ShareUploadFeature {
                 state.credentials = credentials
                 state.destination = defaults.folderPath ?? ""
                 state.shouldUploadWithoutAsking = defaults.directFolder != nil
+                guard !credentials.isLocked else {
+                    state.phase = .locked
+                    return announce(L10n.ShareUpload.locked)
+                }
                 state.phase = .checking
                 return checkConnection(credentials)
 
@@ -569,7 +580,7 @@ public struct ShareUploadFeature {
 
             case .retryTapped:
                 switch state.phase {
-                case .signedOut, .sessionUnreadable:
+                case .signedOut, .locked, .sessionUnreadable:
                     state.phase = .loading
                     state.credentials = nil
                     state.accounts = []

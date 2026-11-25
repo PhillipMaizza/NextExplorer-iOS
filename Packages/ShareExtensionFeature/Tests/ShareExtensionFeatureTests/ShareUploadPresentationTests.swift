@@ -47,6 +47,7 @@ extension ShareUploadFeatureTests {
                 .failed: (.retry, nil),
                 .nothingToUpload: (nil, nil),
                 .signedOut: (canOpenApp ? .openApp : nil, canOpenApp ? .retry : nil),
+                .locked: (canOpenApp ? .openApp : nil, canOpenApp ? .retry : nil),
                 .sessionUnreadable: (canOpenApp ? .openApp : nil, canOpenApp ? .retry : nil),
                 .certificateRequired: (canOpenApp ? .openApp : nil, canOpenApp ? .retry : nil),
                 .certificateRejected: (canOpenApp ? .openApp : nil, canOpenApp ? .retry : nil),

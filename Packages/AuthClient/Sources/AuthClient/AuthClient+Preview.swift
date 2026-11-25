@@ -6,7 +6,7 @@ public extension AuthClient {
         fetchStatus: { _ in AuthStatus(localEnabled: true, oidcEnabled: true) },
         login: { _, _, _ in User.previewAdmin },
         loginTOTP: { _, _ in User.previewAdmin },
-        loginOIDC: { _ in User.previewAdmin },
+        loginOIDC: { _, _ in User.previewAdmin },
         me: { _ in User.previewAdmin },
         logout: { _ in },
         restoreSession: { nil },
@@ -17,6 +17,9 @@ public extension AuthClient {
         switchAccount: { _ in nil },
         removeAccount: { _ in nil },
         clearActiveSession: { nil },
-        clearAllSessions: {}
+        clearAllSessions: {},
+        lockSessions: { _ in [] },
+        endSession: { _ in },
+        setRequireSignIn: { _, _ in }
     )
 }

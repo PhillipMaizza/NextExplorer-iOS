@@ -1,4 +1,3 @@
-import DesignSystem
 import SwiftUI
 
 private enum Constants {
@@ -15,14 +14,14 @@ private enum Constants {
 /// `backend/src/services/users/utils.js`'s `toClientUser`), so `imageURL` is always nil in
 /// practice and this always falls back to initials. `imageURL` still exists so this
 /// doesn't need to change the day one ships.
-struct AvatarView: View {
+public struct AvatarView: View {
     let displayName: String
     let imageURL: URL?
     let size: CGFloat
     /// A per person fill with white initials, sized to the circle; nil keeps the accent look.
     let tint: Color?
 
-    init(displayName: String, imageURL: URL? = nil, size: CGFloat, tint: Color? = nil) {
+    public init(displayName: String, imageURL: URL? = nil, size: CGFloat, tint: Color? = nil) {
         self.displayName = displayName
         self.imageURL = imageURL
         self.size = size
@@ -37,7 +36,7 @@ struct AvatarView: View {
         return letters.isEmpty ? "?" : String(letters).uppercased()
     }
 
-    var body: some View {
+    public var body: some View {
         Group {
             if let imageURL {
                 AsyncImage(url: imageURL) { phase in
@@ -71,16 +70,22 @@ struct AvatarView: View {
 
 /// Text centered in an avatar sized circle. Small circles render it at the compact diameter and
 /// scale the result, so the same font reads at the same size across avatars and counters.
-struct AvatarLabel: View {
+public struct AvatarLabel: View {
     let text: String
     let size: CGFloat
     let color: Color
+
+    public init(text: String, size: CGFloat, color: Color) {
+        self.text = text
+        self.size = size
+        self.color = color
+    }
 
     private var layoutSize: CGFloat {
         max(size, Constants.compactDiameter)
     }
 
-    var body: some View {
+    public var body: some View {
         Text(text)
             .type(size < Constants.compactDiameter ? .caption(.bold) : .body3(.bold))
             .foregroundStyle(color)

@@ -1290,3 +1290,21 @@ emptyState.dropHintFinder	你也可以从“访达”将文件拖到这里。
 settings.rowDefaultSort	默认排序
 settings.rowSortOrder	顺序
 settings.defaultSortFooter	未排序的文件夹按此顺序打开。你排序过的文件夹会在登录此服务器的每台设备上保持自己的顺序。
+settings.sectionSecurity	安全
+settings.rowRequireSignIn	要求登录
+lock.title	NextExplorer 已锁定
+lock.subtitle	请重新登录以打开你的文件。
+lock.signIn	登录
+lock.otherAccount	这是另一个账户。请以 %@ 身份登录以解锁，或退出登录。
+requireSignIn.footer	离开应用后，此账户会锁定并结束会话。解锁需要重新登录；如果登录需要，还需使用你的安全密钥。
+requireSignIn.sectionLock	锁定
+requireSignIn.appStart	应用启动时
+requireSignIn.immediately	立即
+requireSignIn.thirtySeconds	30 秒后
+requireSignIn.oneMinute	1 分钟后
+requireSignIn.fiveMinutes	5 分钟后
+requireSignIn.keepOfflineFiles	保留离线文件
+requireSignIn.keepOfflineFilesFooter	关闭后，锁定时还会从此设备移除该账户的离线文件和缓存的文件夹。
+shareUpload.locked	NextExplorer 已锁定。请打开应用重新登录，然后再次共享。
+requireSignIn.navigationTitle	要求登录
+requireSignIn.toggle	要求登录

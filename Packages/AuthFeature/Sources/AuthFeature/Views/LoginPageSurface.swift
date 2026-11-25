@@ -8,7 +8,7 @@ struct LoginPageSurface: View {
 
     var body: some View {
         if horizontalSizeClass == .regular {
-            DSSheetSurface()
+            DSSheetSurface(in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         } else {
             LinearGradient.backgroundPrimary.ignoresSafeArea()
         }

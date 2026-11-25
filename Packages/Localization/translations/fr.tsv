@@ -1326,3 +1326,21 @@ emptyState.dropHintFinder	Vous pouvez aussi glisser des fichiers ici depuis le F
 settings.rowDefaultSort	Tri par défaut
 settings.rowSortOrder	Ordre
 settings.defaultSortFooter	Les dossiers que vous n'avez pas triés s'ouvrent dans cet ordre. Un dossier que vous triez garde son propre ordre sur tous les appareils connectés à ce serveur.
+settings.sectionSecurity	Sécurité
+settings.rowRequireSignIn	Exiger la connexion
+lock.title	NextExplorer est verrouillé
+lock.subtitle	Reconnectez-vous pour ouvrir vos fichiers.
+lock.signIn	Se connecter
+lock.otherAccount	C’est un autre compte. Connectez-vous en tant que %@ pour déverrouiller, ou déconnectez-vous.
+requireSignIn.footer	Quand vous quittez l’app, ce compte se verrouille et sa session prend fin. Pour déverrouiller, il faut se reconnecter, avec votre clé de sécurité si votre connexion en demande une.
+requireSignIn.sectionLock	Verrouiller
+requireSignIn.appStart	Au démarrage de l’app
+requireSignIn.immediately	Immédiatement
+requireSignIn.thirtySeconds	Après 30 secondes
+requireSignIn.oneMinute	Après 1 minute
+requireSignIn.fiveMinutes	Après 5 minutes
+requireSignIn.keepOfflineFiles	Garder les fichiers hors ligne
+requireSignIn.keepOfflineFilesFooter	Si désactivé, le verrouillage supprime aussi de cet appareil les fichiers hors ligne et les dossiers en cache de ce compte.
+shareUpload.locked	NextExplorer est verrouillé. Ouvrez l’app, reconnectez-vous, puis partagez à nouveau.
+requireSignIn.navigationTitle	Exiger la connexion
+requireSignIn.toggle	Exiger la connexion

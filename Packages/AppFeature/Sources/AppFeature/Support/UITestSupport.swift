@@ -255,7 +255,7 @@
                 sessions.upsert(credentials(serverURL: serverURL, username: secondFactorIdentifier))
                 return user
             }
-            client.loginOIDC = { serverURL in
+            client.loginOIDC = { serverURL, _ in
                 sessions.upsert(credentials(serverURL: serverURL, username: user.username))
                 return user
             }
@@ -267,6 +267,8 @@
             client.removeAccount = { id in sessions.remove(id) }
             client.clearActiveSession = { sessions.clearActive() }
             client.clearAllSessions = { sessions.clearAll() }
+            client.lockSessions = { shouldLock in sessions.lock(where: shouldLock) }
+            client.setRequireSignIn = { id, requireSignIn in sessions.setRequireSignIn(requireSignIn, id: id) }
             switch auth {
             case .loggedOut:
                 client.restoreSession = { nil }
@@ -487,6 +489,14 @@
 
         func clearAll() {
             locked { stored = StoredSessions() }
+        }
+
+        func lock(where shouldLock: (SessionCredentials) -> Bool) -> [SessionCredentials] {
+            locked { stored.lock(where: shouldLock) }
+        }
+
+        func setRequireSignIn(_ requireSignIn: RequireSignIn?, id: String) {
+            locked { stored.setRequireSignIn(requireSignIn, id: id) }
         }
     }
 

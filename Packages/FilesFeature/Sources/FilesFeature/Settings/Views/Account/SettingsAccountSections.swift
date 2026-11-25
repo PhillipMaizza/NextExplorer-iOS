@@ -17,11 +17,10 @@ private enum Constants {
 // MARK: Accounts (multiserver switcher)
 
 /// The signed in servers/accounts. The active account sits on top with a disclosure chevron;
-/// expanding it reveals self service password change and sign out (which act on the active
-/// session). The other accounts follow, each switching on tap (no reauth) with a trailing swipe
-/// to sign it out, then a row to add another. The switch / remove / add work is owned upstream
-/// where `authClient` lives; this only renders `store.accounts` and emits intent. Hidden while
-/// searching.
+/// expanding it reveals sign out (which acts on the active session). The other accounts follow,
+/// each switching on tap (no reauth) with a trailing swipe to sign it out, then a row to add
+/// another. The switch / remove / add work is owned upstream where `authClient` lives; this only
+/// renders `store.accounts` and emits intent. Hidden while searching.
 struct SettingsAccountsSection: View {
     let store: StoreOf<SettingsFeature>
     @State private var isActiveAccountExpanded = false
@@ -42,15 +41,7 @@ struct SettingsAccountsSection: View {
     private var accountsSection: some View {
         Section {
             activeAccountRow(activeAccount)
-            // Outside the disclosure: the second factor protects the account, so it is not
-            // something to find by expanding it.
-            if store.shouldShowTwoFactorRow {
-                twoFactorRow
-            }
             if isActiveAccountExpanded {
-                if store.shouldShowPasswordRow {
-                    changePasswordRow
-                }
                 signOutRow
             }
             ForEach(store.accountRows.filter { !$0.isActive }) { account in
@@ -151,27 +142,6 @@ struct SettingsAccountsSection: View {
         AccountActiveBadge()
     }
 
-    /// Self service password change (`POST /api/auth/password`), nested under the active account.
-    /// No profile editing here: the backend has no self service profile endpoint, so an admin
-    /// changes that from User Management instead.
-    private var changePasswordRow: some View {
-        DSNavigationRow(
-            title: store.passwordStatus == .absent ? L10n.Settings.rowAddPassword : L10n.Settings.rowChangePassword,
-            icon: IconKit.lock
-        ) {
-            store.send(.changePasswordButtonTapped)
-        }
-        .disabled(store.isSigningOut)
-    }
-
-    private var twoFactorRow: some View {
-        DSNavigationRow(title: L10n.TwoFactor.navigationTitle, icon: IconKit.shield) {
-            store.send(.twoFactorButtonTapped)
-        }
-        .accessibilityIdentifier(AccessibilityIdentifiers.Settings.twoFactorRow)
-        .disabled(store.isSigningOut)
-    }
-
     private var signOutRow: some View {
         DSNavigationRow(
             title: store.isSigningOut ? L10n.Settings.signingOut : L10n.Settings.signOutButton,
@@ -216,7 +186,7 @@ extension SettingsFeature.State {
 
     private var signedInAccount: AccountSummary {
         AccountSummary(
-            id: serverURL.absoluteString + "|" + user.username,
+            id: SessionCredentials.accountID(serverURL: serverURL, username: user.username),
             username: user.username,
             serverURL: serverURL,
             isActive: true,

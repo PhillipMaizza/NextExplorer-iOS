@@ -1290,3 +1290,21 @@ emptyState.dropHintFinder	你也可以從「Finder」將檔案拖移到這裡。
 settings.rowDefaultSort	預設排序
 settings.rowSortOrder	順序
 settings.defaultSortFooter	未排序的資料夾會依此順序開啟。你排序過的資料夾會在登入此伺服器的每部裝置上保留自己的順序。
+settings.sectionSecurity	安全性
+settings.rowRequireSignIn	要求登入
+lock.title	NextExplorer 已鎖定
+lock.subtitle	請重新登入以開啟你的檔案。
+lock.signIn	登入
+lock.otherAccount	這是另一個帳號。請以 %@ 身分登入以解鎖，或登出。
+requireSignIn.footer	離開 App 後，此帳號會鎖定並結束工作階段。解鎖需要重新登入；若登入需要，也需使用你的安全金鑰。
+requireSignIn.sectionLock	鎖定
+requireSignIn.appStart	App 啟動時
+requireSignIn.immediately	立即
+requireSignIn.thirtySeconds	30 秒後
+requireSignIn.oneMinute	1 分鐘後
+requireSignIn.fiveMinutes	5 分鐘後
+requireSignIn.keepOfflineFiles	保留離線檔案
+requireSignIn.keepOfflineFilesFooter	關閉時，鎖定也會從此裝置移除此帳號的離線檔案和快取的資料夾。
+shareUpload.locked	NextExplorer 已鎖定。請開啟 App 重新登入，然後再分享一次。
+requireSignIn.navigationTitle	要求登入
+requireSignIn.toggle	要求登入

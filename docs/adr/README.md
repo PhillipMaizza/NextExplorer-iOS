@@ -26,3 +26,4 @@ refactor. Number it after the last one and keep it short. A record that stops ho
 | [0015](0015-fixed-beat-polling.md) | Polling runs on fixed beats |
 | [0016](0016-code-comments-ratchet.md) | Code carries no comments; a ratchet holds the rest |
 | [0017](0017-search-answers-carry-their-term.md) | Search answers carry their term |
+| [0018](0018-unlock-is-not-a-fresh-sign-in.md) | Unlocking an account is not a fresh sign in |

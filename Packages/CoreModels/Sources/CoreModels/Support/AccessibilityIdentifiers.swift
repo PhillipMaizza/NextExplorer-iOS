@@ -30,6 +30,13 @@ public enum AccessibilityIdentifiers {
         public static let diagnosticsButton = "login.diagnosticsButton"
     }
 
+    public enum Lock {
+        public static let screen = "lock.screen"
+        public static let unlockButton = "lock.unlockButton"
+        public static let signOutButton = "lock.signOutButton"
+        public static let problem = "lock.problem"
+    }
+
     public enum Search {
         public static let field = "search.field"
         /// The Mac search panel's text field.
@@ -79,6 +86,8 @@ public enum AccessibilityIdentifiers {
         public static let activeAccount = "settings.activeAccount"
         public static let languagePicker = "settings.languagePicker"
         public static let twoFactorRow = "settings.twoFactorRow"
+        public static let requireSignInRow = "settings.requireSignInRow"
+        public static let requireSignInToggle = "settings.requireSignInToggle"
         public static let apiTokensRow = "settings.apiTokensRow"
         public static let apiTokenNameField = "settings.apiTokenNameField"
         public static let twoFactorCodeField = "settings.twoFactorCodeField"

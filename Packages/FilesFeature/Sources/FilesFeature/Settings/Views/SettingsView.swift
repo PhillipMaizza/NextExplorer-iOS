@@ -107,6 +107,7 @@ struct SettingsView: View {
                             apiTokensDestinationView(twoFactorDestinationView(changePasswordDestinationView(
                                 settingsList {
                                     SettingsAccountsSection(store: store)
+                                    SettingsSecuritySection(store: store)
                                     SettingsProfileSection(store: store)
                                     SettingsServerStorageSection(store: store)
                                     SettingsMenuSection(store: store) { store.send(.pagesChanged(store.pages + [$0]))

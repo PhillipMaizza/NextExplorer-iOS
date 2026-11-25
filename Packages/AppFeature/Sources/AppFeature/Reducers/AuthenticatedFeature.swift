@@ -21,11 +21,7 @@ public struct AuthenticatedFeature {
 
         /// This account's stable identity, matching `SessionCredentials.accountID`.
         var accountID: String {
-            Self.accountID(serverURL: serverURL, username: user.username)
-        }
-
-        static func accountID(serverURL: URL, username: String) -> String {
-            [serverURL.absoluteString, username].joined(separator: Constants.accountIDSeparator)
+            SessionCredentials.accountID(serverURL: serverURL, username: user.username)
         }
     }
 
@@ -57,7 +53,6 @@ public struct AuthenticatedFeature {
     }
 
     private enum Constants {
-        static let accountIDSeparator = "|"
         /// How long the sign out confirmation takes to slide away, so the login screen is not
         /// revealed underneath it.
         static let promptDismissDuration: Duration = .seconds(0.4)
@@ -71,17 +66,12 @@ public struct AuthenticatedFeature {
         let authClient = authClient
         let accountCacheWipe = accountCacheWipe
         return .run { send in
-            accountCacheWipe.markPending(accountID)
-            let next: SessionCredentials?
             do {
-                next = try await authClient.removeAccount(accountID)
+                let next = try await accountCacheWipe.signOut(accountID, authClient: authClient)
+                await send(.accountChangeResolved(next))
             } catch {
-                accountCacheWipe.pendingWipes.remove(accountID)
                 await send(.accountChangeFailed)
-                return
             }
-            accountCacheWipe.wipe(accountID)
-            await send(.accountChangeResolved(next))
         }
     }
 

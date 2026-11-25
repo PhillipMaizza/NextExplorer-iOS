@@ -1221,3 +1221,21 @@ emptyState.dropHintFinder	Anda juga dapat menyeret file ke sini dari Finder.
 settings.rowDefaultSort	Urutan Default
 settings.rowSortOrder	Urutan
 settings.defaultSortFooter	Folder yang belum Anda urutkan terbuka dengan urutan ini. Folder yang Anda urutkan mempertahankan urutannya sendiri di setiap perangkat yang masuk ke server ini.
+settings.sectionSecurity	Keamanan
+settings.rowRequireSignIn	Wajibkan Masuk
+lock.title	NextExplorer terkunci
+lock.subtitle	Masuk lagi untuk membuka file Anda.
+lock.signIn	Masuk
+lock.otherAccount	Itu akun lain. Masuk sebagai %@ untuk membuka kunci, atau keluar.
+requireSignIn.footer	Saat Anda meninggalkan aplikasi, akun ini terkunci dan sesinya berakhir. Membuka kunci perlu masuk ulang, dengan kunci keamanan Anda jika proses masuk memintanya.
+requireSignIn.sectionLock	Kunci
+requireSignIn.appStart	Saat aplikasi dimulai
+requireSignIn.immediately	Segera
+requireSignIn.thirtySeconds	Setelah 30 detik
+requireSignIn.oneMinute	Setelah 1 menit
+requireSignIn.fiveMinutes	Setelah 5 menit
+requireSignIn.keepOfflineFiles	Simpan File Offline
+requireSignIn.keepOfflineFilesFooter	Jika nonaktif, penguncian juga menghapus file offline dan folder cache akun ini dari perangkat ini.
+shareUpload.locked	NextExplorer terkunci. Buka aplikasinya, masuk lagi, lalu bagikan lagi.
+requireSignIn.navigationTitle	Wajibkan Masuk
+requireSignIn.toggle	Wajibkan Masuk

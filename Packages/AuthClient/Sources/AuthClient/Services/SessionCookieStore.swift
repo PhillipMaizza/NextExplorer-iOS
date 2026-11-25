@@ -152,6 +152,23 @@ struct SessionCookieStore: Sendable {
         return nil
     }
 
+    func lock(where shouldLock: (SessionCredentials) -> Bool) throws -> [SessionCredentials] {
+        var stored = try loadForChange()
+        let unlocked = stored.lock(where: shouldLock)
+        guard !unlocked.isEmpty else { return [] }
+        try saveStored(stored)
+        for session in unlocked {
+            deleteCookies(serverURL: session.serverBaseURL)
+        }
+        return unlocked
+    }
+
+    func setRequireSignIn(_ requireSignIn: RequireSignIn?, id: String) throws {
+        var stored = try loadForChange()
+        stored.setRequireSignIn(requireSignIn, id: id)
+        try saveStored(stored)
+    }
+
     /// Session expiry / 401 teardown of the active account only: drops it and switches to the next
     /// remaining account if there is one. Returns the new active account, or `nil` when none left.
     /// Throws when the set can't be read, so an unreadable keychain never reads as "none left".
@@ -184,7 +201,7 @@ struct SessionCookieStore: Sendable {
     // MARK: Cookie install
 
     func install(_ credentials: SessionCredentials) {
-        guard let cookie = credentials.httpCookie else { return }
+        guard !credentials.isLocked, let cookie = credentials.httpCookie else { return }
         cookieStorage.cookieAcceptPolicy = .always
         cookieStorage.setCookie(cookie)
     }
