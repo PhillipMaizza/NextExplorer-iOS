@@ -166,6 +166,7 @@ enum CoreModelsFixture: String, FixtureFile {
     case storageUsageDeniedAllZero = "storage-usage/denied-all-zero"
     case storageUsageFortyOfHundred = "storage-usage/forty-of-hundred"
     case storageUsageNoTotalReported = "storage-usage/no-total-reported"
+    case storageUsageSizeOnly = "storage-usage/size-only"
     case storageUsageSmallFolderOnNearlyFullDisk = "storage-usage/small-folder-on-nearly-full-disk"
     case storageUsageUsedExceedsCapacity = "storage-usage/used-exceeds-capacity"
 

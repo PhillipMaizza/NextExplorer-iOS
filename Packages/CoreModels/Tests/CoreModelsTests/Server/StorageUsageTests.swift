@@ -39,6 +39,12 @@ struct StorageUsageTests {
         #expect(usage.fraction == 0)
     }
 
+    @Test("a folder size without disk figures is not meaningful")
+    func sizeOnlyResponse() throws {
+        let usage = try decode(.storageUsageSizeOnly)
+        #expect(!usage.isMeaningful)
+    }
+
     @Test("fraction clamps to 1 when used exceeds capacity")
     func fractionClamps() throws {
         let usage = try decode(.storageUsageUsedExceedsCapacity)
