@@ -8,6 +8,13 @@
     /// The Dock icon's menu: the folders opened recently in Browse, like Finder's, each one
     /// reopening in the main window. Also asks before quitting mid transfer.
     final class MacAppDelegate: NSObject, NSApplicationDelegate {
+        private var mouseNavigationMonitor: Any?
+
+        @MainActor
+        func applicationDidFinishLaunching(_: Notification) {
+            mouseNavigationMonitor = MacMouseNavigation.install()
+        }
+
         @MainActor
         func applicationDockMenu(_: NSApplication) -> NSMenu? {
             guard case let .authenticated(session) = NextExplorerApp.store.destination,
