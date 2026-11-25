@@ -226,6 +226,26 @@ extension AppSuites {
             )
         }
 
+        @Test("A session check answered by another user ends the session instead of showing that user")
+        func validationAnsweredByAnotherUserEndsTheSession() async {
+            let store = makeStore(activeState(AppFixtures.serverA, AppFixtures.userA)) {
+                recorder.installPendingLog(into: &$0)
+            }
+
+            await store.send(.sessionValidationResponse(.success(AppFixtures.userB), credentialsA))
+            await store.receive(\.activeAccountTornDown) {
+                $0.destination = .unauthenticated(.init())
+            }
+            await store.receive(\.accountsRefreshed)
+
+            await store.finish()
+
+            #expect(
+                recorder.events.value == [.pendingAdded(AppFixtures.accountA), .activeSessionCleared]
+                    + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
+            )
+        }
+
         @Test("Signing out lists the account as pending before removing its session, then wipes it")
         func signOutRecordsThePendingWipeFirst() async {
             let clock = TestClock()
