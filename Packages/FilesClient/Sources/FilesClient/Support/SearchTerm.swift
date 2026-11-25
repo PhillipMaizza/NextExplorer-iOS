@@ -6,11 +6,13 @@ public struct SearchTerm: Equatable, Sendable {
     /// The term folded the way names are folded before comparing: composed and lowercased.
     private let needle: String
     private let glob: Glob?
+    private let words: Glob?
 
     public init(_ query: String) {
         text = query.trimmingCharacters(in: .whitespacesAndNewlines)
         needle = Self.folded(text)
         glob = Glob(text)
+        words = glob == nil ? Self.wordsPattern(text).flatMap(Glob.init) : nil
     }
 
     public static func == (lhs: SearchTerm, rhs: SearchTerm) -> Bool {
@@ -30,6 +32,16 @@ public struct SearchTerm: Equatable, Sendable {
     /// The server answers a shape by names only, so a two character search finds no contents.
     public var serverQuery: String {
         isWrappable ? "*\(text)*" : text
+    }
+
+    public var wordsQuery: String? {
+        words == nil ? nil : Self.wordsPattern(text)
+    }
+
+    private static func wordsPattern(_ text: String) -> String? {
+        let parts = text.split(whereSeparator: \.isWhitespace)
+        guard parts.count > 1, !text.contains("/") else { return nil }
+        return "*" + parts.joined(separator: "*") + "*"
     }
 
     /// `MIN_TERM_LENGTH` in backend `routes/search.js`.
@@ -52,7 +64,7 @@ public struct SearchTerm: Equatable, Sendable {
     /// name. An empty term matches everything.
     public func matches(_ name: String) -> Bool {
         guard !isEmpty else { return true }
-        guard let glob else { return Self.folded(name).contains(needle) }
+        guard let glob else { return Self.folded(name).contains(needle) || words?.fits(name) == true }
         return !glob.isPathPattern && glob.fits(name)
     }
 
@@ -95,6 +107,16 @@ public struct SearchTerm: Equatable, Sendable {
         let byContents = results.filter { !Self.isNameHit($0) }
             .sorted { $0.id.localizedCompare($1.id) == .orderedAscending }
         return byName + byContents
+    }
+
+    public func merging(_ page: SearchPage, with wordsPage: SearchPage) -> SearchPage {
+        let seen = Set(page.items.map(\.id))
+        return SearchPage(
+            items: ranked(page.items + wordsPage.items.filter { !seen.contains($0.id) }),
+            isTruncated: page.isTruncated || wordsPage.isTruncated,
+            isComplete: page.isComplete && wordsPage.isComplete,
+            limit: page.limit
+        )
     }
 
     private static func isNameHit(_ result: SearchResultItem) -> Bool {

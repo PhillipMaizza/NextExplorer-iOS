@@ -29,6 +29,18 @@ extension FilesService {
     }
 
     func search(serverURL: URL, path: String, query: String, limit: Int?) async throws -> SearchPage {
+        let term = SearchTerm(query)
+        guard let wordsQuery = term.wordsQuery else {
+            return try await searchPage(serverURL: serverURL, path: path, query: query, limit: limit)
+        }
+        async let whole = searchPage(serverURL: serverURL, path: path, query: query, limit: limit)
+        async let words = searchPage(serverURL: serverURL, path: path, query: wordsQuery, limit: limit)
+        let page = try await whole
+        guard let wordsPage = try? await words else { return page }
+        return term.merging(page, with: wordsPage)
+    }
+
+    private func searchPage(serverURL: URL, path: String, query: String, limit: Int?) async throws -> SearchPage {
         var items = [(QueryKey.query, SearchTerm(query).serverQuery)]
         if !path.isEmpty {
             items.append((QueryKey.path, path))

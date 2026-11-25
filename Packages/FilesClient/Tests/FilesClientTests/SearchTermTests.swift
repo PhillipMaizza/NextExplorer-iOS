@@ -18,6 +18,10 @@ struct SearchTermTests {
         static let log = "app.log"
         static let stacksLog = "Stacks/app.log"
         static let otherLog = "Other/app.log"
+        static let words = "item 24"
+        static let wordsQuery = "*item*24*"
+        static let wordsFile = "item_24.jpg"
+        static let wordsHeader = "notes on item 24.txt"
     }
 
     struct Case: Sendable, CustomTestStringConvertible {
@@ -201,5 +205,43 @@ struct SearchTermTests {
             "A/memo.txt",
             "Docs/notes.txt",
         ])
+    }
+
+    @Test
+    func severalWordsAlsoAskForNamesHoldingThemInOrder() {
+        let term = SearchTerm(Constants.words)
+        #expect(term.wordsQuery == Constants.wordsQuery)
+        #expect(term.serverQuery == Constants.words)
+        #expect(term.matches(Constants.wordsFile))
+        #expect(!term.matches("24_item.jpg"))
+        #expect(SearchTerm(Constants.photos).wordsQuery == nil)
+        #expect(SearchTerm("item *").wordsQuery == nil)
+        #expect(SearchTerm("Stacks/ app").wordsQuery == nil)
+    }
+
+    @Test
+    func theWordsPageFoldsInOnceInTheServerOrder() {
+        let term = SearchTerm(Constants.words)
+        let header = SearchResultItem(
+            name: Constants.wordsHeader,
+            path: "",
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
+        let file = SearchResultItem(
+            name: Constants.wordsFile,
+            path: Constants.stacks,
+            kind: SearchResultItem.fileKind,
+            isNameMatch: true
+        )
+        let whole = SearchPage(items: [header], limit: 50)
+        let words = SearchPage(items: [file, header], isTruncated: true, isComplete: false)
+
+        let merged = term.merging(whole, with: words)
+
+        #expect(merged.items.map(\.id) == [file.id, header.id])
+        #expect(merged.isTruncated)
+        #expect(!merged.isComplete)
+        #expect(merged.limit == 50)
     }
 }
