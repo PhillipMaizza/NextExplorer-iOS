@@ -608,9 +608,9 @@ public struct AppFeature {
         let clientCertificateClient = clientCertificateClient
         let uploadDefaults = uploadDefaults
         let shareUploads = shareUploads
-        AppStorageKeys.resetSessionPreferences()
         return .merge(
             refreshAccounts,
+            .run { @MainActor _ in AppStorageKeys.resetSessionPreferences() },
             .run { _ in
                 await authClient.clearAllSessions()
                 // A download still landing is dropped by its `CacheAccountScope.wipeStamp`.
