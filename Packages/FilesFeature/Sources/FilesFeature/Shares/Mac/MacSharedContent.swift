@@ -39,29 +39,27 @@
 
         var body: some View {
             let item = inspectedItem
-            HStack(spacing: 0) {
-                VStack(spacing: 0) {
-                    header()
-                    if isRailShown {
-                        SharedPeopleRail(
-                            options: store.state.filterOptions(for: segment),
-                            selection: store.state.filter(for: segment),
-                            onSelect: { store.send(.filterChanged(segment, $0)) },
-                            isCompact: true
-                        )
-                        .padding(.vertical, .space12)
-                        Divider()
-                    }
-                    MacSharedTable(
-                        store: store,
-                        segment: segment,
-                        selection: $selection,
-                        onToast: onToast
+            VStack(spacing: 0) {
+                header()
+                if isRailShown {
+                    SharedPeopleRail(
+                        options: store.state.filterOptions(for: segment),
+                        selection: store.state.filter(for: segment),
+                        onSelect: { store.send(.filterChanged(segment, $0)) },
+                        isCompact: true
                     )
-                    .id(segment)
+                    .padding(.vertical, .space12)
+                    Divider()
                 }
-                .frame(maxWidth: .infinity)
-                .clipped()
+                MacSharedTable(
+                    store: store,
+                    segment: segment,
+                    selection: $selection,
+                    onToast: onToast
+                )
+                .id(segment)
+            }
+            .macInspectorPane(isOpen: item != nil, onClose: { selection = [] }) {
                 if let item {
                     MacSharedInspector(
                         store: store,
@@ -71,11 +69,8 @@
                         onSelectShare: { selection = [.share($0, item: item.id)] },
                         onToast: onToast
                     )
-                    .macInspectorColumn()
                 }
             }
-            .animation(DSMotion.stateFade, value: item == nil)
-            .focusedSceneValue(\.closeMacInspector, item == nil ? nil : MacInspectorAction { selection = [] })
             .onChange(of: segment) { _, _ in selection = [] }
         }
     }
