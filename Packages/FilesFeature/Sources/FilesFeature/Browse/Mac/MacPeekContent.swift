@@ -4,6 +4,7 @@
     import DesignSystem
     import FilesClient
     import Localization
+    import QuickLookThumbnailing
     import SwiftUI
 
     struct MacPeekContent: View {
@@ -61,6 +62,7 @@
         var body: some View {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .environment(\.macPeekFallback, MacPeekFallback(item: item, serverURL: serverURL))
                 .id(item.id)
         }
 
@@ -103,25 +105,51 @@
                     isNear: true,
                     failureMessage: L10n.EmptyState.loadFailed,
                     fetch: { [filesClient, serverURL, item] in
-                        try await filesClient.previewDocument(serverURL, item)
+                        try await Self.previewable(filesClient.previewDocument(serverURL, item))
                     },
-                    content: { QuickLookPreview(url: $0) }
+                    content: quickLook
                 )
             case .summary:
-                FileSummaryView(item: item, message: nil)
+                MacPeekFileSummary(item: item, serverURL: serverURL)
             case .wholeFile:
                 GalleryFetchedPage(
                     isNear: true,
                     failureMessage: L10n.EmptyState.loadFailed,
                     fetch: { [filesClient, serverURL, item] in
                         if let preview = try? await filesClient.previewFile(serverURL, item) {
-                            return preview
+                            return await Self.previewable(preview)
                         }
-                        return try await filesClient.downloadRawFile(serverURL, item)
+                        return try await Self.previewable(filesClient.downloadRawFile(serverURL, item))
                     },
-                    content: { QuickLookPreview(url: $0) }
+                    content: quickLook
                 )
             }
+        }
+
+        @ViewBuilder
+        private func quickLook(_ url: URL?) -> some View {
+            if let url {
+                QuickLookPreview(url: url)
+            } else {
+                MacPeekFileSummary(item: item, serverURL: serverURL)
+            }
+        }
+
+        private static func previewable(_ url: URL) async -> URL? {
+            let size = await Task.detached(priority: .userInitiated) {
+                (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? .zero
+            }.value
+            guard size > .zero else { return nil }
+            let request = QLThumbnailGenerator.Request(
+                fileAt: url,
+                size: CGSize(width: MacPeekMetrics.iconSize, height: MacPeekMetrics.iconSize),
+                scale: 1,
+                representationTypes: .all
+            )
+            guard let best = try? await QLThumbnailGenerator.shared.generateBestRepresentation(for: request),
+                  best.type != .icon
+            else { return nil }
+            return url
         }
     }
 
