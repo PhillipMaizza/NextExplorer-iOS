@@ -24,9 +24,9 @@ public struct BrowseFeature {
         public var directoryPath: String
         public var title: String
         public var items: IdentifiedArrayOf<FileItem> = []
-        /// A file a search sent the user to: selected, scrolled to and opened once the listing holds it.
-        var revealItemID: FileItem.ID?
-        /// The row the Mac table scrolls into view, set when `revealItemID` lands in the listing.
+        /// An item a search sent the user to: selected and scrolled to once the listing holds it, opened when asked.
+        var reveal: BrowseReveal?
+        /// The row the Mac table scrolls into view, set when `reveal` lands in the listing.
         var scrollTargetID: FileItem.ID?
         public var favoritePaths: Set<String> = []
         /// A favorites answer has landed. Until then `favoritePaths` says nothing, and toggling a star
@@ -82,6 +82,16 @@ public struct BrowseFeature {
         public var createdFolderIDs: Set<FileItem.ID> = []
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
+        public var elsewherePhase: DataPhase = .idle
+        public var elsewhereResults: [SearchResultItem] = []
+
+        public var isShowingElsewhereResults: Bool {
+            elsewherePhase == .loaded && !elsewhereResults.isEmpty
+        }
+
+        func searchHit(id: String) -> SearchResultItem? {
+            searchResults?[id: id] ?? elsewhereResults.first { $0.id == id }
+        }
 
         /// How far below the root this folder sits: 0 at the root, 1 for a top level location.
         var folderDepth: Int {
@@ -519,6 +529,7 @@ public struct BrowseFeature {
         /// The listings saved below the search's folder, read off the main actor.
         case searchSavedItemsLoaded([FileItem])
         case searchResultsResponse(Result<SearchPage, FilesClientError>, term: String)
+        case searchElsewhereResponse(Result<SearchPage, FilesClientError>, term: String)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
         case renameTapped(FileItem)
@@ -614,6 +625,7 @@ public struct BrowseFeature {
         case tableSelectionChanged(Set<FileItem.ID>)
         /// The listing now holds the file a search sent the user to: select it, scroll to it, open it.
         case revealItemShown(FileItem.ID)
+        case scrollTargetShown
         case copySelectionTapped
         case cutSelectionTapped
         /// Copies the selection into its own folder; the server names the copies "Name (2)".
@@ -659,6 +671,7 @@ public struct BrowseFeature {
         public enum Delegate: Equatable, Sendable {
             case openFolder(FileItem)
             case openPath(path: String, title: String)
+            case revealInFolder(path: String, title: String, itemID: FileItem.ID)
             case favoritesChanged
             /// Files the user picked from the `+` menu, each already carrying its destination
             /// folder: bubbled up to `MainTabFeature`'s app wide upload queue.

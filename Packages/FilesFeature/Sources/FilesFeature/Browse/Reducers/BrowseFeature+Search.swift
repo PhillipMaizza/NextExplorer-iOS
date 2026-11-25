@@ -14,6 +14,8 @@ extension BrowseFeature {
         // treated as empty rather than pre-filling everything and 400ing on a blank `q`.
         let term = SearchTerm(state.searchQuery)
         let query = term.text
+        state.elsewherePhase = .idle
+        state.elsewhereResults = []
         guard !term.isEmpty else {
             state.searchResults = nil
             state.searchAnsweredTerm = nil
@@ -42,6 +44,25 @@ extension BrowseFeature {
         }
         state.searchPhase = .loading
         return fetchSearchResults(state, isDebounced: isDebounced)
+    }
+
+    func searchElsewhereIfEmpty(_ state: inout State, page: SearchPage, term: String) -> Effect<Action> {
+        #if os(macOS)
+            guard page.items.isEmpty, state.canWidenSearch else { return .none }
+            state.elsewherePhase = .loading
+            let serverURL = state.serverURL
+            let filesClient = filesClient
+            let limit = state.searchLimit
+            return .run { send in
+                try await send(.searchElsewhereResponse(
+                    apiResult { try await filesClient.search(serverURL, "", term, limit) },
+                    term: term
+                ))
+            }
+            .cancellable(id: CancelID.search, cancelInFlight: true)
+        #elseif os(iOS)
+            return .none
+        #endif
     }
 
     /// Instant client side matches from the already loaded folder and the favorites, so results

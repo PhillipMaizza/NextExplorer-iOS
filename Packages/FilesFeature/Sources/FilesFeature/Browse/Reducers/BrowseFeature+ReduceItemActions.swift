@@ -82,6 +82,7 @@ extension BrowseFeature {
             if state.selectedItemIDs.remove(result.originalID) != nil {
                 state.selectedItemIDs.insert(result.renamed.id)
             }
+            renameInSearch(&state, from: result.originalID, to: result.renamed)
             // A rename from a preview keeps the cover up: repoint it at the renamed item
             // so its title/actions follow.
             if state.previewItem?.id == result.originalID {
@@ -246,11 +247,13 @@ extension BrowseFeature {
         case let .extractResponse(.success(extracted)):
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
-            for item in extracted where state.items[id: item.id] == nil {
+            let here = extracted.filter { $0.path == state.directoryPath }
+            guard !here.isEmpty else { return refreshSearch(&state) }
+            for item in here where state.items[id: item.id] == nil {
                 state.items.append(item)
             }
-            state.selectedItemIDs = Set(extracted.map(\.id))
-            state.scrollTargetID = extracted.first?.id
+            state.selectedItemIDs = Set(here.map(\.id))
+            state.scrollTargetID = here.first?.id
             syncListingCache(state)
             return .none
 
@@ -274,6 +277,7 @@ extension BrowseFeature {
         case let .compressResponse(.success(compressed)):
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
+            guard compressed.path == state.directoryPath else { return refreshSearch(&state) }
             state.items.append(compressed)
             state.selectedItemIDs = [compressed.id]
             state.scrollTargetID = compressed.id

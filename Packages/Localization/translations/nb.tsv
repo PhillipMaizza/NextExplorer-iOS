@@ -1199,6 +1199,10 @@ offline.sectionSavedEarlier	Arkivert tidligere
 offline.newFilesBadge	Nye filer tilgjengelig frakoblet
 search.onDevice	På enheten
 search.remote	Eksternt
+search.inOtherFolders	I andre mapper
+search.noMatchesAnywhere	Ingen treff noe sted for «%@».
+search.nothingInThisFolder	Ingenting i denne mappen heter eller inneholder «%@».
+search.showAllEverywhere	Vis alle resultater overalt
 offline.tabEmpty	Ingenting er tilgjengelig uten nett ennå. Velg «Tilgjengelig frakoblet» på en fil eller mappe.
 offline.removeItemTitle	Fjerne «%@» fra tilgjengelig uten nett?
 offline.removeItemsTitle	Fjerne %lld objekter fra tilgjengelig uten nett?

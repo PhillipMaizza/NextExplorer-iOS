@@ -5,7 +5,25 @@ import Foundation
 /// Shared helpers for the folder drill in navigation stack that `BrowseTabFeature` and
 /// `FavoritesFeature` both host (a flat `StackState<BrowseFeature.State>`, one entry per
 /// pushed subfolder). Centralises how a pushed browse screen is built.
+enum BrowseReveal: Equatable, Sendable {
+    case open(FileItem.ID)
+    case select(FileItem.ID)
+
+    var itemID: FileItem.ID {
+        switch self {
+        case let .open(id), let .select(id): id
+        }
+    }
+}
+
 enum BrowseNavigation {
+    @discardableResult
+    static func reveal(_ reveal: BrowseReveal, on stack: inout StackState<BrowseFeature.State>) -> Bool {
+        guard let id = stack.ids.last else { return false }
+        stack[id: id]?.reveal = reveal
+        return true
+    }
+
     /// A pushed screen for drilling into `item`.
     /// `isKeptOffline` marks a screen pushed from the Offline tab, which offers only what works on
     /// files kept on the device.
@@ -44,9 +62,12 @@ enum BrowseNavigation {
     }
 
     /// Opens `path` on top of the folders already open, so Back returns to where the user was.
-    /// The root is no pushable screen: going there clears the stack.
+    /// A folder already open is popped to; the root is no screen, so going there clears the stack.
     static func push(to path: String, title: String, serverURL: URL, stack: inout StackState<BrowseFeature.State>) {
-        guard (stack.last?.directoryPath ?? "") != path else { return }
+        if let open = stack.ids.last(where: { stack[id: $0]?.directoryPath == path }) {
+            stack.pop(to: open)
+            return
+        }
         guard !path.isEmpty else {
             stack.removeAll()
             return

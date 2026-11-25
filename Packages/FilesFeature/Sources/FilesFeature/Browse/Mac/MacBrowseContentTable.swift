@@ -21,7 +21,10 @@
         }
 
         var body: some View {
-            if store.isSearching {
+            if store.isShowingElsewhereResults {
+                MacElsewhereResults(store: store, fileActions: hitActions)
+                    .transition(.opacity)
+            } else if store.isSearching {
                 searchContent
                     .transition(.opacity)
             } else {
@@ -45,8 +48,9 @@
                 MacSearchResultsTable(
                     sections: store.searchResultSections,
                     favoritePaths: store.favoritePaths,
+                    serverURL: store.preferences.shouldShowThumbnails ? store.serverURL : nil,
                     onOpen: { store.send(.searchResultTapped($0)) },
-                    onShowInFolder: { store.send(.searchResultEnclosingFolderTapped($0)) }
+                    fileActions: hitActions
                 )
                 if BrowseSearchFooter.isShown(store) {
                     Divider()
@@ -54,6 +58,14 @@
                 }
             }
             .backgroundGradient()
+        }
+
+        private func hitActions(_ result: SearchResultItem) -> some View {
+            MacSearchHitMenu(
+                result: result,
+                onShowInFolder: { store.send(.searchResultEnclosingFolderTapped(result)) },
+                fileActions: { fileActions(result.actionItem) }
+            )
         }
 
         private var table: some View {
@@ -104,7 +116,8 @@
                 onOpenPersonalSpace: { store.send(.personalSpaceTapped) },
                 isPeeking: isPeeking,
                 onPeek: { isPeeking = true },
-                scrollTargetID: store.scrollTargetID
+                scrollTargetID: store.scrollTargetID,
+                onScrollTargetShown: { store.send(.scrollTargetShown) }
             )
             .focusedSceneValue(\.browseViewOptions, BrowseViewOptions(
                 sortOption: store.sortOption,

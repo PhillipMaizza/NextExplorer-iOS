@@ -764,8 +764,12 @@ public enum L10n {
         public static var share: String { tr("previewToolbar.share") }  // "Share"
     }
     public enum Search {
+        public static var inOtherFolders: String { tr("search.inOtherFolders") }  // "In other folders"
+        public static func noMatchesAnywhere(_ a0: CVarArg) -> String { tr("search.noMatchesAnywhere", a0) }
+        public static func nothingInThisFolder(_ a0: CVarArg) -> String { tr("search.nothingInThisFolder", a0) }
         public static var onDevice: String { tr("search.onDevice") }  // "On device"
         public static var remote: String { tr("search.remote") }  // "Remote"
+        public static var showAllEverywhere: String { tr("search.showAllEverywhere") }  // "Show all results everywhere"
     }
     public enum SearchIndexSettings {
         public static var addButton: String { tr("searchIndexSettings.addButton") }  // "Add"

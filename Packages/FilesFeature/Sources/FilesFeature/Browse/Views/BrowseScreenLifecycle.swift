@@ -52,10 +52,10 @@ struct BrowseScreenLifecycle: ViewModifier {
             }
             // A search hit opened this folder: once its listing holds the file, select it.
             .task(id: RevealKey(
-                id: store.revealItemID,
-                isListed: store.revealItemID.map { store.items[id: $0] != nil }
+                id: store.reveal?.itemID,
+                isListed: store.reveal.map { store.items[id: $0.itemID] != nil }
             )) {
-                guard let id = store.revealItemID, store.items[id: id] != nil else { return }
+                guard let id = store.reveal?.itemID, store.items[id: id] != nil else { return }
                 store.send(.revealItemShown(id))
             }
             // New results, or a change in what this folder keeps offline: find the results on the device.

@@ -39,8 +39,15 @@ struct FavoritesSearchResultsList: View {
                     MacSearchResultsTable(
                         sections: store.searchResultSections,
                         favoritePaths: Set(store.favorites.map(\.path)),
+                        serverURL: store.preferences.shouldShowThumbnails ? store.serverURL : nil,
                         onOpen: { store.send(.searchResultTapped($0)) },
-                        onShowInFolder: { store.send(.searchResultEnclosingFolderTapped($0)) }
+                        fileActions: { result in
+                            SearchResultMenu(
+                                result: result,
+                                onOpen: { store.send(.searchResultTapped(result)) },
+                                onShowInFolder: { store.send(.searchResultEnclosingFolderTapped(result)) }
+                            )
+                        }
                     )
                 }
                 .backgroundGradient()

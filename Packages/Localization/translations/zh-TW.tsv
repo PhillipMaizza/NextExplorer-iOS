@@ -1233,6 +1233,10 @@ offline.sectionSavedEarlier	先前儲存的
 offline.newFilesBadge	有新檔案可離線使用
 search.onDevice	在此裝置上
 search.remote	遠端
+search.inOtherFolders	在其他資料夾中
+search.noMatchesAnywhere	任何位置都沒有「%@」的結果。
+search.nothingInThisFolder	此資料夾中沒有名稱為或包含「%@」的項目。
+search.showAllEverywhere	顯示所有位置的結果
 offline.tabEmpty	目前還沒有可離線使用的項目。請在檔案或檔案夾上選擇「可離線使用」。
 offline.removeItemTitle	要將「%@」從「可離線使用」中移除嗎？
 offline.removeItemsTitle	要將 %lld 個項目從「可離線使用」中移除嗎？

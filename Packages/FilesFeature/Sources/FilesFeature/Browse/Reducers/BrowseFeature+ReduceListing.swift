@@ -64,6 +64,7 @@ extension BrowseFeature {
             state.offlineRemoval = nil
             state.offlineItemIDs.subtract(request.paths)
             state.offlinePinnedItemIDs.subtract(request.paths)
+            state.searchOnDeviceIDs = state.searchOnDeviceIDs.filter { !Self.isTakenOff($0, by: request.paths) }
             // A removed folder takes the files kept through it off the device too, except one
             // pinned on its own, which stays.
             state.offlineItemIDs = state.offlineItemIDs.filter { id in
@@ -94,12 +95,15 @@ extension BrowseFeature {
             return .none
 
         case let .offlineToggleTapped(item):
-            if state.offlineItemIDs.contains(item.id) {
+            if state.offlineItemIDs.contains(item.id) || state.searchOnDeviceIDs.contains(item.id) {
                 state.offlineRemoval = offlineRemoval(of: [item], state: state)
                 return .none
             }
             state.offlinePinnedItemIDs.insert(item.id)
             state.offlineItemIDs.insert(item.id)
+            if state.searchHit(id: item.id) != nil {
+                state.searchOnDeviceIDs.insert(item.id)
+            }
             return .send(.delegate(.offlinePinRequested([item])))
 
         case let .itemsResponse(.success(result)):

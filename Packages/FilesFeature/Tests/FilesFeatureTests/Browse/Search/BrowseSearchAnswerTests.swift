@@ -95,6 +95,10 @@ struct BrowseSearchAnswerTests {
             $0.searchPhase = .loaded
             $0.searchResults = []
             $0.searchAnsweredTerm = Constants.longerTerm
+            $0.elsewherePhase = .loading
+        }
+        await store.receive(\.searchElsewhereResponse) {
+            $0.elsewherePhase = .loaded
         }
     }
 

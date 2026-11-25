@@ -1181,6 +1181,10 @@ offline.sectionSavedEarlier	Đã lưu trước đây
 offline.newFilesBadge	Có tệp mới dùng ngoại tuyến
 search.onDevice	Trên thiết bị
 search.remote	Từ xa
+search.inOtherFolders	Trong thư mục khác
+search.noMatchesAnywhere	Không có kết quả nào ở bất kỳ đâu cho “%@”.
+search.nothingInThisFolder	Không có gì trong thư mục này có tên hoặc chứa “%@”.
+search.showAllEverywhere	Hiển thị tất cả kết quả ở mọi nơi
 offline.tabEmpty	Chưa có gì khả dụng ngoại tuyến. Chọn “Có sẵn ngoại tuyến” trên một tệp hoặc thư mục.
 offline.removeItemTitle	Xóa “%@” khỏi mục có sẵn ngoại tuyến?
 offline.removeItemsTitle	Xóa %lld mục khỏi mục có sẵn ngoại tuyến?

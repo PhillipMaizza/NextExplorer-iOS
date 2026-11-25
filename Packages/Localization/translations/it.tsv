@@ -1251,6 +1251,10 @@ offline.sectionSavedEarlier	Salvati in precedenza
 offline.newFilesBadge	Nuovi file disponibili offline
 search.onDevice	Sul dispositivo
 search.remote	Remoto
+search.inOtherFolders	In altre cartelle
+search.noMatchesAnywhere	Nessun risultato da nessuna parte per “%@”.
+search.nothingInThisFolder	Niente in questa cartella si chiama o contiene “%@”.
+search.showAllEverywhere	Mostra tutti i risultati ovunque
 offline.tabEmpty	Ancora nulla è disponibile offline. Scegli “Disponibile offline” su un file o una cartella.
 offline.removeItemTitle	Rimuovere “%@” da Disponibili offline?
 offline.removeItemsTitle	Rimuovere %lld elementi da Disponibili offline?

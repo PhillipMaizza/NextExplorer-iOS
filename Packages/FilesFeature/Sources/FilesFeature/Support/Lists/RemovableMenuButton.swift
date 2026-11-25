@@ -13,9 +13,22 @@ struct RemovableMenuButton: View {
 
     var body: some View {
         Button(role: isRemoval ? .destructive : nil, action: action) {
-            Label { Text(title).foregroundStyle(isRemoval ? Color.negativeText : Color.primaryDS) } icon: { icon }
+            Label { titleText } icon: { icon }
         }
         .tint(isRemoval ? Color.negativeText : Color.primaryDS)
+    }
+
+    @ViewBuilder
+    private var titleText: some View {
+        if isRemoval {
+            Text(title).foregroundStyle(Color.negativeText)
+        } else {
+            #if os(macOS)
+                Text(title)
+            #elseif os(iOS)
+                Text(title).foregroundStyle(Color.primaryDS)
+            #endif
+        }
     }
 }
 

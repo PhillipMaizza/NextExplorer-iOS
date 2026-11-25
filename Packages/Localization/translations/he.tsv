@@ -1217,6 +1217,10 @@ offline.sectionSavedEarlier	נשמרו קודם
 offline.newFilesBadge	קבצים חדשים זמינים במצב לא מקוון
 search.onDevice	במכשיר
 search.remote	מרוחק
+search.inOtherFolders	בתיקיות אחרות
+search.noMatchesAnywhere	אין תוצאות בשום מקום עבור „%@”.
+search.nothingInThisFolder	שום דבר בתיקייה זו אינו נקרא או מכיל „%@”.
+search.showAllEverywhere	הצגת כל התוצאות בכל מקום
 offline.tabEmpty	עדיין אין דבר זמין ללא חיבור. בחרו ״זמין במצב לא מקוון״ בקובץ או בתיקייה.
 offline.removeItemTitle	להסיר את ״%@״ מהזמינים ללא חיבור?
 offline.removeItemsTitle	להסיר %lld פריטים מהזמינים ללא חיבור?

@@ -1233,6 +1233,10 @@ offline.sectionSavedEarlier	以前に保存したもの
 offline.newFilesBadge	新しいファイルがオフラインで利用可能
 search.onDevice	このデバイス上
 search.remote	リモート
+search.inOtherFolders	ほかのフォルダ
+search.noMatchesAnywhere	どこにも「%@」の結果がありません。
+search.nothingInThisFolder	このフォルダには「%@」という名前のもの、または含むものはありません。
+search.showAllEverywhere	すべての場所の結果を表示
 offline.tabEmpty	オフラインで利用できる項目はまだありません。ファイルまたはフォルダで「オフラインで利用可能」を選択してください。
 offline.removeItemTitle	「%@」をオフラインで利用可能から削除しますか？
 offline.removeItemsTitle	%lld件の項目をオフラインで利用可能から削除しますか？

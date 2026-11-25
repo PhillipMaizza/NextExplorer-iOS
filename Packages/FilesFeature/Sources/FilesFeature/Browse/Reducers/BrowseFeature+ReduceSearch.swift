@@ -14,6 +14,9 @@ extension BrowseFeature {
     func reduceSearch(_ state: inout State, _ action: Action) -> Effect<Action> {
         switch action {
         case let .rowTapped(item):
+            if !state.isPreviewOutsideListing, state.items[id: item.id] == nil, let hit = state.searchHit(id: item.id) {
+                return .send(.searchResultTapped(hit))
+            }
             guard item.isDirectory else {
                 // Google Drive stub files (`.gsheet`, `.gdoc`, …) link out to a real
                 // Google document: open that, don't show the JSON stub.
@@ -129,12 +132,28 @@ extension BrowseFeature {
 
         case let .searchResultsResponse(.success(page), term):
             state.searchPhase = .loaded
+            state.elsewherePhase = .idle
+            state.elsewhereResults = []
             state.searchResults = IdentifiedArray(page.items, id: \.id, uniquingIDsWith: { first, _ in first })
             state.searchAnsweredTerm = term
             state.searchShortfall = SearchShortfall(page)
             // Drop any selected category the new results no longer contain, so the filter
             // can't strand the list on an empty set the sheet doesn't even offer.
             state.selectedSearchCategories.formIntersection(Set(state.availableSearchCategories))
+            return searchElsewhereIfEmpty(&state, page: page, term: term)
+
+        case let .searchElsewhereResponse(_, term)
+            where term != SearchTerm(state.searchQuery).text || state.elsewherePhase != .loading:
+            return .none
+
+        case let .searchElsewhereResponse(.success(page), _):
+            let folderPrefix = state.directoryPath + "/"
+            state.elsewhereResults = page.items.filter { !$0.id.hasPrefix(folderPrefix) }
+            state.elsewherePhase = .loaded
+            return .none
+
+        case let .searchElsewhereResponse(.failure(error), _):
+            state.elsewherePhase = .failed(searchFailureMessage(error))
             return .none
 
         case let .searchResultsResponse(.failure(error), term):

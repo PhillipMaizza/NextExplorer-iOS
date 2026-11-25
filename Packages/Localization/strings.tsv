@@ -1097,6 +1097,10 @@ offline.sectionSavedEarlier	Saved earlier
 offline.newFilesBadge	New files available offline
 search.onDevice	On device
 search.remote	Remote
+search.inOtherFolders	In other folders
+search.noMatchesAnywhere	No matches anywhere for “%@”.
+search.nothingInThisFolder	Nothing named or containing “%@” in this folder.
+search.showAllEverywhere	Show all results everywhere
 offline.tabEmpty	Nothing is available offline yet. Choose Available Offline on a file or folder.
 offline.manageEmpty	Nothing is downloaded for offline use.
 offline.preferOfflineToggle	Play Downloaded Copies

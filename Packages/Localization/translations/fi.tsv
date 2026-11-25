@@ -1199,6 +1199,10 @@ offline.sectionSavedEarlier	Aiemmin tallennetut
 offline.newFilesBadge	Uusia tiedostoja saatavilla offline-tilassa
 search.onDevice	Laitteella
 search.remote	Etänä
+search.inOtherFolders	Muissa kansioissa
+search.noMatchesAnywhere	Ei tuloksia mistään haulle ”%@”.
+search.nothingInThisFolder	Tässä kansiossa mikään ei ole nimeltään tai sisällä ”%@”.
+search.showAllEverywhere	Näytä kaikki tulokset kaikkialta
 offline.tabEmpty	Mitään ei ole vielä saatavilla offline-tilassa. Valitse tiedostolle tai kansiolle “Saatavilla offline-tilassa”.
 offline.removeItemTitle	Poistetaanko “%@” offline-saatavista?
 offline.removeItemsTitle	Poistetaanko %lld kohdetta offline-saatavista?
