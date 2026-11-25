@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Salvato per NextExplorer. Apri l'app per caricare i 
 menu.goToFolderPlaceholder	Documenti/Report
 emptyState.dropHintFiles	Puoi anche trascinare qui i file da File o Foto.
 emptyState.dropHintFinder	Puoi anche trascinare qui i file dal Finder.
+settings.rowDefaultSort	Ordinamento predefinito
+settings.rowSortOrder	Ordine
+settings.defaultSortFooter	Le cartelle che non hai ordinato si aprono in questo ordine. Una cartella che ordini mantiene il proprio ordine su ogni dispositivo connesso a questo server.

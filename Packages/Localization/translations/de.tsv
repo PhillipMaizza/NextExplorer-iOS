@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Für NextExplorer gesichert. Öffne die App, um dein
 menu.goToFolderPlaceholder	Dokumente/Berichte
 emptyState.dropHintFiles	Du kannst auch Dateien aus „Dateien“ oder „Fotos“ hierher ziehen.
 emptyState.dropHintFinder	Du kannst auch Dateien aus dem Finder hierher ziehen.
+settings.rowDefaultSort	Standardsortierung
+settings.rowSortOrder	Reihenfolge
+settings.defaultSortFooter	Ordner, die du nicht sortiert hast, öffnen sich in dieser Reihenfolge. Ein Ordner, den du sortierst, behält seine eigene Reihenfolge auf jedem Gerät, das bei diesem Server angemeldet ist.

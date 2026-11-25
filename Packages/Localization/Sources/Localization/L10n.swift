@@ -793,6 +793,7 @@ public enum L10n {
         public static var creditsMadeBy: String { tr("settings.creditsMadeBy") }  // "Made with ❤️ by Phillip Maizza"
         public static var dateFormatNavigationTitle: String { tr("settings.dateFormatNavigationTitle") }  // "Date Format"
         public static var dateFormatShowTime: String { tr("settings.dateFormatShowTime") }  // "Show Time"
+        public static var defaultSortFooter: String { tr("settings.defaultSortFooter") }
         public static var navigationTitle: String { tr("settings.navigationTitle") }  // "Settings"
         public static var removeAllDownloadsConfirm: String { tr("settings.removeAllDownloadsConfirm") }  // "Remove All"
         public static var removeAllDownloadsMessage: String { tr("settings.removeAllDownloadsMessage") }
@@ -803,12 +804,14 @@ public enum L10n {
         public static var rowChangePassword: String { tr("settings.rowChangePassword") }  // "Change Password"
         public static var rowClearCache: String { tr("settings.rowClearCache") }  // "Clear Cache"
         public static var rowDateFormat: String { tr("settings.rowDateFormat") }  // "Date Format"
+        public static var rowDefaultSort: String { tr("settings.rowDefaultSort") }  // "Default Sort"
         public static var rowLanguage: String { tr("settings.rowLanguage") }  // "Language"
         public static var rowOpenSourceLicenses: String { tr("settings.rowOpenSourceLicenses") }  // "Open Source Licenses"
         public static var rowPrivacyPolicy: String { tr("settings.rowPrivacyPolicy") }  // "Privacy Policy"
         public static var rowRateApp: String { tr("settings.rowRateApp") }  // "Rate NextExplorer"
         public static var rowRemoveAllDownloads: String { tr("settings.rowRemoveAllDownloads") }  // "Remove All Downloads"
         public static var rowServer: String { tr("settings.rowServer") }  // "Server"
+        public static var rowSortOrder: String { tr("settings.rowSortOrder") }  // "Order"
         public static var rowSupport: String { tr("settings.rowSupport") }  // "Help & Support"
         public static var rowTermsOfUse: String { tr("settings.rowTermsOfUse") }  // "Terms of Use"
         public static var rowThumbnailSize: String { tr("settings.rowThumbnailSize") }  // "Thumbnail Size"

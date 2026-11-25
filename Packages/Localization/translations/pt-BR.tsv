@@ -1318,3 +1318,6 @@ shareUpload.startedDeferred	Salvo para o NextExplorer. Abra o app para enviar os
 menu.goToFolderPlaceholder	Documentos/Relatórios
 emptyState.dropHintFiles	Você também pode arrastar arquivos para cá do app Arquivos ou Fotos.
 emptyState.dropHintFinder	Você também pode arrastar arquivos para cá do Finder.
+settings.rowDefaultSort	Ordenação padrão
+settings.rowSortOrder	Ordem
+settings.defaultSortFooter	As pastas que você não ordenou abrem nesta ordem. Uma pasta que você ordena mantém sua própria ordem em todos os dispositivos conectados a este servidor.

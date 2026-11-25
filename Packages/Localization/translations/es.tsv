@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Guardado para NextExplorer. Abre la app para subir t
 menu.goToFolderPlaceholder	Documentos/Informes
 emptyState.dropHintFiles	También puedes arrastrar archivos aquí desde Archivos o Fotos.
 emptyState.dropHintFinder	También puedes arrastrar archivos aquí desde el Finder.
+settings.rowDefaultSort	Orden predeterminado
+settings.rowSortOrder	Orden
+settings.defaultSortFooter	Las carpetas que no has ordenado se abren en este orden. Una carpeta que ordenas conserva su propio orden en todos los dispositivos conectados a este servidor.

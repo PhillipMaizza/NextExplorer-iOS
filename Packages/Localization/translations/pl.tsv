@@ -1395,3 +1395,6 @@ shareUpload.startedDeferred	Zapisano dla NextExplorer. Otwórz aplikację, aby p
 menu.goToFolderPlaceholder	Dokumenty/Raporty
 emptyState.dropHintFiles	Możesz też przeciągnąć tu pliki z aplikacji Pliki lub Zdjęcia.
 emptyState.dropHintFinder	Możesz też przeciągnąć tu pliki z Findera.
+settings.rowDefaultSort	Domyślne sortowanie
+settings.rowSortOrder	Kolejność
+settings.defaultSortFooter	Foldery, których nie posortowano, otwierają się w tej kolejności. Posortowany folder zachowuje własną kolejność na każdym urządzeniu zalogowanym do tego serwera.

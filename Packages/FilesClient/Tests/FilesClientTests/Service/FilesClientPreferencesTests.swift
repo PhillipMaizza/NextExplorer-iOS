@@ -38,6 +38,36 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func saveFolderSortPatchesOneFolderAndReturnsItsEcho() async throws {
+            try stub(statusCode: 200, body: FilesClientFixture.preferencesFolderSortEcho.data())
+            StubURLProtocol.capturedRequest = nil
+            let sort = FolderSort(field: "dateModified", isAscending: false)
+
+            let echoed = try await makeClient().saveFolderSort(serverURL, "/" + TestPath.documentsWork + "/", sort)
+
+            #expect(echoed == sort)
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == HTTPMethod.patch.rawValue)
+            #expect(request.url?.path == "/api/settings")
+            let body = try #require(StubURLProtocol.capturedRequestBody)
+            let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [String: [String: Any]]])
+            let folderSort = try #require(json["user"]?["folderSort"])
+            #expect(folderSort["path"] as? String == TestPath.documentsWork)
+            #expect(folderSort["sort"] as? [String: String] == ["by": "dateModified", "order": "desc"])
+        }
+
+        @Test
+        func saveFolderSortOnAServerWithoutFolderSortsEchoesNothing() async throws {
+            try stub(statusCode: 200, body: FilesClientFixture.preferencesFolderSortEchoOldServer.data())
+            let echoed = try await makeClient().saveFolderSort(
+                serverURL,
+                TestPath.documentsWork,
+                FolderSort(field: "size", isAscending: true)
+            )
+            #expect(echoed == nil)
+        }
+
+        @Test
         func fetchSystemSettingsExtractsThumbnailsAndAccessRules() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.systemSettingsThumbnailsAndAccessRules.data())
 

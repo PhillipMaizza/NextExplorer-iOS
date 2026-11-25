@@ -15,6 +15,9 @@
         @AppStorage(AppStorageKeys.appearanceOverrideSet) private var hasAppearanceOverride = false
         @AppStorage(AppStorageKeys.prefersDarkMode) private var isDarkAppearanceOverride = false
         @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
+        @AppStorage(AppStorageKeys.defaultSortOption) private var defaultSortOption = BrowseFeature.SortOption.name
+        @AppStorage(AppStorageKeys.defaultSortDirection) private var defaultSortDirection = BrowseFeature
+            .SortDirection.ascending
 
         private var appearance: Binding<AppearanceMode> {
             Binding(
@@ -48,6 +51,20 @@
                     .accessibilityLabel(L10n.Settings.toggleShowHiddenFiles)
                     Toggle(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
                         .accessibilityLabel(L10n.Settings.toggleShowExtensions)
+                }
+                Section {
+                    Picker(L10n.Settings.rowDefaultSort, selection: $defaultSortOption) {
+                        ForEach(BrowseFeature.SortOption.allCases, id: \.self) { option in
+                            Text(option.title).tag(option)
+                        }
+                    }
+                    Picker(L10n.Settings.rowSortOrder, selection: $defaultSortDirection) {
+                        ForEach(BrowseFeature.SortDirection.allCases, id: \.self) { direction in
+                            Text(direction.title).tag(direction)
+                        }
+                    }
+                } footer: {
+                    MacSectionFooter(L10n.Settings.defaultSortFooter)
                 }
                 Section(L10n.Settings.sectionDisplay) {
                     Toggle(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)

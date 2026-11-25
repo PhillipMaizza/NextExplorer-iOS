@@ -710,7 +710,7 @@ public struct SettingsFeature {
 
         case let .preferencesResponse(.success(preferences)):
             state.preferencesPhase = .loaded
-            state.$preferences.withLock { $0 = preferences }
+            state.$preferences.withLock { $0.adopt(preferences) }
             return .none
 
         case let .preferencesResponse(.failure(error)):

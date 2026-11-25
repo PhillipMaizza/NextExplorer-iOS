@@ -132,6 +132,8 @@ enum FilesClientFixture: String, FixtureFile {
     // MARK: preferences
 
     case preferencesEmptyBranding = "preferences/empty-branding"
+    case preferencesFolderSortEcho = "preferences/folder-sort-echo"
+    case preferencesFolderSortEchoOldServer = "preferences/folder-sort-echo-old-server"
     case preferencesShowHiddenFiles = "preferences/show-hidden-files"
 
     // MARK: preview

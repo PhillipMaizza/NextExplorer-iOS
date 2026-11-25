@@ -1359,3 +1359,6 @@ shareUpload.startedDeferred	Salvat pentru NextExplorer. Deschide aplicația pent
 menu.goToFolderPlaceholder	Documente/Rapoarte
 emptyState.dropHintFiles	Poți trage aici fișiere și din Fișiere sau Poze.
 emptyState.dropHintFinder	Poți trage aici fișiere și din Finder.
+settings.rowDefaultSort	Sortare implicită
+settings.rowSortOrder	Ordine
+settings.defaultSortFooter	Dosarele pe care nu le-ai sortat se deschid în această ordine. Un dosar pe care îl sortezi își păstrează propria ordine pe fiecare dispozitiv conectat la acest server.

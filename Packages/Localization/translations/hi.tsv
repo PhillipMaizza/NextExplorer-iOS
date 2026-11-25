@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	NextExplorer के लिए सहेजा गय
 menu.goToFolderPlaceholder	दस्तावेज़/रिपोर्ट
 emptyState.dropHintFiles	आप Files या Photos से भी फ़ाइलें यहाँ खींच सकते हैं।
 emptyState.dropHintFinder	आप Finder से भी फ़ाइलें यहाँ खींच सकते हैं।
+settings.rowDefaultSort	डिफ़ॉल्ट क्रम
+settings.rowSortOrder	क्रम
+settings.defaultSortFooter	जिन फ़ोल्डरों को आपने क्रमबद्ध नहीं किया है, वे इसी क्रम में खुलते हैं। आपके द्वारा क्रमबद्ध किया गया फ़ोल्डर इस सर्वर में साइन इन हर डिवाइस पर अपना क्रम रखता है।

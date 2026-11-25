@@ -1252,3 +1252,6 @@ trash.columnDeletedOn	Poistettu
 trash.columnRemoved	Poistetaan
 emptyState.dropHintFiles	Voit myös vetää tiedostoja tähän Tiedostot- tai Kuvat-apista.
 emptyState.dropHintFinder	Voit myös vetää tiedostoja tähän Finderista.
+settings.rowDefaultSort	Oletuslajittelu
+settings.rowSortOrder	Järjestys
+settings.defaultSortFooter	Kansiot, joita et ole lajitellut, avautuvat tässä järjestyksessä. Lajittelemasi kansio säilyttää oman järjestyksensä kaikilla tähän palvelimeen kirjautuneilla laitteilla.

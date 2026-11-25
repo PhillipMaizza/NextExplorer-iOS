@@ -1292,3 +1292,6 @@ shareUpload.failureTooLarge#other	%lld קבצים לא הועלו. חיבור ה
 shareUpload.failureTooLarge#two	%lld קבצים לא הועלו. חיבור השרת שלכם דוחה קבצים גדולים כל כך. שתפו אותם שוב ו-NextExplorer ישלח אותם בחלקים.
 emptyState.dropHintFiles	אפשר גם לגרור לכאן קבצים מ״קבצים״ או מ״תמונות״.
 emptyState.dropHintFinder	אפשר גם לגרור לכאן קבצים מ־Finder.
+settings.rowDefaultSort	מיון ברירת מחדל
+settings.rowSortOrder	סדר
+settings.defaultSortFooter	תיקיות שלא מיינת נפתחות בסדר הזה. תיקייה שאתה ממיין שומרת על הסדר שלה בכל מכשיר המחובר לשרת הזה.

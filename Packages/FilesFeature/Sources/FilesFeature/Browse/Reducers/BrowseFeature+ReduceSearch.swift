@@ -152,15 +152,36 @@ extension BrowseFeature {
             return readSaved
 
         case let .sortOptionChanged(option):
-            state.sortOption = option
-            return .none
+            return saveSort(&state, option: option, direction: state.sortDirection)
 
         case let .sortDirectionChanged(direction):
-            state.sortDirection = direction
+            return saveSort(&state, option: state.sortOption, direction: direction)
+
+        case let .folderSortSaved(path, sort):
+            state.$preferences.withLock { $0.setFolderSort(sort, for: path) }
             return .none
 
         default:
             return .none
         }
+    }
+}
+
+extension BrowseFeature {
+    func saveSort(_ state: inout State, option: SortOption, direction: SortDirection) -> Effect<Action> {
+        let sort = FolderSort(field: option.rawValue, isAscending: direction == .ascending)
+        let path = FolderSort.folderKey(state.directoryPath)
+        guard !path.isEmpty else {
+            state.rootSort = sort
+            return .none
+        }
+        state.$preferences.withLock { $0.setFolderSort(sort, for: path) }
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            guard let echoed = try? await filesClient.saveFolderSort(serverURL, path, sort) else { return }
+            await send(.folderSortSaved(path: path, echoed))
+        }
+        .cancellable(id: CancelID.folderSort(path), cancelInFlight: true)
     }
 }

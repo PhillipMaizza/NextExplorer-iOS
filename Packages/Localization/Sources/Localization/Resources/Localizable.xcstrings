@@ -133036,6 +133036,191 @@
         }
       }
     },
+    "settings.defaultSortFooter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folders you have not sorted open in this order. A folder you sort keeps its own order on every device signed in to this server."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تُفتح المجلدات التي لم تفرزها بهذا الترتيب. يحتفظ المجلد الذي تفرزه بترتيبه على كل جهاز مسجّل الدخول إلى هذا الخادم."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Složky, které jste neseřadili, se otevírají v tomto pořadí. Složka, kterou seřadíte, si své pořadí ponechá na všech zařízeních přihlášených k tomuto serveru."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapper, du ikke har sorteret, åbnes i denne rækkefølge. En mappe, du sorterer, beholder sin egen rækkefølge på alle enheder, der er logget ind på denne server."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordner, die du nicht sortiert hast, öffnen sich in dieser Reihenfolge. Ein Ordner, den du sortierst, behält seine eigene Reihenfolge auf jedem Gerät, das bei diesem Server angemeldet ist."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Οι φάκελοι που δεν έχετε ταξινομήσει ανοίγουν με αυτή τη σειρά. Ένας φάκελος που ταξινομείτε κρατά τη δική του σειρά σε κάθε συσκευή συνδεδεμένη σε αυτόν τον διακομιστή."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las carpetas que no has ordenado se abren en este orden. Una carpeta que ordenas conserva su propio orden en todos los dispositivos conectados a este servidor."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kansiot, joita et ole lajitellut, avautuvat tässä järjestyksessä. Lajittelemasi kansio säilyttää oman järjestyksensä kaikilla tähän palvelimeen kirjautuneilla laitteilla."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les dossiers que vous n'avez pas triés s'ouvrent dans cet ordre. Un dossier que vous triez garde son propre ordre sur tous les appareils connectés à ce serveur."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "תיקיות שלא מיינת נפתחות בסדר הזה. תיקייה שאתה ממיין שומרת על הסדר שלה בכל מכשיר המחובר לשרת הזה."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "जिन फ़ोल्डरों को आपने क्रमबद्ध नहीं किया है, वे इसी क्रम में खुलते हैं। आपके द्वारा क्रमबद्ध किया गया फ़ोल्डर इस सर्वर में साइन इन हर डिवाइस पर अपना क्रम रखता है।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A nem rendezett mappák ebben a sorrendben nyílnak meg. Az általad rendezett mappa megtartja saját sorrendjét minden, ehhez a szerverhez bejelentkezett eszközön."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder yang belum Anda urutkan terbuka dengan urutan ini. Folder yang Anda urutkan mempertahankan urutannya sendiri di setiap perangkat yang masuk ke server ini."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le cartelle che non hai ordinato si aprono in questo ordine. Una cartella che ordini mantiene il proprio ordine su ogni dispositivo connesso a questo server."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "並べ替えていないフォルダはこの順序で開きます。並べ替えたフォルダは、このサーバにサインインしているすべてのデバイスで独自の順序を保ちます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "정렬하지 않은 폴더는 이 순서로 열립니다. 정렬한 폴더는 이 서버에 로그인된 모든 기기에서 자체 순서를 유지합니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapper du ikke har sortert, åpnes i denne rekkefølgen. En mappe du sorterer, beholder sin egen rekkefølge på alle enheter som er logget på denne serveren."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mappen die je niet hebt gesorteerd, openen in deze volgorde. Een map die je sorteert, houdt zijn eigen volgorde op elk apparaat dat bij deze server is ingelogd."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foldery, których nie posortowano, otwierają się w tej kolejności. Posortowany folder zachowuje własną kolejność na każdym urządzeniu zalogowanym do tego serwera."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As pastas que não ordenou abrem por esta ordem. Uma pasta que ordena mantém a sua própria ordem em todos os dispositivos com sessão iniciada neste servidor."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As pastas que você não ordenou abrem nesta ordem. Uma pasta que você ordena mantém sua própria ordem em todos os dispositivos conectados a este servidor."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosarele pe care nu le-ai sortat se deschid în această ordine. Un dosar pe care îl sortezi își păstrează propria ordine pe fiecare dispozitiv conectat la acest server."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папки, которые вы не сортировали, открываются в этом порядке. Папка, которую вы отсортировали, сохраняет свой порядок на всех устройствах, вошедших на этот сервер."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mappar som du inte har sorterat öppnas i den här ordningen. En mapp som du sorterar behåller sin egen ordning på alla enheter som är inloggade på den här servern."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "โฟลเดอร์ที่คุณยังไม่ได้เรียงจะเปิดตามลำดับนี้ โฟลเดอร์ที่คุณเรียงจะคงลำดับของตัวเองบนทุกอุปกรณ์ที่ลงชื่อเข้าใช้เซิร์ฟเวอร์นี้"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sıralamadığınız klasörler bu sırayla açılır. Sıraladığınız bir klasör, bu sunucuda oturum açmış her cihazda kendi sırasını korur."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Теки, які ви не сортували, відкриваються в цьому порядку. Тека, яку ви відсортували, зберігає свій порядок на кожному пристрої, що увійшов на цей сервер."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Các thư mục bạn chưa sắp xếp sẽ mở theo thứ tự này. Thư mục bạn sắp xếp giữ thứ tự riêng trên mọi thiết bị đăng nhập vào máy chủ này."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未排序的文件夹按此顺序打开。你排序过的文件夹会在登录此服务器的每台设备上保持自己的顺序。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "未排序的資料夾會依此順序開啟。你排序過的資料夾會在登入此伺服器的每部裝置上保留自己的順序。"
+          }
+        }
+      }
+    },
     "settings.navigationTitle": {
       "extractionState": "manual",
       "localizations": {
@@ -134886,6 +135071,191 @@
         }
       }
     },
+    "settings.rowDefaultSort": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default Sort"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الفرز الافتراضي"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Výchozí řazení"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standardsortering"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standardsortierung"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Προεπιλεγμένη ταξινόμηση"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orden predeterminado"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oletuslajittelu"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tri par défaut"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "מיון ברירת מחדל"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "डिफ़ॉल्ट क्रम"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alapértelmezett rendezés"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Urutan Default"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordinamento predefinito"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "デフォルトの並べ替え"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "기본 정렬"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard sortering"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standaardsortering"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Domyślne sortowanie"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordenação predefinida"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordenação padrão"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sortare implicită"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сортировка по умолчанию"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standardsortering"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การเรียงเริ่มต้น"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Varsayılan Sıralama"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сортування за замовчуванням"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sắp xếp mặc định"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "默认排序"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預設排序"
+          }
+        }
+      }
+    },
     "settings.rowLanguage": {
       "extractionState": "manual",
       "localizations": {
@@ -135992,6 +136362,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "伺服器"
+          }
+        }
+      }
+    },
+    "settings.rowSortOrder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الترتيب"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pořadí"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rækkefølge"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reihenfolge"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Σειρά"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orden"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Järjestys"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordre"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "סדר"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "क्रम"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sorrend"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Urutan"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordine"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "順序"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "순서"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rekkefølge"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volgorde"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kolejność"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordem"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordem"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordine"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Порядок"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordning"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลำดับ"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sıra"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Порядок"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thứ tự"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顺序"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "順序"
           }
         }
       }

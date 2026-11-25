@@ -1327,3 +1327,6 @@ shareUpload.failureTooLarge#few	%lld soubory se nenahrály. Připojení k server
 shareUpload.failureTooLarge#many	%lld souboru se nenahrálo. Připojení k serveru takto velké soubory odmítá. Sdílejte je znovu a NextExplorer je odešle po částech.
 emptyState.dropHintFiles	Soubory sem můžete přetáhnout také z aplikace Soubory nebo Fotky.
 emptyState.dropHintFinder	Soubory sem můžete přetáhnout také z Finderu.
+settings.rowDefaultSort	Výchozí řazení
+settings.rowSortOrder	Pořadí
+settings.defaultSortFooter	Složky, které jste neseřadili, se otevírají v tomto pořadí. Složka, kterou seřadíte, si své pořadí ponechá na všech zařízeních přihlášených k tomuto serveru.

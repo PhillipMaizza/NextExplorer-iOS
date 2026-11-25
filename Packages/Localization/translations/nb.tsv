@@ -1252,3 +1252,6 @@ trash.columnDeletedOn	Slettet
 trash.columnRemoved	Fjernes
 emptyState.dropHintFiles	Du kan også dra filer hit fra Filer eller Bilder.
 emptyState.dropHintFinder	Du kan også dra filer hit fra Finder.
+settings.rowDefaultSort	Standard sortering
+settings.rowSortOrder	Rekkefølge
+settings.defaultSortFooter	Mapper du ikke har sortert, åpnes i denne rekkefølgen. En mappe du sorterer, beholder sin egen rekkefølge på alle enheter som er logget på denne serveren.

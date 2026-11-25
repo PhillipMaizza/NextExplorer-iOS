@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -130,8 +131,25 @@ public struct BrowseFeature {
         /// Why the latest server answer may be short of the whole truth, said rather than left
         /// to look like everything.
         public var searchShortfall: SearchShortfall?
-        public var sortOption: SortOption = .name
-        public var sortDirection: SortDirection = .ascending
+        var rootSort: FolderSort?
+        @Shared(.appStorage(AppStorageKeys.defaultSortOption)) var defaultSortOption = SortOption.name
+        @Shared(.appStorage(AppStorageKeys.defaultSortDirection)) var defaultSortDirection = SortDirection.ascending
+
+        public var sortOption: SortOption {
+            savedSort?.option ?? defaultSortOption
+        }
+
+        public var sortDirection: SortDirection {
+            savedSort?.direction ?? defaultSortDirection
+        }
+
+        private var savedSort: (option: SortOption, direction: SortDirection)? {
+            guard let sort = rootSort ?? preferences.folderSort(for: directoryPath),
+                  let option = SortOption(rawValue: sort.field)
+            else { return nil }
+            return (option, sort.isAscending ? .ascending : .descending)
+        }
+
         /// Read live from the same in memory key `SettingsFeature` writes, so toggling
         /// "Show Hidden Files" is reflected here immediately, even in an already open folder,
         /// with no manual refresh needed.
@@ -505,6 +523,7 @@ public struct BrowseFeature {
         case searchResultsResponse(Result<SearchPage, FilesClientError>, term: String)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
+        case folderSortSaved(path: String, FolderSort)
         case renameTapped(FileItem)
         case deleteTapped(FileItem)
         case favoriteToggleButtonTapped(FileItem)
@@ -690,6 +709,7 @@ public struct BrowseFeature {
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
         case favorite(String)
+        case folderSort(String)
     }
 
     public init() {}

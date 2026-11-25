@@ -1287,3 +1287,6 @@ shareUpload.startedDeferred	已為 NextExplorer 儲存。請打開 App 上傳大
 menu.goToFolderPlaceholder	文件/報告
 emptyState.dropHintFiles	你也可以從「檔案」或「照片」將檔案拖移到這裡。
 emptyState.dropHintFinder	你也可以從「Finder」將檔案拖移到這裡。
+settings.rowDefaultSort	預設排序
+settings.rowSortOrder	順序
+settings.defaultSortFooter	未排序的資料夾會依此順序開啟。你排序過的資料夾會在登入此伺服器的每部裝置上保留自己的順序。
