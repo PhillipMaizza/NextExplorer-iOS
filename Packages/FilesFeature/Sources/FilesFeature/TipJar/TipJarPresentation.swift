@@ -62,7 +62,7 @@ struct TipJarPresentation: ViewModifier {
                 store.send(.tipToastShown)
             }
         #if os(macOS)
-            .onWindowPromptChange(of: store.tipJar != nil) { isPending, isOwner in
+            .onWindowPromptChange(for: TipJarPresentation.self, of: store.tipJar != nil) { isPending, isOwner in
                 isSheetOwner = isOwner
                 if isPending {
                     isToastOwner = isOwner

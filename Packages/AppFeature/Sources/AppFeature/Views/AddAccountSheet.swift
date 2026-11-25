@@ -76,7 +76,7 @@ struct AddAccountSheet: ViewModifier {
                 #endif
             }
         #if os(macOS)
-            .onWindowPromptChange(of: store.addAccount != nil) { _, isOwner in
+            .onWindowPromptChange(for: AddAccountSheet.self, of: store.addAccount != nil) { _, isOwner in
                 isSheetOwner = isOwner
             }
         #endif
