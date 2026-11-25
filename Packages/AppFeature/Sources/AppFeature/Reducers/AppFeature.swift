@@ -288,6 +288,9 @@ public struct AppFeature {
                 // An answer for an account that is no longer the active one must not touch the one
                 // that is.
                 guard credentials.accountID == state.currentAccountID else { return .none }
+                guard credentials.username == nil || credentials.username == user.username else {
+                    return tearDownExpired(accountID: credentials.accountID)
+                }
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
