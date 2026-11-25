@@ -1302,3 +1302,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Sắp xếp mặc định
 settings.rowSortOrder	Thứ tự
 settings.defaultSortFooter	Các thư mục bạn chưa sắp xếp sẽ mở theo thứ tự này. Thư mục bạn sắp xếp giữ thứ tự riêng trên mọi thiết bị đăng nhập vào máy chủ này.
+settings.sectionSecurity	Bảo mật
+settings.rowRequireSignIn	Yêu cầu đăng nhập
+lock.title	NextExplorer đã khóa
+lock.subtitle	Đăng nhập lại để mở tệp của bạn.
+lock.signIn	Đăng nhập
+lock.otherAccount	Đó là tài khoản khác. Đăng nhập bằng %@ để mở khóa, hoặc đăng xuất.
+requireSignIn.footer	Khi bạn rời ứng dụng, tài khoản này sẽ bị khóa và phiên của nó kết thúc. Mở khóa cần đăng nhập lại, kèm khóa bảo mật nếu việc đăng nhập yêu cầu.
+requireSignIn.sectionLock	Khóa
+requireSignIn.appStart	Khi khởi động ứng dụng
+requireSignIn.immediately	Ngay lập tức
+requireSignIn.thirtySeconds	Sau 30 giây
+requireSignIn.oneMinute	Sau 1 phút
+requireSignIn.fiveMinutes	Sau 5 phút
+requireSignIn.keepOfflineFiles	Giữ tệp ngoại tuyến
+requireSignIn.keepOfflineFilesFooter	Khi tắt, việc khóa cũng xóa tệp ngoại tuyến và thư mục đã lưu đệm của tài khoản này khỏi thiết bị.
+shareUpload.locked	NextExplorer đã khóa. Mở ứng dụng, đăng nhập lại rồi chia sẻ lại.
+requireSignIn.navigationTitle	Yêu cầu đăng nhập
+requireSignIn.toggle	Yêu cầu đăng nhập

@@ -27,6 +27,7 @@ extension AppSuites {
                 AppFeature()
             } withDependencies: {
                 recorder.install(into: &$0)
+                $0.authClient.lockSessions = { _ in [] }
                 configure(&$0)
             }
         }

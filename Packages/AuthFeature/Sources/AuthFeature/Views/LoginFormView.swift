@@ -12,15 +12,6 @@ private enum Constants {
     static let errorRevealDelay: Duration = .seconds(0.4)
     /// How long the email and password fields stay red bordered after a login failure.
     static let invalidFieldsDuration: Duration = .seconds(2)
-    /// On regular width (iPad, not compact multitasking) the login form floats in a centered
-    /// surface card over the full bleed gradient, rather than stretching edge to edge.
-    static let cardWidth: CGFloat = 440
-    static let cardMaxHeight: CGFloat = 620
-    static let cardOuterPadding: CGFloat = .space24
-    /// Login card background gradient stops (regular width). Top leading #FFC228 into bottom
-    /// trailing #FF9D00, a warm amber accent wash.
-    static let backgroundGradientTop = Color(red: 1.0, green: 194.0 / 255.0, blue: 40.0 / 255.0)
-    static let backgroundGradientBottom = Color(red: 1.0, green: 157.0 / 255.0, blue: 0.0)
     /// Named coordinate space the submit button's rect is measured in, so the flood circle
     /// positions against the same origin regardless of scroll offset.
     static let rootSpace = LoginCoordinateSpace.root
@@ -191,16 +182,11 @@ public struct LoginFormView: View {
         private var loginBackground: some View {
             Group {
                 if horizontalSizeClass == .regular {
-                    LinearGradient(
-                        colors: [Constants.backgroundGradientTop, Constants.backgroundGradientBottom],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+                    LoginCardBackground()
                 } else {
-                    LinearGradient.backgroundPrimary
+                    LinearGradient.backgroundPrimary.ignoresSafeArea()
                 }
             }
-            .ignoresSafeArea()
         }
 
         /// The two sliding pages. On regular width they float in a centered surface card over the
@@ -226,11 +212,7 @@ public struct LoginFormView: View {
 
         private var styledCard: some View {
             pages
-                .frame(maxWidth: Constants.cardWidth, maxHeight: Constants.cardMaxHeight)
-                .clipShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
-                .elevation(.level16)
-                .frame(maxWidth: .infinity)
-                .padding(Constants.cardOuterPadding)
+                .loginCard()
         }
     #endif
 

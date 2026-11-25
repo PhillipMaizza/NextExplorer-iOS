@@ -1485,3 +1485,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Domyślne sortowanie
 settings.rowSortOrder	Kolejność
 settings.defaultSortFooter	Foldery, których nie posortowano, otwierają się w tej kolejności. Posortowany folder zachowuje własną kolejność na każdym urządzeniu zalogowanym do tego serwera.
+settings.sectionSecurity	Bezpieczeństwo
+settings.rowRequireSignIn	Wymagaj logowania
+lock.title	NextExplorer jest zablokowany
+lock.subtitle	Zaloguj się ponownie, aby otworzyć pliki.
+lock.signIn	Zaloguj się
+lock.otherAccount	To inne konto. Zaloguj się jako %@, aby odblokować, lub wyloguj się.
+requireSignIn.footer	Gdy opuścisz aplikację, to konto zostanie zablokowane, a jego sesja zakończona. Odblokowanie wymaga ponownego logowania, z kluczem bezpieczeństwa, jeśli logowanie go wymaga.
+requireSignIn.sectionLock	Blokuj
+requireSignIn.appStart	Przy uruchomieniu aplikacji
+requireSignIn.immediately	Natychmiast
+requireSignIn.thirtySeconds	Po 30 sekundach
+requireSignIn.oneMinute	Po 1 minucie
+requireSignIn.fiveMinutes	Po 5 minutach
+requireSignIn.keepOfflineFiles	Zachowaj pliki offline
+requireSignIn.keepOfflineFilesFooter	Gdy wyłączone, blokada usuwa też z tego urządzenia pliki offline i foldery w pamięci podręcznej tego konta.
+shareUpload.locked	NextExplorer jest zablokowany. Otwórz aplikację, zaloguj się ponownie i udostępnij jeszcze raz.
+requireSignIn.navigationTitle	Wymagaj logowania
+requireSignIn.toggle	Wymagaj logowania

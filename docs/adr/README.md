@@ -26,7 +26,8 @@ refactor. Number it after the last one and keep it short. A record that stops ho
 | [0015](0015-fixed-beat-polling.md) | Polling runs on fixed beats |
 | [0016](0016-code-comments-ratchet.md) | Code carries no comments; a ratchet holds the rest |
 | [0017](0017-search-answers-carry-their-term.md) | Search answers carry their term |
-| [0018](0018-mac-design-system.md) | The Mac wears the design system over native controls |
-| [0019](0019-mac-inspector-menu-and-back.md) | The inspector menu shows shortcuts it does not own; Back closes the inspector first |
-| [0020](0020-mac-space-peek-card.md) | Space opens an in app peek card instead of the system Quick Look panel |
-| [0021](0021-mac-archive-peek-card.md) | Archives open in a peek card read through the server's archive routes |
+| [0018](0018-unlock-is-not-a-fresh-sign-in.md) | Unlocking an account is not a fresh sign in |
+| [0019](0019-mac-design-system.md) | The Mac wears the design system over native controls |
+| [0020](0020-mac-inspector-menu-and-back.md) | The inspector menu shows shortcuts it does not own; Back closes the inspector first |
+| [0021](0021-mac-space-peek-card.md) | Space opens an in app peek card instead of the system Quick Look panel |
+| [0022](0022-mac-archive-peek-card.md) | Archives open in a peek card read through the server's archive routes |

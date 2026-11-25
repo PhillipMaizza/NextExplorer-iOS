@@ -1,5 +1,6 @@
 import AuthClient
 import ComposableArchitecture
+import CoreModels
 import FilesClient
 import FilesFeature
 import ShareUploads
@@ -54,6 +55,24 @@ struct AccountCacheWipe: Sendable {
     func callAsFunction(_ accountID: String) {
         markPending(accountID)
         wipe(accountID)
+    }
+
+    func signOut(_ accountID: String, authClient: AuthClient) async throws -> SessionCredentials? {
+        markPending(accountID)
+        do {
+            let next = try await authClient.removeAccount(accountID)
+            wipe(accountID)
+            return next
+        } catch {
+            pendingWipes.remove(accountID)
+            throw error
+        }
+    }
+
+    func wipeLocked(_ accountID: String) {
+        markPending(accountID)
+        wipe(accountID)
+        pendingWipes.remove(accountID)
     }
 
     func markPending(_ accountID: String) {

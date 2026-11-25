@@ -1,4 +1,4 @@
-# 0020. Space opens an in app peek card instead of the system Quick Look panel
+# 0021. Space opens an in app peek card instead of the system Quick Look panel
 
 Status: Accepted
 

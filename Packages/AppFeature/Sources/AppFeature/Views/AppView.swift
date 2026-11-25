@@ -148,6 +148,7 @@ public struct AppView: View {
             store.send(.incomingFiles([url]))
         }
         .modifier(AddAccountSheet(store: store))
+        .modifier(AppLockLifecycle(store: store))
     }
 
     private var destinationContent: some View {
@@ -200,6 +201,12 @@ public struct AppView: View {
                     #else
                         .transition(.opacity)
                     #endif
+                }
+
+            case .locked:
+                if let scopedStore = store.scope(state: \.destination.locked, action: \.destination.locked) {
+                    LockView(store: scopedStore)
+                        .transition(.opacity)
                 }
             }
         }

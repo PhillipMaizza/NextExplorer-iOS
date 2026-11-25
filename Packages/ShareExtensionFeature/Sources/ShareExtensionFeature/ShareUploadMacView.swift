@@ -104,8 +104,8 @@
             case .checking: L10n.ShareUpload.checking(store.serverName)
             case .preparing, .handingOff: L10n.ShareUpload.preparing(store.preparingStep, store.preparingTotal)
             case .partiallyPrepared: L10n.ShareUpload.readyCount(store.stagedCount)
-            case .loading, .started, .signedOut, .sessionUnreadable, .nothingToUpload, .failed, .certificateRequired,
-                 .certificateRejected: nil
+            case .loading, .started, .signedOut, .locked, .sessionUnreadable, .nothingToUpload, .failed,
+                 .certificateRequired, .certificateRejected: nil
             }
         }
 
@@ -197,6 +197,7 @@
             switch store.phase {
             case .started: .done(store.startedMessage)
             case .signedOut: .problem(L10n.ShareUpload.signedOut)
+            case .locked: .problem(L10n.ShareUpload.locked)
             case .sessionUnreadable: .problem(L10n.ShareUpload.sessionUnreadable)
             case .nothingToUpload: .problem(L10n.ShareUpload.nothingToUpload)
             case .failed: .problem(L10n.ShareUpload.failed)
@@ -293,6 +294,7 @@
     }
 
     #Preview("Signed out") { ShareUploadMacView(store: .preview(.signedOut)) }
+    #Preview("Locked") { ShareUploadMacView(store: .preview(.locked)) }
     #Preview("Session unreadable") { ShareUploadMacView(store: .preview(.sessionUnreadable)) }
     #Preview("Nothing to upload") { ShareUploadMacView(store: .preview(.nothingToUpload)) }
     #Preview("Certificate required") { ShareUploadMacView(store: .preview(.certificateRequired)) }

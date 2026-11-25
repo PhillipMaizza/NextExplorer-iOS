@@ -1409,3 +1409,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	डिफ़ॉल्ट क्रम
 settings.rowSortOrder	क्रम
 settings.defaultSortFooter	जिन फ़ोल्डरों को आपने क्रमबद्ध नहीं किया है, वे इसी क्रम में खुलते हैं। आपके द्वारा क्रमबद्ध किया गया फ़ोल्डर इस सर्वर में साइन इन हर डिवाइस पर अपना क्रम रखता है।
+settings.sectionSecurity	सुरक्षा
+settings.rowRequireSignIn	साइन इन ज़रूरी करें
+lock.title	NextExplorer लॉक है
+lock.subtitle	अपनी फ़ाइलें खोलने के लिए फिर से साइन इन करें।
+lock.signIn	साइन इन करें
+lock.otherAccount	यह कोई दूसरा खाता है। अनलॉक करने के लिए %@ के रूप में साइन इन करें, या साइन आउट करें।
+requireSignIn.footer	ऐप छोड़ने पर यह खाता लॉक हो जाता है और इसका सत्र खत्म हो जाता है। अनलॉक करने के लिए फिर से साइन इन करना होगा, और अगर आपका साइन इन माँगे तो सुरक्षा कुंजी के साथ।
+requireSignIn.sectionLock	लॉक
+requireSignIn.appStart	ऐप शुरू होने पर
+requireSignIn.immediately	तुरंत
+requireSignIn.thirtySeconds	30 सेकंड बाद
+requireSignIn.oneMinute	1 मिनट बाद
+requireSignIn.fiveMinutes	5 मिनट बाद
+requireSignIn.keepOfflineFiles	ऑफ़लाइन फ़ाइलें रखें
+requireSignIn.keepOfflineFilesFooter	बंद होने पर, लॉक करने से इस खाते की ऑफ़लाइन फ़ाइलें और कैश किए गए फ़ोल्डर भी इस डिवाइस से हट जाते हैं।
+shareUpload.locked	NextExplorer लॉक है। इसे खोलें, फिर से साइन इन करें, फिर दोबारा शेयर करें।
+requireSignIn.navigationTitle	साइन इन ज़रूरी करें
+requireSignIn.toggle	साइन इन ज़रूरी करें

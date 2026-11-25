@@ -1561,3 +1561,21 @@ browse.contentSummary	%1$@، %2$@
 settings.rowDefaultSort	الفرز الافتراضي
 settings.rowSortOrder	الترتيب
 settings.defaultSortFooter	تُفتح المجلدات التي لم تفرزها بهذا الترتيب. يحتفظ المجلد الذي تفرزه بترتيبه على كل جهاز مسجّل الدخول إلى هذا الخادم.
+settings.sectionSecurity	الأمان
+settings.rowRequireSignIn	طلب تسجيل الدخول
+lock.title	NextExplorer مقفل
+lock.subtitle	سجّل الدخول مرة أخرى لفتح ملفاتك.
+lock.signIn	تسجيل الدخول
+lock.otherAccount	هذا حساب آخر. سجّل الدخول باسم %@ لفتح القفل، أو سجّل الخروج.
+requireSignIn.footer	عند مغادرة التطبيق، يُقفل هذا الحساب وتنتهي جلسته. يتطلب فتح القفل تسجيل دخول جديدًا، باستخدام مفتاح الأمان إن طلبه تسجيل الدخول.
+requireSignIn.sectionLock	القفل
+requireSignIn.appStart	عند بدء التطبيق
+requireSignIn.immediately	فورًا
+requireSignIn.thirtySeconds	بعد 30 ثانية
+requireSignIn.oneMinute	بعد دقيقة واحدة
+requireSignIn.fiveMinutes	بعد 5 دقائق
+requireSignIn.keepOfflineFiles	الاحتفاظ بالملفات دون اتصال
+requireSignIn.keepOfflineFilesFooter	عند الإيقاف، يزيل القفل أيضًا من هذا الجهاز الملفات دون اتصال والمجلدات المخزنة مؤقتًا لهذا الحساب.
+shareUpload.locked	NextExplorer مقفل. افتحه وسجّل الدخول مرة أخرى، ثم شارك مجددًا.
+requireSignIn.navigationTitle	طلب تسجيل الدخول
+requireSignIn.toggle	طلب تسجيل الدخول

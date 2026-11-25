@@ -182,6 +182,7 @@ public struct SettingsFeature {
         case userManagement(PresentationAction<UserManagementFeature.Action>)
         case changePasswordButtonTapped
         case twoFactorButtonTapped
+        case requireSignInChanged(RequireSignIn?)
         case apiTokensButtonTapped
         case authMethodsResponse(Result<[SignInMethod], FilesClientError>)
         case authStatusResponse(Result<AuthStatus, FilesClientError>)
@@ -272,6 +273,7 @@ public struct SettingsFeature {
             case switchAccount(String)
             case removeAccount(String)
             case addAccountRequested
+            case requireSignInChanged(accountID: String, RequireSignIn?)
             /// Offline download intent, handled by the session lifetime `OfflineDownloadsFeature`
             /// engine that `MainTabFeature` owns (Settings is torn down on a tab switch; the engine
             /// is not).
@@ -382,6 +384,14 @@ public struct SettingsFeature {
 
         case .changePassword:
             return .none
+
+        case let .requireSignInChanged(requireSignIn):
+            let accountID = state.activeAccount.id
+            state.$accounts.withLock { accounts in
+                guard let index = accounts.firstIndex(where: { $0.id == accountID }) else { return }
+                accounts[index].requireSignIn = requireSignIn
+            }
+            return .send(.delegate(.requireSignInChanged(accountID: accountID, requireSignIn)))
 
         case .twoFactorButtonTapped:
             state.twoFactor = TwoFactorFeature.State(serverURL: state.serverURL)

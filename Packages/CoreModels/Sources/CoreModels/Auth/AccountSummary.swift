@@ -11,13 +11,41 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
     public var serverURL: URL
     public var isActive: Bool
     public var email: String?
+    public var authMode: AuthMode
+    public var requireSignIn: RequireSignIn?
+    public var isLocked: Bool
 
-    public init(id: String, username: String, serverURL: URL, isActive: Bool, email: String? = nil) {
+    public init(
+        id: String,
+        username: String,
+        serverURL: URL,
+        isActive: Bool,
+        email: String? = nil,
+        authMode: AuthMode = .local,
+        requireSignIn: RequireSignIn? = nil,
+        isLocked: Bool = false
+    ) {
         self.id = id
         self.username = username
         self.serverURL = serverURL
         self.isActive = isActive
         self.email = email
+        self.authMode = authMode
+        self.requireSignIn = requireSignIn
+        self.isLocked = isLocked
+    }
+
+    public init(_ credentials: SessionCredentials, isActive: Bool) {
+        self.init(
+            id: credentials.accountID,
+            username: credentials.username ?? "",
+            serverURL: credentials.serverBaseURL,
+            isActive: isActive,
+            email: credentials.email,
+            authMode: credentials.authMode,
+            requireSignIn: credentials.requireSignIn,
+            isLocked: credentials.isLocked
+        )
     }
 
     /// `@Shared(.inMemory(...))` key holding the current signed in account list.

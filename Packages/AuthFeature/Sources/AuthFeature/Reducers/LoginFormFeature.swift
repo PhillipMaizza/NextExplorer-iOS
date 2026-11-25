@@ -148,6 +148,7 @@ public struct LoginFormFeature {
         /// link so a wrong file can be swapped without waiting for an error.
         public var certificateInUse: ClientCertificateSummary?
         @Presents public var clientCertificate: ClientCertificateFeature.State?
+        public var browserSession: OIDCBrowserSession = .shared
 
         public init(
             currentPage: Page = .server,
@@ -544,8 +545,12 @@ public struct LoginFormFeature {
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
                 let authClient = authClient
+                let browserSession = state.browserSession
                 return .run { send in
-                    await send(.oidcResponse(Self.loginOIDCResult(authClient, url), url))
+                    await send(.oidcResponse(
+                        Self.loginOIDCResult(authClient, url, browserSession: browserSession),
+                        url
+                    ))
                 }
                 .cancellable(id: CancelID.oidc, cancelInFlight: true)
 
@@ -825,9 +830,13 @@ public struct LoginFormFeature {
         }
     }
 
-    static func loginOIDCResult(_ authClient: AuthClient, _ url: URL) async -> Result<User, AuthClientError> {
+    static func loginOIDCResult(
+        _ authClient: AuthClient,
+        _ url: URL,
+        browserSession: OIDCBrowserSession
+    ) async -> Result<User, AuthClientError> {
         do {
-            return try await .success(authClient.loginOIDC(url))
+            return try await .success(authClient.loginOIDC(url, browserSession))
         } catch {
             return .failure(mapError(error))
         }

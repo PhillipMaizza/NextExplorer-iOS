@@ -1,4 +1,4 @@
-# 0019. The inspector's More menu shows shortcuts it does not own, and Back closes the inspector first
+# 0020. The inspector's More menu shows shortcuts it does not own, and Back closes the inspector first
 
 Status: Accepted
 

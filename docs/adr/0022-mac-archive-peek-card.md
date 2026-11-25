@@ -1,4 +1,4 @@
-# 0021. Archives open in a peek card read through the server's archive routes
+# 0022. Archives open in a peek card read through the server's archive routes
 
 Status: Accepted
 

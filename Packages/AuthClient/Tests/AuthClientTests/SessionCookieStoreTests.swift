@@ -368,6 +368,33 @@ struct SessionCookieStoreTests {
 
         #expect(cookieStorage.cookies?.isEmpty ?? true)
     }
+
+    // MARK: - lock
+
+    @Test("Locking keeps the policy in the keychain, drops the cookie and never installs it again")
+    func lockDropsTheCookie() throws {
+        let keychainClient = KeychainClient.inMemory()
+        let store = makeStore(keychainClient: keychainClient)
+        let serverURL = makeUniqueServerURL()
+        var session = try credentials(
+            serverURL: serverURL,
+            value: TestSession.cookieValue,
+            username: TestAccount.username
+        )
+        session.requireSignIn = RequireSignIn()
+        try store.persist(session)
+
+        let unlocked = try store.lock { $0.requireSignIn != nil }
+
+        #expect(unlocked == [session])
+        #expect(cookieStorage.cookies(for: serverURL)?.isEmpty ?? true)
+        let stored = try #require(makeStore(keychainClient: keychainClient).activeCredentials())
+        #expect(stored.isLocked)
+        #expect(stored.cookieValue.isEmpty)
+        #expect(stored.requireSignIn == RequireSignIn())
+        store.install(stored)
+        #expect(cookieStorage.cookies(for: serverURL)?.isEmpty ?? true)
+    }
 }
 
 private enum Constants {

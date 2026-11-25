@@ -167,6 +167,27 @@ struct BackgroundUploadEventsTests {
         #expect(expired.value == 0)
     }
 
+    @Test("A locked account keeps its flag, so its refused uploads go again once it is unlocked")
+    func lockedAccountKeepsTheFlag() async {
+        let account = credentials(username: TestAccount.username).locked
+        let asked = LockIsolated(0)
+        let cleared = LockIsolated<[String]>([])
+        let signedIn = user
+        let client = authClient(active: account.accountID, sessions: [account], me: { _ in
+            asked.withValue { $0 += 1 }
+            return signedIn
+        })
+
+        await BackgroundUploadEvents.checkRefusedSessions(
+            shareUploads: shareUploads(flagged: [account.accountID], cleared: cleared),
+            authClient: client,
+            expireSession: {}
+        )
+
+        #expect(asked.value == 0)
+        #expect(cleared.value.isEmpty)
+    }
+
     private func retry(
         accountID: String?, sessions: [SessionCredentials], retried: Int,
         received: LockIsolated<[(String, SessionCredentials)]> = LockIsolated([]),
