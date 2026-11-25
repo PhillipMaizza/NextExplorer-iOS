@@ -49,6 +49,7 @@ public enum AccessibilityIdentifiers {
 
     public enum Toast {
         public static let message = "toast.message"
+        public static let close = "toast.close"
     }
 
     public enum Offline {
