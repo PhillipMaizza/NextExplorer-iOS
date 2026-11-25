@@ -49,13 +49,16 @@ public extension AuthClient {
 
         @Sendable
         func captureAndPersist(
+            _ signedIn: LocalAuthService.SignedIn,
             serverURL: URL,
             authMode: AuthMode,
-            cookieName: String,
-            username: String?,
-            email: String?
+            cookieName: String
         ) async throws {
+            let username = signedIn.user.username
+            let email = signedIn.user.email
+            let sessionCookies = signedIn.sessionCookies
             try await onCookieQueue {
+                cookieStore.adopt(sessionCookies, serverURL: serverURL)
                 guard let credentials = cookieStore.capture(
                     serverURL: serverURL,
                     authMode: authMode,
@@ -78,30 +81,28 @@ public extension AuthClient {
                 try await localAuthService.status(serverURL: serverURL)
             },
             login: { serverURL, identifier, password in
-                let user = try await localAuthService.login(
+                let signedIn = try await localAuthService.login(
                     serverURL: serverURL,
                     identifier: identifier,
                     password: password
                 )
                 try await captureAndPersist(
+                    signedIn,
                     serverURL: serverURL,
                     authMode: .local,
-                    cookieName: AuthClientConfiguration.CookieName.local,
-                    username: user.username,
-                    email: user.email
+                    cookieName: AuthClientConfiguration.CookieName.local
                 )
-                return user
+                return signedIn.user
             },
             loginTOTP: { serverURL, code in
-                let user = try await localAuthService.loginTOTP(serverURL: serverURL, code: code)
+                let signedIn = try await localAuthService.loginTOTP(serverURL: serverURL, code: code)
                 try await captureAndPersist(
+                    signedIn,
                     serverURL: serverURL,
                     authMode: .local,
-                    cookieName: AuthClientConfiguration.CookieName.local,
-                    username: user.username,
-                    email: user.email
+                    cookieName: AuthClientConfiguration.CookieName.local
                 )
-                return user
+                return signedIn.user
             },
             loginOIDC: { serverURL, browserSession in
                 let pkce = try PKCE.generate()
@@ -126,7 +127,7 @@ public extension AuthClient {
 
                 let code = try OIDCCallback.code(from: callbackURL)
 
-                let user = try await localAuthService.exchangeOIDC(
+                let signedIn = try await localAuthService.exchangeOIDC(
                     serverURL: serverURL,
                     code: code,
                     codeVerifier: pkce.verifier
@@ -134,13 +135,12 @@ public extension AuthClient {
                 // The bridge issues a normal local session cookie, so capture it exactly as the
                 // password path does: just tagged `.oidc` for provenance.
                 try await captureAndPersist(
+                    signedIn,
                     serverURL: serverURL,
                     authMode: .oidc,
-                    cookieName: AuthClientConfiguration.CookieName.local,
-                    username: user.username,
-                    email: user.email
+                    cookieName: AuthClientConfiguration.CookieName.local
                 )
-                return user
+                return signedIn.user
             },
             me: { serverURL in
                 try await localAuthService.me(serverURL: serverURL)

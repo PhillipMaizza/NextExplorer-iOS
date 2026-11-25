@@ -17,17 +17,8 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
 
         let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { request in
             let url = try #require(request.url)
-            if let host = url.host {
-                let cookie = try #require(HTTPCookie(properties: [
-                    .name: AuthClientConfiguration.CookieName.local,
-                    .value: TestSession.loginCookieValue,
-                    .domain: host,
-                    .path: "/",
-                ]))
-                cookieStorage.setCookie(cookie)
-            }
             let body = try AuthClientFixture.sessionUserAdmin.data()
-            return try (body, response(statusCode: 200, url: url))
+            return try (body, signInResponse(url: url, cookieValue: TestSession.loginCookieValue))
         }
 
         let user = try await client.login(serverURL, TestAccount.username, TestAccount.password)
@@ -63,17 +54,8 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
             #expect(json["email"] == TestAccount.username)
             #expect(json["identifier"] == nil)
-            if let host = url.host {
-                let cookie = try #require(HTTPCookie(properties: [
-                    .name: AuthClientConfiguration.CookieName.local,
-                    .value: TestSession.loginCookieValue,
-                    .domain: host,
-                    .path: "/",
-                ]))
-                cookieStorage.setCookie(cookie)
-            }
             let responseBody = try AuthClientFixture.sessionUserPhillipNoRoles.data()
-            return try (responseBody, response(statusCode: 200, url: url))
+            return try (responseBody, signInResponse(url: url, cookieValue: TestSession.loginCookieValue))
         }
 
         _ = try await client.login(serverURL, TestAccount.username, TestAccount.password)
@@ -127,17 +109,8 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
 
         let client = makeClient(cookieStorage: cookieStorage, keychainClient: failingKeychainClient) { request in
             let url = try #require(request.url)
-            if let host = url.host {
-                let cookie = try #require(HTTPCookie(properties: [
-                    .name: AuthClientConfiguration.CookieName.local,
-                    .value: TestSession.loginCookieValue,
-                    .domain: host,
-                    .path: "/",
-                ]))
-                cookieStorage.setCookie(cookie)
-            }
             let body = try AuthClientFixture.sessionUserPhillipNoRoles.data()
-            return try (body, response(statusCode: 200, url: url))
+            return try (body, signInResponse(url: url, cookieValue: TestSession.loginCookieValue))
         }
 
         do {
@@ -146,5 +119,32 @@ struct AuthClientLoginTests: AuthClientLiveHarness {
         } catch AuthClientError.keychain {
             // expected
         }
+    }
+
+    @Test("signing in another account sends no cookie, so the server never ends the active account's session")
+    func signInLeavesTheActiveSessionAlone() async throws {
+        let cookieStorage = makeCookieStorage()
+        let host = try #require(serverURL.host)
+        try cookieStorage.setCookie(#require(HTTPCookie(properties: [
+            .name: AuthClientConfiguration.CookieName.local,
+            .value: TestSession.cookieValue,
+            .domain: host,
+            .path: "/",
+        ])))
+        let sent = LockedBox<URLRequest?>(nil)
+        let client = makeClient(cookieStorage: cookieStorage) { request in
+            sent.set(request)
+            let url = try #require(request.url)
+            return try (
+                AuthClientFixture.sessionUserAdmin.data(),
+                signInResponse(url: url, cookieValue: TestSession.loginCookieValue)
+            )
+        }
+
+        _ = try await client.login(serverURL, TestAccount.username, TestAccount.password)
+
+        let request = try #require(sent.value)
+        #expect(request.httpShouldHandleCookies == false)
+        #expect(request.value(forHTTPHeaderField: TestHTTP.cookie) == nil)
     }
 }

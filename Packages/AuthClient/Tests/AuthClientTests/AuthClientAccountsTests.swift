@@ -130,7 +130,7 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
         #expect(next == fixture.second)
         let logout = try #require(seen.values.first)
         #expect(logout.url?.host() == serverURL.host())
-        #expect(logout.value(forHTTPHeaderField: Constants.cookieHeader) == Constants.firstAccountCookie)
+        #expect(logout.value(forHTTPHeaderField: TestHTTP.cookie) == Constants.firstAccountCookie)
         #expect(logout.httpShouldHandleCookies == false)
     }
 
@@ -169,6 +169,5 @@ struct AuthClientAccountsTests: AuthClientLiveHarness {
 
 private enum Constants {
     static let unknownAccountID = "http://unknown.invalid|nobody"
-    static let cookieHeader = "Cookie"
     static let firstAccountCookie = "connect.sid=abc"
 }

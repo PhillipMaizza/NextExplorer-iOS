@@ -259,6 +259,29 @@ struct SessionCookieStoreTests {
         #expect(cookieStorage.cookies(for: serverA)?.contains { $0.value == "aaa" } == true)
     }
 
+    @Test("switching between two users of one server replaces the HttpOnly cookie the last sign in left")
+    func switchOnOneServerReplacesTheSignInCookie() throws {
+        let store = makeStore(keychainClient: .inMemory())
+        let serverURL = makeUniqueServerURL()
+        let credsA = try credentials(
+            serverURL: serverURL,
+            value: Constants.firstCookieValue,
+            username: TestAccount.username
+        )
+        let credsB = try credentials(serverURL: serverURL, value: Constants.secondCookieValue, username: TestUser.jane)
+        try store.persist(credsA)
+        try store.persist(credsB)
+        let signInCookies = HTTPCookie.cookies(
+            withResponseHeaderFields: [TestHTTP.setCookie: Constants.httpOnlySecondCookie],
+            for: serverURL
+        )
+        cookieStorage.setCookies(signInCookies, for: serverURL, mainDocumentURL: nil)
+
+        try store.setActive(id: credsA.accountID)
+
+        #expect(cookieStorage.cookies(for: serverURL)?.map(\.value) == [Constants.firstCookieValue])
+    }
+
     @Test("remove happy path: removing the active account returns the next remaining account and drops its cookie")
     func removeActiveReturnsNext() throws {
         let store = makeStore(keychainClient: .inMemory())
@@ -403,4 +426,5 @@ private enum Constants {
     static let legacyCookieValue = "legacy"
     static let persistedValue = "persisted-value"
     static let secondCookieValue = "bbb"
+    static let httpOnlySecondCookie = "\(AuthClientConfiguration.CookieName.local)=\(secondCookieValue); Path=/; HttpOnly"
 }
