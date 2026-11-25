@@ -1221,3 +1221,21 @@ emptyState.dropHintFinder	คุณยังลากไฟล์มาที่
 settings.rowDefaultSort	การเรียงเริ่มต้น
 settings.rowSortOrder	ลำดับ
 settings.defaultSortFooter	โฟลเดอร์ที่คุณยังไม่ได้เรียงจะเปิดตามลำดับนี้ โฟลเดอร์ที่คุณเรียงจะคงลำดับของตัวเองบนทุกอุปกรณ์ที่ลงชื่อเข้าใช้เซิร์ฟเวอร์นี้
+settings.sectionSecurity	ความปลอดภัย
+settings.rowRequireSignIn	กำหนดให้ลงชื่อเข้าใช้
+lock.title	NextExplorer ถูกล็อก
+lock.subtitle	ลงชื่อเข้าใช้อีกครั้งเพื่อเปิดไฟล์ของคุณ
+lock.signIn	ลงชื่อเข้าใช้
+lock.otherAccount	นี่เป็นบัญชีอื่น ลงชื่อเข้าใช้เป็น %@ เพื่อปลดล็อก หรือออกจากระบบ
+requireSignIn.footer	เมื่อคุณออกจากแอป บัญชีนี้จะถูกล็อกและเซสชันจะสิ้นสุด การปลดล็อกต้องลงชื่อเข้าใช้ใหม่ พร้อมกุญแจความปลอดภัยหากการลงชื่อเข้าใช้ของคุณต้องการ
+requireSignIn.sectionLock	ล็อก
+requireSignIn.appStart	เมื่อเปิดแอป
+requireSignIn.immediately	ทันที
+requireSignIn.thirtySeconds	หลังจาก 30 วินาที
+requireSignIn.oneMinute	หลังจาก 1 นาที
+requireSignIn.fiveMinutes	หลังจาก 5 นาที
+requireSignIn.keepOfflineFiles	เก็บไฟล์ออฟไลน์ไว้
+requireSignIn.keepOfflineFilesFooter	เมื่อปิด การล็อกจะลบไฟล์ออฟไลน์และโฟลเดอร์ที่แคชไว้ของบัญชีนี้ออกจากอุปกรณ์นี้ด้วย
+shareUpload.locked	NextExplorer ถูกล็อก เปิดแอป ลงชื่อเข้าใช้อีกครั้ง แล้วแชร์ใหม่
+requireSignIn.navigationTitle	กำหนดให้ลงชื่อเข้าใช้
+requireSignIn.toggle	กำหนดให้ลงชื่อเข้าใช้

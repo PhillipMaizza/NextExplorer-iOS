@@ -1326,3 +1326,21 @@ emptyState.dropHintFinder	Du kannst auch Dateien aus dem Finder hierher ziehen.
 settings.rowDefaultSort	Standardsortierung
 settings.rowSortOrder	Reihenfolge
 settings.defaultSortFooter	Ordner, die du nicht sortiert hast, öffnen sich in dieser Reihenfolge. Ein Ordner, den du sortierst, behält seine eigene Reihenfolge auf jedem Gerät, das bei diesem Server angemeldet ist.
+settings.sectionSecurity	Sicherheit
+settings.rowRequireSignIn	Anmeldung erforderlich
+lock.title	NextExplorer ist gesperrt
+lock.subtitle	Melde dich erneut an, um deine Dateien zu öffnen.
+lock.signIn	Anmelden
+lock.otherAccount	Das ist ein anderes Konto. Melde dich als %@ an, um zu entsperren, oder melde dich ab.
+requireSignIn.footer	Wenn du die App verlässt, wird dieses Konto gesperrt und seine Sitzung beendet. Zum Entsperren musst du dich neu anmelden, mit deinem Sicherheitsschlüssel, falls deine Anmeldung einen verlangt.
+requireSignIn.sectionLock	Sperren
+requireSignIn.appStart	Beim Start der App
+requireSignIn.immediately	Sofort
+requireSignIn.thirtySeconds	Nach 30 Sekunden
+requireSignIn.oneMinute	Nach 1 Minute
+requireSignIn.fiveMinutes	Nach 5 Minuten
+requireSignIn.keepOfflineFiles	Offline-Dateien behalten
+requireSignIn.keepOfflineFilesFooter	Wenn aus, entfernt das Sperren auch die Offline-Dateien und zwischengespeicherten Ordner dieses Kontos von diesem Gerät.
+shareUpload.locked	NextExplorer ist gesperrt. Öffne die App, melde dich erneut an und teile dann noch einmal.
+requireSignIn.navigationTitle	Anmeldung erforderlich
+requireSignIn.toggle	Anmeldung erforderlich

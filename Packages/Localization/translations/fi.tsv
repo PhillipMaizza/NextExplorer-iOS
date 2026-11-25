@@ -1255,3 +1255,21 @@ emptyState.dropHintFinder	Voit myös vetää tiedostoja tähän Finderista.
 settings.rowDefaultSort	Oletuslajittelu
 settings.rowSortOrder	Järjestys
 settings.defaultSortFooter	Kansiot, joita et ole lajitellut, avautuvat tässä järjestyksessä. Lajittelemasi kansio säilyttää oman järjestyksensä kaikilla tähän palvelimeen kirjautuneilla laitteilla.
+settings.sectionSecurity	Suojaus
+settings.rowRequireSignIn	Vaadi kirjautuminen
+lock.title	NextExplorer on lukittu
+lock.subtitle	Kirjaudu uudelleen avataksesi tiedostosi.
+lock.signIn	Kirjaudu
+lock.otherAccount	Tämä on eri tili. Kirjaudu tilillä %@ avataksesi lukituksen tai kirjaudu ulos.
+requireSignIn.footer	Kun poistut sovelluksesta, tili lukitaan ja sen istunto päättyy. Lukituksen avaaminen vaatii uuden kirjautumisen, suojausavaimella jos kirjautumisesi sitä pyytää.
+requireSignIn.sectionLock	Lukitse
+requireSignIn.appStart	Kun sovellus käynnistyy
+requireSignIn.immediately	Heti
+requireSignIn.thirtySeconds	30 sekunnin kuluttua
+requireSignIn.oneMinute	1 minuutin kuluttua
+requireSignIn.fiveMinutes	5 minuutin kuluttua
+requireSignIn.keepOfflineFiles	Säilytä offline-tiedostot
+requireSignIn.keepOfflineFilesFooter	Kun tämä on pois päältä, lukitus poistaa myös tilin offline-tiedostot ja välimuistissa olevat kansiot tältä laitteelta.
+shareUpload.locked	NextExplorer on lukittu. Avaa sovellus, kirjaudu uudelleen ja jaa sitten uudelleen.
+requireSignIn.navigationTitle	Vaadi kirjautuminen
+requireSignIn.toggle	Vaadi kirjautuminen

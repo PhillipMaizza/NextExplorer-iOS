@@ -1255,3 +1255,21 @@ emptyState.dropHintFinder	Fájlokat a Finderből is idehúzhat.
 settings.rowDefaultSort	Alapértelmezett rendezés
 settings.rowSortOrder	Sorrend
 settings.defaultSortFooter	A nem rendezett mappák ebben a sorrendben nyílnak meg. Az általad rendezett mappa megtartja saját sorrendjét minden, ehhez a szerverhez bejelentkezett eszközön.
+settings.sectionSecurity	Biztonság
+settings.rowRequireSignIn	Bejelentkezés kérése
+lock.title	A NextExplorer zárolva van
+lock.subtitle	Jelentkezz be újra a fájljaid megnyitásához.
+lock.signIn	Bejelentkezés
+lock.otherAccount	Ez egy másik fiók. Jelentkezz be mint %@ a feloldáshoz, vagy jelentkezz ki.
+requireSignIn.footer	Amikor kilépsz az appból, ez a fiók zárolódik, és a munkamenete véget ér. A feloldáshoz új bejelentkezés kell, a biztonsági kulcsoddal, ha a bejelentkezésed kéri.
+requireSignIn.sectionLock	Zárolás
+requireSignIn.appStart	Az app indításakor
+requireSignIn.immediately	Azonnal
+requireSignIn.thirtySeconds	30 másodperc után
+requireSignIn.oneMinute	1 perc után
+requireSignIn.fiveMinutes	5 perc után
+requireSignIn.keepOfflineFiles	Offline fájlok megtartása
+requireSignIn.keepOfflineFilesFooter	Ha ki van kapcsolva, a zárolás erről az eszközről a fiók offline fájljait és gyorsítótárazott mappáit is törli.
+shareUpload.locked	A NextExplorer zárolva van. Nyisd meg, jelentkezz be újra, majd oszd meg ismét.
+requireSignIn.navigationTitle	Bejelentkezés kérése
+requireSignIn.toggle	Bejelentkezés kérése

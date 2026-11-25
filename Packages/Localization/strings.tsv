@@ -639,6 +639,8 @@ settings.signOutMessage	You'll need to sign in again to access your files. Cache
 settings.signOutButton	Sign Out
 settings.signingOut	Signing Out…
 settings.sectionAccounts	Accounts
+settings.sectionSecurity	Security
+settings.rowRequireSignIn	Require Sign In
 settings.addAccount	Add Account
 settings.accountSignOut	Sign Out
 settings.accountSignOutTitle	Sign Out?
@@ -869,6 +871,23 @@ error.forbidden	You don't have permission to do that.
 error.clientCertificateRequired	This server needs a client certificate. Add one in Settings.
 error.clientCertificateRejected	The server refused your client certificate.
 
+# ---- lock ----
+lock.title	NextExplorer is locked
+lock.subtitle	Sign in again to open your files.
+lock.signIn	Sign In
+lock.otherAccount	That's a different account. Sign in as %@ to unlock, or sign out.
+# ---- require sign in ----
+requireSignIn.navigationTitle	Require Sign In
+requireSignIn.toggle	Require Sign In
+requireSignIn.footer	When you leave the app, this account locks and its session ends. Unlocking needs a fresh sign in, with your security key if your sign in asks for one.
+requireSignIn.sectionLock	Lock
+requireSignIn.appStart	When the app starts
+requireSignIn.immediately	Immediately
+requireSignIn.thirtySeconds	After 30 seconds
+requireSignIn.oneMinute	After 1 minute
+requireSignIn.fiveMinutes	After 5 minutes
+requireSignIn.keepOfflineFiles	Keep Offline Files
+requireSignIn.keepOfflineFilesFooter	When off, locking also removes this account's offline files and cached folders from this device.
 # ---- change password ----
 changePassword.navigationTitle	Change Password
 changePassword.intro	Change the password you use to sign in with your email address. You'll stay signed in on this device.
@@ -1230,6 +1249,7 @@ shareUpload.upload	Upload
 shareUpload.preparing	Preparing %lld of %lld…
 shareUpload.started	Uploading in the background. You'll get a notification when it's done.
 shareUpload.signedOut	Sign in to NextExplorer first, then share again.
+shareUpload.locked	NextExplorer is locked. Open it and sign in again, then share again.
 shareUpload.nothingToUpload	There's nothing here NextExplorer can upload.
 shareUpload.failed	The files couldn't be prepared for upload.
 shareUpload.notificationDoneTitle	Upload finished

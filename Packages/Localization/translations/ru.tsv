@@ -1398,3 +1398,21 @@ emptyState.dropHintFinder	Вы также можете перетащить сю
 settings.rowDefaultSort	Сортировка по умолчанию
 settings.rowSortOrder	Порядок
 settings.defaultSortFooter	Папки, которые вы не сортировали, открываются в этом порядке. Папка, которую вы отсортировали, сохраняет свой порядок на всех устройствах, вошедших на этот сервер.
+settings.sectionSecurity	Безопасность
+settings.rowRequireSignIn	Требовать вход
+lock.title	NextExplorer заблокирован
+lock.subtitle	Войдите снова, чтобы открыть файлы.
+lock.signIn	Войти
+lock.otherAccount	Это другая учётная запись. Войдите как %@, чтобы разблокировать, или выйдите.
+requireSignIn.footer	Когда вы выходите из приложения, эта учётная запись блокируется, а её сеанс завершается. Для разблокировки нужен новый вход, с ключом безопасности, если вход его запрашивает.
+requireSignIn.sectionLock	Блокировка
+requireSignIn.appStart	При запуске приложения
+requireSignIn.immediately	Сразу
+requireSignIn.thirtySeconds	Через 30 секунд
+requireSignIn.oneMinute	Через 1 минуту
+requireSignIn.fiveMinutes	Через 5 минут
+requireSignIn.keepOfflineFiles	Сохранять офлайн-файлы
+requireSignIn.keepOfflineFilesFooter	Если выключено, блокировка также удаляет с этого устройства офлайн-файлы и кэшированные папки этой учётной записи.
+shareUpload.locked	NextExplorer заблокирован. Откройте его, войдите снова и поделитесь ещё раз.
+requireSignIn.navigationTitle	Требовать вход
+requireSignIn.toggle	Требовать вход

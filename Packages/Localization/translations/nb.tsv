@@ -1255,3 +1255,21 @@ emptyState.dropHintFinder	Du kan også dra filer hit fra Finder.
 settings.rowDefaultSort	Standard sortering
 settings.rowSortOrder	Rekkefølge
 settings.defaultSortFooter	Mapper du ikke har sortert, åpnes i denne rekkefølgen. En mappe du sorterer, beholder sin egen rekkefølge på alle enheter som er logget på denne serveren.
+settings.sectionSecurity	Sikkerhet
+settings.rowRequireSignIn	Krev pålogging
+lock.title	NextExplorer er låst
+lock.subtitle	Logg på igjen for å åpne filene dine.
+lock.signIn	Logg på
+lock.otherAccount	Det er en annen konto. Logg på som %@ for å låse opp, eller logg av.
+requireSignIn.footer	Når du forlater appen, låses denne kontoen og økten avsluttes. Opplåsing krever ny pålogging, med sikkerhetsnøkkelen din hvis påloggingen ber om den.
+requireSignIn.sectionLock	Lås
+requireSignIn.appStart	Når appen starter
+requireSignIn.immediately	Umiddelbart
+requireSignIn.thirtySeconds	Etter 30 sekunder
+requireSignIn.oneMinute	Etter 1 minutt
+requireSignIn.fiveMinutes	Etter 5 minutter
+requireSignIn.keepOfflineFiles	Behold frakoblede filer
+requireSignIn.keepOfflineFilesFooter	Når dette er av, fjerner låsing også denne kontoens frakoblede filer og hurtigbufrede mapper fra denne enheten.
+shareUpload.locked	NextExplorer er låst. Åpne appen, logg på igjen og del på nytt.
+requireSignIn.navigationTitle	Krev pålogging
+requireSignIn.toggle	Krev pålogging

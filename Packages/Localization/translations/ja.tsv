@@ -1290,3 +1290,21 @@ emptyState.dropHintFinder	Finderからファイルをここにドラッグする
 settings.rowDefaultSort	デフォルトの並べ替え
 settings.rowSortOrder	順序
 settings.defaultSortFooter	並べ替えていないフォルダはこの順序で開きます。並べ替えたフォルダは、このサーバにサインインしているすべてのデバイスで独自の順序を保ちます。
+settings.sectionSecurity	セキュリティ
+settings.rowRequireSignIn	サインインを要求
+lock.title	NextExplorer はロックされています
+lock.subtitle	ファイルを開くにはもう一度サインインしてください。
+lock.signIn	サインイン
+lock.otherAccount	別のアカウントです。ロックを解除するには %@ としてサインインするか、サインアウトしてください。
+requireSignIn.footer	アプリを離れると、このアカウントはロックされセッションが終了します。ロック解除には再度のサインインが必要です。サインインで求められる場合はセキュリティキーも使います。
+requireSignIn.sectionLock	ロック
+requireSignIn.appStart	アプリの起動時
+requireSignIn.immediately	すぐに
+requireSignIn.thirtySeconds	30秒後
+requireSignIn.oneMinute	1分後
+requireSignIn.fiveMinutes	5分後
+requireSignIn.keepOfflineFiles	オフラインファイルを保持
+requireSignIn.keepOfflineFilesFooter	オフにすると、ロック時にこのアカウントのオフラインファイルとキャッシュされたフォルダもこのデバイスから削除されます。
+shareUpload.locked	NextExplorer はロックされています。アプリを開いて再度サインインしてから、もう一度共有してください。
+requireSignIn.navigationTitle	サインインを要求
+requireSignIn.toggle	サインインを要求

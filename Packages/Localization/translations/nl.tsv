@@ -1326,3 +1326,21 @@ emptyState.dropHintFinder	Je kunt ook bestanden hierheen slepen vanuit de Finder
 settings.rowDefaultSort	Standaardsortering
 settings.rowSortOrder	Volgorde
 settings.defaultSortFooter	Mappen die je niet hebt gesorteerd, openen in deze volgorde. Een map die je sorteert, houdt zijn eigen volgorde op elk apparaat dat bij deze server is ingelogd.
+settings.sectionSecurity	Beveiliging
+settings.rowRequireSignIn	Inloggen vereisen
+lock.title	NextExplorer is vergrendeld
+lock.subtitle	Log opnieuw in om je bestanden te openen.
+lock.signIn	Inloggen
+lock.otherAccount	Dat is een ander account. Log in als %@ om te ontgrendelen, of log uit.
+requireSignIn.footer	Als je de app verlaat, wordt dit account vergrendeld en eindigt de sessie. Ontgrendelen vraagt een nieuwe login, met je beveiligingssleutel als je login daarom vraagt.
+requireSignIn.sectionLock	Vergrendelen
+requireSignIn.appStart	Bij het starten van de app
+requireSignIn.immediately	Direct
+requireSignIn.thirtySeconds	Na 30 seconden
+requireSignIn.oneMinute	Na 1 minuut
+requireSignIn.fiveMinutes	Na 5 minuten
+requireSignIn.keepOfflineFiles	Offline bestanden bewaren
+requireSignIn.keepOfflineFilesFooter	Als dit uit staat, verwijdert vergrendelen ook de offline bestanden en gecachete mappen van dit account van dit apparaat.
+shareUpload.locked	NextExplorer is vergrendeld. Open de app, log opnieuw in en deel daarna opnieuw.
+requireSignIn.navigationTitle	Inloggen vereisen
+requireSignIn.toggle	Inloggen vereisen
