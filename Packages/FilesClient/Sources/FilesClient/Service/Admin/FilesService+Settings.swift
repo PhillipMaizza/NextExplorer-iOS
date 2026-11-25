@@ -21,6 +21,19 @@ extension FilesService {
         try Self.validate(response)
     }
 
+    func saveFolderSort(serverURL: URL, path: String, sort: FolderSort) async throws -> FolderSort? {
+        let url = serverURL.appendingPathComponent(APIPath.settings)
+        var request = Self.makeRequest(url: url, method: .patch)
+        request.setJSONContentType()
+        let key = FolderSort.folderKey(path)
+        request.httpBody = try Self.encode(PatchFolderSortBody(user: .init(folderSort: .init(
+            path: key,
+            sort: .init(by: sort.field, order: sort.order)
+        ))))
+        let envelope = try await send(request, decoding: SettingsEnvelope.self)
+        return envelope.user?.folderSort(for: key)
+    }
+
     /// `GET /api/settings`: extracts the admin only `thumbnails` + `access.rules`. A
     /// non admin session just gets no such keys, decoded as nil / empty.
     func fetchSystemSettings(serverURL: URL) async throws -> SystemSettings {

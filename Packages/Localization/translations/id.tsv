@@ -1299,3 +1299,6 @@ fileInfo.dateRange	%1$@ – %2$@
 browse.folderCount#other	%lld folder
 browse.fileCount#other	%lld file
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Urutan Default
+settings.rowSortOrder	Urutan
+settings.defaultSortFooter	Folder yang belum Anda urutkan terbuka dengan urutan ini. Folder yang Anda urutkan mempertahankan urutannya sendiri di setiap perangkat yang masuk ke server ini.

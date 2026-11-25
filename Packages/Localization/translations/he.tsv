@@ -1377,3 +1377,6 @@ browse.fileCount#one	%lld קובץ
 browse.fileCount#two	%lld קבצים
 browse.fileCount#other	%lld קבצים
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	מיון ברירת מחדל
+settings.rowSortOrder	סדר
+settings.defaultSortFooter	תיקיות שלא מיינת נפתחות בסדר הזה. תיקייה שאתה ממיין שומרת על הסדר שלה בכל מכשיר המחובר לשרת הזה.

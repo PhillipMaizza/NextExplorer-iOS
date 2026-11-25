@@ -162,6 +162,7 @@ struct MainTabUploadsTests: MainTabTestSupport {
         await store.receive(\.browse.syncPathStack)
         await store.receive(\.favorites.syncPathStack)
         await store.receive(\.uploads.appResumed)
+        await store.receive(\.settings.loadPreferences)
         await store.receive(\.offline.autoSync)
         await store.receive(\.browse.root.refreshButtonTapped) {
             $0.browse.root.phase = .loading
@@ -175,6 +176,9 @@ struct MainTabUploadsTests: MainTabTestSupport {
         await store.receive(\.uploads.startNextIfIdle) {
             $0.uploads.jobs[id: UUID(0)]?.status = .uploading
             $0.uploads.jobs[id: UUID(0)]?.startedAt = MockDate.date
+        }
+        await store.receive(\.settings.preferencesResponse.success) {
+            $0.settings.preferencesPhase = .loaded
         }
         await store.receive(\.browse.root.itemsResponse.success) {
             $0.browse.root.phase = .loaded

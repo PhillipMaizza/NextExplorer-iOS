@@ -1558,3 +1558,6 @@ browse.fileCount#few	%lld ملفات
 browse.fileCount#many	%lld ملفًا
 browse.fileCount#other	%lld ملف
 browse.contentSummary	%1$@، %2$@
+settings.rowDefaultSort	الفرز الافتراضي
+settings.rowSortOrder	الترتيب
+settings.defaultSortFooter	تُفتح المجلدات التي لم تفرزها بهذا الترتيب. يحتفظ المجلد الذي تفرزه بترتيبه على كل جهاز مسجّل الدخول إلى هذا الخادم.

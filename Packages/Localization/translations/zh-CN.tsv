@@ -1368,3 +1368,6 @@ fileInfo.dateRange	%1$@至%2$@
 browse.folderCount#other	%lld 个文件夹
 browse.fileCount#other	%lld 个文件
 browse.contentSummary	%1$@，%2$@
+settings.rowDefaultSort	默认排序
+settings.rowSortOrder	顺序
+settings.defaultSortFooter	未排序的文件夹按此顺序打开。你排序过的文件夹会在登录此服务器的每台设备上保持自己的顺序。

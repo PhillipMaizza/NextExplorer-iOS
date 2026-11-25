@@ -1414,3 +1414,6 @@ browse.fileCount#few	%lld soubory
 browse.fileCount#many	%lld souboru
 browse.fileCount#other	%lld souborů
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Výchozí řazení
+settings.rowSortOrder	Pořadí
+settings.defaultSortFooter	Složky, které jste neseřadili, se otevírají v tomto pořadí. Složka, kterou seřadíte, si své pořadí ponechá na všech zařízeních přihlášených k tomuto serveru.

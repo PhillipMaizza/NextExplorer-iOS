@@ -1368,3 +1368,6 @@ fileInfo.dateRange	%1$@至%2$@
 browse.folderCount#other	%lld 個資料夾
 browse.fileCount#other	%lld 個檔案
 browse.contentSummary	%1$@，%2$@
+settings.rowDefaultSort	預設排序
+settings.rowSortOrder	順序
+settings.defaultSortFooter	未排序的資料夾會依此順序開啟。你排序過的資料夾會在登入此伺服器的每部裝置上保留自己的順序。

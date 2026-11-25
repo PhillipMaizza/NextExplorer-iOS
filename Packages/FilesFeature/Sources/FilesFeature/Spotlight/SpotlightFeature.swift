@@ -26,7 +26,7 @@ public struct SpotlightFeature {
         /// the hits inside this folder are listed first.
         let basePath: String
         /// Read for the Show Thumbnails setting, so image, video and audio hits show their picture.
-        @Shared(.inMemory("userPreferences")) var preferences = UserPreferences()
+        @Shared(.inMemory(UserPreferences.sharedKey)) var preferences = UserPreferences()
 
         public init(serverURL: URL, basePath: String) {
             self.serverURL = serverURL

@@ -1368,3 +1368,6 @@ fileInfo.dateRange	%1$@~%2$@
 browse.folderCount#other	폴더 %lld개
 browse.fileCount#other	파일 %lld개
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	기본 정렬
+settings.rowSortOrder	순서
+settings.defaultSortFooter	정렬하지 않은 폴더는 이 순서로 열립니다. 정렬한 폴더는 이 서버에 로그인된 모든 기기에서 자체 순서를 유지합니다.

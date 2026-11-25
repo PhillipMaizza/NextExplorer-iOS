@@ -8,20 +8,46 @@ import Foundation
 /// A brand new user has no rows in `user_settings` at all, so any key can be absent from
 /// the response; decoding falls back to this client's own defaults rather than failing.
 public struct UserPreferences: Decodable, Equatable, Sendable {
+    public static let sharedKey = "userPreferences"
+
     public var shouldShowHiddenFiles: Bool
     public var shouldShowThumbnails: Bool
     /// The user's preferred default lifetime for a new share link, or `nil` when they
     /// haven't set one. `backend` stores it as `{ value, unit }` or `null`.
     public var defaultShareExpiration: ShareExpiration?
+    public var folderSorts: [String: FolderSort]?
 
     public init(
         shouldShowHiddenFiles: Bool = false,
         shouldShowThumbnails: Bool = true,
-        defaultShareExpiration: ShareExpiration? = nil
+        defaultShareExpiration: ShareExpiration? = nil,
+        folderSorts: [String: FolderSort]? = nil
     ) {
         self.shouldShowHiddenFiles = shouldShowHiddenFiles
         self.shouldShowThumbnails = shouldShowThumbnails
         self.defaultShareExpiration = defaultShareExpiration
+        self.folderSorts = folderSorts
+    }
+
+    public func folderSort(for path: String) -> FolderSort? {
+        folderSorts?[FolderSort.folderKey(path)]
+    }
+
+    public mutating func setFolderSort(_ sort: FolderSort, for path: String) {
+        var sorts = folderSorts ?? [:]
+        sorts[FolderSort.folderKey(path)] = sort
+        folderSorts = sorts
+    }
+
+    public mutating func adopt(_ fetched: UserPreferences) {
+        let kept = folderSorts
+        self = fetched
+        guard let fetchedSorts = fetched.folderSorts else {
+            folderSorts = kept
+            return
+        }
+        let newerHere = (kept ?? [:]).filter { path, sort in sort.isNewer(than: fetchedSorts[path]) }
+        folderSorts = fetchedSorts.merging(newerHere) { _, here in here }
     }
 
     /// A relative share link lifetime: `value` of `unit` from now.
@@ -58,6 +84,7 @@ public struct UserPreferences: Decodable, Equatable, Sendable {
         case shouldShowHiddenFiles = "showHiddenFiles"
         case shouldShowThumbnails = "showThumbnails"
         case defaultShareExpiration
+        case folderSorts
     }
 
     public init(from decoder: Decoder) throws {
@@ -65,6 +92,7 @@ public struct UserPreferences: Decodable, Equatable, Sendable {
         shouldShowHiddenFiles = try container.decodeIfPresent(Bool.self, forKey: .shouldShowHiddenFiles) ?? false
         shouldShowThumbnails = try container.decodeIfPresent(Bool.self, forKey: .shouldShowThumbnails) ?? true
         defaultShareExpiration = try container.decodeIfPresent(ShareExpiration.self, forKey: .defaultShareExpiration)
+        folderSorts = (try? container.decodeIfPresent(FolderSorts.self, forKey: .folderSorts))?.entries
     }
 }
 

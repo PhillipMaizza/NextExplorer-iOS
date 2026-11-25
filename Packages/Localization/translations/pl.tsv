@@ -1482,3 +1482,6 @@ browse.fileCount#few	%lld pliki
 browse.fileCount#many	%lld plików
 browse.fileCount#other	%lld pliku
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Domyślne sortowanie
+settings.rowSortOrder	Kolejność
+settings.defaultSortFooter	Foldery, których nie posortowano, otwierają się w tej kolejności. Posortowany folder zachowuje własną kolejność na każdym urządzeniu zalogowanym do tego serwera.

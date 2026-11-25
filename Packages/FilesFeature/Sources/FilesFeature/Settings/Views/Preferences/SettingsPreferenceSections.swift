@@ -54,6 +54,7 @@ struct GeneralSettingsSection: View {
     @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
     @AppStorage(AppStorageKeys.hapticsEnabled) private var isHapticsEnabled = true
     @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
+    @AppStorage(AppStorageKeys.defaultSortOption) private var defaultSortOption = BrowseFeature.SortOption.name
 
     private var currentLanguageLabel: String {
         appLanguage.isEmpty ? L10n.Language.systemDefault : LocalizationOverride.displayName(for: appLanguage)
@@ -72,6 +73,7 @@ struct GeneralSettingsSection: View {
             L10n.Settings.toggleRenderHTML,
             L10n.Settings.toggleRenderMarkdown,
             L10n.Settings.rowDateFormat,
+            L10n.Settings.rowDefaultSort,
             L10n.Settings.rowLanguage,
             L10n.Settings.toggleHaptics,
         ]) {
@@ -97,38 +99,33 @@ struct GeneralSettingsSection: View {
                     NavigationLink {
                         DateFormatPickerView(selection: dateFormat)
                     } label: {
-                        Label {
-                            HStack {
-                                Text(L10n.Settings.rowDateFormat).type(.body2(.regular), style: .primaryOnSurface)
-                                Spacer()
-                                Text(dateFormat.wrappedValue.title).type(.body2(.regular), style: .secondary)
-                            }
-                        } icon: {
-                            IconKit.calendar
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        }
+                        SettingsValueLabel(
+                            title: L10n.Settings.rowDateFormat,
+                            value: dateFormat.wrappedValue.title,
+                            icon: IconKit.calendar
+                        )
+                    }
+                }
+                if !isMac, filter.matches(L10n.Settings.rowDefaultSort) {
+                    NavigationLink {
+                        DefaultSortPickerView()
+                    } label: {
+                        SettingsValueLabel(
+                            title: L10n.Settings.rowDefaultSort,
+                            value: defaultSortOption.title,
+                            icon: IconKit.sort
+                        )
                     }
                 }
                 if filter.matches(L10n.Settings.rowLanguage) {
                     NavigationLink {
                         LanguagePickerView()
                     } label: {
-                        Label {
-                            HStack {
-                                Text(L10n.Settings.rowLanguage).type(.body2(.regular), style: .primaryOnSurface)
-                                Spacer()
-                                Text(currentLanguageLabel).type(.body2(.regular), style: .secondary)
-                            }
-                        } icon: {
-                            IconKit.language
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        }
+                        SettingsValueLabel(
+                            title: L10n.Settings.rowLanguage,
+                            value: currentLanguageLabel,
+                            icon: IconKit.language
+                        )
                         .fullRowHitArea()
                     }
                 }

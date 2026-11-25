@@ -21,12 +21,17 @@ struct MainTabSessionStartTests: MainTabTestSupport {
         }
         let store = makeStore(state) {
             $0.connectivity = ConnectivityClient(isOnline: { false }, events: { AsyncStream { $0.finish() } })
+            $0.filesClient.fetchPreferences = { _ in UserPreferences() }
         }
 
         await store.send(.observeConnectivity) {
             $0.$offlineProgress.withLock { $0 = OfflineDownloadProgress() }
         }
+        await store.receive(\.settings.loadPreferences)
         await store.receive(\.offline.autoSync)
+        await store.receive(\.settings.preferencesResponse.success) {
+            $0.settings.preferencesPhase = .loaded
+        }
         #expect(!store.state.isOfflineBarVisible)
     }
 }

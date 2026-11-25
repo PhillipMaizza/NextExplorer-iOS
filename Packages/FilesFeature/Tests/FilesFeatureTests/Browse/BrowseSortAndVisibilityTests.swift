@@ -21,8 +21,7 @@ struct BrowseSortAndVisibilityTests {
             shouldShowHiddenFiles: shouldShowHiddenFiles,
             shouldShowThumbnails: true
         ) }
-        state.sortOption = sortOption
-        state.sortDirection = sortDirection
+        state.rootSort = FolderSort(field: sortOption.rawValue, isAscending: sortDirection == .ascending)
         return state
     }
 

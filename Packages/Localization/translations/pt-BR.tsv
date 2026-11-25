@@ -1401,3 +1401,6 @@ browse.folderCount#other	%lld pastas
 browse.fileCount#one	%lld arquivo
 browse.fileCount#other	%lld arquivos
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Ordenação padrão
+settings.rowSortOrder	Ordem
+settings.defaultSortFooter	As pastas que você não ordenou abrem nesta ordem. Uma pasta que você ordena mantém sua própria ordem em todos os dispositivos conectados a este servidor.

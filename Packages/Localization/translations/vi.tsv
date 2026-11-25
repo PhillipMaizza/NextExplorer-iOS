@@ -1299,3 +1299,6 @@ fileInfo.dateRange	%1$@ – %2$@
 browse.folderCount#other	%lld thư mục
 browse.fileCount#other	%lld tệp
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Sắp xếp mặc định
+settings.rowSortOrder	Thứ tự
+settings.defaultSortFooter	Các thư mục bạn chưa sắp xếp sẽ mở theo thứ tự này. Thư mục bạn sắp xếp giữ thứ tự riêng trên mọi thiết bị đăng nhập vào máy chủ này.

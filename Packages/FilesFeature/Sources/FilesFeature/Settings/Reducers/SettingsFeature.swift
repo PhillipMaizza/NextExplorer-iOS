@@ -103,7 +103,7 @@ public struct SettingsFeature {
         @Shared(.inMemory(Branding.sharedKey)) public var branding = Branding()
         /// Shared with `BrowseFeature` under the same in memory key, so toggling
         /// "Show Hidden Files" here is reflected immediately in an already open folder.
-        @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
+        @Shared(.inMemory(UserPreferences.sharedKey)) public var preferences = UserPreferences()
         /// Current account's downloads scope, so the size/existence checks count only this
         /// account's files. Shared with `BrowseFeature`/`OfflineTabFeature` under one key.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
@@ -235,6 +235,7 @@ public struct SettingsFeature {
         case serverFeaturesResponse(ServerFeatures)
         case volumesResponse([Volume])
         case serverUsageResponse(path: String, Result<StorageUsage, FilesClientError>)
+        case loadPreferences
         case preferencesResponse(Result<UserPreferences, FilesClientError>)
         case setShowHiddenFiles(Bool)
         case setShowThumbnails(Bool)
@@ -302,9 +303,10 @@ public struct SettingsFeature {
 
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
+    @Dependency(\.cacheScope) var cacheScope
 
     private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize,
-                                           authMethods, authStatus
+                                           authMethods, authStatus, preferences
     }
 
     public init() {}
@@ -701,16 +703,15 @@ public struct SettingsFeature {
                     guard let features = try? await filesClient.serverFeatures(serverURL) else { return }
                     await send(.serverFeaturesResponse(features))
                 },
-                .run { send in
-                    try await send(.preferencesResponse(apiResult {
-                        try await filesClient.fetchPreferences(serverURL)
-                    }))
-                }
+                fetchPreferences(serverURL: serverURL)
             )
+
+        case .loadPreferences:
+            return fetchPreferences(serverURL: state.serverURL)
 
         case let .preferencesResponse(.success(preferences)):
             state.preferencesPhase = .loaded
-            state.$preferences.withLock { $0 = preferences }
+            state.$preferences.withLock { $0.adopt(preferences) }
             return .none
 
         case let .preferencesResponse(.failure(error)):
@@ -894,6 +895,18 @@ public struct SettingsFeature {
             .ifLet(\.$versionedFiles, action: \.versionedFiles) {
                 VersionedFilesFeature()
             }
+    }
+
+    private func fetchPreferences(serverURL: URL) -> Effect<Action> {
+        let filesClient = filesClient
+        let cacheScope = cacheScope
+        let askingScope = cacheScope.current()
+        return .run { send in
+            let result = try await apiResult { try await filesClient.fetchPreferences(serverURL) }
+            guard cacheScope.current() == askingScope else { return }
+            await send(.preferencesResponse(result))
+        }
+        .cancellable(id: CancelID.preferences, cancelInFlight: true)
     }
 
     /// Fire and forget: the toggle already updated optimistically, so a failed PATCH just

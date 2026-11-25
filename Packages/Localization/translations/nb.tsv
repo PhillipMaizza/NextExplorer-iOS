@@ -1335,3 +1335,6 @@ browse.folderCount#other	%lld mapper
 browse.fileCount#one	%lld fil
 browse.fileCount#other	%lld filer
 browse.contentSummary	%1$@, %2$@
+settings.rowDefaultSort	Standard sortering
+settings.rowSortOrder	Rekkefølge
+settings.defaultSortFooter	Mapper du ikke har sortert, åpnes i denne rekkefølgen. En mappe du sorterer, beholder sin egen rekkefølge på alle enheter som er logget på denne serveren.
