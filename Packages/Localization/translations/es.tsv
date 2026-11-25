@@ -726,9 +726,7 @@ menu.enclosingFolder	Carpeta contenedora
 common.more	Más
 openWith.print	Imprimir…
 menu.newWindow	Nueva ventana
-menu.newTab	Nueva pestaña
 browse.actionOpenInNewWindow	Abrir en una ventana nueva
-browse.actionOpenInNewTab	Abrir en una pestaña nueva
 select.slideTipTitle	Desliza para seleccionar
 select.slideTipMessage	Desliza un dedo de lado sobre los elementos para seleccionar varios a la vez.
 settings.rowAppearance	Apariencia

@@ -726,9 +726,7 @@ menu.enclosingFolder	मूल फ़ोल्डर
 common.more	और
 openWith.print	प्रिंट करें…
 menu.newWindow	नई विंडो
-menu.newTab	नया टैब
 browse.actionOpenInNewWindow	नई विंडो में खोलें
-browse.actionOpenInNewTab	नए टैब में खोलें
 select.slideTipTitle	चुनने के लिए स्लाइड करें
 select.slideTipMessage	एक साथ कई आइटम चुनने के लिए उन पर उंगली को बगल की ओर स्लाइड करें।
 settings.rowAppearance	रूप-रंग

@@ -715,9 +715,7 @@ menu.enclosingFolder	上层文件夹
 common.more	更多
 openWith.print	打印…
 menu.newWindow	新建窗口
-menu.newTab	新建标签页
 browse.actionOpenInNewWindow	在新窗口中打开
-browse.actionOpenInNewTab	在新标签页中打开
 select.slideTipTitle	滑动选择
 select.slideTipMessage	用手指横向滑过项目，即可一次选择多个。
 settings.rowAppearance	外观

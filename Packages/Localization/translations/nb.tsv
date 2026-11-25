@@ -974,9 +974,7 @@ menu.enclosingFolder	Overordnet mappe
 common.more	Mer
 openWith.print	Skriv ut…
 menu.newWindow	Nytt vindu
-menu.newTab	Ny fane
 browse.actionOpenInNewWindow	Åpne i nytt vindu
-browse.actionOpenInNewTab	Åpne i ny fane
 select.slideTipTitle	Sveip for å velge
 select.slideTipMessage	Sveip en finger sidelengs over objekter for å velge flere samtidig.
 settings.rowAppearance	Utseende

@@ -974,9 +974,7 @@ menu.enclosingFolder	Περιέχων φάκελος
 common.more	Περισσότερα
 openWith.print	Εκτύπωση…
 menu.newWindow	Νέο παράθυρο
-menu.newTab	Νέα καρτέλα
 browse.actionOpenInNewWindow	Άνοιγμα σε νέο παράθυρο
-browse.actionOpenInNewTab	Άνοιγμα σε νέα καρτέλα
 select.slideTipTitle	Σύρετε για επιλογή
 select.slideTipMessage	Σύρετε ένα δάχτυλο πλάγια πάνω από στοιχεία για να επιλέξετε πολλά μαζί.
 settings.rowAppearance	Εμφάνιση

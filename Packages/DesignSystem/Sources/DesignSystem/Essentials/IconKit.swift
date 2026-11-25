@@ -106,7 +106,6 @@ public enum IconKit {
     public static let openInApp = Image(systemName: "arrow.up.forward.app")
     public static let print = Image(systemName: "printer")
     public static let newWindow = Image(systemName: "macwindow")
-    public static let newTab = Image(systemName: "plus.square.on.square")
     public static let sort = Image(systemName: "arrow.up.arrow.down")
     public static let sortAscending = Image(systemName: "arrow.up")
     public static let sortDescending = Image(systemName: "arrow.down")

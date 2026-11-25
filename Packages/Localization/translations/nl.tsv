@@ -726,9 +726,7 @@ menu.enclosingFolder	Bovenliggende map
 common.more	Meer
 openWith.print	Druk af…
 menu.newWindow	Nieuw venster
-menu.newTab	Nieuw tabblad
 browse.actionOpenInNewWindow	Open in nieuw venster
-browse.actionOpenInNewTab	Open in nieuw tabblad
 select.slideTipTitle	Veeg om te selecteren
 select.slideTipMessage	Veeg met een vinger zijwaarts over onderdelen om er meerdere tegelijk te selecteren.
 settings.rowAppearance	Weergave

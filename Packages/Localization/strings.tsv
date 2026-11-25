@@ -1157,9 +1157,7 @@ menu.enclosingFolder	Enclosing Folder
 common.more	More
 openWith.print	Print…
 menu.newWindow	New Window
-menu.newTab	New Tab
 browse.actionOpenInNewWindow	Open in New Window
-browse.actionOpenInNewTab	Open in New Tab
 select.slideTipTitle	Slide to Select
 select.slideTipMessage	Slide a finger sideways across items to select several at once.
 

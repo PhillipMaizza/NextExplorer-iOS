@@ -974,9 +974,7 @@ menu.enclosingFolder	Tartalmazó mappa
 common.more	Továbbiak
 openWith.print	Nyomtatás…
 menu.newWindow	Új ablak
-menu.newTab	Új lap
 browse.actionOpenInNewWindow	Megnyitás új ablakban
-browse.actionOpenInNewTab	Megnyitás új lapon
 select.slideTipTitle	Kijelölés csúsztatással
 select.slideTipMessage	Csúsztasd az ujjad oldalirányban az elemeken, hogy egyszerre többet jelölj ki.
 settings.rowAppearance	Megjelenés

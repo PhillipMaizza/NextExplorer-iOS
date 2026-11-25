@@ -726,9 +726,7 @@ menu.enclosingFolder	Übergeordneter Ordner
 common.more	Mehr
 openWith.print	Drucken …
 menu.newWindow	Neues Fenster
-menu.newTab	Neuer Tab
 browse.actionOpenInNewWindow	In neuem Fenster öffnen
-browse.actionOpenInNewTab	In neuem Tab öffnen
 select.slideTipTitle	Zum Auswählen wischen
 select.slideTipMessage	Wische mit einem Finger seitlich über Objekte, um mehrere auf einmal auszuwählen.
 settings.rowAppearance	Erscheinungsbild
