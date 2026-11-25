@@ -14,6 +14,8 @@ public struct LockView: View {
         #if os(macOS)
             static let sheetWidth: CGFloat = 520
             static let sheetHeight: CGFloat = 640
+            static let cancelTrailing: CGFloat = .space32
+            static let cancelBottom: CGFloat = .space24
         #endif
     }
 
@@ -158,14 +160,17 @@ public struct LockView: View {
         LoginFormView(
             store: loginStore,
             shouldAutoFocus: true,
-            shouldFloodIntoApp: false
+            shouldFloodIntoApp: false,
+            hasStepsSidebar: false
         )
         #if os(macOS)
         .frame(width: Constants.sheetWidth, height: Constants.sheetHeight)
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button(L10n.Common.cancel) { store.send(.signIn(.dismiss)) }
-            }
+        .overlay(alignment: .bottomTrailing) {
+            Button(L10n.Common.cancel) { store.send(.signIn(.dismiss)) }
+                .buttonStyle(.macDS(.secondary, size: .small))
+                .keyboardShortcut(.cancelAction)
+                .padding(.trailing, Constants.cancelTrailing)
+                .padding(.bottom, Constants.cancelBottom)
         }
         #endif
     }
