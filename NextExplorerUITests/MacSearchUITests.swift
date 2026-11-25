@@ -1,6 +1,5 @@
 #if os(macOS)
     import CoreModels
-    import Localization
     import XCTest
 
     /// The top bar search field (⌘F), the search panel (⌘K), and the toolbar refresh.
@@ -56,8 +55,8 @@
         }
 
         /// A file found by search from another folder opens the folder that holds it, loaded, and ⌘R
-        /// there refreshes and confirms it.
-        func testAFileFoundOpensItsFolderAndRefreshConfirmsTheSync() {
+        /// there refreshes it quietly.
+        func testAFileFoundOpensItsFolderAndRefreshesQuietly() {
             let app = launchApp()
             openDocuments(in: app)
             app.typeKey(Constants.spotlightKey, modifierFlags: .command)
@@ -76,7 +75,11 @@
             )
 
             app.typeKey(Constants.refreshKey, modifierFlags: .command)
-            XCTAssertTrue(text(L10n.Common.syncCompleted, in: app).waitToAppear(), "⌘R should refresh and confirm it")
+            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear(), "The listing should stay after ⌘R")
+            XCTAssertFalse(
+                app.staticTexts[AccessibilityIdentifiers.Toast.message].appears(within: UITestTimeout.short),
+                "A refresh of the folder on screen raises no toast"
+            )
         }
     }
 #endif

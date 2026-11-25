@@ -43,6 +43,10 @@ public enum AccessibilityIdentifiers {
         public static let spotlightField = "search.spotlightField"
     }
 
+    public enum Alert {
+        public static let confirm = "alert.confirm"
+    }
+
     public enum Toast {
         public static let message = "toast.message"
     }

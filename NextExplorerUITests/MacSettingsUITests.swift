@@ -71,7 +71,7 @@
             openMenu({ accounts.click() }, until: signOut)
             signOut.click()
 
-            let confirm = app.labeledButton(L10n.Common.logOut)
+            let confirm = app.buttons[AccessibilityIdentifiers.Alert.confirm].firstMatch
             XCTAssertTrue(confirm.waitToAppear(), "Sign out should ask for confirmation")
             confirm.click()
 

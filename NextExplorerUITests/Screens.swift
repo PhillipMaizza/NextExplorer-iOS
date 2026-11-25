@@ -427,7 +427,7 @@ struct BrowseScreen {
         app.labeledButton(L10n.Common.close)
     }
 
-    /// The "Sync completed" toast, raised on the Mac only; iOS confirms a refresh with a haptic.
+    /// The toast message; a refresh raises none on either platform.
     var syncCompletedToast: XCUIElement {
         app.staticTexts[AccessibilityIdentifiers.Toast.message]
     }
@@ -785,7 +785,7 @@ struct SettingsScreen {
 
     /// The DSAlertSheet's destructive confirm button.
     var confirmSignOut: XCUIElement {
-        app.buttons[L10n.Common.logOut].firstMatch
+        app.buttons[AccessibilityIdentifiers.Alert.confirm].firstMatch
     }
 
     /// Only the language picker shows this subtitle, so it proves the push. A back button query

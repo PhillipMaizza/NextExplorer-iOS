@@ -1,4 +1,5 @@
 #if os(macOS)
+    import CoreModels
     import Localization
     import SwiftUI
 
@@ -76,6 +77,7 @@
                         .frame(maxWidth: .infinity, minHeight: Constants.buttonHeight)
                     }
                     .buttonStyle(.macDS(isDestructive ? .failure : .primary, size: .small))
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Alert.confirm)
                     if let neutralTitle, let onNeutral {
                         button(neutralTitle, style: .secondary, action: onNeutral)
                     }
