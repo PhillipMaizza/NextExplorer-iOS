@@ -133,7 +133,8 @@ public enum BackgroundUploadEvents {
             !flagged.isEmpty,
             let activeID = await authClient.activeAccountID(),
             flagged.contains(activeID),
-            let credentials = await authClient.listSessions().first(where: { $0.accountID == activeID })
+            let credentials = await authClient.listSessions().first(where: { $0.accountID == activeID }),
+            !credentials.isLocked
         else { return }
         do {
             _ = try await authClient.me(credentials.serverBaseURL)
