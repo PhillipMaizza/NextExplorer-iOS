@@ -26,6 +26,9 @@ struct GalleryFetchedPage<Value: Equatable & Sendable, Content: View>: View {
     @State private var phase: GalleryLoadPhase<Value> = .loading
     /// Bumped by Retry so the load task runs again.
     @State private var attempt = 0
+    #if os(macOS)
+        @Environment(\.macPeekFallback) private var peekFallback
+    #endif
 
     var body: some View {
         Group {
@@ -36,13 +39,28 @@ struct GalleryFetchedPage<Value: Equatable & Sendable, Content: View>: View {
             case let .loaded(value):
                 content(value)
             case let .failed(message):
-                PreviewErrorView(message: message) {
-                    phase = .loading
-                    attempt += 1
-                }
+                #if os(macOS)
+                    if let peekFallback {
+                        MacPeekFileSummary(
+                            item: peekFallback.item,
+                            serverURL: peekFallback.serverURL,
+                            message: message,
+                            onRetry: retry
+                        )
+                    } else {
+                        PreviewErrorView(message: message, onRetry: retry)
+                    }
+                #elseif os(iOS)
+                    PreviewErrorView(message: message, onRetry: retry)
+                #endif
             }
         }
         .task(id: "\(isNear)\u{0}\(attempt)") { await load() }
+    }
+
+    private func retry() {
+        phase = .loading
+        attempt += 1
     }
 
     @MainActor
