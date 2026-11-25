@@ -17,16 +17,20 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
 
     /// A cancelled sign in (the login screen closed or the task torn down) cancels the web
     /// session, which answers the continuation with `canceledLogin`; a finished session is let go.
-    func authenticate(url: URL, callbackURLScheme: String) async throws -> URL {
+    func authenticate(url: URL, callbackURLScheme: String, browserSession: OIDCBrowserSession) async throws -> URL {
         defer { session = nil }
         return try await withTaskCancellationHandler {
-            try await start(url: url, callbackURLScheme: callbackURLScheme)
+            try await start(url: url, callbackURLScheme: callbackURLScheme, browserSession: browserSession)
         } onCancel: {
             Task { @MainActor [weak self] in self?.session?.cancel() }
         }
     }
 
-    private func start(url: URL, callbackURLScheme: String) async throws -> URL {
+    private func start(
+        url: URL,
+        callbackURLScheme: String,
+        browserSession: OIDCBrowserSession
+    ) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
             let session = ASWebAuthenticationSession(
                 url: url,
@@ -53,7 +57,7 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
             session.presentationContextProvider = self
             // Share the system browser session so an existing IdP/SSO sign in (and its passkey
             // association) is reused rather than forcing a fresh authentication every time.
-            session.prefersEphemeralWebBrowserSession = false
+            session.prefersEphemeralWebBrowserSession = browserSession == .ephemeral
             self.session = session
             if !session.start() {
                 continuation.resume(throwing: AuthClientError.oidcFailed("could not start web session"))

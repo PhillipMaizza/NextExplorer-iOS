@@ -103,7 +103,7 @@ public extension AuthClient {
                 )
                 return user
             },
-            loginOIDC: { serverURL in
+            loginOIDC: { serverURL, browserSession in
                 let pkce = try PKCE.generate()
                 var components = URLComponents(
                     url: serverURL.appendingPathComponent(AuthPath.oidcMobileLogin),
@@ -120,7 +120,8 @@ public extension AuthClient {
                 let authenticator = await OIDCWebAuthenticator()
                 let callbackURL = try await authenticator.authenticate(
                     url: authURL,
-                    callbackURLScheme: AuthClientConfiguration.oidcCallbackScheme
+                    callbackURLScheme: AuthClientConfiguration.oidcCallbackScheme,
+                    browserSession: browserSession
                 )
 
                 let code = try OIDCCallback.code(from: callbackURL)
@@ -201,6 +202,17 @@ public extension AuthClient {
             },
             clearAllSessions: {
                 await onCookieQueue { cookieStore.clearAll() }
+            },
+            lockSessions: { shouldLock in
+                try await onCookieQueue { try keychainErrors { try cookieStore.lock(where: shouldLock) } }
+            },
+            endSession: { credentials in
+                try? await localAuthService.logout(serverURL: credentials.serverBaseURL, credentials: credentials)
+            },
+            setRequireSignIn: { accountID, requireSignIn in
+                try await onCookieQueue {
+                    try keychainErrors { try cookieStore.setRequireSignIn(requireSignIn, id: accountID) }
+                }
             }
         )
     }

@@ -26,11 +26,27 @@ public struct StoredSessions: Codable, Equatable, Sendable {
     /// Adds a new account or replaces an existing one with the same identity, then makes it active.
     public mutating func upsert(_ credentials: SessionCredentials) {
         if let index = sessions.firstIndex(where: { $0.accountID == credentials.accountID }) {
-            sessions[index] = credentials
+            var replacement = credentials
+            replacement.requireSignIn = credentials.requireSignIn ?? sessions[index].requireSignIn
+            sessions[index] = replacement
         } else {
             sessions.append(credentials)
         }
         activeID = credentials.accountID
+    }
+
+    public mutating func lock(where shouldLock: (SessionCredentials) -> Bool) -> [SessionCredentials] {
+        var unlocked: [SessionCredentials] = []
+        for index in sessions.indices where !sessions[index].isLocked && shouldLock(sessions[index]) {
+            unlocked.append(sessions[index])
+            sessions[index] = sessions[index].locked
+        }
+        return unlocked
+    }
+
+    public mutating func setRequireSignIn(_ requireSignIn: RequireSignIn?, id: String) {
+        guard let index = sessions.firstIndex(where: { $0.accountID == id }) else { return }
+        sessions[index].requireSignIn = requireSignIn
     }
 
     /// Removes an account. If it was active, the first remaining account becomes active (or `nil`

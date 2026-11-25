@@ -12,7 +12,7 @@ public struct AuthClient: Sendable {
     /// Runs the passkey capable OIDC bridge (ASWebAuthenticationSession + PKCE code exchange)
     /// and, on success, persists the resulting session the same way `login` does. Throws
     /// `AuthClientError.oidcCancelled` when the user dismisses the web sheet.
-    public var loginOIDC: @Sendable (_ serverURL: URL) async throws -> User
+    public var loginOIDC: @Sendable (_ serverURL: URL, _ browserSession: OIDCBrowserSession) async throws -> User
     public var me: @Sendable (_ serverURL: URL) async throws -> User
     public var logout: @Sendable (_ serverURL: URL) async throws -> Void
     /// Restores the active account's session (installs its cookie), or `nil` if no account is
@@ -44,4 +44,14 @@ public struct AuthClient: Sendable {
     public var clearActiveSession: @Sendable () async throws -> SessionCredentials?
     /// Full teardown: every account signed out (hard reset of the stored set and its cookies).
     public var clearAllSessions: @Sendable () async -> Void
+    public var lockSessions: @Sendable (
+        _ shouldLock: @escaping @Sendable (SessionCredentials) -> Bool
+    ) async throws -> [SessionCredentials]
+    public var endSession: @Sendable (_ credentials: SessionCredentials) async -> Void
+    public var setRequireSignIn: @Sendable (_ accountID: String, _ requireSignIn: RequireSignIn?) async throws -> Void
+}
+
+public enum OIDCBrowserSession: Sendable {
+    case shared
+    case ephemeral
 }
