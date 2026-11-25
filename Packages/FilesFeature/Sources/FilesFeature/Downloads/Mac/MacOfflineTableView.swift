@@ -260,7 +260,7 @@
                 item: selection.count == 1 ? peekItem(for: selection.first, in: rows) : nil,
                 items: pinnedRows.compactMap { peekItem(for: $0.id, in: rows) },
                 isPeeking: $isPeeking,
-                serverURL: store.serverURL ?? URL(fileURLWithPath: "/"),
+                serverURL: store.serverURL,
                 shouldShowThumbnails: store.preferences.shouldShowThumbnails,
                 showsHiddenFiles: store.preferences.shouldShowHiddenFiles,
                 isSavedOffline: { _ in true },
@@ -280,7 +280,7 @@
         }
 
         private func peekItem(for id: MacOfflineTableRow.ID?, in rows: [MacOfflineTableRow]) -> FileItem? {
-            guard store.serverURL != nil, let usage = row(for: id, in: rows)?.pinned else { return nil }
+            guard let usage = row(for: id, in: rows)?.pinned else { return nil }
             return OfflineDownloadsFeature.fileItem(from: usage.root)
         }
 
