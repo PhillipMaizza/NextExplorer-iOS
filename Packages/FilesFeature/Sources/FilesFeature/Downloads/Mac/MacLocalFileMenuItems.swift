@@ -1,9 +1,18 @@
 #if os(macOS)
     import AppKit
     import ComposableArchitecture
+    import CoreModels
     import DesignSystem
+    import FilesClient
     import Localization
     import SwiftUI
+
+    extension OfflineFileStore {
+        func keptCopy(of item: FileItem) -> @Sendable () -> URL? {
+            let store = self
+            return { store.localURLIgnoringStaleness(item) }
+        }
+    }
 
     @MainActor
     enum MacLocalFileAction: CaseIterable {

@@ -12,7 +12,28 @@ struct PreviewErrorView: View {
     let message: String
     var onRetry: (() -> Void)?
 
+    #if os(macOS)
+        @Environment(\.macPeekFallback) private var peekFallback
+    #endif
+
     var body: some View {
+        #if os(macOS)
+            if let peekFallback {
+                MacPeekFileSummary(
+                    item: peekFallback.item,
+                    serverURL: peekFallback.serverURL,
+                    message: message,
+                    onRetry: onRetry
+                )
+            } else {
+                notice
+            }
+        #elseif os(iOS)
+            notice
+        #endif
+    }
+
+    private var notice: some View {
         VStack(spacing: Constants.spacing) {
             IconKit.warning
                 .resizable()

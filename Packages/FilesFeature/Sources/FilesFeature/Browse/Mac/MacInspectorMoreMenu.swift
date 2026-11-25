@@ -2,6 +2,7 @@
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
+    import FilesClient
     import Localization
     import SwiftUI
 
@@ -15,6 +16,8 @@
         let store: StoreOf<BrowseFeature>
         let item: FileItem
         let onOpenWithFailed: (String) -> Void
+
+        @Dependency(\.offlineFileStore) private var offlineFileStore
 
         private var access: FileAccess? {
             store.access
@@ -64,7 +67,7 @@
                 MacInspectorOpenWithRow(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
             }
             if store.shouldShowDeviceContent, isOffline, !item.isDirectory {
-                MacLocalFilePanelRows(resolve: keptCopy)
+                MacLocalFilePanelRows(resolve: offlineFileStore.pinned(to: store.cacheScope).keptCopy(of: item))
             } else if access?.canDownload ?? false, !store.shouldShowDeviceContent {
                 MacActionMenuButton(SaveActionStyle.title, icon: IconKit.menuDownload) {
                     store.send(.downloadTapped(item))
@@ -99,13 +102,6 @@
                     store.send(.deleteTapped(item))
                 }
             }
-        }
-
-        private var keptCopy: @Sendable () -> URL? {
-            @Dependency(\.offlineFileStore) var offlineFileStore
-            let store = offlineFileStore.pinned(to: store.cacheScope)
-            let item = item
-            return { store.localURLIgnoringStaleness(item) }
         }
 
         @ViewBuilder

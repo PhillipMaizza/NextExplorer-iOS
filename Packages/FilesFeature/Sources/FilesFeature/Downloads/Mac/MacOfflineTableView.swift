@@ -88,6 +88,7 @@
         @FocusState private var isFocused: Bool
         @State private var isPeeking = false
         @State private var width: CGFloat = .zero
+        @Dependency(\.offlineFileStore) private var offlineFileStore
 
         private var columns: MacTableColumnFit<Column> {
             MacTableColumnFit(
@@ -181,7 +182,9 @@
             } else if !selected.isEmpty, selected.allSatisfy({ $0.pinned != nil }) {
                 if selected.count == 1, let root = selected.first?.pinned?.root, !root.isDirectory {
                     Section {
-                        MacLocalFileMenuItems(resolve: keptCopy(of: root))
+                        MacLocalFileMenuItems(
+                            resolve: offlineFileStore.keptCopy(of: OfflineDownloadsFeature.fileItem(from: root))
+                        )
                     }
                 }
                 Button(role: .destructive) { remove(ids) } label: {
@@ -194,13 +197,6 @@
                 }
                 .tint(.negative)
             }
-        }
-
-        private func keptCopy(of root: OfflinePinnedRoot) -> @Sendable () -> URL? {
-            @Dependency(\.offlineFileStore) var offlineFileStore
-            let store = offlineFileStore
-            let item = OfflineDownloadsFeature.fileItem(from: root)
-            return { store.localURLIgnoringStaleness(item) }
         }
 
         private func icon(for row: MacOfflineTableRow) -> some View {
