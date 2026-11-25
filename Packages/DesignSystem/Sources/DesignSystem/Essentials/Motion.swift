@@ -128,6 +128,8 @@ public enum DSMotion {
 
     public static let selectModeStepDuration: Duration = .milliseconds(250)
 
+    public static let skeletonGraceDuration: Duration = .milliseconds(400)
+
     /// How long a toolbar menu takes to close back into its button.
     public static let menuCloseDuration: Duration = .milliseconds(250)
 

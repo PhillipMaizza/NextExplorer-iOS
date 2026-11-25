@@ -173,7 +173,7 @@
                     onScrolled: onScrollTargetShown
                 )
             }
-            .macBoardTable()
+            .macBoardTable(showsHeaders: !items.isEmpty || personalSpace != nil)
             .backgroundGradient()
             .macBrowseTableWidth($width)
             // The table's scroll view otherwise draws its header material up under the pinned title.

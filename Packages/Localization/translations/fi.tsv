@@ -1357,3 +1357,17 @@ requireSignIn.keepOfflineFilesFooter	Kun tämä on pois päältä, lukitus poist
 shareUpload.locked	NextExplorer on lukittu. Avaa sovellus, kirjaudu uudelleen ja jaa sitten uudelleen.
 requireSignIn.navigationTitle	Vaadi kirjautuminen
 requireSignIn.toggle	Vaadi kirjautuminen
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Siirry Selaa-näkymään
+emptyGuide.favoritesTitle	Kansiot yhden klikkauksen päässä
+emptyGuide.favoritesBody	Napsauta kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%1$@”.\nSe näkyy täällä, ja ”%2$@” antaa sille oman nimen, värin ja kuvakkeen.
+emptyGuide.sharedTitle	Jaa linkillä
+emptyGuide.sharedBody	Napsauta tiedostoa tai kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%@”.\nLinkki näkyy täällä, ja siinä kerrotaan, kuka voi avata sen ja mihin asti.
+emptyGuide.sharedWithMeTitle	Kanssasi ei ole vielä jaettu mitään
+emptyGuide.offlineTitle	Pidä tiedostot tällä Macilla
+emptyGuide.offlineBody	Napsauta mitä tahansa tiedostoa tai kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%@”.\nKansiot saavat uudet tiedostot aina, kun sovellus synkronoi.\n\nLadatut tiedostot aukeavat myös ilman yhteyttä.
+emptyGuide.trashTitle	Roskakori on tyhjä
+emptyGuide.trashRestore	Palauta vie kohteen takaisin paikalleen tai valitsemaasi kansioon.
+emptyGuide.trashShareLinks	Jakolinkit lakkaavat toimimasta, kun tiedosto on täällä.\nPalautus voi tuoda ne takaisin.
+emptyGuide.browseDropTitle	Pudota tiedostot tähän ladataksesi ne

@@ -1580,3 +1580,17 @@ requireSignIn.keepOfflineFilesFooter	عند الإيقاف، يزيل القفل
 shareUpload.locked	NextExplorer مقفل. افتحه وسجّل الدخول مرة أخرى، ثم شارك مجددًا.
 requireSignIn.navigationTitle	طلب تسجيل الدخول
 requireSignIn.toggle	طلب تسجيل الدخول
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	الانتقال إلى تصفح
+emptyGuide.favoritesTitle	مجلداتك على بُعد نقرة
+emptyGuide.favoritesBody	انقر بزر الماوس الأيمن على مجلد في تصفح واختر «%1$@».\nسيظهر هنا، ويمنحه «%2$@» اسمًا ولونًا وأيقونة خاصة به.
+emptyGuide.sharedTitle	المشاركة عبر رابط
+emptyGuide.sharedBody	انقر بزر الماوس الأيمن على ملف أو مجلد في تصفح واختر «%@».\nيظهر رابطه هنا، مع من يمكنه فتحه وحتى متى.
+emptyGuide.sharedWithMeTitle	لم يُشارَك معك شيء بعد
+emptyGuide.offlineTitle	احتفظ بالملفات على هذا الـ Mac
+emptyGuide.offlineBody	انقر بزر الماوس الأيمن على أي ملف أو مجلد في تصفح واختر «%@».\nتحصل المجلدات على الملفات الجديدة في كل مزامنة للتطبيق.\n\nتُفتح الملفات التي جرى تنزيلها حتى بدون اتصال.
+emptyGuide.trashTitle	سلة المهملات فارغة
+emptyGuide.trashRestore	الاستعادة تعيد العنصر إلى مكانه، أو إلى أي مجلد تختاره.
+emptyGuide.trashShareLinks	تتوقف روابط المشاركة عن العمل ما دام ملفها هنا.\nيمكن للاستعادة إرجاعها.
+emptyGuide.browseDropTitle	أفلت الملفات هنا لرفعها

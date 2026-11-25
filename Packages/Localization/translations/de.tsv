@@ -1428,3 +1428,17 @@ requireSignIn.keepOfflineFilesFooter	Wenn aus, entfernt das Sperren auch die Off
 shareUpload.locked	NextExplorer ist gesperrt. Öffne die App, melde dich erneut an und teile dann noch einmal.
 requireSignIn.navigationTitle	Anmeldung erforderlich
 requireSignIn.toggle	Anmeldung erforderlich
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Zu Durchsuchen
+emptyGuide.favoritesTitle	Ordner mit einem Klick erreichen
+emptyGuide.favoritesBody	Klicke in Durchsuchen mit der rechten Maustaste auf einen Ordner und wähle „%1$@“.\nEr erscheint hier, und mit „%2$@“ gibst du ihm einen eigenen Namen, eine Farbe und ein Symbol.
+emptyGuide.sharedTitle	Mit einem Link teilen
+emptyGuide.sharedBody	Klicke in Durchsuchen mit der rechten Maustaste auf eine Datei oder einen Ordner und wähle „%@“.\nDer Link erscheint hier, mit wer ihn öffnen kann und bis wann.
+emptyGuide.sharedWithMeTitle	Noch nichts mit dir geteilt
+emptyGuide.offlineTitle	Dateien auf diesem Mac behalten
+emptyGuide.offlineBody	Klicke in Durchsuchen mit der rechten Maustaste auf eine Datei oder einen Ordner und wähle „%@“.\nOrdner übernehmen neue Dateien bei jedem Abgleich der App.\n\nHeruntergeladene Dateien lassen sich auch ohne Verbindung öffnen.
+emptyGuide.trashTitle	Der Papierkorb ist leer
+emptyGuide.trashRestore	Wiederherstellen legt ein Objekt zurück an seinen Ort oder in einen Ordner deiner Wahl.
+emptyGuide.trashShareLinks	Freigabelinks funktionieren nicht, solange ihre Datei hier liegt.\nEine Wiederherstellung kann sie zurückbringen.
+emptyGuide.browseDropTitle	Dateien zum Hochladen hier ablegen

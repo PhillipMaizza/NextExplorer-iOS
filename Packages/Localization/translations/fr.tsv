@@ -1428,3 +1428,17 @@ requireSignIn.keepOfflineFilesFooter	Si désactivé, le verrouillage supprime au
 shareUpload.locked	NextExplorer est verrouillé. Ouvrez l’app, reconnectez-vous, puis partagez à nouveau.
 requireSignIn.navigationTitle	Exiger la connexion
 requireSignIn.toggle	Exiger la connexion
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Aller à Explorer
+emptyGuide.favoritesTitle	Vos dossiers à un clic
+emptyGuide.favoritesBody	Faites un clic droit sur un dossier dans Explorer et choisissez « %1$@ ».\nIl apparaît ici, et « %2$@ » lui donne un nom, une couleur et une icône.
+emptyGuide.sharedTitle	Partager avec un lien
+emptyGuide.sharedBody	Faites un clic droit sur un fichier ou un dossier dans Explorer et choisissez « %@ ».\nSon lien apparaît ici, avec qui peut l’ouvrir et jusqu’à quand.
+emptyGuide.sharedWithMeTitle	Rien n’a encore été partagé avec vous
+emptyGuide.offlineTitle	Garder des fichiers sur ce Mac
+emptyGuide.offlineBody	Faites un clic droit sur un fichier ou un dossier dans Explorer et choisissez « %@ ».\nLes dossiers récupèrent les nouveaux fichiers à chaque synchronisation de l’app.\n\nLes fichiers téléchargés s'ouvrent même sans connexion.
+emptyGuide.trashTitle	La corbeille est vide
+emptyGuide.trashRestore	Restaurer remet un élément à sa place, ou dans le dossier de votre choix.
+emptyGuide.trashShareLinks	Les liens de partage cessent de fonctionner tant que leur fichier est ici.\nUne restauration peut les rétablir.
+emptyGuide.browseDropTitle	Déposez des fichiers ici pour les envoyer

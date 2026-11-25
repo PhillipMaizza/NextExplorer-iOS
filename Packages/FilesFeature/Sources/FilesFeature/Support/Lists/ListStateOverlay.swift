@@ -2,6 +2,11 @@ import DesignSystem
 import Localization
 import SwiftUI
 
+enum MacListGuide: Equatable {
+    case favorites, sharedByMe, sharedWithMe, offline
+    case trash(retentionDays: Int?)
+}
+
 enum ListPhase: Equatable {
     case loading, error, empty, noResults, content
 
@@ -46,6 +51,7 @@ struct ListStateOverlay: View {
     let emptyMessage: String
     let noResultsMessage: String
     var pullOffset: CGFloat = 0
+    var macGuide: MacListGuide?
     let onRetry: () -> Void
 
     var body: some View {
@@ -59,7 +65,7 @@ struct ListStateOverlay: View {
             )
             .shown(phase == .error && errorMessage != nil)
 
-            EmptyStateView(icon: emptyIcon, message: emptyMessage)
+            emptyState
                 .shown(phase == .empty)
 
             EmptyStateView(icon: IconKit.search, message: noResultsMessage)
@@ -70,6 +76,19 @@ struct ListStateOverlay: View {
         // Let list row taps through whenever the list itself is on screen; capture them (and
         // keep the retry button live) only while a placeholder is up.
         .allowsHitTesting(phase.isPlaceholder)
+    }
+
+    @ViewBuilder
+    private var emptyState: some View {
+        #if os(macOS)
+            if let macGuide {
+                Color.clear.macEmptyGuide(phase == .empty ? macGuide : nil)
+            } else {
+                EmptyStateView(icon: emptyIcon, message: emptyMessage)
+            }
+        #elseif os(iOS)
+            EmptyStateView(icon: emptyIcon, message: emptyMessage)
+        #endif
     }
 }
 

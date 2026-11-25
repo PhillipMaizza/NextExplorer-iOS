@@ -154,7 +154,7 @@
                     open(row)
                 }
             }
-            .macBoardTable()
+            .macBoardTable(showsHeaders: !rows.isEmpty)
             .macBrowseTableWidth($width)
             // The table's scroll view otherwise draws its header material up under the pinned title.
             .clipped()

@@ -1321,3 +1321,17 @@ requireSignIn.keepOfflineFilesFooter	Khi tắt, việc khóa cũng xóa tệp ng
 shareUpload.locked	NextExplorer đã khóa. Mở ứng dụng, đăng nhập lại rồi chia sẻ lại.
 requireSignIn.navigationTitle	Yêu cầu đăng nhập
 requireSignIn.toggle	Yêu cầu đăng nhập
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Đi tới Duyệt
+emptyGuide.favoritesTitle	Thư mục chỉ cách một cú nhấp
+emptyGuide.favoritesBody	Nhấp chuột phải vào một thư mục trong Duyệt và chọn “%1$@”.\nThư mục sẽ hiện ở đây, và “%2$@” cho nó tên, màu và biểu tượng riêng.
+emptyGuide.sharedTitle	Chia sẻ bằng liên kết
+emptyGuide.sharedBody	Nhấp chuột phải vào tệp hoặc thư mục trong Duyệt và chọn “%@”.\nLiên kết hiện ở đây, kèm ai có thể mở và đến khi nào.
+emptyGuide.sharedWithMeTitle	Chưa có gì được chia sẻ với bạn
+emptyGuide.offlineTitle	Giữ tệp trên máy Mac này
+emptyGuide.offlineBody	Nhấp chuột phải vào bất kỳ tệp hoặc thư mục nào trong Duyệt và chọn “%@”.\nThư mục nhận tệp mới mỗi lần ứng dụng đồng bộ.\n\nCác tệp đã tải xuống vẫn mở được khi không có kết nối.
+emptyGuide.trashTitle	Thùng rác trống
+emptyGuide.trashRestore	Khôi phục đưa mục về chỗ cũ, hoặc vào bất kỳ thư mục nào bạn chọn.
+emptyGuide.trashShareLinks	Liên kết chia sẻ ngừng hoạt động khi tệp nằm ở đây.\nKhôi phục có thể đưa chúng trở lại.
+emptyGuide.browseDropTitle	Thả tệp vào đây để tải lên

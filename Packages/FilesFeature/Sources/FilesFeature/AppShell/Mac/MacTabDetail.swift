@@ -9,6 +9,12 @@
     struct MacTabDetail: View {
         let store: StoreOf<MainTabFeature>
         @State private var inspectorReserve: CGFloat = .zero
+        @State private var browseOpener: MacBrowseOpener
+
+        init(store: StoreOf<MainTabFeature>) {
+            self.store = store
+            _browseOpener = State(initialValue: MacBrowseOpener { store.send(.tabSelected(.browse)) })
+        }
 
         var body: some View {
             if store.selectedTab == .settings {
@@ -17,6 +23,16 @@
                 MacPaneCard(title: nil, subtitle: nil, reserve: inspectorReserve) {
                     section.padding(.horizontal, MacPaneInset.section)
                 }
+                .overlayPreferenceValue(MacEmptyGuideKey.self) { guide in
+                    ZStack {
+                        if let guide {
+                            MacListGuideView(guide: guide)
+                                .transition(.opacity)
+                        }
+                    }
+                    .animation(DSMotion.stateFade, value: guide)
+                }
+                .environment(\.showMacBrowse, browseOpener)
                 .onPreferenceChange(MacInspectorReserveKey.self) { reserve in
                     withAnimation(DSMotion.stateFade) { inspectorReserve = reserve }
                 }

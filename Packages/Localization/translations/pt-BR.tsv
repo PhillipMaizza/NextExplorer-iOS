@@ -1423,3 +1423,17 @@ requireSignIn.keepOfflineFilesFooter	Se desativado, o bloqueio também remove de
 shareUpload.locked	O NextExplorer está bloqueado. Abra o app, entre novamente e compartilhe de novo.
 requireSignIn.navigationTitle	Exigir login
 requireSignIn.toggle	Exigir login
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Ir para Explorar
+emptyGuide.favoritesTitle	Suas pastas a um clique
+emptyGuide.favoritesBody	Clique com o botão direito em uma pasta em Explorar e escolha “%1$@”.\nEla aparece aqui, e “%2$@” dá a ela um nome, uma cor e um ícone próprios.
+emptyGuide.sharedTitle	Compartilhar com um link
+emptyGuide.sharedBody	Clique com o botão direito em um arquivo ou pasta em Explorar e escolha “%@”.\nO link aparece aqui, com quem pode abrir e até quando.
+emptyGuide.sharedWithMeTitle	Nada foi compartilhado com você ainda
+emptyGuide.offlineTitle	Manter arquivos neste Mac
+emptyGuide.offlineBody	Clique com o botão direito em qualquer arquivo ou pasta em Explorar e escolha “%@”.\nAs pastas recebem arquivos novos sempre que o app sincroniza.\n\nOs arquivos baixados abrem mesmo sem conexão.
+emptyGuide.trashTitle	A lixeira está vazia
+emptyGuide.trashRestore	Restaurar devolve um item para onde estava, ou para a pasta que você escolher.
+emptyGuide.trashShareLinks	Os links de compartilhamento param de funcionar enquanto o arquivo está aqui.\nUma restauração pode trazê-los de volta.
+emptyGuide.browseDropTitle	Solte arquivos aqui para enviar

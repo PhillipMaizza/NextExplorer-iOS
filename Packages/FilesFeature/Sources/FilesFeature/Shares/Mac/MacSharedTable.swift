@@ -66,6 +66,7 @@
         @FocusState private var isFocused: Bool
         @State private var width: CGFloat = .zero
         @State private var isPeeking = false
+        @State private var isSkeletonDue = false
 
         init(
             store: StoreOf<SharedFeature>,
@@ -108,7 +109,8 @@
         }
 
         var body: some View {
-            let rows = (isLoading ? SharedSegmentList.placeholderItems : store.state.items(for: segment))
+            let placeholders = isSkeletonDue ? SharedSegmentList.placeholderItems : []
+            let rows = (isLoading ? placeholders : store.state.items(for: segment))
                 .map { item in
                     var row = MacSharedRow(
                         item: item,
@@ -120,11 +122,18 @@
                 }
                 .sorted(using: sortOrder)
             table(rows)
-                .macBoardTable()
+                .macBoardTable(showsHeaders: !rows.isEmpty)
                 .macBrowseTableWidth($width)
                 // The table's scroll view otherwise draws its header material up under the pinned title.
                 .clipped()
                 .allowsHitTesting(!isLoading)
+                .task(id: isLoading) {
+                    isSkeletonDue = false
+                    guard isLoading else { return }
+                    try? await DSMotion.waitForStep(DSMotion.skeletonGraceDuration)
+                    guard !Task.isCancelled else { return }
+                    isSkeletonDue = true
+                }
                 // The placeholder rows carry made up names; VoiceOver skips them.
                 .accessibilityHidden(isLoading)
                 .focused($isFocused)
@@ -166,6 +175,7 @@
                         emptyMessage: store.state.emptyMessage(for: segment),
                         noResultsMessage: store.state.noResultsMessage(for: segment),
                         pullOffset: 0,
+                        macGuide: isByMe ? .sharedByMe : .sharedWithMe,
                         onRetry: { store.send(.refreshRequested) }
                     )
                 }

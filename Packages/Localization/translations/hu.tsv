@@ -1357,3 +1357,17 @@ requireSignIn.keepOfflineFilesFooter	Ha ki van kapcsolva, a zárolás erről az 
 shareUpload.locked	A NextExplorer zárolva van. Nyisd meg, jelentkezz be újra, majd oszd meg ismét.
 requireSignIn.navigationTitle	Bejelentkezés kérése
 requireSignIn.toggle	Bejelentkezés kérése
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Ugrás a Böngészéshez
+emptyGuide.favoritesTitle	Mappák egy kattintásnyira
+emptyGuide.favoritesBody	Kattints jobb gombbal egy mappára a Böngészésben, és válaszd a „%1$@” lehetőséget.\nItt jelenik meg, a „%2$@” pedig saját nevet, színt és ikont ad neki.
+emptyGuide.sharedTitle	Megosztás linkkel
+emptyGuide.sharedBody	Kattints jobb gombbal egy fájlra vagy mappára a Böngészésben, és válaszd a „%@” lehetőséget.\nA link itt jelenik meg, azzal együtt, hogy ki és meddig nyithatja meg.
+emptyGuide.sharedWithMeTitle	Még semmit sem osztottak meg veled
+emptyGuide.offlineTitle	Fájlok megtartása ezen a Macen
+emptyGuide.offlineBody	Kattints jobb gombbal bármely fájlra vagy mappára a Böngészésben, és válaszd a „%@” lehetőséget.\nA mappák minden szinkronizáláskor megkapják az új fájlokat.\n\nA letöltött fájlok kapcsolat nélkül is megnyílnak.
+emptyGuide.trashTitle	A kuka üres
+emptyGuide.trashRestore	A visszaállítás az elemet az eredeti helyére vagy egy választott mappába teszi vissza.
+emptyGuide.trashShareLinks	A megosztási linkek nem működnek, amíg a fájl itt van.\nEgy visszaállítás visszahozhatja őket.
+emptyGuide.browseDropTitle	Húzd ide a feltöltendő fájlokat

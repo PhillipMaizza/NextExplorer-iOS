@@ -81,6 +81,19 @@ struct FavoritesView: View {
         L10n.Favorites.removeConfirm(store.selectedFavoriteIDs.count)
     }
 
+    private var stateOverlay: some View {
+        ListStateOverlay(
+            phase: listPhase,
+            errorMessage: overlayErrorMessage,
+            emptyIcon: IconKit.star,
+            emptyMessage: L10n.Favorites.emptyList,
+            noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
+            pullOffset: pullOffset,
+            macGuide: .favorites,
+            onRetry: { store.send(store.isSearching ? .searchRetryTapped : .refreshButtonTapped) }
+        )
+    }
+
     /// The folder path bar is `SplitDetailBreadcrumb`, floating over the split view: an iPhone
     /// shows none.
     var body: some View {
@@ -116,6 +129,11 @@ struct FavoritesView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay {
+            if isMacTable {
+                stateOverlay
+            }
+        }
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
                 title: L10n.Favorites.navigationTitle,
@@ -154,15 +172,9 @@ struct FavoritesView: View {
         // empty/error message is an overlay fed the list's pull to refresh drag so it
         // rubber bands with it. One animation cross fades the whole state change.
         .overlay {
-            ListStateOverlay(
-                phase: listPhase,
-                errorMessage: overlayErrorMessage,
-                emptyIcon: IconKit.star,
-                emptyMessage: L10n.Favorites.emptyList,
-                noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
-                pullOffset: pullOffset,
-                onRetry: { store.send(store.isSearching ? .searchRetryTapped : .refreshButtonTapped) }
-            )
+            if !isMacTable {
+                stateOverlay
+            }
         }
         .animation(DSMotion.contentReveal, value: listPhase)
         .featureToast(error: store.actionErrorMessage)

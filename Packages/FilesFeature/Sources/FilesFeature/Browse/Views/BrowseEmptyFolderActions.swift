@@ -22,6 +22,23 @@ struct BrowseEmptyFolderActions: View {
     #endif
 
     var body: some View {
+        #if os(macOS)
+            if canUpload, !store.isSelecting {
+                MacBrowseDropZone(
+                    canCreateFolder: canCreateFolder,
+                    onCreateFolder: { store.send(.newFolderTapped) },
+                    onUpload: { isFilesPickerPresented = true }
+                )
+            } else {
+                actions
+            }
+        #elseif os(iOS)
+            actions
+        #endif
+    }
+
+    @ViewBuilder
+    private var actions: some View {
         if hasAnyAction {
             VStack(spacing: .space4) {
                 Text(title)
