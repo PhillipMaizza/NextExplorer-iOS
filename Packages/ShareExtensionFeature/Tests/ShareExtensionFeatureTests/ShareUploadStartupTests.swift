@@ -111,6 +111,25 @@ extension ShareUploadFeatureTests {
         }
 
         @Test
+        func aLockedAccountUploadsNothingUntilItIsSignedInAgainInTheApp() async {
+            let calls = Calls()
+            let announcements = LockIsolated<[String]>([])
+            let locked = SessionCredentials.preview.locked
+            let store = store(credentials: locked, calls: calls, announcements: announcements)
+
+            await store.send(.onAppear) { $0.itemCount = 3 }
+            await store.receive(\.accountsLoaded) { $0.accounts = [locked] }
+            await store.receive(\.sessionLoaded) {
+                $0.credentials = locked
+                $0.phase = .locked
+            }
+            await store.finish()
+            #expect(!store.state.canUpload)
+            #expect(calls.all.isEmpty)
+            #expect(announcements.value == [L10n.ShareUpload.locked])
+        }
+
+        @Test
         func tryAgainAfterAnUnreadableSessionReadsItAgain() async {
             let isReadable = LockIsolated(false)
             let store = TestStore(initialState: ShareUploadFeature.State()) {

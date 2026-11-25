@@ -45,6 +45,11 @@ struct ShareUploadStatus: View {
                 if !openApp.isAvailable {
                     Text(L10n.ShareUpload.openAppInstructions).type(.body3(.regular), style: .secondary)
                 }
+            case .locked:
+                DSErrorCard(L10n.ShareUpload.locked)
+                if !openApp.isAvailable {
+                    Text(L10n.ShareUpload.openAppInstructions).type(.body3(.regular), style: .secondary)
+                }
             case .sessionUnreadable:
                 DSErrorCard(L10n.ShareUpload.sessionUnreadable)
             case .nothingToUpload:
@@ -212,7 +217,7 @@ extension ShareUploadFeature.State {
 
 extension ShareUploadFeature.Phase {
     static let previewCases: [ShareUploadFeature.Phase] = [
-        .loading, .checking, .ready, .preparing, .handingOff, .partiallyPrepared, .started, .signedOut,
+        .loading, .checking, .ready, .preparing, .handingOff, .partiallyPrepared, .started, .signedOut, .locked,
         .sessionUnreadable,
         .nothingToUpload, .failed, .certificateRequired, .certificateRejected,
     ]
