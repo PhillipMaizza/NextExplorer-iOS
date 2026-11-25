@@ -6,7 +6,11 @@
     import SwiftUI
 
     private enum Metrics {
-        static let locationColumnMinWidth: CGFloat = 120
+        static let locationColumnMinWidth: CGFloat = 200
+    }
+
+    private enum Column {
+        case location
     }
 
     /// Favorites as a Mac table, matching Browse's: name and location columns, double click to
@@ -20,6 +24,17 @@
         @State private var sortOrder: [KeyPathComparator<Favorite>] = []
         @FocusState private var isFocused: Bool
         @State private var isPeeking = false
+        @State private var width: CGFloat = .zero
+
+        private var showsLocation: Bool {
+            MacTableColumnFit(
+                width: width,
+                nameWidth: MacBrowseTableMetrics.nameColumnMinWidth,
+                spacing: MacTableMetrics.columnSpacing,
+                byPriority: [(Column.location, Metrics.locationColumnMinWidth)]
+            )
+            .shows(.location)
+        }
 
         private var displayed: [Favorite] {
             sortOrder.isEmpty ? favorites : favorites.sorted(using: sortOrder)
@@ -43,13 +58,15 @@
                     .macBoardTableCell()
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
-                TableColumn(L10n.FileInfo.rowLocation, value: \.path) { favorite in
-                    Text(MacInspectorLocation.trail(parent: (favorite.path as NSString).deletingLastPathComponent))
-                        .lineLimit(1)
-                        .truncationMode(.head)
-                        .foregroundStyle(.secondary)
+                if showsLocation {
+                    TableColumn(L10n.FileInfo.rowLocation, value: \.path) { favorite in
+                        Text(MacInspectorLocation.trail(parent: (favorite.path as NSString).deletingLastPathComponent))
+                            .lineLimit(1)
+                            .truncationMode(.head)
+                            .foregroundStyle(.secondary)
+                    }
+                    .width(min: Metrics.locationColumnMinWidth)
                 }
-                .width(min: Metrics.locationColumnMinWidth)
             } rows: {
                 ForEach(displayed) { favorite in
                     // The app's own private drag type: a plain string would drop the id as text
@@ -77,6 +94,7 @@
                 }
             }
             .macBoardTable()
+            .macBrowseTableWidth($width)
             // The table's scroll view otherwise draws its header material up under the pinned title.
             .clipped()
             .focused($isFocused)

@@ -23,7 +23,7 @@
             case received
         }
 
-        private let shown: Set<Column>
+        private let fit: MacTableColumnFit<Column>
 
         init(width: CGFloat, isByMe: Bool) {
             let byPriority: [(Column, CGFloat)] = isByMe
@@ -38,18 +38,16 @@
                     (.expires, Metrics.dateColumnWidth),
                     (.received, Metrics.dateColumnWidth),
                 ]
-            var used = MacBrowseTableMetrics.nameColumnMinWidth
-            var shown: Set<Column> = []
-            for (column, columnWidth) in byPriority {
-                used += MacTableMetrics.columnSpacing + columnWidth
-                guard used <= width else { break }
-                shown.insert(column)
-            }
-            self.shown = shown
+            fit = MacTableColumnFit(
+                width: width,
+                nameWidth: MacBrowseTableMetrics.nameColumnMinWidth,
+                spacing: MacTableMetrics.columnSpacing,
+                byPriority: byPriority
+            )
         }
 
         func shows(_ column: Column) -> Bool {
-            shown.contains(column)
+            fit.shows(column)
         }
     }
 
