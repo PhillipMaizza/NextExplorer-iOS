@@ -8,7 +8,7 @@ struct L10nTests {
         let pairs: [(key: String, value: String)] = [
             ("common.cancel", L10n.Common.cancel),
             ("common.retry", L10n.Common.retry),
-            ("common.logOut", L10n.Common.logOut),
+            ("settings.signOutButton", L10n.Settings.signOutButton),
             ("tab.browse", L10n.Tab.browse),
             ("browse.navigationTitle", L10n.Browse.navigationTitle),
             ("browse.action.getInfo", L10n.Browse.actionGetInfo),

@@ -50,7 +50,7 @@ public struct LockView: View {
                 icon: IconKit.signOut,
                 title: L10n.Settings.signOutAlertTitle,
                 message: L10n.Settings.signOutMessage,
-                confirmTitle: L10n.Common.logOut,
+                confirmTitle: L10n.Settings.signOutButton,
                 dismissTitle: L10n.Common.cancel,
                 role: .destructive,
                 isConfirmLoading: store.signOut.isRunning,
