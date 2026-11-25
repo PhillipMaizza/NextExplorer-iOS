@@ -34,7 +34,7 @@
                     HStack(spacing: .space8) {
                         icon(for: result)
                         VStack(alignment: .leading, spacing: .space2) {
-                            Text(result.name).lineLimit(1).truncationMode(.middle)
+                            MacFileNameText(name: result.name, isDirectory: result.isDirectory)
                             if let snippet = searchResultSnippet(result) {
                                 Text(snippet)
                                     .font(.callout)

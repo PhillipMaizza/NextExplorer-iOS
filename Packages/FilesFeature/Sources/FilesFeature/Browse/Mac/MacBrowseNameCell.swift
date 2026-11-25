@@ -27,9 +27,7 @@
                         onCancel: onRenameCancel
                     )
                 } else {
-                    Text(title)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                    MacFileNameText(name: title, isDirectory: item.isDirectory)
                         .accessibilityValue(isCut ? L10n.Browse.actionCut : "")
                 }
                 if isOffline {
