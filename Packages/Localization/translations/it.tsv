@@ -1415,6 +1415,9 @@ lock.subtitle	Accedi di nuovo per aprire i tuoi file.
 lock.signIn	Accedi
 lock.otherAccount	Questo è un altro account. Accedi come %@ per sbloccare, oppure esci.
 lock.status	Bloccato
+lockedSettings.note	%@ è bloccato. Le impostazioni dell’account e del server tornano dopo un nuovo accesso.
+lockedSettings.showLockScreen	Mostra schermata di blocco
+lockedSettings.accountFooter	Questo account è bloccato e la sua sessione è terminata. Accedi di nuovo dalla schermata di blocco per vedere le sue impostazioni e quelle del server.
 requireSignIn.footer	Quando esci dall’app, questo account si blocca e la sua sessione termina. Per sbloccare serve un nuovo accesso, con la tua chiave di sicurezza se il tuo accesso la richiede.
 requireSignIn.sectionLock	Blocca
 requireSignIn.appStart	All’avvio dell’app

@@ -1415,6 +1415,9 @@ lock.subtitle	Melde dich erneut an, um deine Dateien zu öffnen.
 lock.signIn	Anmelden
 lock.otherAccount	Das ist ein anderes Konto. Melde dich als %@ an, um zu entsperren, oder melde dich ab.
 lock.status	Gesperrt
+lockedSettings.note	%@ ist gesperrt. Konto- und Servereinstellungen sind wieder da, sobald du dich erneut anmeldest.
+lockedSettings.showLockScreen	Sperrbildschirm zeigen
+lockedSettings.accountFooter	Dieses Konto ist gesperrt und seine Sitzung ist beendet. Melde dich auf dem Sperrbildschirm erneut an, um seine Einstellungen und die des Servers zu sehen.
 requireSignIn.footer	Wenn du die App verlässt, wird dieses Konto gesperrt und seine Sitzung beendet. Zum Entsperren musst du dich neu anmelden, mit deinem Sicherheitsschlüssel, falls deine Anmeldung einen verlangt.
 requireSignIn.sectionLock	Sperren
 requireSignIn.appStart	Beim Start der App

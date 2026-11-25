@@ -1308,6 +1308,9 @@ lock.subtitle	Masuk lagi untuk membuka file Anda.
 lock.signIn	Masuk
 lock.otherAccount	Itu akun lain. Masuk sebagai %@ untuk membuka kunci, atau keluar.
 lock.status	Terkunci
+lockedSettings.note	%@ terkunci. Pengaturan akun dan server kembali setelah Anda masuk lagi.
+lockedSettings.showLockScreen	Tampilkan Layar Kunci
+lockedSettings.accountFooter	Akun ini terkunci dan sesinya telah berakhir. Masuk lagi dari layar kunci untuk melihat pengaturannya dan pengaturan server.
 requireSignIn.footer	Saat Anda meninggalkan aplikasi, akun ini terkunci dan sesinya berakhir. Membuka kunci perlu masuk ulang, dengan kunci keamanan Anda jika proses masuk memintanya.
 requireSignIn.sectionLock	Kunci
 requireSignIn.appStart	Saat aplikasi dimulai

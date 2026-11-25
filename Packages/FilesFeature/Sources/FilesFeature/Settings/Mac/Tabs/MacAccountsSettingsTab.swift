@@ -67,18 +67,18 @@
 
         private func detailsGroup(_ account: AccountSummary) -> some View {
             MacFormGroup(account.displayName) {
-                valueRow(L10n.MacSettings.username, account.username)
+                MacValueRow(L10n.MacSettings.username, account.username)
                 if account.isActive {
                     if let email = store.user.email, !email.isEmpty {
-                        valueRow(L10n.MacSettings.email, email)
+                        MacValueRow(L10n.MacSettings.email, email)
                     }
-                    valueRow(
+                    MacValueRow(
                         L10n.MacSettings.role,
                         store.user.isAdmin ? L10n.MacSettings.roleAdmin : L10n.MacSettings.roleUser
                     )
                 }
-                valueRow(L10n.MacSettings.status, L10n.MacSettings.statusSignedIn)
-                valueRow(L10n.Settings.rowServer, account.serverHost)
+                MacValueRow(L10n.MacSettings.status, L10n.MacSettings.statusSignedIn)
+                MacValueRow(L10n.Settings.rowServer, account.serverHost)
             }
         }
 
@@ -94,16 +94,6 @@
                 .buttonStyle(.macDS(.secondary))
             }
             .disabled(store.isSigningOut)
-        }
-
-        private func valueRow(_ title: String, _ value: String) -> some View {
-            MacFormRow(title) {
-                Text(value)
-                    .type(.body2(.regular), style: .secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                    .textSelection(.enabled)
-            }
         }
     }
 

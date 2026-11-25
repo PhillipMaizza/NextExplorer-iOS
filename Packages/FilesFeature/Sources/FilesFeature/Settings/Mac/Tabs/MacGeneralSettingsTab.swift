@@ -7,8 +7,9 @@
     import SwiftUI
 
     /// The General pane: appearance, language, default sort and what the file tables show.
-    struct MacGeneralSettingsTab: View {
-        @Bindable var store: StoreOf<SettingsFeature>
+    struct MacGeneralSettingsTab<Notice: View>: View {
+        let showHiddenFiles: Binding<Bool>?
+        @ViewBuilder let notice: () -> Notice
 
         @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
         @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
@@ -51,22 +52,24 @@
 
         var body: some View {
             MacFormPage {
+                notice()
                 VStack(alignment: .leading, spacing: .space8) {
                     MacFormGroupTitle(L10n.Settings.rowAppearance)
                     MacAppearanceTiles(selection: appearance)
                 }
                 MacFormGroup(L10n.Settings.sectionGeneral) {
                     languageRow
-                    defaultSortRow
+                    if showHiddenFiles != nil {
+                        defaultSortRow
+                    }
                 }
-                MacFormGroup(L10n.Settings.sectionDisplay) {
-                    MacSwitchRow(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
-                    MacSwitchRow(
-                        L10n.Settings.toggleShowHiddenFiles,
-                        isOn: $store.preferences.shouldShowHiddenFiles.sending(\.setShowHiddenFiles)
-                    )
-                    MacSwitchRow(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
-                    MacSwitchRow(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
+                if let showHiddenFiles {
+                    MacFormGroup(L10n.Settings.sectionDisplay) {
+                        MacSwitchRow(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
+                        MacSwitchRow(L10n.Settings.toggleShowHiddenFiles, isOn: showHiddenFiles)
+                        MacSwitchRow(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
+                        MacSwitchRow(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
+                    }
                 }
             }
         }
@@ -115,8 +118,28 @@
         }
     }
 
+    extension MacGeneralSettingsTab where Notice == EmptyView {
+        init(store: StoreOf<SettingsFeature>) {
+            self.init(
+                showHiddenFiles: Bindable(store).preferences.shouldShowHiddenFiles.sending(\.setShowHiddenFiles)
+            ) { EmptyView() }
+        }
+    }
+
     #Preview("General") {
         MacGeneralSettingsTab(store: Store(initialState: .macPreview) { SettingsFeature() })
+            .previewCanvas(.settingsPane)
+    }
+
+    #Preview("General, locked") {
+        MacGeneralSettingsTab(showHiddenFiles: nil) {
+            MacNote(L10n.LockedSettings.note(User.preview.username), kind: .warning)
+        }
+        .previewCanvas(.settingsPane)
+    }
+
+    #Preview("General, signed out") {
+        MacGeneralSettingsTab(showHiddenFiles: nil) { EmptyView() }
             .previewCanvas(.settingsPane)
     }
 #endif

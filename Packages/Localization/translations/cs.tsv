@@ -1423,6 +1423,9 @@ lock.subtitle	Přihlaste se znovu a otevřete své soubory.
 lock.signIn	Přihlásit se
 lock.otherAccount	To je jiný účet. Přihlaste se jako %@ a odemkněte, nebo se odhlaste.
 lock.status	Zamčeno
+lockedSettings.note	%@ je uzamčen. Nastavení účtu a serveru se vrátí, až se znovu přihlásíte.
+lockedSettings.showLockScreen	Zobrazit zamykací obrazovku
+lockedSettings.accountFooter	Tento účet je uzamčen a jeho relace skončila. Přihlaste se znovu na zamykací obrazovce, abyste viděli jeho nastavení a nastavení serveru.
 requireSignIn.footer	Když aplikaci opustíte, tento účet se zamkne a jeho relace skončí. Odemčení vyžaduje nové přihlášení, s bezpečnostním klíčem, pokud ho přihlášení žádá.
 requireSignIn.sectionLock	Zamknout
 requireSignIn.appStart	Při spuštění aplikace

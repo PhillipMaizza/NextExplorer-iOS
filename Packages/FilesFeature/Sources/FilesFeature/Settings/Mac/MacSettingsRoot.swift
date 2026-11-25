@@ -9,6 +9,25 @@
         static let sidebarWidth: CGFloat = 272
     }
 
+    struct MacSettingsShell<Sidebar: View, Detail: View>: View {
+        @ViewBuilder let sidebar: () -> Sidebar
+        @ViewBuilder let detail: () -> Detail
+
+        var body: some View {
+            HStack(spacing: .zero) {
+                List(content: sidebar)
+                    .listStyle(.sidebar)
+                    .scrollContentBackground(.hidden)
+                    .clipped()
+                    .frame(width: Metrics.sidebarWidth)
+                detail()
+            }
+            .containerBackground(Color.macChrome, for: .window)
+            .toolbarBackground(.hidden, for: .windowToolbar)
+            .toolbar(removing: .title)
+        }
+    }
+
     /// One page of the Mac Settings window's sidebar.
     enum MacSettingsCategory: String, CaseIterable, Identifiable {
         case accounts
@@ -132,24 +151,19 @@
         }
 
         var body: some View {
-            HStack(spacing: .zero) {
-                List {
-                    Section {
-                        ForEach(MacSettingsCategory.everyone) { sidebarRow($0) }
-                    }
-                    if store.user.isAdmin {
-                        Section(L10n.Settings.sectionAdmin) {
-                            ForEach(MacSettingsCategory.admin) { sidebarRow($0) }
-                        }
-                    }
-                    Section {
-                        ForEach(MacSettingsCategory.app) { sidebarRow($0) }
+            MacSettingsShell {
+                Section {
+                    ForEach(MacSettingsCategory.everyone) { sidebarRow($0) }
+                }
+                if store.user.isAdmin {
+                    Section(L10n.Settings.sectionAdmin) {
+                        ForEach(MacSettingsCategory.admin) { sidebarRow($0) }
                     }
                 }
-                .listStyle(.sidebar)
-                .scrollContentBackground(.hidden)
-                .clipped()
-                .frame(width: Metrics.sidebarWidth)
+                Section {
+                    ForEach(MacSettingsCategory.app) { sidebarRow($0) }
+                }
+            } detail: {
                 NavigationStack {
                     MacPaneCard(title: visibleSelection.headerTitle, subtitle: subtitle(for: visibleSelection)) {
                         pane(visibleSelection)
@@ -171,8 +185,6 @@
             // back loads it fresh: the Users list otherwise kept showing what it first loaded.
             .onChange(of: visibleSelection) { previous, _ in release(previous) }
             .onDisappear { release(visibleSelection) }
-            .containerBackground(Color.macChrome, for: .window)
-            .toolbarBackground(.hidden, for: .windowToolbar)
             .macLicensesSheet(isPresented: $isShowingLicenses)
         }
 
@@ -205,8 +217,7 @@
             ) {
                 selection = category
             }
-            .listRowInsets(EdgeInsets())
-            .listRowSeparator(.hidden)
+            .macSettingsSidebarRow()
         }
 
         @ViewBuilder

@@ -574,6 +574,11 @@ public enum L10n {
         public static var subtitle: String { tr("lock.subtitle") }  // "Sign in again to open your files."
         public static var title: String { tr("lock.title") }  // "NextExplorer is locked"
     }
+    public enum LockedSettings {
+        public static var accountFooter: String { tr("lockedSettings.accountFooter") }
+        public static func note(_ a0: CVarArg) -> String { tr("lockedSettings.note", a0) }
+        public static var showLockScreen: String { tr("lockedSettings.showLockScreen") }  // "Show Lock Screen"
+    }
     public enum Login {
         public static var addClientCertificate: String { tr("login.addClientCertificate") }  // "Add Certificate"
         public static var changeClientCertificate: String { tr("login.changeClientCertificate") }  // "Change"

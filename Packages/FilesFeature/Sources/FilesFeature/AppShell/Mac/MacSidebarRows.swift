@@ -156,27 +156,7 @@
                             .accessibilityHidden(true)
                     }
                 }
-                .background {
-                    if isSelected {
-                        RoundedRectangle(
-                            cornerRadius: isRail ? Constants.railRadius : Constants.rowRadius,
-                            style: .continuous
-                        )
-                        .fill(Color.macSelection)
-                        .shadow(
-                            color: .macCardShadow,
-                            radius: Constants.selectionShadowRadius,
-                            y: Constants.selectionShadowOffset
-                        )
-                    } else if isHovered {
-                        RoundedRectangle(
-                            cornerRadius: isRail ? Constants.railRadius : Constants.rowRadius,
-                            style: .continuous
-                        )
-                        .fill(Color.macChromeHover)
-                    }
-                }
-                .contentShape(Rectangle())
+                .macSidebarSelection(isSelected: isSelected, isHovered: isHovered, isRail: isRail)
             }
             .buttonStyle(.plain)
             .frame(maxWidth: .infinity)
@@ -210,7 +190,28 @@
         }
     }
 
-    private extension View {
+    extension View {
+        func macSidebarSelection(isSelected: Bool, isHovered: Bool, isRail: Bool = false) -> some View {
+            let shape = RoundedRectangle(
+                cornerRadius: isRail ? Constants.railRadius : Constants.rowRadius,
+                style: .continuous
+            )
+            return background {
+                if isSelected {
+                    shape
+                        .fill(Color.macSelection)
+                        .shadow(
+                            color: .macCardShadow,
+                            radius: Constants.selectionShadowRadius,
+                            y: Constants.selectionShadowOffset
+                        )
+                } else if isHovered {
+                    shape.fill(Color.macChromeHover)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+
         func macSidebarItemFrame(isRail: Bool, height: CGFloat) -> some View {
             frame(
                 minWidth: isRail ? MacSidebarRail.item : nil,

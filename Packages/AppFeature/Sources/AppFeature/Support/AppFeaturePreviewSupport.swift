@@ -1,4 +1,5 @@
 import AuthClient
+import AuthFeature
 import ComposableArchitecture
 import CoreModels
 import FilesClient
@@ -14,6 +15,19 @@ extension AppFeature.State {
         ))
         return state
     }
+
+    static var previewLocked: Self {
+        var state = Self()
+        state.destination = .locked(LockFeature.State(account: AccountSummary(
+            id: "a",
+            username: User.preview.username,
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            isActive: true,
+            requireSignIn: RequireSignIn(),
+            isLocked: true
+        )))
+        return state
+    }
 }
 
 @MainActor
@@ -24,6 +38,13 @@ extension StoreOf<AppFeature> {
             state.addAccount = .init()
         }
         return Store(initialState: state) { AppFeature() } withDependencies: {
+            $0.filesClient = .previewValue
+            $0.authClient = .previewValue
+        }
+    }
+
+    static func previewLocked() -> StoreOf<AppFeature> {
+        Store(initialState: AppFeature.State.previewLocked) { AppFeature() } withDependencies: {
             $0.filesClient = .previewValue
             $0.authClient = .previewValue
         }

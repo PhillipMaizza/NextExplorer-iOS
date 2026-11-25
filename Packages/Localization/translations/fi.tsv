@@ -1344,6 +1344,9 @@ lock.subtitle	Kirjaudu uudelleen avataksesi tiedostosi.
 lock.signIn	Kirjaudu
 lock.otherAccount	Tämä on eri tili. Kirjaudu tilillä %@ avataksesi lukituksen tai kirjaudu ulos.
 lock.status	Lukittu
+lockedSettings.note	%@ on lukittu. Tilin ja palvelimen asetukset palaavat, kun kirjaudut uudelleen.
+lockedSettings.showLockScreen	Näytä lukitusnäyttö
+lockedSettings.accountFooter	Tämä tili on lukittu ja sen istunto on päättynyt. Kirjaudu uudelleen lukitusnäytöstä nähdäksesi sen ja palvelimen asetukset.
 requireSignIn.footer	Kun poistut sovelluksesta, tili lukitaan ja sen istunto päättyy. Lukituksen avaaminen vaatii uuden kirjautumisen, suojausavaimella jos kirjautumisesi sitä pyytää.
 requireSignIn.sectionLock	Lukitse
 requireSignIn.appStart	Kun sovellus käynnistyy

@@ -1491,6 +1491,9 @@ lock.subtitle	Zaloguj się ponownie, aby otworzyć pliki.
 lock.signIn	Zaloguj się
 lock.otherAccount	To inne konto. Zaloguj się jako %@, aby odblokować, lub wyloguj się.
 lock.status	Zablokowane
+lockedSettings.note	%@ jest zablokowane. Ustawienia konta i serwera wrócą po ponownym zalogowaniu.
+lockedSettings.showLockScreen	Pokaż ekran blokady
+lockedSettings.accountFooter	To konto jest zablokowane, a jego sesja się zakończyła. Zaloguj się ponownie na ekranie blokady, aby zobaczyć jego ustawienia i ustawienia serwera.
 requireSignIn.footer	Gdy opuścisz aplikację, to konto zostanie zablokowane, a jego sesja zakończona. Odblokowanie wymaga ponownego logowania, z kluczem bezpieczeństwa, jeśli logowanie go wymaga.
 requireSignIn.sectionLock	Blokuj
 requireSignIn.appStart	Przy uruchomieniu aplikacji
