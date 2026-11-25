@@ -93,37 +93,12 @@
                         }
                         .tint(.primaryDS)
                     }
-                    if store.access?.canDownload ?? false {
-                        let offlineAction = OfflineBulkAction.resolve(
-                            selectedIDs: items.map(\.id),
-                            offlineIDs: store.offlineItemIDs
-                        )
-                        RemovableMenuButton(
-                            title: offlineAction?.title ?? L10n.Browse.actionAvailableOffline,
-                            icon: offlineAction?.icon ?? IconKit.availableOffline,
-                            isRemoval: offlineAction == .remove
-                        ) {
-                            store.send(.tableSelectionChanged(ids))
-                            store.send(.bulkOfflineTapped)
-                        }
-                        .disabled(offlineAction == nil)
-                    }
-                    if items.allSatisfy(\.isDirectory) {
-                        let isAllFavorite = items.allSatisfy { store.favoritePaths.contains($0.id) }
-                        RemovableMenuButton(
-                            title: isAllFavorite
-                                ? L10n.Browse.actionRemoveFromFavorites
-                                : L10n.Browse.actionAddToFavorites,
-                            icon: isAllFavorite ? IconKit.starFill : IconKit.star,
-                            isRemoval: isAllFavorite
-                        ) {
-                            store.send(.tableSelectionChanged(ids))
-                            store.send(.bulkFavoriteTapped)
-                        }
-                        .disabled(!store.hasLoadedFavorites)
-                    }
+                    offlineAction(items, removals: false)
+                    favoriteAction(items, removals: false)
                 }
                 Section {
+                    offlineAction(items, removals: true)
+                    favoriteAction(items, removals: true)
                     if store.access?.canDelete ?? false {
                         Button(role: .destructive) {
                             store.send(.tableSelectionChanged(ids))
@@ -141,6 +116,38 @@
                 Divider()
                 BrowsePasteMenu(store: store, shouldKeepClipboard: shouldKeepClipboard)
                     .tint(.primaryDS)
+            }
+        }
+
+        @ViewBuilder
+        private func offlineAction(_ items: some Collection<FileItem>, removals: Bool) -> some View {
+            let action = OfflineBulkAction.resolve(selectedIDs: items.map(\.id), offlineIDs: store.offlineItemIDs)
+            if store.access?.canDownload ?? false, (action == .remove) == removals {
+                RemovableMenuButton(
+                    title: action?.title ?? L10n.Browse.actionAvailableOffline,
+                    icon: action?.icon ?? IconKit.availableOffline,
+                    isRemoval: removals
+                ) {
+                    store.send(.tableSelectionChanged(ids))
+                    store.send(.bulkOfflineTapped)
+                }
+                .disabled(action == nil)
+            }
+        }
+
+        @ViewBuilder
+        private func favoriteAction(_ items: some Collection<FileItem>, removals: Bool) -> some View {
+            let isAllFavorite = items.allSatisfy { store.favoritePaths.contains($0.id) }
+            if items.allSatisfy(\.isDirectory), isAllFavorite == removals {
+                RemovableMenuButton(
+                    title: removals ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,
+                    icon: removals ? IconKit.starFill : IconKit.star,
+                    isRemoval: removals
+                ) {
+                    store.send(.tableSelectionChanged(ids))
+                    store.send(.bulkFavoriteTapped)
+                }
+                .disabled(!store.hasLoadedFavorites)
             }
         }
     }

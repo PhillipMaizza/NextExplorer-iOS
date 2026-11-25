@@ -11,16 +11,22 @@ struct DownloadRowContextMenu: View {
     let download: LocalDownload
 
     var body: some View {
-        ShareLink(item: download.url) {
-            Label { Text(L10n.Common.share) } icon: { IconKit.share }
-        }
-        .tint(.primaryDS)
+        #if os(macOS)
+            let url = download.url
+            MacLocalFileMenuItems { url }
+        #elseif os(iOS)
+            ShareLink(item: download.url) {
+                Label { Text(L10n.Common.share) } icon: { IconKit.share }
+            }
+            .tint(.primaryDS)
+        #endif
         Button {
             store.send(.renameTapped(download))
         } label: {
             Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
         }
         .tint(.primaryDS)
+        Divider()
         Button(role: .destructive) {
             store.send(.deleteTapped(download))
         } label: {

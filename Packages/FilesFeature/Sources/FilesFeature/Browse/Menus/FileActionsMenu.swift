@@ -38,16 +38,6 @@ struct FileActionsMenu: View {
                     Label { Text(L10n.Browse.actionOpenInNewWindow) } icon: { IconKit.newWindow }
                 }
                 .tint(.primaryDS)
-                Button {
-                    openWindow(value: FolderWindowRoute(
-                        path: item.id,
-                        title: item.name,
-                        tabHostWindowNumber: NSApp.keyWindow?.windowNumber
-                    ))
-                } label: {
-                    Label { Text(L10n.Browse.actionOpenInNewTab) } icon: { IconKit.newTab }
-                }
-                .tint(.primaryDS)
                 Divider()
             } else {
                 MacOpenWithMenuItems(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
@@ -63,17 +53,18 @@ struct FileActionsMenu: View {
         #if os(macOS)
             Section {
                 sendActions
-                keepActions
+                keepActions(removals: false)
             }
             if store.access?.canWrite ?? false {
                 Section { archiveActions }
             }
         #elseif os(iOS)
             Section { sendActions }
-            Section { keepActions }
+            Section { keepActions(removals: false) }
         #endif
-        if store.access?.canDelete ?? false {
-            Section {
+        Section {
+            keepActions(removals: true)
+            if store.access?.canDelete ?? false {
                 Button(role: .destructive) {
                     store.send(.deleteTapped(item))
                 } label: {
@@ -211,6 +202,21 @@ struct FileActionsMenu: View {
         .tint(.primaryDS)
     }
 
+    private static var shouldSaveKeptCopyLocally: Bool {
+        #if os(macOS)
+            true
+        #elseif os(iOS)
+            false
+        #endif
+    }
+
+    private var keptCopy: @Sendable () -> URL? {
+        @Dependency(\.offlineFileStore) var offlineFileStore
+        let store = offlineFileStore.pinned(to: store.cacheScope)
+        let item = item
+        return { store.localURLIgnoringStaleness(item) }
+    }
+
     /// On device content only a kept file can be saved or shared, from its copy on the device.
     private var isKept: Bool {
         store.offlineItemIDs.contains(item.id) || store.searchOnDeviceIDs.contains(item.id)
@@ -218,8 +224,13 @@ struct FileActionsMenu: View {
 
     @ViewBuilder
     private var sendActions: some View {
+        #if os(macOS)
+            if store.shouldShowDeviceContent, isKept, !item.isDirectory {
+                MacLocalFileMenuItems(resolve: keptCopy)
+            }
+        #endif
         if store.access?.canDownload ?? false, SaveActionStyle.isAvailable(for: item.isDirectory),
-           !store.shouldShowDeviceContent || isKept
+           !store.shouldShowDeviceContent || (isKept && !Self.shouldSaveKeptCopyLocally)
         {
             Button {
                 store.send(.downloadTapped(item))
@@ -249,8 +260,8 @@ struct FileActionsMenu: View {
 
     /// Available Offline and Favorites. Taking an item off either reads as a removal: red, like Delete.
     @ViewBuilder
-    private var keepActions: some View {
-        if store.access?.canDownload ?? false, !store.shouldShowDeviceContent || isKept {
+    private func keepActions(removals: Bool) -> some View {
+        if store.access?.canDownload ?? false, !store.shouldShowDeviceContent || isKept, isKept == removals {
             // A file kept through a pinned folder removes that folder, after a confirmation naming it.
             RemovableMenuButton(
                 title: isKept ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
@@ -261,8 +272,8 @@ struct FileActionsMenu: View {
             }
         }
         // Only folders can be favorited: the server 400s on anything else.
-        if item.isDirectory, !store.shouldShowDeviceContent {
-            let isFavorite = store.favoritePaths.contains(item.id)
+        if item.isDirectory, !store.shouldShowDeviceContent, store.favoritePaths.contains(item.id) == removals {
+            let isFavorite = removals
             RemovableMenuButton(
                 title: isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,
                 icon: isFavorite ? IconKit.starFill : IconKit.star,

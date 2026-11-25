@@ -200,12 +200,9 @@
         var body: some View {
             let availability = store.selectionAvailability
             let hasOrganize = Self.hasOrganizeActions(availability, directoryPath: store.directoryPath)
-            if Self.hasOfflineAction(availability), let action = availability.offlineAction {
-                MacActionMenuButton(
-                    action == .remove ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionKeepOffline,
-                    icon: IconKit.menuKeepOffline,
-                    isDestructive: action == .remove
-                ) {
+            let offlineAction = Self.hasOfflineAction(availability) ? availability.offlineAction : nil
+            if offlineAction == .add {
+                MacActionMenuButton(L10n.Browse.actionKeepOffline, icon: IconKit.menuKeepOffline) {
                     store.send(.bulkOfflineTapped)
                 }
                 if hasOrganize || availability.canDelete {
@@ -231,8 +228,20 @@
                     store.send(.copySelectionToTapped)
                 }
             }
-            if availability.canDelete {
+            if offlineAction == .remove {
                 if hasOrganize {
+                    MacActionMenuDivider()
+                }
+                MacActionMenuButton(
+                    L10n.Browse.actionRemoveFromOffline,
+                    icon: IconKit.menuKeepOffline,
+                    isDestructive: true
+                ) {
+                    store.send(.bulkOfflineTapped)
+                }
+            }
+            if availability.canDelete {
+                if hasOrganize, offlineAction != .remove {
                     MacActionMenuDivider()
                 }
                 MacDeleteMenuButton(isTrashAvailable: store.isTrashAvailable) {

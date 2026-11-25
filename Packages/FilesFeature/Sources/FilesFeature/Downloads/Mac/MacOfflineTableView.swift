@@ -179,14 +179,28 @@
             if selected.count == 1, let download = selected.first?.saved {
                 DownloadRowContextMenu(store: store, download: download)
             } else if !selected.isEmpty, selected.allSatisfy({ $0.pinned != nil }) {
+                if selected.count == 1, let root = selected.first?.pinned?.root, !root.isDirectory {
+                    Section {
+                        MacLocalFileMenuItems(resolve: keptCopy(of: root))
+                    }
+                }
                 Button(role: .destructive) { remove(ids) } label: {
                     Label { Text(L10n.Common.remove) } icon: { IconKit.delete }
                 }
+                .tint(.negative)
             } else if !selected.isEmpty, selected.allSatisfy({ $0.saved != nil }) {
                 Button(role: .destructive) { remove(ids) } label: {
                     Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
                 }
+                .tint(.negative)
             }
+        }
+
+        private func keptCopy(of root: OfflinePinnedRoot) -> @Sendable () -> URL? {
+            @Dependency(\.offlineFileStore) var offlineFileStore
+            let store = offlineFileStore
+            let item = OfflineDownloadsFeature.fileItem(from: root)
+            return { store.localURLIgnoringStaleness(item) }
         }
 
         private func icon(for row: MacOfflineTableRow) -> some View {
