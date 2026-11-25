@@ -144,7 +144,7 @@ struct LoginCredentialsPage: View {
             .task {
                 try? await DSMotion.waitForStep(Constants.identifierAutoFocusDelay)
                 guard !Task.isCancelled else { return }
-                focusedField = .identifier
+                focusedField = store.identifier.isEmpty ? .identifier : .password
             }
         }
     }
