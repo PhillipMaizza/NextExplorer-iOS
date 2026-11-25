@@ -58,8 +58,8 @@
                         )
                     }
                 }
-                .padding(.horizontal, .space24)
-                .frame(maxHeight: .infinity)
+                .padding(.space24)
+                .frame(maxHeight: .infinity, alignment: .top)
                 .preference(key: MacPeekFolderSummaryKey.self, value: Self.summary(items))
             }
         }

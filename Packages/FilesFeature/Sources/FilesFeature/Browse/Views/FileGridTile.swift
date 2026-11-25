@@ -14,6 +14,11 @@ private enum Constants {
     static let hiddenOpacity: Double = 0.5
     static let fullOpacity: Double = 1
     static let previewWidth: CGFloat = 120
+    #if os(macOS)
+        static let captionInset: CGFloat = .space4
+    #elseif os(iOS)
+        static let captionInset: CGFloat = .zero
+    #endif
     /// Below this contrast ratio a well melts into the page, so it gets an outline.
     static let outlineContrastRatio: Double = 1.15
     static let luminanceOffset: Double = 0.05
@@ -81,6 +86,7 @@ struct FileGridTile<Picture: View>: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 caption
             }
+            .padding(.horizontal, Constants.captionInset)
         }
         // The ring, the circle and the name's colour change in one step.
         .animation(DSMotion.selectModeStep, value: selection)
