@@ -23,8 +23,21 @@ struct LockAccountCard: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity)
-        .dsCard()
+        .lockCardSurface()
         .accessibilityElement(children: .combine)
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func lockCardSurface() -> some View {
+        #if os(macOS)
+            MacFormGroup {
+                MacFormRow(label: { self }, control: { EmptyView() })
+            }
+        #elseif os(iOS)
+            dsCard()
+        #endif
     }
 }
 
