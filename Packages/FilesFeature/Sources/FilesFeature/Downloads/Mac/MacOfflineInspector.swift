@@ -86,7 +86,11 @@ import SwiftUI
                         localFile: localFile,
                         onClose: onClose
                     )
-                    MacInspectorQuickActions(actions: quickActions) { EmptyView() }
+                    MacInspectorQuickActions(actions: quickActions, showsMore: localFile != nil && !item.isDirectory) {
+                        if let localFile {
+                            MacLocalFilePanelRows { localFile }
+                        }
+                    }
                     MacInspectorGroup {
                         MacInspectorRow(L10n.FileInfo.rowSize, FileSizeFormat.string(item.size))
                         MacInspectorRow(L10n.FileInfo.rowWhere, location, icon: IconKit.folderFill)
@@ -138,7 +142,7 @@ import SwiftUI
             let row = row
             content
                 .environment(\.macOfflineSelection, $selection)
-                .macInspectorPane(isOpen: row != nil && store.serverURL != nil, onClose: { selection = [] }) {
+                .macInspectorPane(isOpen: isOpen(row), onClose: { selection = [] }) {
                     if let row, let serverURL = store.serverURL {
                         MacOfflineInspector(
                             row: row,
@@ -149,6 +153,10 @@ import SwiftUI
                         )
                     }
                 }
+        }
+
+        private func isOpen(_ row: MacOfflineTableRow?) -> Bool {
+            row != nil && store.serverURL != nil && store.path.isEmpty && store.previewHost == nil
         }
 
         private func open(_ row: MacOfflineTableRow) {

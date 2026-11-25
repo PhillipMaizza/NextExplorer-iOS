@@ -32,6 +32,10 @@
             store.offlineItemIDs.contains(item.id)
         }
 
+        private var hasOrganizeActions: Bool {
+            canWrite || !store.shouldShowDeviceContent
+        }
+
         var body: some View {
             if store.items[id: item.id] == nil {
                 currentFolderActions
@@ -59,29 +63,49 @@
             if !item.isDirectory {
                 MacInspectorOpenWithRow(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
             }
-            if access?.canDownload ?? false {
+            if store.shouldShowDeviceContent, isOffline, !item.isDirectory {
+                MacLocalFilePanelRows(resolve: keptCopy)
+            } else if access?.canDownload ?? false, !store.shouldShowDeviceContent {
                 MacActionMenuButton(SaveActionStyle.title, icon: IconKit.menuDownload) {
                     store.send(.downloadTapped(item))
                 }
-                MacActionMenuButton(
-                    isOffline ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionKeepOffline,
-                    icon: IconKit.menuKeepOffline,
-                    isDestructive: isOffline
-                ) {
+            }
+            if access?.canDownload ?? false, !isOffline, !store.shouldShowDeviceContent {
+                MacActionMenuButton(L10n.Browse.actionKeepOffline, icon: IconKit.menuKeepOffline) {
                     store.send(.offlineToggleTapped(item))
                 }
             }
             MacActionMenuButton(L10n.Browse.actionShowInFolder, icon: IconKit.folder) {
                 store.send(.showInFolderTapped(item))
             }
-            MacActionMenuDivider()
-            organizeActions
-            if canDelete {
+            if hasOrganizeActions {
                 MacActionMenuDivider()
+                organizeActions
+            }
+            if isOffline || canDelete {
+                MacActionMenuDivider()
+            }
+            if isOffline {
+                MacActionMenuButton(
+                    L10n.Browse.actionRemoveFromOffline,
+                    icon: IconKit.menuKeepOffline,
+                    isDestructive: true
+                ) {
+                    store.send(.offlineToggleTapped(item))
+                }
+            }
+            if canDelete {
                 MacDeleteMenuButton(isTrashAvailable: store.isTrashAvailable) {
                     store.send(.deleteTapped(item))
                 }
             }
+        }
+
+        private var keptCopy: @Sendable () -> URL? {
+            @Dependency(\.offlineFileStore) var offlineFileStore
+            let store = offlineFileStore.pinned(to: store.cacheScope)
+            let item = item
+            return { store.localURLIgnoringStaleness(item) }
         }
 
         @ViewBuilder
