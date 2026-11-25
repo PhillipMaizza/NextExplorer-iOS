@@ -133,7 +133,7 @@ struct AccountConfirmations: ViewModifier {
                 )
             }
         #if os(macOS)
-            .onWindowPromptChange(of: isPromptPending) { _, isOwner in
+            .onWindowPromptChange(for: AccountConfirmations.self, of: isPromptPending) { _, isOwner in
                 isPromptOwner = isOwner
             }
         #endif
