@@ -4,10 +4,11 @@ import Localization
 import SwiftUI
 
 /// What a trash screen shows around its list: a spinner while nothing is listed yet, the failure with
-/// Retry, the screen's own empty state, or the list. A reload keeps the list on screen.
+/// Retry, the screen's own empty state, a search that matched nothing, or the list. A reload keeps the list on screen.
 struct TrashPhaseContent<Empty: View, Loaded: View>: View {
     let phase: DataPhase
     let isEmpty: Bool
+    var searchMiss: String?
     let onRetry: () -> Void
     @ViewBuilder let empty: () -> Empty
     @ViewBuilder let loaded: () -> Loaded
@@ -23,6 +24,8 @@ struct TrashPhaseContent<Empty: View, Loaded: View>: View {
             case .loaded:
                 empty()
             }
+        } else if let searchMiss {
+            EmptyStateView(icon: IconKit.search, message: searchMiss)
         } else {
             loaded()
         }
@@ -46,4 +49,13 @@ struct TrashPhaseContent<Empty: View, Loaded: View>: View {
         EmptyView()
     }
     .preferredColorScheme(.dark)
+}
+
+#Preview("No matches") {
+    TrashPhaseContent(
+        phase: .loaded,
+        isEmpty: false,
+        searchMiss: L10n.EmptyState.noSearchMatches("invoice"),
+        onRetry: {}
+    ) { EmptyView() } loaded: { EmptyView() }
 }

@@ -36,7 +36,7 @@
                         deletedAt: deletedAt,
                         expiresAt: deletedAt.addingTimeInterval(retention),
                         deletedBy: deletedBy,
-                        location: location ?? TrashItem.Location(isPersonal: false, name: nil, parent: parent),
+                        location: location ?? .mockVolume(parent),
                         openPath: parent,
                         isAvailable: isAvailable,
                         shareCount: shareCount
