@@ -1447,3 +1447,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Sortare implicită
 settings.rowSortOrder	Ordine
 settings.defaultSortFooter	Dosarele pe care nu le-ai sortat se deschid în această ordine. Un dosar pe care îl sortezi își păstrează propria ordine pe fiecare dispozitiv conectat la acest server.
+settings.sectionSecurity	Securitate
+settings.rowRequireSignIn	Solicită autentificarea
+lock.title	NextExplorer este blocat
+lock.subtitle	Autentifică-te din nou ca să îți deschizi fișierele.
+lock.signIn	Autentificare
+lock.otherAccount	Acesta este alt cont. Autentifică-te ca %@ pentru a debloca sau deconectează-te.
+requireSignIn.footer	Când părăsești aplicația, acest cont se blochează și sesiunea se încheie. Deblocarea cere o nouă autentificare, cu cheia de securitate dacă autentificarea o cere.
+requireSignIn.sectionLock	Blocare
+requireSignIn.appStart	La pornirea aplicației
+requireSignIn.immediately	Imediat
+requireSignIn.thirtySeconds	După 30 de secunde
+requireSignIn.oneMinute	După 1 minut
+requireSignIn.fiveMinutes	După 5 minute
+requireSignIn.keepOfflineFiles	Păstrează fișierele offline
+requireSignIn.keepOfflineFilesFooter	Când este dezactivat, blocarea elimină de pe acest dispozitiv și fișierele offline și dosarele din cache ale acestui cont.
+shareUpload.locked	NextExplorer este blocat. Deschide aplicația, autentifică-te din nou, apoi partajează din nou.
+requireSignIn.navigationTitle	Solicită autentificarea
+requireSignIn.toggle	Solicită autentificarea

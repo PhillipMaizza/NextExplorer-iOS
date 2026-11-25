@@ -568,6 +568,12 @@ public enum L10n {
     public enum Licenses {
         public static var navigationTitle: String { tr("licenses.navigationTitle") }  // "Open Source Licenses"
     }
+    public enum Lock {
+        public static func otherAccount(_ a0: CVarArg) -> String { tr("lock.otherAccount", a0) }
+        public static var signIn: String { tr("lock.signIn") }  // "Sign In"
+        public static var subtitle: String { tr("lock.subtitle") }  // "Sign in again to open your files."
+        public static var title: String { tr("lock.title") }  // "NextExplorer is locked"
+    }
     public enum Login {
         public static var addClientCertificate: String { tr("login.addClientCertificate") }  // "Add Certificate"
         public static var changeClientCertificate: String { tr("login.changeClientCertificate") }  // "Change"
@@ -763,6 +769,19 @@ public enum L10n {
         public static var saveVideo: String { tr("previewToolbar.saveVideo") }  // "Save Video"
         public static var share: String { tr("previewToolbar.share") }  // "Share"
     }
+    public enum RequireSignIn {
+        public static var appStart: String { tr("requireSignIn.appStart") }  // "When the app starts"
+        public static var fiveMinutes: String { tr("requireSignIn.fiveMinutes") }  // "After 5 minutes"
+        public static var footer: String { tr("requireSignIn.footer") }
+        public static var immediately: String { tr("requireSignIn.immediately") }  // "Immediately"
+        public static var keepOfflineFiles: String { tr("requireSignIn.keepOfflineFiles") }  // "Keep Offline Files"
+        public static var keepOfflineFilesFooter: String { tr("requireSignIn.keepOfflineFilesFooter") }
+        public static var navigationTitle: String { tr("requireSignIn.navigationTitle") }  // "Require Sign In"
+        public static var oneMinute: String { tr("requireSignIn.oneMinute") }  // "After 1 minute"
+        public static var sectionLock: String { tr("requireSignIn.sectionLock") }  // "Lock"
+        public static var thirtySeconds: String { tr("requireSignIn.thirtySeconds") }  // "After 30 seconds"
+        public static var toggle: String { tr("requireSignIn.toggle") }  // "Require Sign In"
+    }
     public enum Search {
         public static var inOtherFolders: String { tr("search.inOtherFolders") }  // "In other folders"
         public static func noMatchesAnywhere(_ a0: CVarArg) -> String { tr("search.noMatchesAnywhere", a0) }
@@ -863,6 +882,7 @@ public enum L10n {
         public static var rowPrivacyPolicy: String { tr("settings.rowPrivacyPolicy") }  // "Privacy Policy"
         public static var rowRateApp: String { tr("settings.rowRateApp") }  // "Rate NextExplorer"
         public static var rowRemoveAllDownloads: String { tr("settings.rowRemoveAllDownloads") }  // "Remove All Downloads"
+        public static var rowRequireSignIn: String { tr("settings.rowRequireSignIn") }  // "Require Sign In"
         public static var rowServer: String { tr("settings.rowServer") }  // "Server"
         public static var rowSortOrder: String { tr("settings.rowSortOrder") }  // "Order"
         public static var rowSupport: String { tr("settings.rowSupport") }  // "Help & Support"
@@ -877,6 +897,7 @@ public enum L10n {
         public static var sectionInfo: String { tr("settings.sectionInfo") }  // "Info"
         public static var sectionLegal: String { tr("settings.sectionLegal") }  // "Legal"
         public static var sectionLicenses: String { tr("settings.sectionLicenses") }  // "Licenses"
+        public static var sectionSecurity: String { tr("settings.sectionSecurity") }  // "Security"
         public static var sectionServerStorage: String { tr("settings.sectionServerStorage") }  // "Server Storage"
         public static var sectionStorage: String { tr("settings.sectionStorage") }  // "Storage"
         public static var sectionSupport: String { tr("settings.sectionSupport") }  // "Support"
@@ -938,6 +959,7 @@ public enum L10n {
         public static func itemCount(_ a0: CVarArg) -> String { tr("shareUpload.itemCount", a0) }
         public static var keepOpen: String { tr("shareUpload.keepOpen") }  // "Keep this open until preparing finishes."
         public static var livePhotoNote: String { tr("shareUpload.livePhotoNote") }  // "Live Photos upload with their motion video."
+        public static var locked: String { tr("shareUpload.locked") }
         public static var nameHint: String { tr("shareUpload.nameHint") }
         public static var nameLabel: String { tr("shareUpload.nameLabel") }  // "File Name"
         public static var namesLabel: String { tr("shareUpload.namesLabel") }  // "File Names"

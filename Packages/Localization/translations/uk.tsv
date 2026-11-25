@@ -1418,3 +1418,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Сортування за замовчуванням
 settings.rowSortOrder	Порядок
 settings.defaultSortFooter	Теки, які ви не сортували, відкриваються в цьому порядку. Тека, яку ви відсортували, зберігає свій порядок на кожному пристрої, що увійшов на цей сервер.
+settings.sectionSecurity	Безпека
+settings.rowRequireSignIn	Вимагати вхід
+lock.title	NextExplorer заблоковано
+lock.subtitle	Увійдіть знову, щоб відкрити файли.
+lock.signIn	Увійти
+lock.otherAccount	Це інший обліковий запис. Увійдіть як %@, щоб розблокувати, або вийдіть.
+requireSignIn.footer	Коли ви виходите з застосунку, цей обліковий запис блокується, а його сеанс завершується. Для розблокування потрібен новий вхід, з ключем безпеки, якщо вхід його вимагає.
+requireSignIn.sectionLock	Блокування
+requireSignIn.appStart	Під час запуску застосунку
+requireSignIn.immediately	Одразу
+requireSignIn.thirtySeconds	Через 30 секунд
+requireSignIn.oneMinute	Через 1 хвилину
+requireSignIn.fiveMinutes	Через 5 хвилин
+requireSignIn.keepOfflineFiles	Зберігати офлайн-файли
+requireSignIn.keepOfflineFilesFooter	Якщо вимкнено, блокування також видаляє з цього пристрою офлайн-файли та кешовані папки цього облікового запису.
+shareUpload.locked	NextExplorer заблоковано. Відкрийте його, увійдіть знову, а потім поділіться ще раз.
+requireSignIn.navigationTitle	Вимагати вхід
+requireSignIn.toggle	Вимагати вхід

@@ -29,7 +29,7 @@ struct LoginFormSignInTests {
             ),
             clock: clock
         ) {
-            $0.authClient.loginOIDC = { url in
+            $0.authClient.loginOIDC = { url, _ in
                 requested.withValue { $0.append(url.absoluteString) }
                 return ssoUser
             }
@@ -66,7 +66,7 @@ struct LoginFormSignInTests {
             ),
             clock: clock
         ) {
-            $0.authClient.loginOIDC = { [error = testCase.error] _ in throw error }
+            $0.authClient.loginOIDC = { [error = testCase.error] _, _ in throw error }
         }
 
         await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }

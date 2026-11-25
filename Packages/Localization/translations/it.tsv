@@ -1409,3 +1409,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Ordinamento predefinito
 settings.rowSortOrder	Ordine
 settings.defaultSortFooter	Le cartelle che non hai ordinato si aprono in questo ordine. Una cartella che ordini mantiene il proprio ordine su ogni dispositivo connesso a questo server.
+settings.sectionSecurity	Sicurezza
+settings.rowRequireSignIn	Richiedi accesso
+lock.title	NextExplorer è bloccato
+lock.subtitle	Accedi di nuovo per aprire i tuoi file.
+lock.signIn	Accedi
+lock.otherAccount	Questo è un altro account. Accedi come %@ per sbloccare, oppure esci.
+requireSignIn.footer	Quando esci dall’app, questo account si blocca e la sua sessione termina. Per sbloccare serve un nuovo accesso, con la tua chiave di sicurezza se il tuo accesso la richiede.
+requireSignIn.sectionLock	Blocca
+requireSignIn.appStart	All’avvio dell’app
+requireSignIn.immediately	Subito
+requireSignIn.thirtySeconds	Dopo 30 secondi
+requireSignIn.oneMinute	Dopo 1 minuto
+requireSignIn.fiveMinutes	Dopo 5 minuti
+requireSignIn.keepOfflineFiles	Mantieni file offline
+requireSignIn.keepOfflineFilesFooter	Se disattivato, il blocco rimuove da questo dispositivo anche i file offline e le cartelle in cache di questo account.
+shareUpload.locked	NextExplorer è bloccato. Aprilo, accedi di nuovo e poi condividi ancora.
+requireSignIn.navigationTitle	Richiedi accesso
+requireSignIn.toggle	Richiedi accesso

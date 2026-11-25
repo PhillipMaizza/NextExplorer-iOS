@@ -1380,3 +1380,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	מיון ברירת מחדל
 settings.rowSortOrder	סדר
 settings.defaultSortFooter	תיקיות שלא מיינת נפתחות בסדר הזה. תיקייה שאתה ממיין שומרת על הסדר שלה בכל מכשיר המחובר לשרת הזה.
+settings.sectionSecurity	אבטחה
+settings.rowRequireSignIn	דרישת התחברות
+lock.title	NextExplorer נעול
+lock.subtitle	התחבר שוב כדי לפתוח את הקבצים שלך.
+lock.signIn	התחברות
+lock.otherAccount	זה חשבון אחר. התחבר בתור %@ כדי לבטל את הנעילה, או התנתק.
+requireSignIn.footer	כשאתה יוצא מהאפליקציה, החשבון ננעל וההפעלה שלו מסתיימת. ביטול הנעילה דורש התחברות מחדש, עם מפתח האבטחה שלך אם ההתחברות מבקשת אותו.
+requireSignIn.sectionLock	נעילה
+requireSignIn.appStart	בהפעלת האפליקציה
+requireSignIn.immediately	מיד
+requireSignIn.thirtySeconds	אחרי 30 שניות
+requireSignIn.oneMinute	אחרי דקה
+requireSignIn.fiveMinutes	אחרי 5 דקות
+requireSignIn.keepOfflineFiles	שמירת קבצים במצב לא מקוון
+requireSignIn.keepOfflineFilesFooter	כשהאפשרות כבויה, הנעילה מסירה מהמכשיר גם את הקבצים הלא מקוונים והתיקיות השמורות במטמון של החשבון.
+shareUpload.locked	NextExplorer נעול. פתח אותו, התחבר שוב ואז שתף שוב.
+requireSignIn.navigationTitle	דרישת התחברות
+requireSignIn.toggle	דרישת התחברות

@@ -1417,3 +1417,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Výchozí řazení
 settings.rowSortOrder	Pořadí
 settings.defaultSortFooter	Složky, které jste neseřadili, se otevírají v tomto pořadí. Složka, kterou seřadíte, si své pořadí ponechá na všech zařízeních přihlášených k tomuto serveru.
+settings.sectionSecurity	Zabezpečení
+settings.rowRequireSignIn	Vyžadovat přihlášení
+lock.title	NextExplorer je zamčený
+lock.subtitle	Přihlaste se znovu a otevřete své soubory.
+lock.signIn	Přihlásit se
+lock.otherAccount	To je jiný účet. Přihlaste se jako %@ a odemkněte, nebo se odhlaste.
+requireSignIn.footer	Když aplikaci opustíte, tento účet se zamkne a jeho relace skončí. Odemčení vyžaduje nové přihlášení, s bezpečnostním klíčem, pokud ho přihlášení žádá.
+requireSignIn.sectionLock	Zamknout
+requireSignIn.appStart	Při spuštění aplikace
+requireSignIn.immediately	Okamžitě
+requireSignIn.thirtySeconds	Po 30 sekundách
+requireSignIn.oneMinute	Po 1 minutě
+requireSignIn.fiveMinutes	Po 5 minutách
+requireSignIn.keepOfflineFiles	Ponechat offline soubory
+requireSignIn.keepOfflineFilesFooter	Když je vypnuto, zamčení z tohoto zařízení odstraní i offline soubory a složky v mezipaměti tohoto účtu.
+shareUpload.locked	NextExplorer je zamčený. Otevřete ho, znovu se přihlaste a pak sdílejte znovu.
+requireSignIn.navigationTitle	Vyžadovat přihlášení
+requireSignIn.toggle	Vyžadovat přihlášení

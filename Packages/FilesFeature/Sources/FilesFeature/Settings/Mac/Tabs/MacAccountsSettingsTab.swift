@@ -39,7 +39,7 @@
                         detailsGroup(selectedAccount)
                             .frame(maxWidth: .infinity)
                         VStack(spacing: .space24) {
-                            securityGroup
+                            MacSecuritySection(store: store)
                             MacUploadDefaultsSection(
                                 store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults)
                             )
@@ -96,31 +96,6 @@
             .disabled(store.isSigningOut)
         }
 
-        private var securityGroup: some View {
-            MacFormGroup(L10n.UserManagement.tabSecurity) {
-                if store.shouldShowPasswordRow {
-                    MacFormRow(L10n.Common.password) {
-                        actionButton(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
-                    }
-                }
-                if store.shouldShowTwoFactorRow {
-                    MacFormRow(L10n.TwoFactor.navigationTitle) {
-                        actionButton(L10n.TwoFactor.manageButton) { store.send(.twoFactorButtonTapped) }
-                    }
-                }
-                MacFormRow {
-                    let detail = store.clientCertificateStatus.settingsDetail()
-                    if detail.isEmpty {
-                        Text(L10n.Settings.clientCertificate)
-                    } else {
-                        MacRowTitle(title: L10n.Settings.clientCertificate, subtitle: detail)
-                    }
-                } control: {
-                    actionButton(L10n.Login.manageClientCertificate) { store.send(.clientCertificateButtonTapped) }
-                }
-            }
-        }
-
         private func valueRow(_ title: String, _ value: String) -> some View {
             MacFormRow(title) {
                 Text(value)
@@ -129,12 +104,6 @@
                     .truncationMode(.middle)
                     .textSelection(.enabled)
             }
-        }
-
-        private func actionButton(_ title: String, action: @escaping () -> Void) -> some View {
-            Button(title, action: action)
-                .buttonStyle(.macDS(.secondary, size: .small))
-                .fixedSize()
         }
     }
 

@@ -11,7 +11,7 @@ struct LoginPageSurface: View {
             Color.macCard
         #else
             if horizontalSizeClass == .regular {
-                DSSheetSurface()
+                DSSheetSurface(in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
             } else {
                 LinearGradient.backgroundPrimary.ignoresSafeArea()
             }

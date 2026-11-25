@@ -62,14 +62,26 @@ public struct DSFrostedTint<S: Shape>: View {
 
 /// A sheet's surface: frosted, with enough of the page color over it that text stays easy to read.
 /// Solid page color with Reduce Transparency on.
-public struct DSSheetSurface: View {
-    private static let tintOpacity: Double = 0.65
+public struct DSSheetSurface<S: Shape>: View {
+    private let shape: S
 
-    public init() {}
+    public init(in shape: S) {
+        self.shape = shape
+    }
 
     public var body: some View {
-        DSFrostedTint(Rectangle(), tint: .backgroundPrimary, tintOpacity: Self.tintOpacity)
+        DSFrostedTint(shape, tint: .backgroundPrimary, tintOpacity: DSSheetSurfaceTint.opacity)
     }
+}
+
+public extension DSSheetSurface where S == Rectangle {
+    init() {
+        self.init(in: Rectangle())
+    }
+}
+
+private enum DSSheetSurfaceTint {
+    static let opacity: Double = 0.65
 }
 
 #Preview("Frosted tint") {
@@ -86,6 +98,15 @@ public struct DSSheetSurface: View {
         Text("Sheet")
             .frame(width: 280, height: 160)
             .background(DSSheetSurface())
+    }
+}
+
+#Preview("Rounded sheet surface") {
+    ZStack {
+        LinearGradient(colors: [.orange, .purple], startPoint: .top, endPoint: .bottom)
+        Text("Card")
+            .frame(width: 280, height: 160)
+            .background(DSSheetSurface(in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous)))
     }
 }
 

@@ -265,6 +265,37 @@ extension ShareUploadFeatureTests {
         }
 
         @Test
+        func choosingALockedAccountUploadsNothingAndInstallsNoCookie() async {
+            let cookies = HTTPCookieStorage
+                .sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(TestID.name())")
+            let locked = SessionCredentials.previewSecond.locked
+            let store = TestStore(initialState: ShareUploadFeature.State()) {
+                ShareUploadFeature()
+            } withDependencies: {
+                $0.sharedItems.count = { 1 }
+                $0.authClient.loadSession = { .preview }
+                $0.authClient.listSessions = { [.preview, locked] }
+                $0.authClient.me = { _ in Self.user }
+                $0.uploadDefaults = .inMemory([:])
+                $0.cookieStorage = cookies
+            }
+            await store.send(.onAppear) { $0.itemCount = 1 }
+            await store.receive(\.accountsLoaded) { $0.accounts = [.preview, locked] }
+            await store.receive(\.sessionLoaded) {
+                $0.credentials = .preview
+                $0.phase = .checking
+            }
+            await store.receive(\.connectionChecked) { $0.phase = .ready }
+
+            await store.send(.accountSelected(locked.accountID)) {
+                $0.credentials = locked
+                $0.phase = .locked
+            }
+            #expect(!store.state.canUpload)
+            #expect(cookies.cookies(for: locked.serverBaseURL)?.isEmpty ?? true)
+        }
+
+        @Test
         func oneAccountHasNoPicker() async {
             let store = store(count: 1)
             await store.send(.onAppear) { $0.itemCount = 1 }

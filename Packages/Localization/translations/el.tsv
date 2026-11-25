@@ -1338,3 +1338,21 @@ browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Προεπιλεγμένη ταξινόμηση
 settings.rowSortOrder	Σειρά
 settings.defaultSortFooter	Οι φάκελοι που δεν έχετε ταξινομήσει ανοίγουν με αυτή τη σειρά. Ένας φάκελος που ταξινομείτε κρατά τη δική του σειρά σε κάθε συσκευή συνδεδεμένη σε αυτόν τον διακομιστή.
+settings.sectionSecurity	Ασφάλεια
+settings.rowRequireSignIn	Απαίτηση σύνδεσης
+lock.title	Το NextExplorer είναι κλειδωμένο
+lock.subtitle	Συνδεθείτε ξανά για να ανοίξετε τα αρχεία σας.
+lock.signIn	Σύνδεση
+lock.otherAccount	Αυτός είναι άλλος λογαριασμός. Συνδεθείτε ως %@ για ξεκλείδωμα ή αποσυνδεθείτε.
+requireSignIn.footer	Όταν βγαίνετε από την εφαρμογή, ο λογαριασμός κλειδώνει και η συνεδρία του λήγει. Το ξεκλείδωμα απαιτεί νέα σύνδεση, με το κλειδί ασφαλείας σας αν το ζητά η σύνδεσή σας.
+requireSignIn.sectionLock	Κλείδωμα
+requireSignIn.appStart	Κατά την εκκίνηση της εφαρμογής
+requireSignIn.immediately	Αμέσως
+requireSignIn.thirtySeconds	Μετά από 30 δευτερόλεπτα
+requireSignIn.oneMinute	Μετά από 1 λεπτό
+requireSignIn.fiveMinutes	Μετά από 5 λεπτά
+requireSignIn.keepOfflineFiles	Διατήρηση αρχείων εκτός σύνδεσης
+requireSignIn.keepOfflineFilesFooter	Όταν είναι ανενεργό, το κλείδωμα αφαιρεί επίσης από τη συσκευή τα αρχεία εκτός σύνδεσης και τους αποθηκευμένους φακέλους αυτού του λογαριασμού.
+shareUpload.locked	Το NextExplorer είναι κλειδωμένο. Ανοίξτε το, συνδεθείτε ξανά και μετά κοινοποιήστε ξανά.
+requireSignIn.navigationTitle	Απαίτηση σύνδεσης
+requireSignIn.toggle	Απαίτηση σύνδεσης
