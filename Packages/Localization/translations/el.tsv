@@ -1252,3 +1252,6 @@ trash.columnDeletedOn	Ημερομηνία διαγραφής
 trash.columnRemoved	Αφαίρεση
 emptyState.dropHintFiles	Μπορείτε επίσης να σύρετε αρχεία εδώ από τα Αρχεία ή τις Φωτογραφίες.
 emptyState.dropHintFinder	Μπορείτε επίσης να σύρετε αρχεία εδώ από το Finder.
+settings.rowDefaultSort	Προεπιλεγμένη ταξινόμηση
+settings.rowSortOrder	Σειρά
+settings.defaultSortFooter	Οι φάκελοι που δεν έχετε ταξινομήσει ανοίγουν με αυτή τη σειρά. Ένας φάκελος που ταξινομείτε κρατά τη δική του σειρά σε κάθε συσκευή συνδεδεμένη σε αυτόν τον διακομιστή.

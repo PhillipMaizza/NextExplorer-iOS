@@ -61,10 +61,7 @@
                 items: store.displayedItems,
                 sortOption: store.sortOption,
                 sortDirection: store.sortDirection,
-                onSortChanged: { option, direction in
-                    store.send(.sortOptionChanged(option))
-                    store.send(.sortDirectionChanged(direction))
-                },
+                onSortChanged: { store.send(.sortChanged($0, $1)) },
                 selection: Binding(
                     get: { store.selectedItemIDs },
                     set: { store.send(.tableSelectionChanged($0)) }

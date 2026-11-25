@@ -43,6 +43,7 @@ public struct AppFeature {
         @Shared(.inMemory(FileClipboard.sharedKey)) public var fileClipboard: FileClipboard?
         @Shared(.inMemory(FileUndoEntry.sharedKey)) public var fileUndoStack: [FileUndoEntry] = []
         @Shared(.inMemory(FileUndoEntry.redoSharedKey)) public var fileRedoStack: [FileUndoEntry] = []
+        @Shared(.inMemory(UserPreferences.sharedKey)) var preferences = UserPreferences()
         @Shared(.inMemory(SharedFileInbox.sharedKey)) public var sharedFileInbox: [URL] = []
         /// The signed-in account's downloads scope (server + user id), so each account's saved
         /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
@@ -53,6 +54,13 @@ public struct AppFeature {
 
         public init(destination: Destination.State = .loading) {
             self.destination = destination
+        }
+
+        mutating func clearAccountSharedState() {
+            $fileClipboard.withLock { $0 = nil }
+            $fileUndoStack.withLock { $0 = [] }
+            $fileRedoStack.withLock { $0 = [] }
+            $preferences.withLock { $0 = UserPreferences() }
         }
 
         var currentAccountID: String? {
@@ -307,9 +315,7 @@ public struct AppFeature {
                 return tearDownExpired(accountID: accountID)
 
             case let .activeAccountTornDown(next):
-                state.$fileClipboard.withLock { $0 = nil }
-                state.$fileUndoStack.withLock { $0 = [] }
-                state.$fileRedoStack.withLock { $0 = [] }
+                state.clearAccountSharedState()
                 if let next {
                     // Another account is still signed in: switch to it rather than dropping the
                     // user out to the login screen.
@@ -322,9 +328,7 @@ public struct AppFeature {
 
             case let .activateAccount(credentials):
                 let leavingAccountID = state.currentAccountID
-                state.$fileClipboard.withLock { $0 = nil }
-                state.$fileUndoStack.withLock { $0 = [] }
-                state.$fileRedoStack.withLock { $0 = [] }
+                state.clearAccountSharedState()
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
@@ -461,9 +465,7 @@ public struct AppFeature {
                 state.pendingAddedAccount = nil
                 let user = added.user
                 let serverURL = added.serverURL
-                state.$fileClipboard.withLock { $0 = nil }
-                state.$fileUndoStack.withLock { $0 = [] }
-                state.$fileRedoStack.withLock { $0 = [] }
+                state.clearAccountSharedState()
                 let accountID = AuthenticatedFeature.State.accountID(serverURL: serverURL, username: user.username)
                 let leavingAccountID = state.currentAccountID
                 CacheAccountScope.set(accountID)
@@ -549,9 +551,7 @@ public struct AppFeature {
     /// Full teardown to the login screen: no account left signed in. Clears every cache and
     /// per-session state so nothing leaks into the next sign in.
     private func teardownToLogin(_ state: inout State, removesClientCertificates: Bool) -> Effect<Action> {
-        state.$fileClipboard.withLock { $0 = nil }
-        state.$fileUndoStack.withLock { $0 = [] }
-        state.$fileRedoStack.withLock { $0 = [] }
+        state.clearAccountSharedState()
         state.$downloadScope.withLock { $0 = "" }
         CacheAccountScope.set("")
         CacheAccountScope.markEveryAccountWiped()

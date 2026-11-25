@@ -1218,3 +1218,6 @@ trash.columnDeletedOn	วันที่ลบ
 trash.columnRemoved	ลบถาวร
 emptyState.dropHintFiles	คุณยังลากไฟล์มาที่นี่จากแอปไฟล์หรือรูปภาพได้
 emptyState.dropHintFinder	คุณยังลากไฟล์มาที่นี่จาก Finder ได้
+settings.rowDefaultSort	การเรียงเริ่มต้น
+settings.rowSortOrder	ลำดับ
+settings.defaultSortFooter	โฟลเดอร์ที่คุณยังไม่ได้เรียงจะเปิดตามลำดับนี้ โฟลเดอร์ที่คุณเรียงจะคงลำดับของตัวเองบนทุกอุปกรณ์ที่ลงชื่อเข้าใช้เซิร์ฟเวอร์นี้

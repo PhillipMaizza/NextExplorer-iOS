@@ -1287,3 +1287,6 @@ shareUpload.startedDeferred	NextExplorer용으로 저장했습니다. 앱을 열
 menu.goToFolderPlaceholder	문서/보고서
 emptyState.dropHintFiles	파일 또는 사진 앱에서 파일을 여기로 드래그할 수도 있습니다.
 emptyState.dropHintFinder	Finder에서 파일을 여기로 드래그할 수도 있습니다.
+settings.rowDefaultSort	기본 정렬
+settings.rowSortOrder	순서
+settings.defaultSortFooter	정렬하지 않은 폴더는 이 순서로 열립니다. 정렬한 폴더는 이 서버에 로그인된 모든 기기에서 자체 순서를 유지합니다.

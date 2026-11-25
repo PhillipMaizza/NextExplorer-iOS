@@ -1467,3 +1467,6 @@ shareUpload.startedDeferred	تم الحفظ لـ NextExplorer. افتح التط
 menu.goToFolderPlaceholder	المستندات/التقارير
 emptyState.dropHintFiles	يمكنك أيضًا سحب الملفات إلى هنا من الملفات أو الصور.
 emptyState.dropHintFinder	يمكنك أيضًا سحب الملفات إلى هنا من Finder.
+settings.rowDefaultSort	الفرز الافتراضي
+settings.rowSortOrder	الترتيب
+settings.defaultSortFooter	تُفتح المجلدات التي لم تفرزها بهذا الترتيب. يحتفظ المجلد الذي تفرزه بترتيبه على كل جهاز مسجّل الدخول إلى هذا الخادم.

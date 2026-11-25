@@ -37,6 +37,9 @@ public struct FilesClient: Sendable {
     public var updatePreference: @Sendable (
         _ serverURL: URL, _ key: UserPreferenceKey, _ value: Bool
     ) async throws -> Void
+    public var saveFolderSort: @Sendable (
+        _ serverURL: URL, _ path: String, _ sort: FolderSort
+    ) async throws -> FolderSort?
     /// `GET /api/branding`: the server's app name + logo, unauthenticated.
     public var fetchBranding: @Sendable (_ serverURL: URL) async throws -> Branding
     /// `PATCH /api/settings` with `{ branding: {...} }` (admin only; the server 403s a

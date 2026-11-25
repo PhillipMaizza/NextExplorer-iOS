@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Bewaard voor NextExplorer. Open de app om je grote b
 menu.goToFolderPlaceholder	Documenten/Rapporten
 emptyState.dropHintFiles	Je kunt ook bestanden hierheen slepen vanuit Bestanden of Foto's.
 emptyState.dropHintFinder	Je kunt ook bestanden hierheen slepen vanuit de Finder.
+settings.rowDefaultSort	Standaardsortering
+settings.rowSortOrder	Volgorde
+settings.defaultSortFooter	Mappen die je niet hebt gesorteerd, openen in deze volgorde. Een map die je sorteert, houdt zijn eigen volgorde op elk apparaat dat bij deze server is ingelogd.

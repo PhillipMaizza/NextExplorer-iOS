@@ -1218,3 +1218,6 @@ trash.columnDeletedOn	Ngày xóa
 trash.columnRemoved	Xóa vĩnh viễn
 emptyState.dropHintFiles	Bạn cũng có thể kéo tệp vào đây từ Tệp hoặc Ảnh.
 emptyState.dropHintFinder	Bạn cũng có thể kéo tệp vào đây từ Finder.
+settings.rowDefaultSort	Sắp xếp mặc định
+settings.rowSortOrder	Thứ tự
+settings.defaultSortFooter	Các thư mục bạn chưa sắp xếp sẽ mở theo thứ tự này. Thư mục bạn sắp xếp giữ thứ tự riêng trên mọi thiết bị đăng nhập vào máy chủ này.

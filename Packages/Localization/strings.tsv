@@ -612,6 +612,9 @@ settings.toggleShowTabLabels	Show Tab Labels
 settings.toggleKeepClipboard	Keep Items After Paste
 settings.toggleKeepClipboardSubtitle	Copied items stay ready to paste into another folder. Moved items always clear.
 settings.rowDateFormat	Date Format
+settings.rowDefaultSort	Default Sort
+settings.rowSortOrder	Order
+settings.defaultSortFooter	Folders you have not sorted open in this order. A folder you sort keeps its own order on every device signed in to this server.
 settings.rowLanguage	Language
 settings.rowThumbnailSize	Thumbnail Size
 settings.rowRemoveAllDownloads	Remove All Downloads

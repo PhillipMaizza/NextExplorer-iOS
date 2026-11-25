@@ -1,0 +1,11 @@
+{
+  "user": {
+    "showHiddenFiles": false,
+    "folderSorts": {
+      "Documents/Work": { "by": "dateModified", "order": "desc", "updatedAt": 1700000000000 },
+      "Docs": { "by": "name", "order": "asc", "updatedAt": 1699999999999 }
+    },
+    "folderViews": {}
+  },
+  "branding": { "appName": "NextExplorer", "appLogoUrl": "/logo.svg" }
+}

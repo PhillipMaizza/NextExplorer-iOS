@@ -421,6 +421,7 @@ public struct MainTabFeature {
                         .send(.browse(.syncPathStack)),
                         .send(.favorites(.syncPathStack)),
                         .send(.uploads(.appResumed)),
+                        .send(.settings(.loadPreferences)),
                         queueDeferredShares(state),
                         // Check the pinned folders for new files each time the app comes forward.
                         .send(.offline(.autoSync(force: false)))
@@ -438,6 +439,7 @@ public struct MainTabFeature {
                     let clientCertificateClient = clientCertificateClient
                     let certificateOrigin = ClientCertificateOrigin(url: state.browse.root.serverURL)
                     return .merge(
+                        .send(.settings(.loadPreferences)),
                         .send(.offline(.autoSync(force: false))),
                         // Files the Share Extension kept while this account was not the open one.
                         queueDeferredShares(state),

@@ -46,6 +46,60 @@ struct CacheScopeCaptureTests {
     }
 
     @Test
+    func preferencesAnsweredAfterAnAccountSwitchNeverReachTheNextAccount() async {
+        let box = ScopeBox(Fixture.accountA)
+        let answer = AsyncGate()
+        let state = SettingsFeature.State(serverURL: Fixture.server, user: User.janeDoeFixture)
+        state.$preferences.withLock { $0 = UserPreferences() }
+        let store = TestStore(initialState: state) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.cacheScope = scopeSource(box)
+            $0.filesClient.fetchPreferences = { _ in
+                try await answer.wait()
+                return UserPreferences(shouldShowHiddenFiles: true)
+            }
+        }
+
+        await store.send(.loadPreferences)
+        box.value = Fixture.accountB
+        answer.open()
+        await store.finish()
+
+        #expect(store.state.preferences == UserPreferences())
+    }
+
+    @Test
+    func aFolderSortSavedAfterAnAccountSwitchNeverReachesTheNextAccount() async {
+        let box = ScopeBox(Fixture.accountA)
+        let answer = AsyncGate()
+        let sort = FolderSort(field: BrowseFeature.SortOption.size.rawValue, isAscending: false)
+        let echoed = FolderSort(field: BrowseFeature.SortOption.name.rawValue, isAscending: true)
+        let state = withDependencies { $0.cacheScope = scopeSource(box) } operation: {
+            BrowseFeature.State(serverURL: Fixture.server, directoryPath: Fixture.path, title: Fixture.path)
+        }
+        state.$preferences.withLock { $0 = UserPreferences() }
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.cacheScope = scopeSource(box)
+            $0.filesClient.saveFolderSort = { _, _, _ in
+                try await answer.wait()
+                return echoed
+            }
+        }
+
+        await store.send(.sortChanged(.size, .descending)) {
+            $0.$preferences.withLock { $0.setFolderSort(sort, for: Fixture.path) }
+        }
+        box.value = Fixture.accountB
+        answer.open()
+        await store.finish()
+
+        #expect(store.state.preferences.folderSort(for: Fixture.path) == sort)
+    }
+
+    @Test
     func aFavoritesResponseAfterAnAccountSwitchIsSavedUnderTheAccountThatAsked() async {
         let box = ScopeBox(Fixture.accountA)
         let jsonStore = JSONCacheStore.inMemory()

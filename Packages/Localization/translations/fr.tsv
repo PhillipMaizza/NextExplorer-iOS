@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Enregistré pour NextExplorer. Ouvrez l'app pour env
 menu.goToFolderPlaceholder	Documents/Rapports
 emptyState.dropHintFiles	Vous pouvez aussi glisser des fichiers ici depuis Fichiers ou Photos.
 emptyState.dropHintFinder	Vous pouvez aussi glisser des fichiers ici depuis le Finder.
+settings.rowDefaultSort	Tri par défaut
+settings.rowSortOrder	Ordre
+settings.defaultSortFooter	Les dossiers que vous n'avez pas triés s'ouvrent dans cet ordre. Un dossier que vous triez garde son propre ordre sur tous les appareils connectés à ce serveur.

@@ -38,12 +38,16 @@ public enum AppStorageKeys {
     public static let favoritesViewMode = "favoritesViewMode"
     public static let downloadsViewMode = "downloadsViewMode"
 
+    public static let defaultSortOption = "defaultSortOption"
+    public static let defaultSortDirection = "defaultSortDirection"
+
     /// Preferences reset to their defaults on sign out, so a new session on this device starts
     /// clean instead of inheriting the previous account's view modes and display choices.
     /// Device level chrome the user sets for themselves, not per account (appearance, language,
     /// haptics), is deliberately left untouched.
     public static let sessionScopedKeys: [String] = [
         browseViewMode, favoritesViewMode, downloadsViewMode,
+        defaultSortOption, defaultSortDirection,
         thumbnailSize, showFilenameExtensions, showTabLabels,
         renderHTMLPages, renderMarkdownPages,
         keepClipboardAfterCopy,

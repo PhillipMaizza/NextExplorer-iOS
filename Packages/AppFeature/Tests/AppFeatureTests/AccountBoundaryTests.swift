@@ -347,7 +347,7 @@ extension AppSuites {
             )
         }
 
-        @Test("Activating an account unlists a stale pending entry for it, so it is never wiped")
+        @Test("Activating an account unlists its stale pending entry and drops the last one's preferences")
         func activatingAnAccountDropsItsStalePendingEntry() async {
             let pending = PendingAccountWipes.inMemory()
             pending.add(AppFixtures.accountA)
@@ -358,7 +358,9 @@ extension AppSuites {
             )
             let confirmation = AsyncGate()
             let accountList = AsyncGate()
-            let store = makeStore(activeState(AppFixtures.serverB, AppFixtures.userB)) {
+            let leaving = activeState(AppFixtures.serverB, AppFixtures.userB)
+            leaving.$preferences.withLock { $0.shouldShowHiddenFiles = true }
+            let store = makeStore(leaving) {
                 $0.pendingAccountWipes = pending
                 $0.directoryCacheStore = directory
                 $0.authClient.me = { _ in
@@ -374,6 +376,7 @@ extension AppSuites {
             }
 
             await store.send(.activateAccount(credentialsA)) {
+                $0.$preferences.withLock { $0 = UserPreferences() }
                 $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountB)

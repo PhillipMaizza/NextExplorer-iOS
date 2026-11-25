@@ -1395,3 +1395,6 @@ shareUpload.startedDeferred	Сохранено для NextExplorer. Открой
 menu.goToFolderPlaceholder	Документы/Отчёты
 emptyState.dropHintFiles	Вы также можете перетащить сюда файлы из «Файлов» или «Фото».
 emptyState.dropHintFinder	Вы также можете перетащить сюда файлы из Finder.
+settings.rowDefaultSort	Сортировка по умолчанию
+settings.rowSortOrder	Порядок
+settings.defaultSortFooter	Папки, которые вы не сортировали, открываются в этом порядке. Папка, которую вы отсортировали, сохраняет свой порядок на всех устройствах, вошедших на этот сервер.

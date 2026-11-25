@@ -1218,3 +1218,6 @@ trash.columnDeletedOn	Tanggal Dihapus
 trash.columnRemoved	Dihapus Permanen
 emptyState.dropHintFiles	Anda juga dapat menyeret file ke sini dari File atau Foto.
 emptyState.dropHintFinder	Anda juga dapat menyeret file ke sini dari Finder.
+settings.rowDefaultSort	Urutan Default
+settings.rowSortOrder	Urutan
+settings.defaultSortFooter	Folder yang belum Anda urutkan terbuka dengan urutan ini. Folder yang Anda urutkan mempertahankan urutannya sendiri di setiap perangkat yang masuk ke server ini.

@@ -1323,3 +1323,6 @@ shareUpload.startedDeferred	Sparat för NextExplorer. Öppna appen för att ladd
 menu.goToFolderPlaceholder	Dokument/Rapporter
 emptyState.dropHintFiles	Du kan också dra filer hit från Filer eller Bilder.
 emptyState.dropHintFinder	Du kan också dra filer hit från Finder.
+settings.rowDefaultSort	Standardsortering
+settings.rowSortOrder	Ordning
+settings.defaultSortFooter	Mappar som du inte har sorterat öppnas i den här ordningen. En mapp som du sorterar behåller sin egen ordning på alla enheter som är inloggade på den här servern.
