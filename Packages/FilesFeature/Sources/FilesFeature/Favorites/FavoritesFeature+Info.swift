@@ -47,14 +47,7 @@ extension FavoritesFeature {
     }
 
     private func loadInfo(_ state: inout State, favorite: Favorite) -> Effect<Action> {
-        let parts = favorite.path.split(separator: "/").map(String.init)
-        let item = FileItem(
-            name: favorite.folderName,
-            path: parts.dropLast().joined(separator: "/"),
-            dateModified: date.now,
-            size: 0,
-            kind: FileItem.directoryKind
-        )
+        let item = favorite.fileItem(modified: date.now)
         state.infoItem = item
         state.infoMetadata = nil
         state.infoUsage = nil
@@ -80,5 +73,18 @@ extension FavoritesFeature {
 private extension FavoritesFeature.State {
     func favorite(id: Favorite.ID?) -> Favorite? {
         id.flatMap { favorites[id: $0] }
+    }
+}
+
+extension Favorite {
+    func fileItem(modified: Date) -> FileItem {
+        let parts = path.split(separator: "/").map(String.init)
+        return FileItem(
+            name: folderName,
+            path: parts.dropLast().joined(separator: "/"),
+            dateModified: modified,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
     }
 }

@@ -19,6 +19,11 @@
         @State private var selection: Set<Favorite.ID> = []
         @State private var sortOrder: [KeyPathComparator<Favorite>] = []
         @FocusState private var isFocused: Bool
+        @State private var isPeeking = false
+
+        private var displayed: [Favorite] {
+            sortOrder.isEmpty ? favorites : favorites.sorted(using: sortOrder)
+        }
 
         var body: some View {
             Table(of: Favorite.self, selection: $selection, sortOrder: $sortOrder) {
@@ -46,7 +51,7 @@
                 }
                 .width(min: Metrics.locationColumnMinWidth)
             } rows: {
-                ForEach(sortOrder.isEmpty ? favorites : favorites.sorted(using: sortOrder)) { favorite in
+                ForEach(displayed) { favorite in
                     // The app's own private drag type: a plain string would drop the id as text
                     // into other apps, and accept any text dragged in.
                     TableRow(favorite)
@@ -83,6 +88,24 @@
                 return .handled
             }
             .onDeleteCommand(perform: removeSelection)
+            .modifier(MacItemPeek(
+                item: favorite(for: selection.first).map { $0.fileItem(modified: FileItem.unknownDate) },
+                items: displayed.map { $0.fileItem(modified: FileItem.unknownDate) },
+                isPeeking: $isPeeking,
+                serverURL: store.serverURL,
+                shouldShowThumbnails: store.preferences.shouldShowThumbnails,
+                showsHiddenFiles: store.shouldShowHiddenFiles,
+                onSelect: { item in
+                    selection = Set(favorites.filter { $0.path == item.id }.map(\.id))
+                },
+                onOpen: { item in
+                    guard let favorite = favorites.first(where: { $0.path == item.id }) else { return }
+                    store.send(.rowTapped(favorite))
+                },
+                showsMore: false,
+                isListFocused: $isFocused,
+                more: { _ in EmptyView() }
+            ))
             .onChange(of: favorites.map(\.id)) { _, ids in
                 selection.formIntersection(ids)
             }

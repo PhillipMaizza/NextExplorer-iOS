@@ -7,7 +7,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let locationColumnMinWidth: CGFloat = 200
+        static let locationColumnMinWidth: CGFloat = 120
     }
 
     /// One row of the Offline table: an item kept offline, or a file saved by an earlier version.
@@ -70,6 +70,7 @@
         @State private var phase = OfflineDownloadProgress.Phase.idle
         @State private var selection: Set<MacOfflineTableRow.ID> = []
         @FocusState private var isFocused: Bool
+        @State private var isPeeking = false
 
         private var rows: [MacOfflineTableRow] {
             pinned.map(MacOfflineTableRow.pinned) + saved.map(MacOfflineTableRow.saved)
@@ -131,6 +132,7 @@
                 return .handled
             }
             .onDeleteCommand { remove(selection) }
+            .modifier(peek(rows))
             .onOfflinePhaseChange(isInitial: true) { phase = $0 }
             .onChange(of: rows.map(\.id)) { _, ids in
                 selection.formIntersection(ids)
@@ -208,6 +210,36 @@
         }
 
         /// A pinned folder opens in place, a pinned file previews from its kept copy, a saved file previews.
+        private func peek(_ rows: [MacOfflineTableRow]) -> MacItemPeek<EmptyView> {
+            let pinnedRows = rows.filter { $0.pinned != nil }
+            return MacItemPeek(
+                item: selection.count == 1 ? peekItem(for: selection.first, in: rows) : nil,
+                items: pinnedRows.compactMap { peekItem(for: $0.id, in: rows) },
+                isPeeking: $isPeeking,
+                serverURL: store.serverURL ?? URL(fileURLWithPath: "/"),
+                shouldShowThumbnails: store.preferences.shouldShowThumbnails,
+                showsHiddenFiles: store.preferences.shouldShowHiddenFiles,
+                isSavedOffline: { _ in true },
+                size: { item in pinned.first { $0.root.path == item.id }?.sizeBytes },
+                onSelect: { item in
+                    guard let row = pinnedRows.first(where: { $0.pinned?.root.path == item.id }) else { return }
+                    selection = [row.id]
+                },
+                onOpen: { item in
+                    guard let row = pinnedRows.first(where: { $0.pinned?.root.path == item.id }) else { return }
+                    open(row)
+                },
+                showsMore: false,
+                isListFocused: $isFocused,
+                more: { _ in EmptyView() }
+            )
+        }
+
+        private func peekItem(for id: MacOfflineTableRow.ID?, in rows: [MacOfflineTableRow]) -> FileItem? {
+            guard store.serverURL != nil, let usage = row(for: id, in: rows)?.pinned else { return nil }
+            return OfflineDownloadsFeature.fileItem(from: usage.root)
+        }
+
         private func open(_ row: MacOfflineTableRow) {
             switch row {
             case let .pinned(usage):
