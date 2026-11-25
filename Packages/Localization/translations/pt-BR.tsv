@@ -925,9 +925,7 @@ menu.enclosingFolder	Pasta superior
 common.more	Mais
 openWith.print	Imprimir…
 menu.newWindow	Nova janela
-menu.newTab	Nova aba
 browse.actionOpenInNewWindow	Abrir em nova janela
-browse.actionOpenInNewTab	Abrir em nova aba
 select.slideTipTitle	Deslize para selecionar
 select.slideTipMessage	Deslize um dedo de lado sobre os itens para selecionar vários de uma vez.
 settings.rowAppearance	Aparência

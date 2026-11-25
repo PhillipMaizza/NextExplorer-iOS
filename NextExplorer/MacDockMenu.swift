@@ -12,6 +12,7 @@
 
         @MainActor
         func applicationDidFinishLaunching(_: Notification) {
+            NSWindow.allowsAutomaticWindowTabbing = false
             mouseNavigationMonitor = MacMouseNavigation.install()
         }
 

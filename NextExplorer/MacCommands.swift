@@ -55,13 +55,11 @@
             CommandGroup(after: .appInfo) {
                 RateAppButton()
             }
-            // New Window / New Tab open lightweight Browse windows (MacFolderWindow); the main
+            // New Window opens a lightweight Browse window (MacFolderWindow); the main
             // window stays the only one owning uploads, sync and the session.
             CommandGroup(replacing: .newItem) {
-                Button(L10n.Menu.newWindow) { openBrowseWindow(asTab: false) }
+                Button(L10n.Menu.newWindow) { openBrowseWindow() }
                     .keyboardShortcut("n")
-                Button(L10n.Menu.newTab) { openBrowseWindow(asTab: true) }
-                    .keyboardShortcut("t")
                 Divider()
                 Button(L10n.Browse.actionNewFolder) { sendToFrontWindow(
                     { $0.newFolder() },
@@ -250,13 +248,9 @@
             )
         }
 
-        private func openBrowseWindow(asTab: Bool) {
+        private func openBrowseWindow() {
             guard case .authenticated = store.destination else { return }
-            openWindow(value: FolderWindowRoute(
-                path: "",
-                title: L10n.Browse.navigationTitle,
-                tabHostWindowNumber: asTab ? NSApp.keyWindow?.windowNumber : nil
-            ))
+            openWindow(value: FolderWindowRoute(path: "", title: L10n.Browse.navigationTitle))
         }
 
         /// File table actions when the table has focus, otherwise the standard text action down

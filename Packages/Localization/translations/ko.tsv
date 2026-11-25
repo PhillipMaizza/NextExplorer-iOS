@@ -715,9 +715,7 @@ menu.enclosingFolder	상위 폴더
 common.more	더 보기
 openWith.print	프린트…
 menu.newWindow	새로운 윈도우
-menu.newTab	새로운 탭
 browse.actionOpenInNewWindow	새로운 윈도우에서 열기
-browse.actionOpenInNewTab	새로운 탭에서 열기
 select.slideTipTitle	밀어서 선택
 select.slideTipMessage	항목 위로 손가락을 옆으로 밀면 여러 항목을 한 번에 선택할 수 있습니다.
 settings.rowAppearance	화면 모드

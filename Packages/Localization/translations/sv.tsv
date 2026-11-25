@@ -726,9 +726,7 @@ menu.enclosingFolder	Omslutande mapp
 common.more	Mer
 openWith.print	Skriv ut …
 menu.newWindow	Nytt fönster
-menu.newTab	Ny flik
 browse.actionOpenInNewWindow	Öppna i nytt fönster
-browse.actionOpenInNewTab	Öppna i ny flik
 select.slideTipTitle	Svep för att välja
 select.slideTipMessage	Svep med ett finger i sidled över objekt för att välja flera på en gång.
 settings.rowAppearance	Utseende

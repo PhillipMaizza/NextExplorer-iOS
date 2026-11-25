@@ -147,7 +147,6 @@ public enum L10n {
         public static var actionNewFile: String { tr("browse.actionNewFile") }  // "Create File"
         public static var actionNewFolder: String { tr("browse.actionNewFolder") }  // "Create Folder"
         public static var actionOpenInBrowser: String { tr("browse.actionOpenInBrowser") }  // "Open in Browser"
-        public static var actionOpenInNewTab: String { tr("browse.actionOpenInNewTab") }  // "Open in New Tab"
         public static var actionOpenInNewWindow: String { tr("browse.actionOpenInNewWindow") }  // "Open in New Window"
         public static var actionPaste: String { tr("browse.actionPaste") }  // "Paste"
         public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
@@ -674,7 +673,6 @@ public enum L10n {
         public static var goToFolderPlaceholder: String { tr("menu.goToFolderPlaceholder") }  // "Documents/Reports"
         public static var goToFolderTitle: String { tr("menu.goToFolderTitle") }  // "Go to the folder:"
         public static var hideInspector: String { tr("menu.hideInspector") }  // "Hide Inspector"
-        public static var newTab: String { tr("menu.newTab") }  // "New Tab"
         public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
         public static var quitTransfersConfirm: String { tr("menu.quitTransfersConfirm") }  // "Quit"
         public static var quitTransfersMessage: String { tr("menu.quitTransfersMessage") }

@@ -1,5 +1,4 @@
 #if os(macOS)
-    import AppKit
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
@@ -41,7 +40,6 @@
             }
             .environment(\.horizontalSizeClass, .regular)
             .frame(minWidth: Metrics.minWidth, minHeight: Metrics.minHeight)
-            .background(WindowTabJoiner(hostWindowNumber: route.tabHostWindowNumber))
             .onAppear(perform: start)
             .onChange(of: mainStore.currentAccountID) { _, newValue in
                 if newValue == nil || newValue != accountID {
@@ -88,49 +86,6 @@
                 windowStore.send(.browse(.navigateToDirectory(path: route.path, title: route.title)))
             }
             store = windowStore
-        }
-    }
-
-    /// Joins this window to `hostWindowNumber`'s tab group the first time it lands in a window,
-    /// which is how ⌘T and "Open in New Tab" open a tab rather than a separate window.
-    private struct WindowTabJoiner: NSViewRepresentable {
-        let hostWindowNumber: Int?
-
-        func makeNSView(context _: Context) -> NSView {
-            JoinerView(hostWindowNumber: hostWindowNumber)
-        }
-
-        func updateNSView(_: NSView, context _: Context) {}
-
-        private final class JoinerView: NSView {
-            private let hostWindowNumber: Int?
-            private var hasJoined = false
-
-            init(hostWindowNumber: Int?) {
-                self.hostWindowNumber = hostWindowNumber
-                super.init(frame: .zero)
-            }
-
-            @available(*, unavailable)
-            required init?(coder _: NSCoder) {
-                nil
-            }
-
-            override func viewDidMoveToWindow() {
-                super.viewDidMoveToWindow()
-                guard !hasJoined, let window, let hostWindowNumber,
-                      let host = NSApp.window(withWindowNumber: hostWindowNumber), host != window
-                else { return }
-                hasJoined = true
-                // Deferred out of the layout pass this callback runs in: regrouping windows
-                // mid pass lets SwiftUI replay a toolbar update and AppKit rejects the
-                // duplicate item.
-                DispatchQueue.main.async { [weak window] in
-                    guard let window else { return }
-                    host.addTabbedWindow(window, ordered: .above)
-                    window.makeKeyAndOrderFront(nil)
-                }
-            }
         }
     }
 
