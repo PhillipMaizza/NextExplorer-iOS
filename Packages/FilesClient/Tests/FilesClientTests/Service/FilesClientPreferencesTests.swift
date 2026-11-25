@@ -45,7 +45,8 @@ extension FilesClientLiveTests {
 
             let echoed = try await makeClient().saveFolderSort(serverURL, "/" + TestPath.documentsWork + "/", sort)
 
-            #expect(echoed == sort)
+            let stamped = FolderSort(field: sort.field, isAscending: sort.isAscending, updatedAt: MockDate.milliseconds)
+            #expect(echoed == stamped)
             let request = try #require(StubURLProtocol.capturedRequest)
             #expect(request.httpMethod == HTTPMethod.patch.rawValue)
             #expect(request.url?.path == "/api/settings")

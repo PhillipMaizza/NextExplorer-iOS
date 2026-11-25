@@ -43,12 +43,15 @@ struct UserPreferencesDecodingTests {
     func decodesFolderSorts() throws {
         let prefs = try CoreModelsFixture.userPreferencesFolderSorts.decode(UserPreferences.self)
         #expect(prefs.shouldShowHiddenFiles == true)
+        let work = FolderSort(field: "dateModified", isAscending: false, updatedAt: MockDate.milliseconds)
+        let photos = FolderSort(field: "size", isAscending: true, updatedAt: MockDate.milliseconds + 1)
+        let media = FolderSort(field: "bitrate", isAscending: true, updatedAt: MockDate.milliseconds + 2)
         #expect(prefs.folderSorts == [
-            TestPath.documentsWork: FolderSort(field: "dateModified", isAscending: false),
-            TestPath.photos2026: FolderSort(field: "size", isAscending: true),
-            TestFolder.media: FolderSort(field: "bitrate", isAscending: true),
+            TestPath.documentsWork: work,
+            TestPath.photos2026: photos,
+            TestFolder.media: media,
         ])
-        #expect(prefs.folderSort(for: "/" + TestPath.photos2026) == FolderSort(field: "size", isAscending: true))
+        #expect(prefs.folderSort(for: "/" + TestPath.photos2026) == photos)
     }
 
     @Test("a server that sends no folder sorts is told apart from one that has none saved")
@@ -81,6 +84,27 @@ struct UserPreferencesDecodingTests {
         var fromNewServer = current
         fromNewServer.adopt(UserPreferences(folderSorts: [:]))
         #expect(fromNewServer.folderSorts == [:])
+    }
+
+    @Test("a fetch that left before a save keeps the saved sort, a later change from the web replaces it")
+    func adoptKeepsTheNewestStampedSort() {
+        let saved = FolderSort(field: "size", isAscending: false, updatedAt: MockDate.milliseconds + 1)
+        let older = FolderSort(field: "name", isAscending: true, updatedAt: MockDate.milliseconds)
+        let newer = FolderSort(field: "kind", isAscending: true, updatedAt: MockDate.milliseconds + 2)
+        var current = UserPreferences()
+        current.setFolderSort(saved, for: TestPath.documentsWork)
+
+        var afterStaleFetch = current
+        afterStaleFetch.adopt(UserPreferences(folderSorts: [TestPath.documentsWork: older]))
+        #expect(afterStaleFetch.folderSort(for: TestPath.documentsWork) == saved)
+
+        var afterFetchMissingIt = current
+        afterFetchMissingIt.adopt(UserPreferences(folderSorts: [:]))
+        #expect(afterFetchMissingIt.folderSort(for: TestPath.documentsWork) == saved)
+
+        var afterWebChange = current
+        afterWebChange.adopt(UserPreferences(folderSorts: [TestPath.documentsWork: newer]))
+        #expect(afterWebChange.folderSort(for: TestPath.documentsWork) == newer)
     }
 
     @Test("share expiration resolves to a calendar date, respecting the unit")

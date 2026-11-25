@@ -42,9 +42,12 @@ public struct UserPreferences: Decodable, Equatable, Sendable {
     public mutating func adopt(_ fetched: UserPreferences) {
         let kept = folderSorts
         self = fetched
-        if fetched.folderSorts == nil {
+        guard let fetchedSorts = fetched.folderSorts else {
             folderSorts = kept
+            return
         }
+        let newerHere = (kept ?? [:]).filter { path, sort in sort.isNewer(than: fetchedSorts[path]) }
+        folderSorts = fetchedSorts.merging(newerHere) { _, here in here }
     }
 
     /// A relative share link lifetime: `value` of `unit` from now.

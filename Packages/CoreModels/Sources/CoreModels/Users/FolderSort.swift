@@ -3,10 +3,17 @@ import Foundation
 public struct FolderSort: Decodable, Equatable, Sendable {
     public let field: String
     public let isAscending: Bool
+    public let updatedAt: Int64?
 
-    public init(field: String, isAscending: Bool) {
+    public init(field: String, isAscending: Bool, updatedAt: Int64? = nil) {
         self.field = field
         self.isAscending = isAscending
+        self.updatedAt = updatedAt
+    }
+
+    func isNewer(than other: FolderSort?) -> Bool {
+        guard let updatedAt else { return false }
+        return updatedAt > (other?.updatedAt ?? .min)
     }
 
     public var order: String {
@@ -25,6 +32,7 @@ public struct FolderSort: Decodable, Equatable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case field = "by"
         case order
+        case updatedAt
     }
 
     public init(from decoder: Decoder) throws {
@@ -35,6 +43,7 @@ public struct FolderSort: Decodable, Equatable, Sendable {
             throw DecodingError.dataCorruptedError(forKey: .order, in: container, debugDescription: "Not a folder sort")
         }
         isAscending = order == Order.ascending
+        updatedAt = try? container.decodeIfPresent(Int64.self, forKey: .updatedAt)
     }
 }
 
