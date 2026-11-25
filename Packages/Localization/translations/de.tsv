@@ -1415,6 +1415,7 @@ lock.title	NextExplorer ist gesperrt
 lock.subtitle	Melde dich erneut an, um deine Dateien zu öffnen.
 lock.signIn	Anmelden
 lock.otherAccount	Das ist ein anderes Konto. Melde dich als %@ an, um zu entsperren, oder melde dich ab.
+lock.status	Gesperrt
 requireSignIn.footer	Wenn du die App verlässt, wird dieses Konto gesperrt und seine Sitzung beendet. Zum Entsperren musst du dich neu anmelden, mit deinem Sicherheitsschlüssel, falls deine Anmeldung einen verlangt.
 requireSignIn.sectionLock	Sperren
 requireSignIn.appStart	Beim Start der App

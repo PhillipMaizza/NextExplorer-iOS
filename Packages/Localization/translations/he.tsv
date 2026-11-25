@@ -1386,6 +1386,7 @@ lock.title	NextExplorer נעול
 lock.subtitle	התחבר שוב כדי לפתוח את הקבצים שלך.
 lock.signIn	התחברות
 lock.otherAccount	זה חשבון אחר. התחבר בתור %@ כדי לבטל את הנעילה, או התנתק.
+lock.status	נעול
 requireSignIn.footer	כשאתה יוצא מהאפליקציה, החשבון ננעל וההפעלה שלו מסתיימת. ביטול הנעילה דורש התחברות מחדש, עם מפתח האבטחה שלך אם ההתחברות מבקשת אותו.
 requireSignIn.sectionLock	נעילה
 requireSignIn.appStart	בהפעלת האפליקציה

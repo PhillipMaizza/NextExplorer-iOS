@@ -1308,6 +1308,7 @@ lock.title	NextExplorer terkunci
 lock.subtitle	Masuk lagi untuk membuka file Anda.
 lock.signIn	Masuk
 lock.otherAccount	Itu akun lain. Masuk sebagai %@ untuk membuka kunci, atau keluar.
+lock.status	Terkunci
 requireSignIn.footer	Saat Anda meninggalkan aplikasi, akun ini terkunci dan sesinya berakhir. Membuka kunci perlu masuk ulang, dengan kunci keamanan Anda jika proses masuk memintanya.
 requireSignIn.sectionLock	Kunci
 requireSignIn.appStart	Saat aplikasi dimulai

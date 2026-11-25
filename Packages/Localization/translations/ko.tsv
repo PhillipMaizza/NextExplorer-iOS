@@ -1377,6 +1377,7 @@ lock.title	NextExplorer가 잠겨 있습니다
 lock.subtitle	파일을 열려면 다시 로그인하세요.
 lock.signIn	로그인
 lock.otherAccount	다른 계정입니다. 잠금을 해제하려면 %@(으)로 로그인하거나 로그아웃하세요.
+lock.status	잠김
 requireSignIn.footer	앱을 떠나면 이 계정이 잠기고 세션이 끝납니다. 잠금을 해제하려면 다시 로그인해야 하며, 로그인에서 요구하면 보안 키도 사용합니다.
 requireSignIn.sectionLock	잠금
 requireSignIn.appStart	앱을 시작할 때

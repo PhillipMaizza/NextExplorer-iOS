@@ -923,6 +923,7 @@ lock.title	NextExplorer is locked
 lock.subtitle	Sign in again to open your files.
 lock.signIn	Sign In
 lock.otherAccount	That's a different account. Sign in as %@ to unlock, or sign out.
+lock.status	Locked
 # ---- require sign in ----
 requireSignIn.navigationTitle	Require Sign In
 requireSignIn.toggle	Require Sign In

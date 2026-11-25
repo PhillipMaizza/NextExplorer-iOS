@@ -1415,6 +1415,7 @@ lock.title	NextExplorer är låst
 lock.subtitle	Logga in igen för att öppna dina filer.
 lock.signIn	Logga in
 lock.otherAccount	Det är ett annat konto. Logga in som %@ för att låsa upp, eller logga ut.
+lock.status	Låst
 requireSignIn.footer	När du lämnar appen låses kontot och sessionen avslutas. För att låsa upp krävs en ny inloggning, med din säkerhetsnyckel om inloggningen kräver en.
 requireSignIn.sectionLock	Lås
 requireSignIn.appStart	När appen startar

@@ -1308,6 +1308,7 @@ lock.title	NextExplorer đã khóa
 lock.subtitle	Đăng nhập lại để mở tệp của bạn.
 lock.signIn	Đăng nhập
 lock.otherAccount	Đó là tài khoản khác. Đăng nhập bằng %@ để mở khóa, hoặc đăng xuất.
+lock.status	Đã khóa
 requireSignIn.footer	Khi bạn rời ứng dụng, tài khoản này sẽ bị khóa và phiên của nó kết thúc. Mở khóa cần đăng nhập lại, kèm khóa bảo mật nếu việc đăng nhập yêu cầu.
 requireSignIn.sectionLock	Khóa
 requireSignIn.appStart	Khi khởi động ứng dụng

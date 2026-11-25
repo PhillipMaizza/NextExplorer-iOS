@@ -16,40 +16,50 @@
         @ViewBuilder let pages: () -> Pages
 
         var body: some View {
-            HStack(spacing: .zero) {
-                if hasStepsSidebar {
+            if hasStepsSidebar {
+                MacLoginShell {
                     MacLoginSidebar(store: store)
+                } content: {
+                    pages().macLoginColumn()
                 }
-                surface(
-                    VStack(spacing: .zero) {
-                        pages()
-                            .defaultScrollAnchor(.center)
-                            .frame(maxWidth: Constants.contentMaxWidth)
-                            .padding(.horizontal, Constants.cardPadding)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        if !hasStepsSidebar {
-                            MacLoginFooterLinks(store: store)
-                                .padding(.horizontal, Constants.cardPadding)
-                                .padding(.bottom, .space16)
-                        }
-                    }
-                )
+            } else {
+                VStack(spacing: .zero) {
+                    pages().macLoginColumn()
+                    MacLoginFooterLinks(store: store)
+                        .padding(.horizontal, Constants.cardPadding)
+                        .padding(.bottom, .space16)
+                }
+                .background(Color.macCard.ignoresSafeArea())
+                .toolbar(removing: .title)
+                .toolbarBackground(.hidden, for: .windowToolbar)
             }
-            .ignoresSafeArea(edges: hasStepsSidebar ? .top : [])
-            .background((hasStepsSidebar ? Color.macChrome : .macCard).ignoresSafeArea())
+        }
+    }
+
+    struct MacLoginShell<Sidebar: View, Content: View>: View {
+        @ViewBuilder let sidebar: () -> Sidebar
+        @ViewBuilder let content: () -> Content
+
+        var body: some View {
+            HStack(spacing: .zero) {
+                sidebar()
+                content()
+                    .macCard()
+                    .padding(Constants.windowPadding)
+            }
+            .ignoresSafeArea(edges: .top)
+            .background(Color.macChrome.ignoresSafeArea())
             .toolbar(removing: .title)
             .toolbarBackground(.hidden, for: .windowToolbar)
         }
+    }
 
-        @ViewBuilder
-        private func surface(_ content: some View) -> some View {
-            if hasStepsSidebar {
-                content
-                    .macCard()
-                    .padding(Constants.windowPadding)
-            } else {
-                content
-            }
+    extension View {
+        func macLoginColumn() -> some View {
+            defaultScrollAnchor(.center)
+                .frame(maxWidth: Constants.contentMaxWidth)
+                .padding(.horizontal, Constants.cardPadding)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 

@@ -19,6 +19,21 @@
         let store: StoreOf<LoginFormFeature>
 
         var body: some View {
+            MacLoginSidebarFrame {
+                ForEach(MacLoginStep.visible(on: store.currentPage), id: \.self) { step in
+                    MacLoginStepRow(step: step, state: step.state(current: MacLoginStep(page: store.currentPage)))
+                }
+            } footer: {
+                MacLoginFooterLinks(store: store)
+            }
+        }
+    }
+
+    struct MacLoginSidebarFrame<Rows: View, Footer: View>: View {
+        @ViewBuilder let rows: () -> Rows
+        @ViewBuilder let footer: () -> Footer
+
+        var body: some View {
             VStack(alignment: .leading, spacing: .zero) {
                 IconKit.logo
                     .resizable()
@@ -30,13 +45,11 @@
                     .foregroundStyle(Color.macChromeText)
                     .padding(.top, .space24)
                 VStack(alignment: .leading, spacing: .space4) {
-                    ForEach(MacLoginStep.visible(on: store.currentPage), id: \.self) { step in
-                        MacLoginStepRow(step: step, state: step.state(current: MacLoginStep(page: store.currentPage)))
-                    }
+                    rows()
                 }
                 .padding(.top, .space32)
                 Spacer(minLength: .space24)
-                MacLoginFooterLinks(store: store)
+                footer()
             }
             .padding(.horizontal, .space32)
             .padding(.top, Constants.topPadding)
@@ -76,14 +89,19 @@
         }
     }
 
-    private struct MacLoginStepRow: View {
-        let step: MacLoginStep
+    struct MacLoginStepRow<Mark: View>: View {
+        let title: String
         let state: MacLoginStepState
+        @ViewBuilder let mark: () -> Mark
 
         var body: some View {
             HStack(spacing: .space12) {
-                badge
-                Text(step.title)
+                ZStack {
+                    Circle().fill(state == .current ? Color.accent : Color.macChromeButton)
+                    mark()
+                }
+                .frame(width: Constants.stepBadgeSize, height: Constants.stepBadgeSize)
+                Text(title)
                     .type(.body2(state == .current ? .semibold : .regular))
                     .foregroundStyle(state == .upcoming ? Color.macChromeSecondary : Color.macChromeText)
                 Spacer(minLength: .zero)
@@ -100,25 +118,32 @@
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(state == .current ? .isSelected : [])
         }
+    }
 
-        private var badge: some View {
-            ZStack {
-                Circle().fill(state == .current ? Color.accent : Color.macChromeButton)
-                switch state {
-                case .done:
-                    IconKit.checkmark
-                        .resizable()
-                        .scaledToFit()
-                        .bold()
-                        .frame(width: Constants.checkSize, height: Constants.checkSize)
-                        .foregroundStyle(Color.accentText)
-                case .current, .upcoming:
-                    Text(step.rawValue.formatted())
-                        .type(.caption(.bold))
-                        .foregroundStyle(state == .current ? Color.onAccent : Color.macChromeSecondary)
-                }
+    extension MacLoginStepRow where Mark == MacLoginStepMark {
+        init(step: MacLoginStep, state: MacLoginStepState) {
+            self.init(title: step.title, state: state) { MacLoginStepMark(step: step, state: state) }
+        }
+    }
+
+    struct MacLoginStepMark: View {
+        let step: MacLoginStep
+        let state: MacLoginStepState
+
+        var body: some View {
+            switch state {
+            case .done:
+                IconKit.checkmark
+                    .resizable()
+                    .scaledToFit()
+                    .bold()
+                    .frame(width: Constants.checkSize, height: Constants.checkSize)
+                    .foregroundStyle(Color.accentText)
+            case .current, .upcoming:
+                Text(step.rawValue.formatted())
+                    .type(.caption(.bold))
+                    .foregroundStyle(state == .current ? Color.onAccent : Color.macChromeSecondary)
             }
-            .frame(width: Constants.stepBadgeSize, height: Constants.stepBadgeSize)
         }
     }
 

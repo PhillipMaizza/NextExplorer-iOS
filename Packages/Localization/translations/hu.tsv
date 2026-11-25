@@ -1344,6 +1344,7 @@ lock.title	A NextExplorer zárolva van
 lock.subtitle	Jelentkezz be újra a fájljaid megnyitásához.
 lock.signIn	Bejelentkezés
 lock.otherAccount	Ez egy másik fiók. Jelentkezz be mint %@ a feloldáshoz, vagy jelentkezz ki.
+lock.status	Zárolva
 requireSignIn.footer	Amikor kilépsz az appból, ez a fiók zárolódik, és a munkamenete véget ér. A feloldáshoz új bejelentkezés kell, a biztonsági kulcsoddal, ha a bejelentkezésed kéri.
 requireSignIn.sectionLock	Zárolás
 requireSignIn.appStart	Az app indításakor

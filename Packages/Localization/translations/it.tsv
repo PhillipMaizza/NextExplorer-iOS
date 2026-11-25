@@ -1415,6 +1415,7 @@ lock.title	NextExplorer è bloccato
 lock.subtitle	Accedi di nuovo per aprire i tuoi file.
 lock.signIn	Accedi
 lock.otherAccount	Questo è un altro account. Accedi come %@ per sbloccare, oppure esci.
+lock.status	Bloccato
 requireSignIn.footer	Quando esci dall’app, questo account si blocca e la sua sessione termina. Per sbloccare serve un nuovo accesso, con la tua chiave di sicurezza se il tuo accesso la richiede.
 requireSignIn.sectionLock	Blocca
 requireSignIn.appStart	All’avvio dell’app
