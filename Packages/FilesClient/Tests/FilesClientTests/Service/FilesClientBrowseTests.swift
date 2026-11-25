@@ -359,9 +359,10 @@ extension FilesClientLiveTests {
         func searchKeepsAPlusAndAnAmpersandInsideTheTerm() async throws {
             try stub(statusCode: 200, body: FilesClientFixture.commonItemsEmpty.data())
             StubURLProtocol.capturedRequest = nil
+            StubURLProtocol.requests = []
             _ = try await makeClient().search(serverURL, "", Constants.reservedTerm, nil)
-            let url = try #require(StubURLProtocol.capturedRequest?.url)
-            #expect(url.query(percentEncoded: true) == Constants.reservedTermQuery)
+            let queries = StubURLProtocol.requests.compactMap { $0.url?.query(percentEncoded: true) }
+            #expect(Set(queries) == [Constants.reservedTermQuery, Constants.reservedWordsQuery])
         }
 
         @Test
@@ -403,6 +404,7 @@ private enum Constants {
     /// A server reads a raw `+` as a space and a raw `&` as the next item.
     static let reservedTerm = "C++ a&b"
     static let reservedTermQuery = "q=C%2B%2B%20a%26b"
+    static let reservedWordsQuery = "q=%2AC%2B%2B%2Aa%26b%2A"
     static let plusName = "a+b.txt"
     static let plusNameQuery = "path=a%2Bb.txt"
 }
