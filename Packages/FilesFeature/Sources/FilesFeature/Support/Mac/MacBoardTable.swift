@@ -14,7 +14,8 @@
         }
 
         func macBoardTable() -> some View {
-            scrollContentBackground(.hidden)
+            tableStyle(.inset)
+                .scrollContentBackground(.hidden)
                 .alternatingRowBackgrounds(.disabled)
         }
     }
