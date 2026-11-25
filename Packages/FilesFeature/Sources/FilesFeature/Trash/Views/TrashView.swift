@@ -54,7 +54,12 @@ struct TrashView: View {
     }
 
     private var content: some View {
-        TrashPhaseContent(phase: store.phase, isEmpty: store.items.isEmpty, onRetry: { store.send(.retryTapped) }) {
+        TrashPhaseContent(
+            phase: store.phase,
+            isEmpty: store.items.isEmpty,
+            searchMiss: store.searchMiss,
+            onRetry: { store.send(.retryTapped) }
+        ) {
             VStack(spacing: .space24) {
                 EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
                 footer

@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
@@ -48,6 +49,29 @@ struct TrashSortAndSelectionTests {
         #expect(store.state.displayedItems.map(\.id) == [small.id, undated.id])
         await store.send(.searchQueryChanged("")) { $0.searchQuery = "" }
         #expect(store.state.displayedItems.count == 3)
+    }
+
+    @Test("A search drops the selection it hides, so an action never reaches a row out of sight")
+    func searchDropsHiddenSelection() async {
+        let store = store(isSelecting: true)
+        await store.send(.selectAllTapped) { $0.selectedIDs = [big.id, small.id, undated.id] }
+        await store.send(.searchQueryChanged("txt")) {
+            $0.searchQuery = "txt"
+            $0.selectedIDs = [small.id, undated.id]
+        }
+        #expect(store.state.isAllSelected)
+        await store.send(.selectAllTapped) { $0.selectedIDs = [] }
+        await store.send(.selectAllTapped) { $0.selectedIDs = [small.id, undated.id] }
+    }
+
+    @Test("A search that matches nothing says so, and clearing it brings the list back")
+    func searchMissSaysSo() async {
+        let store = store()
+        #expect(store.state.searchMiss == nil)
+        await store.send(.searchQueryChanged("zzz")) { $0.searchQuery = "zzz" }
+        #expect(store.state.searchMiss == L10n.EmptyState.noSearchMatches("zzz"))
+        await store.send(.searchQueryChanged("  ")) { $0.searchQuery = "  " }
+        #expect(store.state.searchMiss == nil)
     }
 
     @Test("A finger sweep selects what it crossed, never an id the trash does not hold")

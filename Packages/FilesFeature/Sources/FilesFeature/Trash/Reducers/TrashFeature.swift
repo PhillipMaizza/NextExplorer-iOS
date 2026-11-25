@@ -54,8 +54,15 @@ public struct TrashFeature {
             return matches.sorted(by: sortOption, sortDirection)
         }
 
+        public var searchMiss: String? {
+            searchQuery.trimmingCharacters(in: .whitespaces).isEmpty || !displayedItems.isEmpty
+                ? nil
+                : L10n.EmptyState.noSearchMatches(searchQuery)
+        }
+
         public var isAllSelected: Bool {
-            !items.isEmpty && selectedIDs.count == items.count
+            let shown = displayedItems
+            return !shown.isEmpty && selectedIDs.count == shown.count
         }
     }
 
@@ -164,6 +171,7 @@ public struct TrashFeature {
 
             case let .searchQueryChanged(query):
                 state.searchQuery = query
+                state.selectedIDs.formIntersection(state.displayedItems.map(\.id))
                 return .none
 
             case let .itemTapped(item):
@@ -211,7 +219,7 @@ public struct TrashFeature {
                 return .none
 
             case .selectAllTapped:
-                state.selectedIDs = state.isAllSelected ? [] : Set(state.items.ids)
+                state.selectedIDs = state.isAllSelected ? [] : Set(state.displayedItems.map(\.id))
                 return .none
 
             case let .selectionSwept(ids):

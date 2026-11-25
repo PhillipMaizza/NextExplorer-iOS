@@ -90,7 +90,7 @@
                         deletedAt: deletedAt,
                         expiresAt: deletedAt
                             .addingTimeInterval(Double(UITestSupport.trashRetentionDays) * Constants.day),
-                        location: TrashItem.Location(isPersonal: false, name: nil, parent: item.path),
+                        location: .mockVolume(item.path),
                         openPath: item.path
                     )
                     trash.insert(Trashed(item: trashed, original: item, subtree: subtree), at: 0)
@@ -403,6 +403,13 @@
                 kind: item.kind,
                 supportsThumbnail: item.supportsThumbnail
             )
+        }
+    }
+
+    extension TrashItem.Location {
+        static func mockVolume(_ path: String) -> Self {
+            let parts = path.split(separator: "/", maxSplits: 1).map(String.init)
+            return Self(isPersonal: false, name: parts.first, parent: parts.dropFirst().first ?? "")
         }
     }
 #endif
