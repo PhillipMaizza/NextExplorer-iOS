@@ -147,7 +147,7 @@ struct FileActionsMenu: View {
             .tint(.primaryDS)
             .macMenuShortcut("c")
             #if os(macOS)
-                if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
+                if store.access?.canWrite ?? false, !store.directoryPath.isEmpty, isInListing {
                     Button {
                         store.send(.tableSelectionChanged([item.id]))
                         store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
@@ -158,7 +158,7 @@ struct FileActionsMenu: View {
                     .keyboardShortcut("d")
                 }
                 // Stages the row for a move, as Command X does; Move still opens the picker.
-                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                if store.access?.canWrite ?? false, store.access?.canDelete ?? false, isInListing {
                     Button {
                         store.send(.tableSelectionChanged([item.id]))
                         store.send(.cutSelectionTapped, animation: DSMotion.listDiff)
@@ -213,7 +213,7 @@ struct FileActionsMenu: View {
 
     /// On device content only a kept file can be saved or shared, from its copy on the device.
     private var isKept: Bool {
-        store.offlineItemIDs.contains(item.id)
+        store.offlineItemIDs.contains(item.id) || store.searchOnDeviceIDs.contains(item.id)
     }
 
     @ViewBuilder
@@ -252,11 +252,10 @@ struct FileActionsMenu: View {
     private var keepActions: some View {
         if store.access?.canDownload ?? false, !store.shouldShowDeviceContent || isKept {
             // A file kept through a pinned folder removes that folder, after a confirmation naming it.
-            let isRemoval = store.offlineItemIDs.contains(item.id)
             RemovableMenuButton(
-                title: isRemoval ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
+                title: isKept ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
                 icon: IconKit.availableOffline,
-                isRemoval: isRemoval
+                isRemoval: isKept
             ) {
                 store.send(.offlineToggleTapped(item))
             }
@@ -277,9 +276,13 @@ struct FileActionsMenu: View {
 
     /// A top level location (root screen) that is the only one there: it has nowhere to be
     /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
+    private var isInListing: Bool {
+        store.items[id: item.id] != nil
+    }
+
     private var isGetInfoAvailable: Bool {
         #if os(macOS)
-            !store.directoryPath.isEmpty
+            !store.directoryPath.isEmpty || !isInListing
         #elseif os(iOS)
             true
         #endif

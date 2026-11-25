@@ -1269,6 +1269,10 @@ offline.sectionSavedEarlier	Salvate anterior
 offline.newFilesBadge	Fișiere noi disponibile offline
 search.onDevice	Pe dispozitiv
 search.remote	La distanță
+search.inOtherFolders	În alte dosare
+search.noMatchesAnywhere	Niciun rezultat nicăieri pentru „%@”.
+search.nothingInThisFolder	Nimic din acest dosar nu se numește și nu conține „%@”.
+search.showAllEverywhere	Afișează toate rezultatele de peste tot
 offline.tabEmpty	Încă nu este nimic disponibil offline. Alege „Disponibil offline” pentru un fișier sau un dosar.
 offline.removeItemTitle	Elimini „%@” din Disponibile offline?
 offline.removeItemsTitle	Elimini %lld elemente din Disponibile offline?

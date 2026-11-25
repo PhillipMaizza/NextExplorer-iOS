@@ -1251,6 +1251,10 @@ offline.sectionSavedEarlier	Guardado antes
 offline.newFilesBadge	Nuevos archivos disponibles sin conexión
 search.onDevice	En el dispositivo
 search.remote	Remoto
+search.inOtherFolders	En otras carpetas
+search.noMatchesAnywhere	No hay resultados en ningún sitio para «%@».
+search.nothingInThisFolder	Nada en esta carpeta se llama ni contiene «%@».
+search.showAllEverywhere	Mostrar todos los resultados en todas partes
 offline.tabEmpty	Todavía no hay nada disponible sin conexión. Elige «Disponible sin conexión» en un archivo o carpeta.
 offline.removeItemTitle	¿Quitar «%@» de disponibles sin conexión?
 offline.removeItemsTitle	¿Quitar %lld elementos de disponibles sin conexión?

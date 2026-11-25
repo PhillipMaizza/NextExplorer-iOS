@@ -1199,6 +1199,10 @@ offline.sectionSavedEarlier	Korábban mentett
 offline.newFilesBadge	Új fájlok érhetők el offline
 search.onDevice	Az eszközön
 search.remote	Távoli
+search.inOtherFolders	Más mappákban
+search.noMatchesAnywhere	Sehol nincs találat erre: „%@”.
+search.nothingInThisFolder	Ebben a mappában semmi sem ezt a nevet viseli, és nem is tartalmazza: „%@”.
+search.showAllEverywhere	Összes találat mindenhonnan
 offline.tabEmpty	Még semmi sem érhető el offline. Válassza a(z) „Elérhető offline” lehetőséget egy fájlnál vagy mappánál.
 offline.removeItemTitle	Eltávolítja a(z) „%@” elemet az offline elérhetők közül?
 offline.removeItemsTitle	Eltávolít %lld elemet az offline elérhetők közül?

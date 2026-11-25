@@ -173,6 +173,7 @@ extension BrowseFeature {
     /// prompt, and announces what went to the trash.
     func applyDeleteResult(_ state: inout State, _ result: DeleteResult) -> Effect<Action> {
         var hasFavorited = false
+        dropFromSearch(&state, ids: Set(result.removedIDs))
         for itemID in result.removedIDs {
             state.items.remove(id: itemID)
             if repointFavorites(&state, from: itemID, to: nil) {
@@ -190,6 +191,38 @@ extension BrowseFeature {
             syncListingCache(state)
         }
         return hasFavorited ? .send(.delegate(.favoritesChanged)) : .none
+    }
+
+    func dropFromSearch(_ state: inout State, ids: Set<String>) {
+        state.searchResults?.removeAll { ids.contains($0.id) }
+        state.elsewhereResults.removeAll { ids.contains($0.id) }
+        state.searchOnDeviceIDs.subtract(ids)
+    }
+
+    func renameInSearch(_ state: inout State, from originalID: String, to renamed: FileItem) {
+        let rename: (SearchResultItem) -> SearchResultItem = { hit in
+            guard hit.id == originalID else { return hit }
+            return SearchResultItem(
+                name: renamed.name,
+                path: hit.path,
+                kind: hit.kind,
+                matchLine: hit.matchLine,
+                matchLineNumber: hit.matchLineNumber,
+                isNameMatch: hit.isNameMatch,
+                isContentMatch: hit.isContentMatch
+            )
+        }
+        if let results = state.searchResults {
+            state.searchResults = IdentifiedArray(
+                results.map(rename),
+                id: \.id,
+                uniquingIDsWith: { first, _ in first }
+            )
+        }
+        state.elsewhereResults = state.elsewhereResults.map(rename)
+        if state.searchOnDeviceIDs.remove(originalID) != nil {
+            state.searchOnDeviceIDs.insert(renamed.id)
+        }
     }
 
     func repointFavorites(_ state: inout State, from path: String, to newPath: String?) -> Bool {

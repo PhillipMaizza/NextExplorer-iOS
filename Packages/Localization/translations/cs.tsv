@@ -1234,6 +1234,10 @@ offline.sectionSavedEarlier	Uloženo dříve
 offline.newFilesBadge	Nové soubory dostupné offline
 search.onDevice	V zařízení
 search.remote	Vzdálené
+search.inOtherFolders	V jiných složkách
+search.noMatchesAnywhere	Nikde žádné výsledky pro „%@“.
+search.nothingInThisFolder	V této složce nic nemá v názvu ani neobsahuje „%@“.
+search.showAllEverywhere	Zobrazit všechny výsledky všude
 offline.tabEmpty	Zatím není nic dostupné offline. U souboru nebo složky zvolte „Dostupné offline“.
 offline.removeItemTitle	Odebrat „%@“ z dostupných offline?
 offline.removeItemsTitle	Odebrat %lld položek z dostupných offline?

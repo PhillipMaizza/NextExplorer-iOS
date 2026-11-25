@@ -49,6 +49,7 @@
         var onPeek: () -> Void = {}
         /// A row to scroll into view, such as the file a search opened this folder for.
         var scrollTargetID: FileItem.ID?
+        var onScrollTargetShown: () -> Void = {}
 
         @Dependency(\.filesClient) private var filesClient
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
@@ -168,7 +169,8 @@
             .background {
                 MacTableRowScroller(
                     row: scrollTargetID.flatMap { items.index(id: $0) }.map { $0 + (personalSpace == nil ? 0 : 1) },
-                    target: scrollTargetID
+                    target: scrollTargetID,
+                    onScrolled: onScrollTargetShown
                 )
             }
             .macBoardTable()

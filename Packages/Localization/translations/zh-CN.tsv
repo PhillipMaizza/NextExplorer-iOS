@@ -1233,6 +1233,10 @@ offline.sectionSavedEarlier	之前存储的
 offline.newFilesBadge	有新文件可离线使用
 search.onDevice	在此设备上
 search.remote	远程
+search.inOtherFolders	在其他文件夹中
+search.noMatchesAnywhere	任何位置都没有“%@”的结果。
+search.nothingInThisFolder	此文件夹中没有名称为或包含“%@”的内容。
+search.showAllEverywhere	显示所有位置的结果
 offline.tabEmpty	目前还没有可离线使用的内容。请在文件或文件夹上选择“可离线使用”。
 offline.removeItemTitle	要将“%@”从“可离线使用”中移除吗？
 offline.removeItemsTitle	要将 %lld 个项目从“可离线使用”中移除吗？

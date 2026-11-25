@@ -402,12 +402,10 @@ struct FavoritesSearchTests: FavoritesTestSupport {
             FavoritesFeature()
         }
 
+        var folder = BrowseFeature.State(serverURL: serverURL, directoryPath: Constants.bills, title: Constants.bills)
+        folder.reveal = .select(hit.id)
         await store.send(.searchResultEnclosingFolderTapped(hit)) {
-            $0.path.append(BrowseFeature.State(
-                serverURL: serverURL,
-                directoryPath: Constants.bills,
-                title: Constants.bills
-            ))
+            $0.path.append(folder)
         }
         #expect(store.state.searchQuery == Constants.term)
         #expect(store.state.fileSearchResults == [hit])

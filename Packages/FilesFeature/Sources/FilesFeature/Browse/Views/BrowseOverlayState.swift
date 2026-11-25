@@ -24,7 +24,11 @@ enum BrowseOverlayState: Hashable {
         } else if store.searchFailureMessage != nil, store.displayedSearchResults?.isEmpty ?? true {
             self = .searchFailed
         } else if store.isSearching, let results = store.displayedSearchResults, results.isEmpty {
-            self = .noResults
+            switch store.elsewherePhase {
+            case .loading: self = .searching
+            case .loaded where store.isShowingElsewhereResults: self = .none
+            default: self = .noResults
+            }
         } else {
             self = .none
         }

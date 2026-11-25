@@ -25,11 +25,14 @@ extension BrowseFeature {
             return openUploadReview(source, state: &state)
 
         case let .searchResultEnclosingFolderTapped(result):
+            let reveal = Effect<Action>.send(.delegate(.revealInFolder(
+                path: result.path,
+                title: result.enclosingFolderTitle,
+                itemID: result.id
+            )))
+            guard result.path == state.directoryPath else { return reveal }
             state.searchQuery = ""
-            return .merge(
-                search(&state),
-                .send(.delegate(.openPath(path: result.path, title: result.enclosingFolderTitle)))
-            )
+            return .merge(search(&state), reveal)
 
         #if os(macOS)
             case let .reviewUpload(source):
@@ -168,11 +171,16 @@ extension BrowseFeature {
             return .none
 
         case let .revealItemShown(id):
-            guard state.revealItemID == id, let item = state.items[id: id] else { return .none }
-            state.revealItemID = nil
+            guard let reveal = state.reveal, reveal.itemID == id, let item = state.items[id: id] else { return .none }
+            state.reveal = nil
             state.scrollTargetID = id
+            guard case .open = reveal else { return .send(.tableSelectionChanged([id])) }
             // Its folder first, then the file itself, as a double click on its row would.
             return .concatenate(.send(.tableSelectionChanged([id])), .send(.rowTapped(item)))
+
+        case .scrollTargetShown:
+            state.scrollTargetID = nil
+            return .none
 
         case .copySelectionTapped:
             let items = state.selectedItems

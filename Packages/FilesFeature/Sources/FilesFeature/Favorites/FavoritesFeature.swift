@@ -550,6 +550,7 @@ public struct FavoritesFeature {
 
             case let .searchResultEnclosingFolderTapped(result):
                 pushFolder(result.path, title: result.enclosingFolderTitle, in: &state)
+                BrowseNavigation.reveal(.select(result.id), on: &state.path)
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.downloadRequested(items)))),
@@ -654,6 +655,12 @@ public struct FavoritesFeature {
 
             case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):
                 return .send(.navigateToDirectory(path: path, title: title))
+
+            case let .path(.element(id: _, action: .delegate(.revealInFolder(path, title, itemID)))):
+                state.forwardStack = []
+                BrowseNavigation.push(to: path, title: title, serverURL: state.serverURL, stack: &state.path)
+                BrowseNavigation.reveal(.select(itemID), on: &state.path)
+                return .none
 
             case .path(.element(id: _, action: .delegate(.favoritesChanged))):
                 return .send(.delegate(.favoritesChanged))

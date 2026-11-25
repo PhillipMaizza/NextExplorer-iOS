@@ -1323,6 +1323,10 @@ offline.sectionSavedEarlier	محفوظ سابقًا
 offline.newFilesBadge	ملفات جديدة متاحة دون اتصال
 search.onDevice	على الجهاز
 search.remote	عن بُعد
+search.inOtherFolders	في مجلدات أخرى
+search.noMatchesAnywhere	لا نتائج في أي مكان لـ ‏«%@».
+search.nothingInThisFolder	لا شيء باسم ‏«%@» أو يحتويه في هذا المجلد.
+search.showAllEverywhere	عرض كل النتائج في كل مكان
 offline.tabEmpty	لا شيء متاح دون اتصال بعد. اختر «متاح دون اتصال» لملف أو مجلد.
 offline.removeItemTitle	إزالة «%@» من المتاح دون اتصال؟
 offline.removeItemsTitle	إزالة %lld عناصر من المتاح دون اتصال؟

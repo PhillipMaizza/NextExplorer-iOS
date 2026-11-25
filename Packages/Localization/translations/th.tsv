@@ -1181,6 +1181,10 @@ offline.sectionSavedEarlier	ที่บันทึกไว้ก่อนห�
 offline.newFilesBadge	มีไฟล์ใหม่ใช้งานแบบออฟไลน์ได้
 search.onDevice	บนอุปกรณ์
 search.remote	ระยะไกล
+search.inOtherFolders	ในโฟลเดอร์อื่น
+search.noMatchesAnywhere	ไม่พบผลลัพธ์สำหรับ “%@” ในที่ใดเลย
+search.nothingInThisFolder	ไม่มีรายการที่ชื่อหรือมี “%@” ในโฟลเดอร์นี้
+search.showAllEverywhere	แสดงผลลัพธ์ทั้งหมดจากทุกที่
 offline.tabEmpty	ยังไม่มีสิ่งใดใช้งานแบบออฟไลน์ได้ เลือก “ใช้งานแบบออฟไลน์ได้” ที่ไฟล์หรือโฟลเดอร์
 offline.removeItemTitle	นำ “%@” ออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม
 offline.removeItemsTitle	นำ %lld รายการออกจากที่ใช้งานแบบออฟไลน์ได้ใช่ไหม

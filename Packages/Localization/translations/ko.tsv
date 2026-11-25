@@ -1233,6 +1233,10 @@ offline.sectionSavedEarlier	이전에 저장됨
 offline.newFilesBadge	새 파일을 오프라인으로 사용할 수 있음
 search.onDevice	기기에 있음
 search.remote	원격
+search.inOtherFolders	다른 폴더
+search.noMatchesAnywhere	어디에도 “%@”에 대한 결과가 없습니다.
+search.nothingInThisFolder	이 폴더에는 “%@” 이름이거나 이를 포함하는 항목이 없습니다.
+search.showAllEverywhere	모든 위치의 결과 보기
 offline.tabEmpty	오프라인으로 사용할 수 있는 항목이 아직 없습니다. 파일이나 폴더에서 “오프라인 사용 가능”을(를) 선택하세요.
 offline.removeItemTitle	“%@”을(를) 오프라인 사용 가능에서 제거할까요?
 offline.removeItemsTitle	%lld개 항목을 오프라인 사용 가능에서 제거할까요?

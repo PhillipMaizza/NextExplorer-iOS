@@ -40,6 +40,7 @@ struct SearchScopeDepthTests {
 
     /// Types the query and lets the debounced server search answer with nothing.
     private func searchForQuery(_ store: TestStoreOf<BrowseFeature>, clock: TestClock<Duration>) async {
+        let looksElsewhere = store.state.canWidenSearch
         await store.send(.searchQueryChanged(Constants.query)) {
             $0.searchQuery = Constants.query
             $0.searchResults = []
@@ -49,6 +50,11 @@ struct SearchScopeDepthTests {
         await store.receive(\.searchResultsResponse) {
             $0.searchAnsweredTerm = Constants.query
             $0.searchPhase = .loaded
+            $0.elsewherePhase = looksElsewhere ? .loading : .idle
+        }
+        guard looksElsewhere else { return }
+        await store.receive(\.searchElsewhereResponse) {
+            $0.elsewherePhase = .loaded
         }
     }
 
@@ -78,7 +84,7 @@ struct SearchScopeDepthTests {
         let store = searchingStore(state(TestPath.filesDocuments), clock: clock, searchedPaths: searchedPaths)
 
         await searchForQuery(store, clock: clock)
-        #expect(searchedPaths.value == [TestPath.filesDocuments])
+        #expect(searchedPaths.value == [TestPath.filesDocuments, ""])
     }
 
     @Test
@@ -93,12 +99,13 @@ struct SearchScopeDepthTests {
             $0.searchScope = .everywhere
             $0.searchPhase = .loading
             $0.searchAnsweredTerm = nil
+            $0.elsewherePhase = .idle
         }
         await store.receive(\.searchResultsResponse) {
             $0.searchPhase = .loaded
             $0.searchAnsweredTerm = Constants.query
         }
-        #expect(searchedPaths.value == [TestPath.filesDocuments, ""])
+        #expect(searchedPaths.value == [TestPath.filesDocuments, "", ""])
     }
 
     @Test

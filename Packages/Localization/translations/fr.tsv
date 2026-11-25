@@ -1251,6 +1251,10 @@ offline.sectionSavedEarlier	Enregistrés précédemment
 offline.newFilesBadge	Nouveaux fichiers disponibles hors ligne
 search.onDevice	Sur l'appareil
 search.remote	À distance
+search.inOtherFolders	Dans d’autres dossiers
+search.noMatchesAnywhere	Aucun résultat nulle part pour « %@ ».
+search.nothingInThisFolder	Rien dans ce dossier ne s’appelle ou ne contient « %@ ».
+search.showAllEverywhere	Afficher tous les résultats partout
 offline.tabEmpty	Rien n’est encore disponible hors connexion. Choisissez « Disponible hors ligne » sur un fichier ou un dossier.
 offline.removeItemTitle	Retirer « %@ » des éléments disponibles hors connexion ?
 offline.removeItemsTitle	Retirer %lld éléments des éléments disponibles hors connexion ?

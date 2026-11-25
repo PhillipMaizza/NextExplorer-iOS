@@ -13,13 +13,13 @@ struct BrowseNoResultsState: View {
     var body: some View {
         #if os(macOS)
             ContentUnavailableView {
-                Label { Text(L10n.Browse.searchNoMatchesInFolder(store.searchQuery)) } icon: { IconKit.search }
+                Label { Text(macTitle) } icon: { IconKit.search }
             } description: {
                 if store.isSearchTermTooShort {
                     Text(SearchStatusFooter.tooShortMessage)
                 }
             } actions: {
-                if store.canWidenSearch, !store.isSearchTermTooShort {
+                if store.canWidenSearch, !store.isSearchTermTooShort, store.elsewherePhase != .loaded {
                     Button(L10n.Browse.searchEverywhere) { store.send(.searchScopeChanged(.everywhere)) }
                         .buttonStyle(.macDS(.secondary, size: .small))
                 }
@@ -27,6 +27,12 @@ struct BrowseNoResultsState: View {
         #else
             iOSBody
         #endif
+    }
+
+    private var macTitle: String {
+        store.elsewherePhase == .loaded
+            ? L10n.Search.noMatchesAnywhere(store.searchQuery)
+            : L10n.Browse.searchNoMatchesInFolder(store.searchQuery)
     }
 
     private var iOSBody: some View {
@@ -70,6 +76,14 @@ private enum Constants {
     BrowseNoResultsState(store: Store(initialState: .preview(mutate: { $0.searchQuery = "invoice" })) {
         BrowseFeature()
     })
+}
+
+#Preview("No matches anywhere") {
+    let state = BrowseFeature.State.preview { state in
+        state.searchQuery = "invoice"
+        state.elsewherePhase = .loaded
+    }
+    BrowseNoResultsState(store: Store(initialState: state) { BrowseFeature() })
 }
 
 #Preview("Term too short") {

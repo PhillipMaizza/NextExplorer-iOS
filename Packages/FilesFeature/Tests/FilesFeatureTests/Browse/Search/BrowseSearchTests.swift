@@ -466,44 +466,6 @@ struct BrowseSearchTests {
 
     // MARK: Opening a result
 
-    @Test("Show in Enclosing Folder ends the search and opens the folder that holds the result")
-    func showInEnclosingFolderEndsTheSearchAndOpensTheFolder() async {
-        var state = BrowseFixtures.state()
-        state.searchQuery = Constants.reportTerm
-        let result = SearchResultItem(
-            name: TestFile.report,
-            path: TestPath.documentsWork,
-            kind: SearchResultItem.fileKind,
-            isNameMatch: true
-        )
-        let store = BrowseFixtures.store(state)
-
-        await store.send(.searchResultEnclosingFolderTapped(result)) {
-            $0.searchQuery = ""
-        }
-        await store.receive(.delegate(.openPath(path: TestPath.documentsWork, title: FilesFeatureTestValue.workFolder)))
-    }
-
-    @Test("Show in Enclosing Folder on a hit at the top opens the root under its own title")
-    func showInEnclosingFolderAtTheTopOpensTheRoot() async {
-        var state = BrowseFixtures.state(TestFolder.photos)
-        state.searchQuery = Constants.reportTerm
-        state.searchScope = .everywhere
-        let result = SearchResultItem(
-            name: TestFile.report,
-            path: "",
-            kind: SearchResultItem.fileKind,
-            isNameMatch: true
-        )
-        let store = BrowseFixtures.store(state)
-
-        await store.send(.searchResultEnclosingFolderTapped(result)) {
-            $0.searchQuery = ""
-            $0.searchScope = .thisFolder
-        }
-        await store.receive(.delegate(.openPath(path: "", title: L10n.Browse.navigationTitle)))
-    }
-
     @Test("Opening a folder from the results ends the search")
     func openingAFolderFromSearchEndsTheSearch() async {
         let result = SearchResultItem(name: Constants.payslips, path: "", kind: SearchResultItem.directoryKind)

@@ -212,6 +212,13 @@ public struct BrowseTabFeature {
             case let .root(.delegate(.openPath(path, title))):
                 return .send(.navigateToDirectory(path: path, title: title))
 
+            case let .root(.delegate(.revealInFolder(path, title, itemID))),
+                 let .path(.element(id: _, action: .delegate(.revealInFolder(path, title, itemID)))):
+                state.forwardStack = []
+                BrowseNavigation.push(to: path, title: title, serverURL: state.root.serverURL, stack: &state.path)
+                state.reveal(.select(itemID))
+                return .none
+
             case .root(.delegate(.favoritesChanged)):
                 return .send(.delegate(.favoritesChanged))
 
@@ -297,20 +304,14 @@ public struct BrowseTabFeature {
                 return .send(.delegate(.openDownloadsTapped))
 
             case let .navigateToDirectory(path, title):
-                state.forwardStack = []
-                state.inspectorLeftOpenPaths = []
-                BrowseNavigation.jump(to: path, title: title, serverURL: state.root.serverURL, stack: &state.path)
+                state.jump(to: path, title: title)
                 return .none
 
             case let .navigateToItem(folder, title, itemID):
                 state.forwardStack = []
                 BrowseNavigation.push(to: folder, title: title, serverURL: state.root.serverURL, stack: &state.path)
                 guard let itemID else { return .none }
-                if let id = state.path.ids.last {
-                    state.path[id: id]?.revealItemID = itemID
-                } else {
-                    state.root.revealItemID = itemID
-                }
+                state.reveal(.open(itemID))
                 return .none
 
             case .syncPathStack:
@@ -390,5 +391,18 @@ public struct BrowseTabFeature {
             return .send(.path(.element(id: id, action: action)))
         }
         return .send(.root(action))
+    }
+}
+
+private extension BrowseTabFeature.State {
+    mutating func jump(to path: String, title: String) {
+        forwardStack = []
+        inspectorLeftOpenPaths = []
+        BrowseNavigation.jump(to: path, title: title, serverURL: root.serverURL, stack: &self.path)
+    }
+
+    mutating func reveal(_ reveal: BrowseReveal) {
+        guard !BrowseNavigation.reveal(reveal, on: &path) else { return }
+        root.reveal = reveal
     }
 }

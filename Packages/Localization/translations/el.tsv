@@ -1199,6 +1199,10 @@ offline.sectionSavedEarlier	Αποθηκεύτηκαν παλαιότερα
 offline.newFilesBadge	Νέα αρχεία διαθέσιμα εκτός σύνδεσης
 search.onDevice	Στη συσκευή
 search.remote	Απομακρυσμένα
+search.inOtherFolders	Σε άλλους φακέλους
+search.noMatchesAnywhere	Κανένα αποτέλεσμα πουθενά για «%@».
+search.nothingInThisFolder	Τίποτα σε αυτόν τον φάκελο δεν ονομάζεται ή δεν περιέχει «%@».
+search.showAllEverywhere	Εμφάνιση όλων των αποτελεσμάτων παντού
 offline.tabEmpty	Τίποτα δεν είναι διαθέσιμο εκτός σύνδεσης ακόμη. Επιλέξτε «Διαθέσιμο εκτός σύνδεσης» σε ένα αρχείο ή φάκελο.
 offline.removeItemTitle	Κατάργηση του «%@» από τα διαθέσιμα εκτός σύνδεσης;
 offline.removeItemsTitle	Κατάργηση %lld στοιχείων από τα διαθέσιμα εκτός σύνδεσης;

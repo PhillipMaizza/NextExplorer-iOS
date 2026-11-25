@@ -61,6 +61,10 @@ extension SearchResultItem {
     /// The `FileItem` a tapped file hit opens in the preview, like a tapped row: its kind from its
     /// name, `unknown` without an extension. Size and modified date are unknown, so the preview
     /// cache treats it as fresh and fetches it.
+    var actionItem: FileItem {
+        previewItem(openedAt: .distantPast)
+    }
+
     func previewItem(openedAt date: Date) -> FileItem {
         let kind = displayKind
         return FileItem(

@@ -1199,6 +1199,10 @@ offline.sectionSavedEarlier	Daha önce kaydedilenler
 offline.newFilesBadge	Yeni dosyalar çevrimdışı kullanılabilir
 search.onDevice	Cihazda
 search.remote	Uzak
+search.inOtherFolders	Diğer klasörlerde
+search.noMatchesAnywhere	“%@” için hiçbir yerde sonuç yok.
+search.nothingInThisFolder	Bu klasörde adı “%@” olan veya bunu içeren bir şey yok.
+search.showAllEverywhere	Her yerdeki tüm sonuçları göster
 offline.tabEmpty	Henüz çevrimdışı kullanılabilir bir şey yok. Bir dosya veya klasörde “Çevrimdışı kullanılabilir” seçeneğini seçin.
 offline.removeItemTitle	“%@” çevrimdışı kullanılabilirden kaldırılsın mı?
 offline.removeItemsTitle	%lld öğe çevrimdışı kullanılabilirden kaldırılsın mı?

@@ -1181,6 +1181,10 @@ offline.sectionSavedEarlier	Disimpan sebelumnya
 offline.newFilesBadge	File baru tersedia offline
 search.onDevice	Di perangkat
 search.remote	Jarak jauh
+search.inOtherFolders	Di folder lain
+search.noMatchesAnywhere	Tidak ada hasil di mana pun untuk “%@”.
+search.nothingInThisFolder	Tidak ada yang bernama atau berisi “%@” di folder ini.
+search.showAllEverywhere	Tampilkan semua hasil di mana saja
 offline.tabEmpty	Belum ada yang tersedia secara offline. Pilih “Tersedia offline” pada file atau folder.
 offline.removeItemTitle	Hapus “%@” dari Tersedia Offline?
 offline.removeItemsTitle	Hapus %lld item dari Tersedia Offline?

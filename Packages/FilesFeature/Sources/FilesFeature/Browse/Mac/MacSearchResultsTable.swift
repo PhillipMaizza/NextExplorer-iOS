@@ -12,21 +12,25 @@
     /// Browse search results as a Mac table, like the folder it searches: the name with the
     /// matched line under it, and where the hit lives. Double click or Return opens it. Results kept
     /// on this device head the table under "On device", the rest follow under "Remote".
-    struct MacSearchResultsTable: View {
+    struct MacSearchResultsTable<FileActions: View>: View {
         let sections: SearchResultSections
+        var elsewhere: [SearchResultItem] = []
+        var elsewhereNote: AttributedString?
         let favoritePaths: Set<String>
+        var serverURL: URL?
         let onOpen: (SearchResultItem) -> Void
-        var onShowInFolder: (SearchResultItem) -> Void = { _ in }
+        @ViewBuilder var fileActions: (SearchResultItem) -> FileActions
 
         @State private var selection: Set<SearchResultItem.ID> = []
+        @State private var sortOrder: [KeyPathComparator<SearchResultItem>] = []
 
         private var results: [SearchResultItem] {
-            sections.onDevice + sections.remote
+            sections.onDevice + sections.remote + elsewhere
         }
 
         var body: some View {
-            Table(of: SearchResultItem.self, selection: $selection) {
-                TableColumn(L10n.Sort.name) { result in
+            Table(of: SearchResultItem.self, selection: $selection, sortOrder: $sortOrder) {
+                TableColumn(L10n.Sort.name, value: \.name) { result in
                     HStack(spacing: .space8) {
                         icon(for: result)
                         VStack(alignment: .leading, spacing: .space2) {
@@ -50,8 +54,8 @@
                     .macBoardTableCell()
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
-                TableColumn(L10n.FileInfo.rowLocation) { result in
-                    Text(result.path.isEmpty ? "/" : result.path)
+                TableColumn(L10n.FileInfo.rowLocation, value: \.path) { result in
+                    Text(MacInspectorLocation.trail(parent: result.path))
                         .lineLimit(1)
                         .truncationMode(.head)
                         .foregroundStyle(.secondary)
@@ -66,26 +70,29 @@
             } rows: {
                 if sections.isSplit {
                     Section(L10n.Search.onDevice) {
-                        ForEach(sections.onDevice) { TableRow($0) }
+                        ForEach(sorted(sections.onDevice)) { TableRow($0) }
                     }
                     if !sections.remote.isEmpty {
                         Section(L10n.Search.remote) {
-                            ForEach(sections.remote) { TableRow($0) }
+                            ForEach(sorted(sections.remote)) { TableRow($0) }
                         }
                     }
                 } else {
-                    ForEach(sections.remote) { TableRow($0) }
+                    ForEach(sorted(sections.remote)) { TableRow($0) }
+                }
+                if !elsewhere.isEmpty {
+                    Section {
+                        ForEach(sorted(elsewhere)) { TableRow($0) }
+                    } header: {
+                        MacElsewhereSectionHeader(note: elsewhereNote, count: elsewhere.count)
+                    }
                 }
             }
             .contextMenu(forSelectionType: SearchResultItem.ID.self, menu: { ids in
                 // Finder's search results menu: open the hit, show where it lives, copy its path.
                 if ids.count == 1, let result = results.first(where: { $0.id == ids.first }) {
-                    SearchResultMenu(
-                        result: result,
-                        onOpen: { onOpen(result) },
-                        onShowInFolder: { onShowInFolder(result) }
-                    )
-                    .labelStyle(.titleAndIcon)
+                    fileActions(result)
+                        .labelStyle(.titleAndIcon)
                 }
             }, primaryAction: { ids in
                 guard ids.count == 1, let result = results.first(where: { $0.id == ids.first }) else { return }
@@ -94,8 +101,17 @@
             .macBoardTable()
         }
 
+        private func sorted(_ results: [SearchResultItem]) -> [SearchResultItem] {
+            sortOrder.isEmpty ? results : results.sorted(using: sortOrder)
+        }
+
+        @ViewBuilder
         private func icon(for result: SearchResultItem) -> some View {
-            MacItemTile(name: result.name, isDirectory: result.isDirectory)
+            if let file = result.thumbnailFile {
+                MacFileTile(item: file, serverURL: serverURL)
+            } else {
+                MacItemTile(name: result.name, isDirectory: result.isDirectory)
+            }
         }
     }
 
@@ -116,13 +132,20 @@
                 ),
             ], onDeviceIDs: ["Photos/Trips/Beach.jpg"]),
             favoritePaths: ["Photos/Trips"],
-            onOpen: { _ in }
+            serverURL: URL(string: "https://cloud.example.com"),
+            onOpen: { _ in },
+            fileActions: { _ in EmptyView() }
         )
         .previewCanvas(.table)
     }
 
     #Preview("Empty") {
-        MacSearchResultsTable(sections: SearchResultSections([], onDeviceIDs: []), favoritePaths: [], onOpen: { _ in })
-            .previewCanvas(.table)
+        MacSearchResultsTable(
+            sections: SearchResultSections([], onDeviceIDs: []),
+            favoritePaths: [],
+            onOpen: { _ in },
+            fileActions: { _ in EmptyView() }
+        )
+        .previewCanvas(.table)
     }
 #endif

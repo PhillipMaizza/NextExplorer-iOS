@@ -1287,6 +1287,10 @@ offline.sectionSavedEarlier	Сохранено ранее
 offline.newFilesBadge	Новые файлы доступны офлайн
 search.onDevice	На устройстве
 search.remote	Удалённо
+search.inOtherFolders	В других папках
+search.noMatchesAnywhere	Нигде нет результатов для «%@».
+search.nothingInThisFolder	В этой папке нет ничего с именем или содержимым «%@».
+search.showAllEverywhere	Показать все результаты отовсюду
 offline.tabEmpty	Пока нет ничего, что доступно офлайн. Выберите «Доступно офлайн» для файла или папки.
 offline.removeItemTitle	Убрать «%@» из доступных офлайн?
 offline.removeItemsTitle	Убрать %lld объектов из доступных офлайн?

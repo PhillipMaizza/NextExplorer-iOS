@@ -1251,6 +1251,10 @@ offline.sectionSavedEarlier	Eerder bewaard
 offline.newFilesBadge	Nieuwe bestanden offline beschikbaar
 search.onDevice	Op apparaat
 search.remote	Extern
+search.inOtherFolders	In andere mappen
+search.noMatchesAnywhere	Nergens resultaten voor ‘%@’.
+search.nothingInThisFolder	Niets in deze map heet of bevat ‘%@’.
+search.showAllEverywhere	Alle resultaten overal tonen
 offline.tabEmpty	Er is nog niets offline beschikbaar. Kies ‘Offline beschikbaar’ bij een bestand of map.
 offline.removeItemTitle	‘%@’ verwijderen uit Offline beschikbaar?
 offline.removeItemsTitle	%lld onderdelen verwijderen uit Offline beschikbaar?

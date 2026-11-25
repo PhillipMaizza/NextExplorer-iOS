@@ -1199,6 +1199,10 @@ offline.sectionSavedEarlier	Gemt tidligere
 offline.newFilesBadge	Nye filer tilgængelige offline
 search.onDevice	På enheden
 search.remote	Eksternt
+search.inOtherFolders	I andre mapper
+search.noMatchesAnywhere	Ingen resultater nogen steder for “%@”.
+search.nothingInThisFolder	Intet i denne mappe hedder eller indeholder “%@”.
+search.showAllEverywhere	Vis alle resultater overalt
 offline.tabEmpty	Intet er tilgængeligt offline endnu. Vælg “Tilgængelig offline” på en fil eller mappe.
 offline.removeItemTitle	Fjern “%@” fra tilgængeligt offline?
 offline.removeItemsTitle	Fjern %lld emner fra tilgængeligt offline?

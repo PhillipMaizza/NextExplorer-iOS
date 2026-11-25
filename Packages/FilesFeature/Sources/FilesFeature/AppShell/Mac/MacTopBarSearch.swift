@@ -17,6 +17,7 @@
         let openSpotlight: () -> Void
 
         @FocusState private var isFocused: Bool
+        @State private var typedText = ""
 
         var body: some View {
             Group {
@@ -41,7 +42,13 @@
             pill(trailing: trailing(text)) {
                 TextField(
                     L10n.Common.search,
-                    text: text,
+                    text: Binding(
+                        get: { text.wrappedValue },
+                        set: {
+                            typedText = $0
+                            text.wrappedValue = $0
+                        }
+                    ),
                     prompt: Text(prompt)
                         .foregroundStyle(Color.macChromeSecondary)
                 )
@@ -59,6 +66,11 @@
             }
             .contentShape(Capsule())
             .onTapGesture { isFocused = true }
+            .onChange(of: text.wrappedValue) { _, newText in
+                guard newText != typedText else { return }
+                typedText = newText
+                isFocused = false
+            }
             .focusEffectDisabled()
             .overlay {
                 Capsule()
@@ -74,7 +86,10 @@
         @ViewBuilder
         private func trailing(_ text: Binding<String>) -> some View {
             if !text.wrappedValue.isEmpty {
-                Button { text.wrappedValue = "" } label: {
+                Button {
+                    typedText = ""
+                    text.wrappedValue = ""
+                } label: {
                     IconKit.closeCircle
                         .foregroundStyle(Color.macChromeSecondary)
                         .frame(width: Metrics.clearSize, height: Metrics.clearSize)
