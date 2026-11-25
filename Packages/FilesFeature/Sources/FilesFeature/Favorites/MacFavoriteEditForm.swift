@@ -59,11 +59,12 @@
                 .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: .space4) {
                     Text(L10n.Favorites.editNameLabel)
-                        .type(.caption(.semibold), style: .secondary)
+                        .type(.body2(.semibold), style: .secondary)
                     MacTextField(
                         L10n.Favorites.editNameLabel,
                         text: $store.nameDraft.sending(\.nameChanged),
-                        prompt: store.favorite.path
+                        prompt: store.favorite.folderName,
+                        isInvalid: store.nameErrorText != nil
                     )
                     .autocorrectionDisabled()
                     MacFieldError(message: store.nameErrorText)
@@ -108,7 +109,7 @@
 
         private func sectionTitle(_ title: String) -> some View {
             Text(title)
-                .type(.caption(.semibold), style: .secondary)
+                .type(.body2(.semibold), style: .secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
 

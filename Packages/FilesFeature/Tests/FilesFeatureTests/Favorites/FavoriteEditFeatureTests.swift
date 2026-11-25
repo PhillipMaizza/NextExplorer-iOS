@@ -92,6 +92,25 @@ struct FavoriteEditFeatureTests {
     }
 
     @Test
+    func keepingTheFolderNameSavesNoLabelSoARenameStillShows() async {
+        var initial = FavoriteEditFeature.State(serverURL: serverURL, favorite: favorite(label: nil))
+        initial.colorDraft = "#0bd336"
+        let saved = favorite(label: nil, color: "#0bd336")
+        let store = TestStore(initialState: initial) {
+            FavoriteEditFeature()
+        } withDependencies: {
+            $0.filesClient.updateFavorite = { _, _, label, _, _ in
+                #expect(label == nil)
+                return saved
+            }
+        }
+
+        await store.send(.saveTapped) { $0.isSaving = true }
+        await store.receive(\.saveResponse.success) { $0.isSaving = false }
+        await store.receive(\.delegate)
+    }
+
+    @Test
     func anEmptyNameFlagsAnErrorAndBlocksSaving() async {
         var initial = FavoriteEditFeature.State(serverURL: serverURL, favorite: favorite())
         initial.iconDraft = "BriefcaseIcon" // dirty, so only the name gates the save
