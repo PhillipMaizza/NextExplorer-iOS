@@ -1567,6 +1567,9 @@ lock.subtitle	سجّل الدخول مرة أخرى لفتح ملفاتك.
 lock.signIn	تسجيل الدخول
 lock.otherAccount	هذا حساب آخر. سجّل الدخول باسم %@ لفتح القفل، أو سجّل الخروج.
 lock.status	مقفل
+lockedSettings.note	%@ مقفل. تعود إعدادات الحساب والخادم بعد تسجيل الدخول مجددًا.
+lockedSettings.showLockScreen	إظهار شاشة القفل
+lockedSettings.accountFooter	هذا الحساب مقفل وانتهت جلسته. سجّل الدخول مجددًا من شاشة القفل لرؤية إعداداته وإعدادات الخادم.
 requireSignIn.footer	عند مغادرة التطبيق، يُقفل هذا الحساب وتنتهي جلسته. يتطلب فتح القفل تسجيل دخول جديدًا، باستخدام مفتاح الأمان إن طلبه تسجيل الدخول.
 requireSignIn.sectionLock	القفل
 requireSignIn.appStart	عند بدء التطبيق

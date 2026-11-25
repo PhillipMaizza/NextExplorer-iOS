@@ -1377,6 +1377,9 @@ lock.subtitle	ファイルを開くにはもう一度サインインしてくだ
 lock.signIn	サインイン
 lock.otherAccount	別のアカウントです。ロックを解除するには %@ としてサインインするか、サインアウトしてください。
 lock.status	ロック中
+lockedSettings.note	%@ はロック中です。もう一度サインインすると、アカウントとサーバの設定が戻ります。
+lockedSettings.showLockScreen	ロック画面を表示
+lockedSettings.accountFooter	このアカウントはロック中で、セッションは終了しています。設定とサーバの設定を見るには、ロック画面からもう一度サインインしてください。
 requireSignIn.footer	アプリを離れると、このアカウントはロックされセッションが終了します。ロック解除には再度のサインインが必要です。サインインで求められる場合はセキュリティキーも使います。
 requireSignIn.sectionLock	ロック
 requireSignIn.appStart	アプリの起動時

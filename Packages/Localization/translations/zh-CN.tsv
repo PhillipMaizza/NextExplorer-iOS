@@ -1377,6 +1377,9 @@ lock.subtitle	请重新登录以打开你的文件。
 lock.signIn	登录
 lock.otherAccount	这是另一个账户。请以 %@ 身份登录以解锁，或退出登录。
 lock.status	已锁定
+lockedSettings.note	%@ 已锁定。重新登录后，账户和服务器设置会恢复。
+lockedSettings.showLockScreen	显示锁定屏幕
+lockedSettings.accountFooter	此账户已锁定，会话已结束。请在锁定屏幕重新登录，以查看其设置和服务器设置。
 requireSignIn.footer	离开应用后，此账户会锁定并结束会话。解锁需要重新登录；如果登录需要，还需使用你的安全密钥。
 requireSignIn.sectionLock	锁定
 requireSignIn.appStart	应用启动时

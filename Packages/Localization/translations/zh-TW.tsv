@@ -1377,6 +1377,9 @@ lock.subtitle	請重新登入以開啟你的檔案。
 lock.signIn	登入
 lock.otherAccount	這是另一個帳號。請以 %@ 身分登入以解鎖，或登出。
 lock.status	已鎖定
+lockedSettings.note	%@ 已鎖定。重新登入後，帳號和伺服器設定會恢復。
+lockedSettings.showLockScreen	顯示鎖定畫面
+lockedSettings.accountFooter	此帳號已鎖定，工作階段已結束。請在鎖定畫面重新登入，以查看其設定和伺服器設定。
 requireSignIn.footer	離開 App 後，此帳號會鎖定並結束工作階段。解鎖需要重新登入；若登入需要，也需使用你的安全金鑰。
 requireSignIn.sectionLock	鎖定
 requireSignIn.appStart	App 啟動時

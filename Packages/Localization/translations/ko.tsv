@@ -1377,6 +1377,9 @@ lock.subtitle	파일을 열려면 다시 로그인하세요.
 lock.signIn	로그인
 lock.otherAccount	다른 계정입니다. 잠금을 해제하려면 %@(으)로 로그인하거나 로그아웃하세요.
 lock.status	잠김
+lockedSettings.note	%@이(가) 잠겨 있습니다. 다시 로그인하면 계정 및 서버 설정이 돌아옵니다.
+lockedSettings.showLockScreen	잠금 화면 보기
+lockedSettings.accountFooter	이 계정은 잠겨 있으며 세션이 종료되었습니다. 계정 및 서버 설정을 보려면 잠금 화면에서 다시 로그인하세요.
 requireSignIn.footer	앱을 떠나면 이 계정이 잠기고 세션이 끝납니다. 잠금을 해제하려면 다시 로그인해야 하며, 로그인에서 요구하면 보안 키도 사용합니다.
 requireSignIn.sectionLock	잠금
 requireSignIn.appStart	앱을 시작할 때

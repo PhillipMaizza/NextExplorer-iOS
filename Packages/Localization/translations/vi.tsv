@@ -1308,6 +1308,9 @@ lock.subtitle	Đăng nhập lại để mở tệp của bạn.
 lock.signIn	Đăng nhập
 lock.otherAccount	Đó là tài khoản khác. Đăng nhập bằng %@ để mở khóa, hoặc đăng xuất.
 lock.status	Đã khóa
+lockedSettings.note	%@ đang bị khóa. Cài đặt tài khoản và máy chủ sẽ trở lại sau khi bạn đăng nhập lại.
+lockedSettings.showLockScreen	Hiện màn hình khóa
+lockedSettings.accountFooter	Tài khoản này đang bị khóa và phiên đã kết thúc. Đăng nhập lại từ màn hình khóa để xem cài đặt của tài khoản và máy chủ.
 requireSignIn.footer	Khi bạn rời ứng dụng, tài khoản này sẽ bị khóa và phiên của nó kết thúc. Mở khóa cần đăng nhập lại, kèm khóa bảo mật nếu việc đăng nhập yêu cầu.
 requireSignIn.sectionLock	Khóa
 requireSignIn.appStart	Khi khởi động ứng dụng

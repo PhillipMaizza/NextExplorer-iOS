@@ -1344,6 +1344,9 @@ lock.subtitle	Dosyalarını açmak için yeniden oturum aç.
 lock.signIn	Oturum Aç
 lock.otherAccount	Bu başka bir hesap. Kilidi açmak için %@ olarak oturum aç veya oturumu kapat.
 lock.status	Kilitli
+lockedSettings.note	%@ kilitli. Yeniden oturum açtığınızda hesap ve sunucu ayarları geri gelir.
+lockedSettings.showLockScreen	Kilit Ekranını Göster
+lockedSettings.accountFooter	Bu hesap kilitli ve oturumu sona erdi. Ayarlarını ve sunucunun ayarlarını görmek için kilit ekranından yeniden oturum açın.
 requireSignIn.footer	Uygulamadan çıktığında bu hesap kilitlenir ve oturumu sona erer. Kilidi açmak yeni bir oturum açma gerektirir; oturum açman istiyorsa güvenlik anahtarınla.
 requireSignIn.sectionLock	Kilitle
 requireSignIn.appStart	Uygulama açılınca

@@ -1415,6 +1415,9 @@ lock.subtitle	Logga in igen för att öppna dina filer.
 lock.signIn	Logga in
 lock.otherAccount	Det är ett annat konto. Logga in som %@ för att låsa upp, eller logga ut.
 lock.status	Låst
+lockedSettings.note	%@ är låst. Konto- och serverinställningar kommer tillbaka när du loggar in igen.
+lockedSettings.showLockScreen	Visa låsskärm
+lockedSettings.accountFooter	Det här kontot är låst och dess session har avslutats. Logga in igen från låsskärmen för att se dess inställningar och serverns.
 requireSignIn.footer	När du lämnar appen låses kontot och sessionen avslutas. För att låsa upp krävs en ny inloggning, med din säkerhetsnyckel om inloggningen kräver en.
 requireSignIn.sectionLock	Lås
 requireSignIn.appStart	När appen startar

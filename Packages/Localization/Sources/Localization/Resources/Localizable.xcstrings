@@ -98690,6 +98690,561 @@
         }
       }
     },
+    "lockedSettings.accountFooter": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This account is locked and its session has ended. Sign in again from the lock screen to see its settings and the server's."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "هذا الحساب مقفل وانتهت جلسته. سجّل الدخول مجددًا من شاشة القفل لرؤية إعداداته وإعدادات الخادم."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tento účet je uzamčen a jeho relace skončila. Přihlaste se znovu na zamykací obrazovce, abyste viděli jeho nastavení a nastavení serveru."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denne konto er låst, og dens session er afsluttet. Log ind igen fra låseskærmen for at se dens indstillinger og serverens."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Konto ist gesperrt und seine Sitzung ist beendet. Melde dich auf dem Sperrbildschirm erneut an, um seine Einstellungen und die des Servers zu sehen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Αυτός ο λογαριασμός είναι κλειδωμένος και η συνεδρία του έληξε. Συνδεθείτε ξανά από την οθόνη κλειδώματος για να δείτε τις ρυθμίσεις του και του διακομιστή."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta cuenta está bloqueada y su sesión ha terminado. Inicia sesión de nuevo desde la pantalla de bloqueo para ver sus ajustes y los del servidor."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tämä tili on lukittu ja sen istunto on päättynyt. Kirjaudu uudelleen lukitusnäytöstä nähdäksesi sen ja palvelimen asetukset."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce compte est verrouillé et sa session est terminée. Reconnectez-vous depuis l’écran de verrouillage pour voir ses réglages et ceux du serveur."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "החשבון הזה נעול וההפעלה שלו הסתיימה. התחבר שוב ממסך הנעילה כדי לראות את ההגדרות שלו ושל השרת."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "यह खाता लॉक है और इसका सत्र समाप्त हो गया है। इसकी और सर्वर की सेटिंग्स देखने के लिए लॉक स्क्रीन से फिर से साइन इन करें।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ez a fiók zárolva van, és a munkamenete véget ért. Jelentkezz be újra a zárolási képernyőn, hogy lásd a fiók és a szerver beállításait."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Akun ini terkunci dan sesinya telah berakhir. Masuk lagi dari layar kunci untuk melihat pengaturannya dan pengaturan server."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo account è bloccato e la sua sessione è terminata. Accedi di nuovo dalla schermata di blocco per vedere le sue impostazioni e quelle del server."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このアカウントはロック中で、セッションは終了しています。設定とサーバの設定を見るには、ロック画面からもう一度サインインしてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 계정은 잠겨 있으며 세션이 종료되었습니다. 계정 및 서버 설정을 보려면 잠금 화면에서 다시 로그인하세요."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denne kontoen er låst, og økten er avsluttet. Logg på igjen fra låseskjermen for å se innstillingene og serverens."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit account is vergrendeld en de sessie is beëindigd. Log opnieuw in via het vergrendelscherm om de instellingen en die van de server te zien."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To konto jest zablokowane, a jego sesja się zakończyła. Zaloguj się ponownie na ekranie blokady, aby zobaczyć jego ustawienia i ustawienia serwera."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta conta está bloqueada e a sessão terminou. Inicie sessão de novo no ecrã de bloqueio para ver as definições dela e do servidor."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta conta está bloqueada e a sessão terminou. Entre de novo pela tela de bloqueio para ver os ajustes dela e do servidor."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acest cont este blocat și sesiunea sa s-a încheiat. Conectează-te din nou din ecranul de blocare pentru a vedea setările sale și ale serverului."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Эта учётная запись заблокирована, и её сеанс завершён. Войдите снова на экране блокировки, чтобы увидеть её настройки и настройки сервера."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Det här kontot är låst och dess session har avslutats. Logga in igen från låsskärmen för att se dess inställningar och serverns."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "บัญชีนี้ถูกล็อกและเซสชันสิ้นสุดแล้ว ลงชื่อเข้าใช้อีกครั้งจากหน้าจอล็อกเพื่อดูการตั้งค่าของบัญชีและของเซิร์ฟเวอร์"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu hesap kilitli ve oturumu sona erdi. Ayarlarını ve sunucunun ayarlarını görmek için kilit ekranından yeniden oturum açın."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цей обліковий запис заблоковано, і його сеанс завершено. Увійдіть знову на екрані блокування, щоб побачити його налаштування й налаштування сервера."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tài khoản này đang bị khóa và phiên đã kết thúc. Đăng nhập lại từ màn hình khóa để xem cài đặt của tài khoản và máy chủ."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此账户已锁定，会话已结束。请在锁定屏幕重新登录，以查看其设置和服务器设置。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此帳號已鎖定，工作階段已結束。請在鎖定畫面重新登入，以查看其設定和伺服器設定。"
+          }
+        }
+      }
+    },
+    "lockedSettings.note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is locked. Account and server settings come back after you sign in again."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ مقفل. تعود إعدادات الحساب والخادم بعد تسجيل الدخول مجددًا."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ je uzamčen. Nastavení účtu a serveru se vrátí, až se znovu přihlásíte."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ er låst. Konto- og serverindstillinger vender tilbage, når du logger ind igen."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ist gesperrt. Konto- und Servereinstellungen sind wieder da, sobald du dich erneut anmeldest."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ο λογαριασμός %@ είναι κλειδωμένος. Οι ρυθμίσεις λογαριασμού και διακομιστή επιστρέφουν όταν συνδεθείτε ξανά."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está bloqueada. Los ajustes de la cuenta y del servidor vuelven cuando inicies sesión de nuevo."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ on lukittu. Tilin ja palvelimen asetukset palaavat, kun kirjaudut uudelleen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ est verrouillé. Les réglages du compte et du serveur reviennent après une nouvelle connexion."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ נעול. הגדרות החשבון והשרת יחזרו אחרי שתתחבר שוב."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ लॉक है। फिर से साइन इन करने के बाद खाते और सर्वर की सेटिंग्स वापस आ जाएँगी।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ zárolva van. A fiók- és szerverbeállítások újbóli bejelentkezés után visszatérnek."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ terkunci. Pengaturan akun dan server kembali setelah Anda masuk lagi."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ è bloccato. Le impostazioni dell’account e del server tornano dopo un nuovo accesso."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ はロック中です。もう一度サインインすると、アカウントとサーバの設定が戻ります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@이(가) 잠겨 있습니다. 다시 로그인하면 계정 및 서버 설정이 돌아옵니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ er låst. Konto- og serverinnstillinger kommer tilbake når du logger på igjen."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ is vergrendeld. Account- en serverinstellingen komen terug nadat je opnieuw inlogt."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ jest zablokowane. Ustawienia konta i serwera wrócą po ponownym zalogowaniu."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está bloqueada. As definições da conta e do servidor voltam depois de iniciar sessão de novo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está bloqueada. Os ajustes da conta e do servidor voltam depois que você entrar de novo."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ este blocat. Setările contului și ale serverului revin după ce te conectezi din nou."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ заблокирован. Настройки учётной записи и сервера вернутся после повторного входа."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ är låst. Konto- och serverinställningar kommer tillbaka när du loggar in igen."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ถูกล็อกอยู่ การตั้งค่าบัญชีและเซิร์ฟเวอร์จะกลับมาหลังจากคุณลงชื่อเข้าใช้อีกครั้ง"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ kilitli. Yeniden oturum açtığınızda hesap ve sunucu ayarları geri gelir."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ заблоковано. Налаштування облікового запису й сервера повернуться після повторного входу."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ đang bị khóa. Cài đặt tài khoản và máy chủ sẽ trở lại sau khi bạn đăng nhập lại."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已锁定。重新登录后，账户和服务器设置会恢复。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已鎖定。重新登入後，帳號和伺服器設定會恢復。"
+          }
+        }
+      }
+    },
+    "lockedSettings.showLockScreen": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show Lock Screen"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إظهار شاشة القفل"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zobrazit zamykací obrazovku"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vis låseskærm"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sperrbildschirm zeigen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Εμφάνιση οθόνης κλειδώματος"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar pantalla de bloqueo"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Näytä lukitusnäyttö"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher l’écran de verrouillage"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "הצג מסך נעילה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "लॉक स्क्रीन दिखाएँ"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zárolási képernyő megjelenítése"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tampilkan Layar Kunci"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra schermata di blocco"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ロック画面を表示"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "잠금 화면 보기"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vis låseskjerm"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toon vergrendelscherm"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pokaż ekran blokady"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar ecrã de bloqueio"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar tela de bloqueio"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arată ecranul de blocare"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показать экран блокировки"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visa låsskärm"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แสดงหน้าจอล็อก"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kilit Ekranını Göster"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Показати екран блокування"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiện màn hình khóa"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "显示锁定屏幕"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "顯示鎖定畫面"
+          }
+        }
+      }
+    },
     "login.addClientCertificate": {
       "extractionState": "manual",
       "localizations": {

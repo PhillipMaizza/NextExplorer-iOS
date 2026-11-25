@@ -185,7 +185,7 @@ struct NextExplorerApp: App {
 
             // The native Settings window; SwiftUI adds NextExplorer > Settings… (⌘,) for it.
             Settings {
-                MacSettingsWindow(mainStore: Self.store)
+                MacSettingsWindow(mainStore: Self.store) { Self.openTipJar() }
                     .followsAppLanguage()
                     .appAppearance(appearanceMode)
             }

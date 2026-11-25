@@ -923,6 +923,9 @@ lock.subtitle	Sign in again to open your files.
 lock.signIn	Sign In
 lock.otherAccount	That's a different account. Sign in as %@ to unlock, or sign out.
 lock.status	Locked
+lockedSettings.note	%@ is locked. Account and server settings come back after you sign in again.
+lockedSettings.showLockScreen	Show Lock Screen
+lockedSettings.accountFooter	This account is locked and its session has ended. Sign in again from the lock screen to see its settings and the server's.
 # ---- require sign in ----
 requireSignIn.navigationTitle	Require Sign In
 requireSignIn.toggle	Require Sign In

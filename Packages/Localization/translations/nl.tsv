@@ -1415,6 +1415,9 @@ lock.subtitle	Log opnieuw in om je bestanden te openen.
 lock.signIn	Inloggen
 lock.otherAccount	Dat is een ander account. Log in als %@ om te ontgrendelen, of log uit.
 lock.status	Vergrendeld
+lockedSettings.note	%@ is vergrendeld. Account- en serverinstellingen komen terug nadat je opnieuw inlogt.
+lockedSettings.showLockScreen	Toon vergrendelscherm
+lockedSettings.accountFooter	Dit account is vergrendeld en de sessie is beëindigd. Log opnieuw in via het vergrendelscherm om de instellingen en die van de server te zien.
 requireSignIn.footer	Als je de app verlaat, wordt dit account vergrendeld en eindigt de sessie. Ontgrendelen vraagt een nieuwe login, met je beveiligingssleutel als je login daarom vraagt.
 requireSignIn.sectionLock	Vergrendelen
 requireSignIn.appStart	Bij het starten van de app
