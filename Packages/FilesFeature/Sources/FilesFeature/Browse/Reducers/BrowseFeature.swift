@@ -523,6 +523,7 @@ public struct BrowseFeature {
         case searchResultsResponse(Result<SearchPage, FilesClientError>, term: String)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
+        case sortChanged(SortOption, SortDirection)
         case folderSortSaved(path: String, FolderSort)
         case renameTapped(FileItem)
         case deleteTapped(FileItem)

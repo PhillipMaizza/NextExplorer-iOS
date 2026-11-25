@@ -157,6 +157,9 @@ extension BrowseFeature {
         case let .sortDirectionChanged(direction):
             return saveSort(&state, option: state.sortOption, direction: direction)
 
+        case let .sortChanged(option, direction):
+            return saveSort(&state, option: option, direction: direction)
+
         case let .folderSortSaved(path, sort):
             state.$preferences.withLock { $0.setFolderSort(sort, for: path) }
             return .none

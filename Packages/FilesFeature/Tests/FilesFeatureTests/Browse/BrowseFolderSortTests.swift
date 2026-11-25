@@ -63,6 +63,24 @@ struct BrowseFolderSortTests {
         #expect(sent.value == [TestPath.documentsWork])
     }
 
+    @Test("A header click that changes field and direction together saves the folder once")
+    func aHeaderClickSavesOnce() async {
+        let saves = LockIsolated<[FolderSort]>([])
+        let store = BrowseFixtures.store(folder(saved: [:])) {
+            $0.filesClient.saveFolderSort = { _, _, sort in
+                saves.withValue { $0.append(sort) }
+                return sort
+            }
+        }
+
+        await store.send(.sortChanged(.size, .descending)) {
+            $0.$preferences.withLock { $0.folderSorts = [TestPath.documentsWork: Constants.largestFirst] }
+        }
+        await store.receive(\.folderSortSaved)
+
+        #expect(saves.value == [Constants.largestFirst])
+    }
+
     @Test("A sort the server could not save still applies on screen")
     func aFailedSaveKeepsTheSortOnScreen() async {
         let store = BrowseFixtures.store(folder()) {
