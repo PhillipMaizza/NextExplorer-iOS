@@ -168,7 +168,7 @@
 
         private func modifiedRange(_ items: [FileItem]) -> String {
             let format = DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
-            let dates = items.map(\.dateModified)
+            let dates = items.filter(\.hasKnownDate).map(\.dateModified)
             guard let first = dates.min(), let last = dates.max() else { return L10n.Browse.noValue }
             let start = format.string(from: first, includeTime: false)
             let end = format.string(from: last, includeTime: false)

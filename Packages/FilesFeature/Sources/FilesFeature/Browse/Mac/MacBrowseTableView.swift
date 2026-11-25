@@ -79,7 +79,7 @@
                 .width(min: MacBrowseTableMetrics.nameColumnCompactWidth)
                 if columns.showsDate {
                     TableColumn(L10n.Sort.dateModified, value: \.dateModified) { item in
-                        secondaryText(isPersonalSpace(item)
+                        secondaryText(isPersonalSpace(item) || !item.hasKnownDate
                             ? ""
                             : dateFormat.tableString(from: item.dateModified, now: .now))
                             .opacity(opacity(for: item))
