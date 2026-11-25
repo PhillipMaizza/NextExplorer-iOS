@@ -5,40 +5,31 @@
 
     private enum Metrics {
         static let width: CGFloat = 340
-        static let spinnerBaselineDrop: CGFloat = 5
+        static let glyphBaselineDrop: CGFloat = 5
         static let closeSize: CGFloat = 22
         static let closeGlyph: CGFloat = 9
-        static let maxPlates = 2
-        static let plateInset: CGFloat = .space8
-        static let plateLift: CGFloat = .size6
     }
 
     struct MacToastCard: View {
         let message: DSToastMessage
-        let waitingCount: Int
+        var collapsedHeight: CGFloat?
         let onAction: () -> Void
         let onClose: () -> Void
+        var onHeight: (CGFloat) -> Void = { _ in }
 
         private var shape: RoundedRectangle {
             RoundedRectangle(cornerRadius: .radiusMedium, style: .continuous)
         }
 
-        private var plates: [Int] {
-            Array(stride(from: min(waitingCount, Metrics.maxPlates), to: 0, by: -1))
-        }
-
         var body: some View {
             card
-                .background(alignment: .top) {
-                    ZStack {
-                        ForEach(plates, id: \.self) { plate in
-                            surface
-                                .padding(.horizontal, Metrics.plateInset * CGFloat(plate))
-                                .offset(y: -Metrics.plateLift * CGFloat(plate))
-                        }
-                    }
-                }
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { onHeight($0) }
+                .opacity(collapsedHeight == nil ? 1 : 0)
                 .frame(width: Metrics.width)
+                .frame(height: collapsedHeight, alignment: .top)
+                .clipped()
+                .background { surface }
+                .accessibilityElement(children: .contain)
         }
 
         private var surface: some View {
@@ -68,11 +59,15 @@
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.trailing, Metrics.closeSize)
+                closeButton
+                    .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + Metrics.glyphBaselineDrop }
             }
-            .padding(.space12)
-            .background { surface }
-            .overlay(alignment: .topTrailing) { closeButton }
+            .padding(.horizontal, .space12)
+            .padding(.vertical, isSingleLine ? .space16 : .space12)
+        }
+
+        private var isSingleLine: Bool {
+            message.detail == nil && message.actionTitle == nil
         }
 
         @ViewBuilder
@@ -83,7 +78,7 @@
                     .foregroundStyle(message.tint)
             } else {
                 DSSpinner(size: .small)
-                    .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + Metrics.spinnerBaselineDrop }
+                    .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + Metrics.glyphBaselineDrop }
             }
         }
 
@@ -102,18 +97,15 @@
             .foregroundStyle(Color.secondaryDS)
             .accessibilityLabel(L10n.Common.close)
             .accessibilityIdentifier(AccessibilityIdentifiers.Toast.close)
-            .padding(.space8)
         }
     }
 
     private struct MacToastCardPreview: View {
         let message: DSToastMessage
-        var waitingCount = 0
 
         var body: some View {
             MacToastCard(
                 message: message,
-                waitingCount: waitingCount,
                 onAction: {},
                 onClose: {}
             )
@@ -146,19 +138,8 @@
         MacToastCardPreview(message: .progress("Compressing…"))
     }
 
-    #Preview("Stacked, dark") {
-        MacToastCardPreview(
-            message: .success("3 items moved to the trash", actionTitle: "Open Trash") {},
-            waitingCount: 2
-        )
-        .preferredColorScheme(.dark)
-    }
-
-    #Preview("Stacked, light") {
-        MacToastCardPreview(
-            message: .success("3 items moved to the trash", actionTitle: "Open Trash") {},
-            waitingCount: 1
-        )
-        .preferredColorScheme(.light)
+    #Preview("Light") {
+        MacToastCardPreview(message: .success("3 items moved to the trash", actionTitle: "Open Trash") {})
+            .preferredColorScheme(.light)
     }
 #endif

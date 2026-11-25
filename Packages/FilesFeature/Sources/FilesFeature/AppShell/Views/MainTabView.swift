@@ -132,6 +132,7 @@ public struct MainTabView: View {
                 error: store.settings.hasAccountChangeFailed ? L10n.Settings.accountChangeFailed : nil,
                 extraBottomInset: Constants.toastTabBarClearance
             )
+            .environment(\.routesToastsToPane, true)
             .onChange(of: store.selectedTab, initial: true) { _, tab in
                 visitedTabs.insert(tab)
             }
