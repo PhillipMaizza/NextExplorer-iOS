@@ -157,6 +157,7 @@ public struct MainTabFeature {
             case switchAccount(String)
             case removeAccount(String)
             case addAccountRequested
+            case requireSignInChanged(accountID: String, RequireSignIn?)
         }
     }
 
@@ -519,6 +520,9 @@ public struct MainTabFeature {
 
                 case let .settings(.delegate(.removeAccount(id))):
                     return .send(.delegate(.removeAccount(id)))
+
+                case let .settings(.delegate(.requireSignInChanged(accountID, requireSignIn))):
+                    return .send(.delegate(.requireSignInChanged(accountID: accountID, requireSignIn)))
 
                 case .settings(.delegate(.addAccountRequested)):
                     return .send(.delegate(.addAccountRequested))

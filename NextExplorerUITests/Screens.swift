@@ -595,7 +595,7 @@ struct TextPreviewScreen {
     }
 }
 
-/// The Two Factor Authentication screen, reached from the accounts: in Settings on iPhone, in the
+/// The Two Factor Authentication screen, reached from the Security group in Settings, or from the
 /// sidebar's account popover on iPad.
 struct TwoFactorScreen {
     let app: XCUIApplication
@@ -777,7 +777,7 @@ struct SettingsScreen {
         }
     }
 
-    /// The active account row (expands to reveal Change Password / Sign Out). A stable identifier
+    /// The active account row (expands to reveal Sign Out). A stable identifier
     /// since its label is a combined accessibility element.
     var activeAccountRow: XCUIElement {
         app.buttons[AccessibilityIdentifiers.Settings.activeAccount].firstMatch
