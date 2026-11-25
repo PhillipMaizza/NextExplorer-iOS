@@ -1428,3 +1428,17 @@ requireSignIn.keepOfflineFilesFooter	बंद होने पर, लॉक �
 shareUpload.locked	NextExplorer लॉक है। इसे खोलें, फिर से साइन इन करें, फिर दोबारा शेयर करें।
 requireSignIn.navigationTitle	साइन इन ज़रूरी करें
 requireSignIn.toggle	साइन इन ज़रूरी करें
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	ब्राउज़ करें पर जाएँ
+emptyGuide.favoritesTitle	फ़ोल्डर बस एक क्लिक दूर
+emptyGuide.favoritesBody	ब्राउज़ करें में किसी फ़ोल्डर पर राइट क्लिक करें और “%1$@” चुनें।\nवह यहाँ दिखेगा, और “%2$@” से उसे अपना नाम, रंग और आइकन मिलता है।
+emptyGuide.sharedTitle	लिंक से शेयर करें
+emptyGuide.sharedBody	ब्राउज़ करें में किसी फ़ाइल या फ़ोल्डर पर राइट क्लिक करें और “%@” चुनें।\nउसका लिंक यहाँ दिखेगा, साथ में कौन उसे खोल सकता है और कब तक।
+emptyGuide.sharedWithMeTitle	अभी तक आपके साथ कुछ शेयर नहीं किया गया
+emptyGuide.offlineTitle	फ़ाइलें इस Mac पर रखें
+emptyGuide.offlineBody	ब्राउज़ करें में किसी भी फ़ाइल या फ़ोल्डर पर राइट क्लिक करें और “%@” चुनें।\nहर बार ऐप सिंक होने पर फ़ोल्डरों में नई फ़ाइलें आ जाती हैं।\n\nडाउनलोड की गई फ़ाइलें बिना कनेक्शन के भी खुलती हैं।
+emptyGuide.trashTitle	ट्रैश खाली है
+emptyGuide.trashRestore	रीस्टोर किसी आइटम को उसकी जगह पर, या आपके चुने किसी भी फ़ोल्डर में वापस रखता है।
+emptyGuide.trashShareLinks	फ़ाइल यहाँ रहने तक शेयर लिंक काम नहीं करते।\nरीस्टोर उन्हें वापस ला सकता है।
+emptyGuide.browseDropTitle	अपलोड करने के लिए फ़ाइलें यहाँ छोड़ें

@@ -1321,3 +1321,17 @@ requireSignIn.keepOfflineFilesFooter	Jika nonaktif, penguncian juga menghapus fi
 shareUpload.locked	NextExplorer terkunci. Buka aplikasinya, masuk lagi, lalu bagikan lagi.
 requireSignIn.navigationTitle	Wajibkan Masuk
 requireSignIn.toggle	Wajibkan Masuk
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Buka Jelajahi
+emptyGuide.favoritesTitle	Folder hanya sekali klik
+emptyGuide.favoritesBody	Klik kanan folder di Jelajahi lalu pilih “%1$@”.\nFolder akan muncul di sini, dan “%2$@” memberinya nama, warna, dan ikon sendiri.
+emptyGuide.sharedTitle	Bagikan dengan tautan
+emptyGuide.sharedBody	Klik kanan file atau folder di Jelajahi lalu pilih “%@”.\nTautannya muncul di sini, beserta siapa yang dapat membukanya dan sampai kapan.
+emptyGuide.sharedWithMeTitle	Belum ada yang dibagikan dengan Anda
+emptyGuide.offlineTitle	Simpan file di Mac ini
+emptyGuide.offlineBody	Klik kanan file atau folder apa pun di Jelajahi lalu pilih “%@”.\nFolder mendapat file baru setiap kali aplikasi menyinkronkan.\n\nFile yang diunduh terbuka walau tanpa koneksi.
+emptyGuide.trashTitle	Sampah kosong
+emptyGuide.trashRestore	Pulihkan mengembalikan item ke tempat asalnya, atau ke folder mana pun yang Anda pilih.
+emptyGuide.trashShareLinks	Tautan berbagi berhenti berfungsi selama filenya ada di sini.\nPemulihan dapat mengembalikannya.
+emptyGuide.browseDropTitle	Letakkan file di sini untuk mengunggah

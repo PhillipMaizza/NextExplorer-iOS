@@ -93,14 +93,6 @@ struct OfflineTabView: View {
         )
     }
 
-    private var renameItemBinding: Binding<LocalDownload?> {
-        Binding(get: { store.renameItem }, set: {
-            if $0 == nil {
-                store.send(.renameCancelled)
-            }
-        })
-    }
-
     @ViewBuilder
     private var downloadRows: some View {
         // Bound once: `displayedDownloads` filters + sorts on every read, and the separator
@@ -201,6 +193,18 @@ struct OfflineTabView: View {
         }
     }
 
+    private var stateOverlay: some View {
+        ListStateOverlay(
+            phase: listPhase,
+            errorMessage: store.errorMessage,
+            emptyIcon: IconKit.availableOffline,
+            emptyMessage: L10n.Offline.tabEmpty,
+            noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
+            macGuide: .offline,
+            onRetry: { store.send(.refreshButtonTapped) }
+        )
+    }
+
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             Group {
@@ -232,11 +236,16 @@ struct OfflineTabView: View {
             // appearance, and the overlay (centered by default on whatever frame it currently
             // sees) visibly slides from that transient small frame to the real one.
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay {
+                if isMacTable {
+                    stateOverlay
+                }
+            }
             .safeAreaInset(edge: .top, spacing: 0) {
                 PinnedTitleSearchHeader(
                     title: L10n.Tab.offline,
                     selectionTitle: store.isSelecting ? L10n.Common.selectedCount(store.selectedCount) : nil,
-                    subtitle: L10n.Offline.footnote,
+                    subtitle: isMacTable && listPhase == .empty ? nil : L10n.Offline.footnote,
                     searchText: $store.searchQuery.sending(\.searchQueryChanged),
                     shouldFadeIntoContent: !isMacTable
                 )
@@ -248,14 +257,9 @@ struct OfflineTabView: View {
             // empty/error message is an overlay fed the list's pull to refresh drag so it
             // rubber bands with it. One animation crossfades the whole state change.
             .overlay {
-                ListStateOverlay(
-                    phase: listPhase,
-                    errorMessage: store.errorMessage,
-                    emptyIcon: IconKit.availableOffline,
-                    emptyMessage: L10n.Offline.tabEmpty,
-                    noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
-                    onRetry: { store.send(.refreshButtonTapped) }
-                )
+                if !isMacTable {
+                    stateOverlay
+                }
             }
             .animation(DSMotion.contentReveal, value: listPhase)
             .featureToast(error: store.actionErrorMessage)
@@ -330,18 +334,7 @@ struct OfflineTabView: View {
                     },
                     onCancel: { offlineStore.send(.removeCancelled) }
                 )
-                .dsSheet(item: renameItemBinding) { item in
-                    NameInputSheet(
-                        icon: IconKit.rename,
-                        title: L10n.Browse.renameTitle,
-                        placeholder: L10n.Browse.renameNamePlaceholder,
-                        confirmTitle: L10n.Common.save,
-                        initialName: item.fileName,
-                        isBusy: false,
-                        onConfirm: { store.send(.renameConfirmed($0)) },
-                        onCancel: { store.send(.renameCancelled) }
-                    )
-                }
+                .downloadRenameSheet(store: store)
                 .modifier(PreviewHostCover(
                     host: $store.scope(state: \.previewHost, action: \.previewHost),
                     zoom: zoom,

@@ -1357,3 +1357,17 @@ requireSignIn.keepOfflineFilesFooter	Kapalıyken kilitleme bu hesabın çevrimd�
 shareUpload.locked	NextExplorer kilitli. Uygulamayı aç, yeniden oturum aç ve sonra tekrar paylaş.
 requireSignIn.navigationTitle	Oturum Açmayı İste
 requireSignIn.toggle	Oturum Açmayı İste
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Gözat’a git
+emptyGuide.favoritesTitle	Klasörler bir tık uzakta
+emptyGuide.favoritesBody	Gözat’ta bir klasöre sağ tıklayıp “%1$@” seçeneğini seçin.\nBurada görünür ve “%2$@” ona kendi adını, rengini ve simgesini verir.
+emptyGuide.sharedTitle	Bağlantıyla paylaş
+emptyGuide.sharedBody	Gözat’ta bir dosyaya veya klasöre sağ tıklayıp “%@” seçeneğini seçin.\nBağlantısı burada, kimin ne zamana kadar açabileceğiyle birlikte görünür.
+emptyGuide.sharedWithMeTitle	Henüz sizinle bir şey paylaşılmadı
+emptyGuide.offlineTitle	Dosyaları bu Mac’te tut
+emptyGuide.offlineBody	Gözat’ta herhangi bir dosyaya veya klasöre sağ tıklayıp “%@” seçeneğini seçin.\nKlasörler, uygulama her eşitlendiğinde yeni dosyaları alır.\n\nİndirilen dosyalar bağlantı olmasa bile açılır.
+emptyGuide.trashTitle	Çöp kutusu boş
+emptyGuide.trashRestore	Geri yükleme, ögeyi eski yerine veya seçtiğiniz bir klasöre geri koyar.
+emptyGuide.trashShareLinks	Paylaşım bağlantıları, dosyaları burada olduğu sürece çalışmaz.\nGeri yükleme onları geri getirebilir.
+emptyGuide.browseDropTitle	Yüklemek için dosyaları buraya bırakın

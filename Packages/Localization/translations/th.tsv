@@ -1321,3 +1321,17 @@ requireSignIn.keepOfflineFilesFooter	เมื่อปิด การล็อ
 shareUpload.locked	NextExplorer ถูกล็อก เปิดแอป ลงชื่อเข้าใช้อีกครั้ง แล้วแชร์ใหม่
 requireSignIn.navigationTitle	กำหนดให้ลงชื่อเข้าใช้
 requireSignIn.toggle	กำหนดให้ลงชื่อเข้าใช้
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	ไปที่เรียกดู
+emptyGuide.favoritesTitle	โฟลเดอร์ที่อยู่ห่างแค่คลิกเดียว
+emptyGuide.favoritesBody	คลิกขวาที่โฟลเดอร์ในเรียกดูแล้วเลือก “%1$@”\nโฟลเดอร์จะแสดงที่นี่ และ “%2$@” ให้ชื่อ สี และไอคอนของตัวเอง
+emptyGuide.sharedTitle	แชร์ด้วยลิงก์
+emptyGuide.sharedBody	คลิกขวาที่ไฟล์หรือโฟลเดอร์ในเรียกดูแล้วเลือก “%@”\nลิงก์จะแสดงที่นี่ พร้อมผู้ที่เปิดได้และถึงเมื่อใด
+emptyGuide.sharedWithMeTitle	ยังไม่มีใครแชร์อะไรกับคุณ
+emptyGuide.offlineTitle	เก็บไฟล์ไว้ใน Mac เครื่องนี้
+emptyGuide.offlineBody	คลิกขวาที่ไฟล์หรือโฟลเดอร์ใดก็ได้ในเรียกดูแล้วเลือก “%@”\nโฟลเดอร์จะได้รับไฟล์ใหม่ทุกครั้งที่แอปซิงค์\n\nไฟล์ที่ดาวน์โหลดแล้วเปิดได้แม้ไม่มีการเชื่อมต่อ
+emptyGuide.trashTitle	ถังขยะว่างเปล่า
+emptyGuide.trashRestore	การกู้คืนจะนำรายการกลับไปที่เดิม หรือไปยังโฟลเดอร์ใดก็ได้ที่คุณเลือก
+emptyGuide.trashShareLinks	ลิงก์แชร์จะหยุดทำงานขณะที่ไฟล์อยู่ที่นี่\nการกู้คืนสามารถนำกลับมาได้
+emptyGuide.browseDropTitle	วางไฟล์ที่นี่เพื่ออัปโหลด

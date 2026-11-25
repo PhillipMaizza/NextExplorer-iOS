@@ -1399,3 +1399,17 @@ requireSignIn.keepOfflineFilesFooter	כשהאפשרות כבויה, הנעילה
 shareUpload.locked	NextExplorer נעול. פתח אותו, התחבר שוב ואז שתף שוב.
 requireSignIn.navigationTitle	דרישת התחברות
 requireSignIn.toggle	דרישת התחברות
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	מעבר לעיון
+emptyGuide.favoritesTitle	תיקיות במרחק לחיצה
+emptyGuide.favoritesBody	לחצו לחיצה ימנית על תיקייה בעיון ובחרו ״%1$@״.\nהיא תופיע כאן, ו״%2$@״ ייתן לה שם, צבע וסמל משלה.
+emptyGuide.sharedTitle	שיתוף בקישור
+emptyGuide.sharedBody	לחצו לחיצה ימנית על קובץ או תיקייה בעיון ובחרו ״%@״.\nהקישור יופיע כאן, עם מי יכול לפתוח אותו ועד מתי.
+emptyGuide.sharedWithMeTitle	עדיין לא שיתפו איתך דבר
+emptyGuide.offlineTitle	שמירת קבצים ב־Mac הזה
+emptyGuide.offlineBody	לחצו לחיצה ימנית על כל קובץ או תיקייה בעיון ובחרו ״%@״.\nתיקיות מקבלות קבצים חדשים בכל סנכרון של האפליקציה.\n\nקבצים שהורדו נפתחים גם ללא חיבור.
+emptyGuide.trashTitle	הפח ריק
+emptyGuide.trashRestore	שחזור מחזיר פריט למקומו, או לכל תיקייה שתבחרו.
+emptyGuide.trashShareLinks	קישורי שיתוף מפסיקים לעבוד כל עוד הקובץ כאן.\nשחזור יכול להחזיר אותם.
+emptyGuide.browseDropTitle	שחררו קבצים כאן כדי להעלות

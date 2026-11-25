@@ -1504,3 +1504,17 @@ requireSignIn.keepOfflineFilesFooter	Если выключено, блокиро
 shareUpload.locked	NextExplorer заблокирован. Откройте его, войдите снова и поделитесь ещё раз.
 requireSignIn.navigationTitle	Требовать вход
 requireSignIn.toggle	Требовать вход
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Перейти в Обзор
+emptyGuide.favoritesTitle	Папки в один клик
+emptyGuide.favoritesBody	Нажмите правой кнопкой на папку в Обзоре и выберите «%1$@».\nОна появится здесь, а «%2$@» даст ей своё имя, цвет и значок.
+emptyGuide.sharedTitle	Поделиться ссылкой
+emptyGuide.sharedBody	Нажмите правой кнопкой на файл или папку в Обзоре и выберите «%@».\nСсылка появится здесь вместе с тем, кто и до какого срока может её открыть.
+emptyGuide.sharedWithMeTitle	С вами пока ничем не поделились
+emptyGuide.offlineTitle	Храните файлы на этом Mac
+emptyGuide.offlineBody	Нажмите правой кнопкой на любой файл или папку в Обзоре и выберите «%@».\nПапки получают новые файлы при каждой синхронизации приложения.\n\nЗагруженные файлы открываются даже без подключения.
+emptyGuide.trashTitle	Корзина пуста
+emptyGuide.trashRestore	Восстановление вернёт объект на прежнее место или в выбранную папку.
+emptyGuide.trashShareLinks	Ссылки для общего доступа не работают, пока файл здесь.\nВосстановление может вернуть их.
+emptyGuide.browseDropTitle	Перетащите файлы сюда для загрузки

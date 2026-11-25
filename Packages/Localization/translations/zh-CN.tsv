@@ -1390,3 +1390,17 @@ requireSignIn.keepOfflineFilesFooter	关闭后，锁定时还会从此设备移�
 shareUpload.locked	NextExplorer 已锁定。请打开应用重新登录，然后再次共享。
 requireSignIn.navigationTitle	要求登录
 requireSignIn.toggle	要求登录
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	前往浏览
+emptyGuide.favoritesTitle	一键直达文件夹
+emptyGuide.favoritesBody	在“浏览”中右键点按文件夹并选择“%1$@”。\n它会显示在这里，用“%2$@”可为它设置名称、颜色和图标。
+emptyGuide.sharedTitle	通过链接共享
+emptyGuide.sharedBody	在“浏览”中右键点按文件或文件夹并选择“%@”。\n链接会显示在这里，并注明谁可以打开以及有效期限。
+emptyGuide.sharedWithMeTitle	还没有人与你共享内容
+emptyGuide.offlineTitle	将文件保留在这台 Mac 上
+emptyGuide.offlineBody	在“浏览”中右键点按任意文件或文件夹并选择“%@”。\n每次 App 同步时，文件夹都会获取新文件。\n\n已下载的文件即使没有网络也能打开。
+emptyGuide.trashTitle	废纸篓为空
+emptyGuide.trashRestore	恢复会将项目放回原处，或放入你选择的任意文件夹。
+emptyGuide.trashShareLinks	文件在这里期间，共享链接会失效。\n恢复后可重新启用。
+emptyGuide.browseDropTitle	将文件拖到此处上传

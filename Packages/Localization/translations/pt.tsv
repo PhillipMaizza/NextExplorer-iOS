@@ -1428,3 +1428,17 @@ requireSignIn.keepOfflineFilesFooter	Se desativado, o bloqueio também remove de
 shareUpload.locked	O NextExplorer está bloqueado. Abra-o, inicie sessão novamente e partilhe outra vez.
 requireSignIn.navigationTitle	Exigir início de sessão
 requireSignIn.toggle	Exigir início de sessão
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Ir para Explorar
+emptyGuide.favoritesTitle	As suas pastas à distância de um clique
+emptyGuide.favoritesBody	Clique com o botão direito numa pasta em Explorar e escolha «%1$@».\nAparece aqui, e «%2$@» dá-lhe um nome, uma cor e um ícone próprios.
+emptyGuide.sharedTitle	Partilhar com uma ligação
+emptyGuide.sharedBody	Clique com o botão direito num ficheiro ou pasta em Explorar e escolha «%@».\nA ligação aparece aqui, com quem a pode abrir e até quando.
+emptyGuide.sharedWithMeTitle	Ainda nada foi partilhado consigo
+emptyGuide.offlineTitle	Manter ficheiros neste Mac
+emptyGuide.offlineBody	Clique com o botão direito em qualquer ficheiro ou pasta em Explorar e escolha «%@».\nAs pastas recebem ficheiros novos sempre que a app sincroniza.\n\nOs ficheiros transferidos abrem mesmo sem ligação.
+emptyGuide.trashTitle	O lixo está vazio
+emptyGuide.trashRestore	Restaurar volta a colocar um item onde estava, ou na pasta que escolher.
+emptyGuide.trashShareLinks	As ligações de partilha deixam de funcionar enquanto o ficheiro está aqui.\nUm restauro pode recuperá-las.
+emptyGuide.browseDropTitle	Largue ficheiros aqui para os carregar

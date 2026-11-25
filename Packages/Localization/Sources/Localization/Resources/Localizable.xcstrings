@@ -70168,6 +70168,2226 @@
         }
       }
     },
+    "emptyGuide.browseDropTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drop files here to upload"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "أفلت الملفات هنا لرفعها"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Přetáhněte sem soubory k nahrání"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slip filer her for at uploade"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateien zum Hochladen hier ablegen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Αφήστε αρχεία εδώ για μεταφόρτωση"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suelta archivos aquí para subirlos"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pudota tiedostot tähän ladataksesi ne"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déposez des fichiers ici pour les envoyer"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שחררו קבצים כאן כדי להעלות"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अपलोड करने के लिए फ़ाइलें यहाँ छोड़ें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Húzd ide a feltöltendő fájlokat"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Letakkan file di sini untuk mengunggah"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trascina qui i file da caricare"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ここにファイルをドロップしてアップロード"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "업로드할 파일을 여기에 놓으세요"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Slipp filer her for å laste opp"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zet bestanden hier neer om te uploaden"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upuść tu pliki, aby je wysłać"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Largue ficheiros aqui para os carregar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solte arquivos aqui para enviar"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trage fișierele aici pentru a le încărca"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетащите файлы сюда для загрузки"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Släpp filer här för att ladda upp"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "วางไฟล์ที่นี่เพื่ออัปโหลด"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yüklemek için dosyaları buraya bırakın"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перетягніть файли сюди для завантаження"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thả tệp vào đây để tải lên"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将文件拖到此处上传"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將檔案拖到此處上傳"
+          }
+        }
+      }
+    },
+    "emptyGuide.favoritesBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right click a folder in Browse and choose %1$@.\nIt shows up here, and %2$@ gives it its own name, color and icon."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انقر بزر الماوس الأيمن على مجلد في تصفح واختر «%1$@».\nسيظهر هنا، ويمنحه «%2$@» اسمًا ولونًا وأيقونة خاصة به."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klikněte pravým tlačítkem na složku v sekci Procházet a vyberte „%1$@“.\nObjeví se tady a pomocí „%2$@“ jí dáte vlastní název, barvu a ikonu."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Højreklik på en mappe i Gennemse, og vælg “%1$@”.\nDen vises her, og med “%2$@” giver du den sit eget navn, farve og symbol."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klicke in Durchsuchen mit der rechten Maustaste auf einen Ordner und wähle „%1$@“.\nEr erscheint hier, und mit „%2$@“ gibst du ihm einen eigenen Namen, eine Farbe und ein Symbol."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Κάντε δεξί κλικ σε έναν φάκελο στην Περιήγηση και επιλέξτε «%1$@».\nΕμφανίζεται εδώ, και με το «%2$@» του δίνετε δικό του όνομα, χρώμα και εικονίδιο."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haz clic derecho en una carpeta en Explorar y elige «%1$@».\nAparece aquí, y «%2$@» le da su propio nombre, color e icono."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Napsauta kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%1$@”.\nSe näkyy täällä, ja ”%2$@” antaa sille oman nimen, värin ja kuvakkeen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites un clic droit sur un dossier dans Explorer et choisissez « %1$@ ».\nIl apparaît ici, et « %2$@ » lui donne un nom, une couleur et une icône."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "לחצו לחיצה ימנית על תיקייה בעיון ובחרו ״%1$@״.\nהיא תופיע כאן, ו״%2$@״ ייתן לה שם, צבע וסמל משלה."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्राउज़ करें में किसी फ़ोल्डर पर राइट क्लिक करें और “%1$@” चुनें।\nवह यहाँ दिखेगा, और “%2$@” से उसे अपना नाम, रंग और आइकन मिलता है।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kattints jobb gombbal egy mappára a Böngészésben, és válaszd a „%1$@” lehetőséget.\nItt jelenik meg, a „%2$@” pedig saját nevet, színt és ikont ad neki."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik kanan folder di Jelajahi lalu pilih “%1$@”.\nFolder akan muncul di sini, dan “%2$@” memberinya nama, warna, dan ikon sendiri."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai clic destro su una cartella in Esplora e scegli «%1$@».\nComparirà qui, e con «%2$@» puoi darle un nome, un colore e un’icona."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブラウズでフォルダを右クリックして「%1$@」を選択します。\nここに表示され、「%2$@」で名前、色、アイコンを設定できます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "탐색에서 폴더를 오른쪽 클릭하고 ‘%1$@’를 선택하세요.\n여기에 표시되며, ‘%2$@’로 이름, 색상, 아이콘을 지정할 수 있습니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Høyreklikk på en mappe i Utforsk og velg «%1$@».\nDen vises her, og med «%2$@» gir du den eget navn, farge og symbol."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik in Verkennen met de rechtermuisknop op een map en kies ‘%1$@’.\nHij verschijnt hier, en met ‘%2$@’ geef je hem een eigen naam, kleur en symbool."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknij prawym przyciskiem folder w sekcji Przeglądaj i wybierz „%1$@”.\nPojawi się tutaj, a „%2$@” nada mu własną nazwę, kolor i ikonę."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique com o botão direito numa pasta em Explorar e escolha «%1$@».\nAparece aqui, e «%2$@» dá-lhe um nome, uma cor e um ícone próprios."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique com o botão direito em uma pasta em Explorar e escolha “%1$@”.\nEla aparece aqui, e “%2$@” dá a ela um nome, uma cor e um ícone próprios."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fă clic dreapta pe un dosar în Explorează și alege „%1$@”.\nApare aici, iar „%2$@” îi dă un nume, o culoare și o pictogramă proprii."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите правой кнопкой на папку в Обзоре и выберите «%1$@».\nОна появится здесь, а «%2$@» даст ей своё имя, цвет и значок."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Högerklicka på en mapp i Bläddra och välj ”%1$@”.\nDen visas här, och med ”%2$@” ger du den ett eget namn, en färg och en symbol."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คลิกขวาที่โฟลเดอร์ในเรียกดูแล้วเลือก “%1$@”\nโฟลเดอร์จะแสดงที่นี่ และ “%2$@” ให้ชื่อ สี และไอคอนของตัวเอง"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gözat’ta bir klasöre sağ tıklayıp “%1$@” seçeneğini seçin.\nBurada görünür ve “%2$@” ona kendi adını, rengini ve simgesini verir."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натисніть правою кнопкою на папку в Огляді й виберіть «%1$@».\nВона з’явиться тут, а «%2$@» дасть їй власну назву, колір і значок."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhấp chuột phải vào một thư mục trong Duyệt và chọn “%1$@”.\nThư mục sẽ hiện ở đây, và “%2$@” cho nó tên, màu và biểu tượng riêng."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“浏览”中右键点按文件夹并选择“%1$@”。\n它会显示在这里，用“%2$@”可为它设置名称、颜色和图标。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在「瀏覽」中右鍵點按資料夾並選擇「%1$@」。\n它會顯示在這裡，用「%2$@」可為它設定名稱、顏色和圖示。"
+          }
+        }
+      }
+    },
+    "emptyGuide.favoritesTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep folders one click away"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مجلداتك على بُعد نقرة"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Složky na jedno kliknutí"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapper et klik væk"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordner mit einem Klick erreichen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Οι φάκελοι με ένα κλικ"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus carpetas a un clic"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kansiot yhden klikkauksen päässä"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos dossiers à un clic"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "תיקיות במרחק לחיצה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ोल्डर बस एक क्लिक दूर"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mappák egy kattintásnyira"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder hanya sekali klik"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cartelle a portata di clic"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フォルダにワンクリックで"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클릭 한 번으로 폴더 열기"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mapper ett klikk unna"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mappen op één klik afstand"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Foldery na jedno kliknięcie"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As suas pastas à distância de um clique"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suas pastas a um clique"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosarele la un clic distanță"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папки в один клик"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mappar ett klick bort"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "โฟลเดอร์ที่อยู่ห่างแค่คลิกเดียว"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klasörler bir tık uzakta"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папки в один клік"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thư mục chỉ cách một cú nhấp"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一键直达文件夹"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "一鍵直達資料夾"
+          }
+        }
+      }
+    },
+    "emptyGuide.goToBrowse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Go to Browse"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الانتقال إلى تصفح"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Přejít do sekce Procházet"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gå til Gennemse"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu Durchsuchen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Μετάβαση στην Περιήγηση"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ir a Explorar"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siirry Selaa-näkymään"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aller à Explorer"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "מעבר לעיון"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्राउज़ करें पर जाएँ"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ugrás a Böngészéshez"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buka Jelajahi"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vai a Esplora"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブラウズへ移動"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "탐색으로 이동"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gå til Utforsk"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naar Verkennen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przejdź do sekcji Przeglądaj"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ir para Explorar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ir para Explorar"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mergi la Explorează"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перейти в Обзор"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gå till Bläddra"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไปที่เรียกดู"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gözat’a git"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Перейти до Огляду"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đi tới Duyệt"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前往浏览"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "前往瀏覽"
+          }
+        }
+      }
+    },
+    "emptyGuide.offlineBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right click any file or folder in Browse and choose %@.\nFolders pick up new files each time the app syncs.\n\nDownloaded files open even without a connection."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انقر بزر الماوس الأيمن على أي ملف أو مجلد في تصفح واختر «%@».\nتحصل المجلدات على الملفات الجديدة في كل مزامنة للتطبيق.\n\nتُفتح الملفات التي جرى تنزيلها حتى بدون اتصال."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klikněte pravým tlačítkem na libovolný soubor nebo složku v sekci Procházet a vyberte „%@“.\nSložky si nové soubory stáhnou při každé synchronizaci aplikace.\n\nStažené soubory se otevřou i bez připojení."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Højreklik på en fil eller mappe i Gennemse, og vælg “%@”.\nMapper henter nye filer, hver gang appen synkroniserer.\n\nHentede filer kan åbnes, selv uden forbindelse."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klicke in Durchsuchen mit der rechten Maustaste auf eine Datei oder einen Ordner und wähle „%@“.\nOrdner übernehmen neue Dateien bei jedem Abgleich der App.\n\nHeruntergeladene Dateien lassen sich auch ohne Verbindung öffnen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Κάντε δεξί κλικ σε οποιοδήποτε αρχείο ή φάκελο στην Περιήγηση και επιλέξτε «%@».\nΟι φάκελοι παίρνουν τα νέα αρχεία σε κάθε συγχρονισμό της εφαρμογής.\n\nΤα αρχεία που έχουν ληφθεί ανοίγουν ακόμη και χωρίς σύνδεση."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haz clic derecho en cualquier archivo o carpeta en Explorar y elige «%@».\nLas carpetas reciben los archivos nuevos cada vez que la app se sincroniza.\n\nLos archivos descargados se abren incluso sin conexión."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Napsauta mitä tahansa tiedostoa tai kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%@”.\nKansiot saavat uudet tiedostot aina, kun sovellus synkronoi.\n\nLadatut tiedostot aukeavat myös ilman yhteyttä."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites un clic droit sur un fichier ou un dossier dans Explorer et choisissez « %@ ».\nLes dossiers récupèrent les nouveaux fichiers à chaque synchronisation de l’app.\n\nLes fichiers téléchargés s'ouvrent même sans connexion."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "לחצו לחיצה ימנית על כל קובץ או תיקייה בעיון ובחרו ״%@״.\nתיקיות מקבלות קבצים חדשים בכל סנכרון של האפליקציה.\n\nקבצים שהורדו נפתחים גם ללא חיבור."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्राउज़ करें में किसी भी फ़ाइल या फ़ोल्डर पर राइट क्लिक करें और “%@” चुनें।\nहर बार ऐप सिंक होने पर फ़ोल्डरों में नई फ़ाइलें आ जाती हैं।\n\nडाउनलोड की गई फ़ाइलें बिना कनेक्शन के भी खुलती हैं।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kattints jobb gombbal bármely fájlra vagy mappára a Böngészésben, és válaszd a „%@” lehetőséget.\nA mappák minden szinkronizáláskor megkapják az új fájlokat.\n\nA letöltött fájlok kapcsolat nélkül is megnyílnak."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik kanan file atau folder apa pun di Jelajahi lalu pilih “%@”.\nFolder mendapat file baru setiap kali aplikasi menyinkronkan.\n\nFile yang diunduh terbuka walau tanpa koneksi."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai clic destro su un file o una cartella in Esplora e scegli «%@».\nLe cartelle ricevono i nuovi file a ogni sincronizzazione dell’app.\n\nI file scaricati si aprono anche senza connessione."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブラウズで任意のファイルまたはフォルダを右クリックして「%@」を選択します。\nフォルダはアプリが同期するたびに新しいファイルを取り込みます。\n\nダウンロードしたファイルは接続がなくても開けます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "탐색에서 아무 파일이나 폴더를 오른쪽 클릭하고 ‘%@’를 선택하세요.\n폴더는 앱이 동기화할 때마다 새 파일을 받아옵니다.\n\n다운로드한 파일은 연결이 없어도 열 수 있습니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Høyreklikk på en fil eller mappe i Utforsk og velg «%@».\nMapper henter nye filer hver gang appen synkroniserer.\n\nNedlastede filer kan åpnes selv uten tilkobling."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik in Verkennen met de rechtermuisknop op een bestand of map en kies ‘%@’.\nMappen halen nieuwe bestanden op bij elke synchronisatie van de app.\n\nGedownloade bestanden openen ook zonder verbinding."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknij prawym przyciskiem dowolny plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nFoldery pobierają nowe pliki przy każdej synchronizacji aplikacji.\n\nPobrane pliki otwierają się nawet bez połączenia."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique com o botão direito em qualquer ficheiro ou pasta em Explorar e escolha «%@».\nAs pastas recebem ficheiros novos sempre que a app sincroniza.\n\nOs ficheiros transferidos abrem mesmo sem ligação."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique com o botão direito em qualquer arquivo ou pasta em Explorar e escolha “%@”.\nAs pastas recebem arquivos novos sempre que o app sincroniza.\n\nOs arquivos baixados abrem mesmo sem conexão."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fă clic dreapta pe orice fișier sau dosar în Explorează și alege „%@”.\nDosarele primesc fișierele noi la fiecare sincronizare a aplicației.\n\nFișierele descărcate se deschid chiar și fără conexiune."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите правой кнопкой на любой файл или папку в Обзоре и выберите «%@».\nПапки получают новые файлы при каждой синхронизации приложения.\n\nЗагруженные файлы открываются даже без подключения."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Högerklicka på valfri fil eller mapp i Bläddra och välj ”%@”.\nMappar hämtar nya filer varje gång appen synkar.\n\nHämtade filer öppnas även utan anslutning."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คลิกขวาที่ไฟล์หรือโฟลเดอร์ใดก็ได้ในเรียกดูแล้วเลือก “%@”\nโฟลเดอร์จะได้รับไฟล์ใหม่ทุกครั้งที่แอปซิงค์\n\nไฟล์ที่ดาวน์โหลดแล้วเปิดได้แม้ไม่มีการเชื่อมต่อ"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gözat’ta herhangi bir dosyaya veya klasöre sağ tıklayıp “%@” seçeneğini seçin.\nKlasörler, uygulama her eşitlendiğinde yeni dosyaları alır.\n\nİndirilen dosyalar bağlantı olmasa bile açılır."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натисніть правою кнопкою на будь-який файл або папку в Огляді й виберіть «%@».\nПапки отримують нові файли під час кожної синхронізації застосунку.\n\nЗавантажені файли відкриваються навіть без з’єднання."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhấp chuột phải vào bất kỳ tệp hoặc thư mục nào trong Duyệt và chọn “%@”.\nThư mục nhận tệp mới mỗi lần ứng dụng đồng bộ.\n\nCác tệp đã tải xuống vẫn mở được khi không có kết nối."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“浏览”中右键点按任意文件或文件夹并选择“%@”。\n每次 App 同步时，文件夹都会获取新文件。\n\n已下载的文件即使没有网络也能打开。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在「瀏覽」中右鍵點按任何檔案或資料夾並選擇「%@」。\n每次 App 同步時，資料夾都會取得新檔案。\n\n已下載的檔案即使沒有連線也能開啟。"
+          }
+        }
+      }
+    },
+    "emptyGuide.offlineTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep files on this Mac"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "احتفظ بالملفات على هذا الـ Mac"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mít soubory na tomto Macu"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Behold filer på denne Mac"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateien auf diesem Mac behalten"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Κρατήστε αρχεία σε αυτό το Mac"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar archivos en este Mac"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pidä tiedostot tällä Macilla"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garder des fichiers sur ce Mac"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שמירת קבצים ב־Mac הזה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ाइलें इस Mac पर रखें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fájlok megtartása ezen a Macen"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simpan file di Mac ini"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tieni i file su questo Mac"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このMacにファイルを保持"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Mac에 파일 보관"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Behold filer på denne Macen"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestanden op deze Mac bewaren"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zachowaj pliki na tym Macu"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manter ficheiros neste Mac"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manter arquivos neste Mac"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Păstrează fișiere pe acest Mac"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Храните файлы на этом Mac"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Behåll filer på den här Macen"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เก็บไฟล์ไว้ใน Mac เครื่องนี้"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyaları bu Mac’te tut"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зберігайте файли на цьому Mac"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giữ tệp trên máy Mac này"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将文件保留在这台 Mac 上"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將檔案保留在這台 Mac 上"
+          }
+        }
+      }
+    },
+    "emptyGuide.sharedBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right click a file or folder in Browse and choose %@.\nIts link shows up here, with who can open it and until when."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "انقر بزر الماوس الأيمن على ملف أو مجلد في تصفح واختر «%@».\nيظهر رابطه هنا، مع من يمكنه فتحه وحتى متى."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klikněte pravým tlačítkem na soubor nebo složku v sekci Procházet a vyberte „%@“.\nOdkaz se objeví tady, i s tím, kdo ho může otevřít a do kdy."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Højreklik på en fil eller mappe i Gennemse, og vælg “%@”.\nLinket vises her, med hvem der kan åbne det og indtil hvornår."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klicke in Durchsuchen mit der rechten Maustaste auf eine Datei oder einen Ordner und wähle „%@“.\nDer Link erscheint hier, mit wer ihn öffnen kann und bis wann."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Κάντε δεξί κλικ σε ένα αρχείο ή φάκελο στην Περιήγηση και επιλέξτε «%@».\nΟ σύνδεσμος εμφανίζεται εδώ, με το ποιος μπορεί να τον ανοίξει και μέχρι πότε."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haz clic derecho en un archivo o carpeta en Explorar y elige «%@».\nSu enlace aparece aquí, con quién puede abrirlo y hasta cuándo."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Napsauta tiedostoa tai kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%@”.\nLinkki näkyy täällä, ja siinä kerrotaan, kuka voi avata sen ja mihin asti."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites un clic droit sur un fichier ou un dossier dans Explorer et choisissez « %@ ».\nSon lien apparaît ici, avec qui peut l’ouvrir et jusqu’à quand."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "לחצו לחיצה ימנית על קובץ או תיקייה בעיון ובחרו ״%@״.\nהקישור יופיע כאן, עם מי יכול לפתוח אותו ועד מתי."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्राउज़ करें में किसी फ़ाइल या फ़ोल्डर पर राइट क्लिक करें और “%@” चुनें।\nउसका लिंक यहाँ दिखेगा, साथ में कौन उसे खोल सकता है और कब तक।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kattints jobb gombbal egy fájlra vagy mappára a Böngészésben, és válaszd a „%@” lehetőséget.\nA link itt jelenik meg, azzal együtt, hogy ki és meddig nyithatja meg."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik kanan file atau folder di Jelajahi lalu pilih “%@”.\nTautannya muncul di sini, beserta siapa yang dapat membukanya dan sampai kapan."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fai clic destro su un file o una cartella in Esplora e scegli «%@».\nIl link comparirà qui, con chi può aprirlo e fino a quando."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブラウズでファイルまたはフォルダを右クリックして「%@」を選択します。\nリンクがここに表示され、誰がいつまで開けるかもわかります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "탐색에서 파일이나 폴더를 오른쪽 클릭하고 ‘%@’를 선택하세요.\n링크가 여기에 표시되며, 누가 언제까지 열 수 있는지도 보입니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Høyreklikk på en fil eller mappe i Utforsk og velg «%@».\nLenken vises her, med hvem som kan åpne den og til når."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Klik in Verkennen met de rechtermuisknop op een bestand of map en kies ‘%@’.\nDe link verschijnt hier, met wie hem kan openen en tot wanneer."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kliknij prawym przyciskiem plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nLink pojawi się tutaj, razem z tym, kto może go otworzyć i do kiedy."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique com o botão direito num ficheiro ou pasta em Explorar e escolha «%@».\nA ligação aparece aqui, com quem a pode abrir e até quando."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clique com o botão direito em um arquivo ou pasta em Explorar e escolha “%@”.\nO link aparece aqui, com quem pode abrir e até quando."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fă clic dreapta pe un fișier sau dosar în Explorează și alege „%@”.\nLinkul apare aici, cu cine îl poate deschide și până când."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите правой кнопкой на файл или папку в Обзоре и выберите «%@».\nСсылка появится здесь вместе с тем, кто и до какого срока может её открыть."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Högerklicka på en fil eller mapp i Bläddra och välj ”%@”.\nLänken visas här, med vem som kan öppna den och till när."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คลิกขวาที่ไฟล์หรือโฟลเดอร์ในเรียกดูแล้วเลือก “%@”\nลิงก์จะแสดงที่นี่ พร้อมผู้ที่เปิดได้และถึงเมื่อใด"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gözat’ta bir dosyaya veya klasöre sağ tıklayıp “%@” seçeneğini seçin.\nBağlantısı burada, kimin ne zamana kadar açabileceğiyle birlikte görünür."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натисніть правою кнопкою на файл або папку в Огляді й виберіть «%@».\nПосилання з’явиться тут разом із тим, хто й до коли може його відкрити."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhấp chuột phải vào tệp hoặc thư mục trong Duyệt và chọn “%@”.\nLiên kết hiện ở đây, kèm ai có thể mở và đến khi nào."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“浏览”中右键点按文件或文件夹并选择“%@”。\n链接会显示在这里，并注明谁可以打开以及有效期限。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在「瀏覽」中右鍵點按檔案或資料夾並選擇「%@」。\n連結會顯示在這裡，並註明誰可以開啟以及期限。"
+          }
+        }
+      }
+    },
+    "emptyGuide.sharedTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share with a link"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المشاركة عبر رابط"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sdílet odkazem"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Del med et link"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit einem Link teilen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Κοινή χρήση με σύνδεσμο"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartir con un enlace"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jaa linkillä"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partager avec un lien"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שיתוף בקישור"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "लिंक से शेयर करें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Megosztás linkkel"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bagikan dengan tautan"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Condividi con un link"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "リンクで共有"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "링크로 공유"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Del med en lenke"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delen met een link"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Udostępnij przez link"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partilhar com uma ligação"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compartilhar com um link"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Partajează cu un link"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поделиться ссылкой"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dela med en länk"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แชร์ด้วยลิงก์"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağlantıyla paylaş"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поділитися посиланням"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chia sẻ bằng liên kết"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "通过链接共享"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "透過連結分享"
+          }
+        }
+      }
+    },
+    "emptyGuide.sharedWithMeTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing shared with you yet"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يُشارَك معك شيء بعد"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zatím s vámi nikdo nic nesdílel"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intet er delt med dig endnu"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nichts mit dir geteilt"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Δεν έχει κοινοποιηθεί τίποτα σε εσάς ακόμη"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no han compartido nada contigo"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kanssasi ei ole vielä jaettu mitään"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien n’a encore été partagé avec vous"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "עדיין לא שיתפו איתך דבר"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अभी तक आपके साथ कुछ शेयर नहीं किया गया"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Még semmit sem osztottak meg veled"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Belum ada yang dibagikan dengan Anda"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancora nulla condiviso con te"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まだ共有されているものはありません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "아직 공유받은 항목이 없습니다"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ingenting er delt med deg ennå"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog niets met je gedeeld"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nikt jeszcze niczego Ci nie udostępnił"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda nada foi partilhado consigo"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nada foi compartilhado com você ainda"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nimic nu a fost partajat cu tine încă"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "С вами пока ничем не поделились"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inget har delats med dig än"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ยังไม่มีใครแชร์อะไรกับคุณ"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Henüz sizinle bir şey paylaşılmadı"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "З вами ще нічим не поділилися"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có gì được chia sẻ với bạn"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还没有人与你共享内容"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還沒有人與你分享內容"
+          }
+        }
+      }
+    },
+    "emptyGuide.trashRestore": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore puts an item back where it was, or into any folder you choose."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الاستعادة تعيد العنصر إلى مكانه، أو إلى أي مجلد تختاره."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obnovit vrátí položku tam, kde byla, nebo do vybrané složky."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gendan lægger et emne tilbage, hvor det var, eller i en mappe efter eget valg."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederherstellen legt ein Objekt zurück an seinen Ort oder in einen Ordner deiner Wahl."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Η επαναφορά επιστρέφει ένα στοιχείο εκεί που ήταν ή σε όποιον φάκελο επιλέξετε."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar devuelve un elemento a su sitio, o a la carpeta que elijas."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palauta vie kohteen takaisin paikalleen tai valitsemaasi kansioon."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer remet un élément à sa place, ou dans le dossier de votre choix."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שחזור מחזיר פריט למקומו, או לכל תיקייה שתבחרו."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "रीस्टोर किसी आइटम को उसकी जगह पर, या आपके चुने किसी भी फ़ोल्डर में वापस रखता है।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A visszaállítás az elemet az eredeti helyére vagy egy választott mappába teszi vissza."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulihkan mengembalikan item ke tempat asalnya, atau ke folder mana pun yang Anda pilih."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ripristina rimette un elemento dov’era, o in una cartella a tua scelta."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復元すると、項目は元の場所か、選んだフォルダに戻ります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "복원하면 항목이 원래 위치나 원하는 폴더로 돌아갑니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gjenopprett legger et objekt tilbake der det var, eller i en mappe du velger."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herstellen zet een item terug waar het was, of in een map naar keuze."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przywróć odkłada element tam, gdzie był, albo do wybranego folderu."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar volta a colocar um item onde estava, ou na pasta que escolher."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar devolve um item para onde estava, ou para a pasta que você escolher."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurarea pune un element înapoi unde era sau în orice dosar alegi."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Восстановление вернёт объект на прежнее место или в выбранную папку."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Återställ lägger tillbaka ett objekt där det var, eller i valfri mapp."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "การกู้คืนจะนำรายการกลับไปที่เดิม หรือไปยังโฟลเดอร์ใดก็ได้ที่คุณเลือก"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geri yükleme, ögeyi eski yerine veya seçtiğiniz bir klasöre geri koyar."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відновлення повертає об’єкт на попереднє місце або в будь-яку вибрану папку."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khôi phục đưa mục về chỗ cũ, hoặc vào bất kỳ thư mục nào bạn chọn."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "恢复会将项目放回原处，或放入你选择的任意文件夹。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還原會將項目放回原處，或放入你選擇的任何資料夾。"
+          }
+        }
+      }
+    },
+    "emptyGuide.trashShareLinks": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share links stop working while their file is here.\nA restore can bring them back."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تتوقف روابط المشاركة عن العمل ما دام ملفها هنا.\nيمكن للاستعادة إرجاعها."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odkazy na sdílení nefungují, dokud je soubor tady.\nObnovení je může vrátit."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delingslinks holder op med at virke, mens filen ligger her.\nEn gendannelse kan bringe dem tilbage."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Freigabelinks funktionieren nicht, solange ihre Datei hier liegt.\nEine Wiederherstellung kann sie zurückbringen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Οι σύνδεσμοι κοινής χρήσης σταματούν να λειτουργούν όσο το αρχείο είναι εδώ.\nΜια επαναφορά μπορεί να τους επαναφέρει."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los enlaces compartidos dejan de funcionar mientras su archivo está aquí.\nUna restauración puede recuperarlos."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jakolinkit lakkaavat toimimasta, kun tiedosto on täällä.\nPalautus voi tuoda ne takaisin."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les liens de partage cessent de fonctionner tant que leur fichier est ici.\nUne restauration peut les rétablir."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "קישורי שיתוף מפסיקים לעבוד כל עוד הקובץ כאן.\nשחזור יכול להחזיר אותם."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ाइल यहाँ रहने तक शेयर लिंक काम नहीं करते।\nरीस्टोर उन्हें वापस ला सकता है।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A megosztási linkek nem működnek, amíg a fájl itt van.\nEgy visszaállítás visszahozhatja őket."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tautan berbagi berhenti berfungsi selama filenya ada di sini.\nPemulihan dapat mengembalikannya."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I link di condivisione smettono di funzionare finché il file è qui.\nUn ripristino può riattivarli."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ファイルがここにある間、共有リンクは使えません。\n復元するとリンクも戻せます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일이 여기 있는 동안 공유 링크는 작동하지 않습니다.\n복원하면 링크도 되살릴 수 있습니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delingslenker slutter å virke mens filen ligger her.\nEn gjenoppretting kan hente dem tilbake."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deellinks werken niet zolang hun bestand hier staat.\nHerstellen kan ze terugbrengen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linki udostępniania przestają działać, gdy plik jest tutaj.\nPrzywrócenie może je odzyskać."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As ligações de partilha deixam de funcionar enquanto o ficheiro está aqui.\nUm restauro pode recuperá-las."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os links de compartilhamento param de funcionar enquanto o arquivo está aqui.\nUma restauração pode trazê-los de volta."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linkurile de partajare nu mai funcționează cât fișierul lor e aici.\nO restaurare le poate aduce înapoi."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ссылки для общего доступа не работают, пока файл здесь.\nВосстановление может вернуть их."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delningslänkar slutar fungera medan filen ligger här.\nEn återställning kan ta tillbaka dem."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ลิงก์แชร์จะหยุดทำงานขณะที่ไฟล์อยู่ที่นี่\nการกู้คืนสามารถนำกลับมาได้"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paylaşım bağlantıları, dosyaları burada olduğu sürece çalışmaz.\nGeri yükleme onları geri getirebilir."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Посилання для спільного доступу не працюють, поки файл тут.\nВідновлення може їх повернути."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liên kết chia sẻ ngừng hoạt động khi tệp nằm ở đây.\nKhôi phục có thể đưa chúng trở lại."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件在这里期间，共享链接会失效。\n恢复后可重新启用。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "檔案在這裡期間，分享連結會失效。\n還原後可重新啟用。"
+          }
+        }
+      }
+    },
+    "emptyGuide.trashTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The trash is empty"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سلة المهملات فارغة"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Koš je prázdný"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Papirkurven er tom"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der Papierkorb ist leer"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ο κάδος είναι άδειος"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La papelera está vacía"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Roskakori on tyhjä"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La corbeille est vide"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "הפח ריק"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ट्रैश खाली है"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A kuka üres"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sampah kosong"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il cestino è vuoto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ゴミ箱は空です"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "휴지통이 비어 있습니다"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Papirkurven er tom"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De prullenmand is leeg"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kosz jest pusty"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O lixo está vazio"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A lixeira está vazia"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coșul de gunoi este gol"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Корзина пуста"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Papperskorgen är tom"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ถังขยะว่างเปล่า"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çöp kutusu boş"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кошик порожній"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thùng rác trống"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "废纸篓为空"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "垃圾桶是空的"
+          }
+        }
+      }
+    },
     "emptyState.dropHintFiles": {
       "extractionState": "manual",
       "localizations": {

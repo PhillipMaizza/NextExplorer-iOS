@@ -13,8 +13,9 @@
             frame(height: MacBoardTableMetrics.cellHeight)
         }
 
-        func macBoardTable() -> some View {
+        func macBoardTable(showsHeaders: Bool = true) -> some View {
             tableStyle(.inset)
+                .tableColumnHeaders(showsHeaders ? .visible : .hidden)
                 .scrollContentBackground(.hidden)
                 .alternatingRowBackgrounds(.disabled)
         }

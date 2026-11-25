@@ -1357,3 +1357,17 @@ requireSignIn.keepOfflineFilesFooter	Όταν είναι ανενεργό, το 
 shareUpload.locked	Το NextExplorer είναι κλειδωμένο. Ανοίξτε το, συνδεθείτε ξανά και μετά κοινοποιήστε ξανά.
 requireSignIn.navigationTitle	Απαίτηση σύνδεσης
 requireSignIn.toggle	Απαίτηση σύνδεσης
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Μετάβαση στην Περιήγηση
+emptyGuide.favoritesTitle	Οι φάκελοι με ένα κλικ
+emptyGuide.favoritesBody	Κάντε δεξί κλικ σε έναν φάκελο στην Περιήγηση και επιλέξτε «%1$@».\nΕμφανίζεται εδώ, και με το «%2$@» του δίνετε δικό του όνομα, χρώμα και εικονίδιο.
+emptyGuide.sharedTitle	Κοινή χρήση με σύνδεσμο
+emptyGuide.sharedBody	Κάντε δεξί κλικ σε ένα αρχείο ή φάκελο στην Περιήγηση και επιλέξτε «%@».\nΟ σύνδεσμος εμφανίζεται εδώ, με το ποιος μπορεί να τον ανοίξει και μέχρι πότε.
+emptyGuide.sharedWithMeTitle	Δεν έχει κοινοποιηθεί τίποτα σε εσάς ακόμη
+emptyGuide.offlineTitle	Κρατήστε αρχεία σε αυτό το Mac
+emptyGuide.offlineBody	Κάντε δεξί κλικ σε οποιοδήποτε αρχείο ή φάκελο στην Περιήγηση και επιλέξτε «%@».\nΟι φάκελοι παίρνουν τα νέα αρχεία σε κάθε συγχρονισμό της εφαρμογής.\n\nΤα αρχεία που έχουν ληφθεί ανοίγουν ακόμη και χωρίς σύνδεση.
+emptyGuide.trashTitle	Ο κάδος είναι άδειος
+emptyGuide.trashRestore	Η επαναφορά επιστρέφει ένα στοιχείο εκεί που ήταν ή σε όποιον φάκελο επιλέξετε.
+emptyGuide.trashShareLinks	Οι σύνδεσμοι κοινής χρήσης σταματούν να λειτουργούν όσο το αρχείο είναι εδώ.\nΜια επαναφορά μπορεί να τους επαναφέρει.
+emptyGuide.browseDropTitle	Αφήστε αρχεία εδώ για μεταφόρτωση

@@ -93,7 +93,7 @@
                     store.send(.rowTapped(favorite))
                 }
             }
-            .macBoardTable()
+            .macBoardTable(showsHeaders: !favorites.isEmpty)
             .macBrowseTableWidth($width)
             // The table's scroll view otherwise draws its header material up under the pinned title.
             .clipped()

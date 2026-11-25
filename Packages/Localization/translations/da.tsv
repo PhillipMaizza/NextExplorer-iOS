@@ -1357,3 +1357,17 @@ requireSignIn.keepOfflineFilesFooter	Når det er slået fra, fjerner låsning og
 shareUpload.locked	NextExplorer er låst. Åbn appen, log ind igen, og del derefter igen.
 requireSignIn.navigationTitle	Kræv login
 requireSignIn.toggle	Kræv login
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Gå til Gennemse
+emptyGuide.favoritesTitle	Mapper et klik væk
+emptyGuide.favoritesBody	Højreklik på en mappe i Gennemse, og vælg “%1$@”.\nDen vises her, og med “%2$@” giver du den sit eget navn, farve og symbol.
+emptyGuide.sharedTitle	Del med et link
+emptyGuide.sharedBody	Højreklik på en fil eller mappe i Gennemse, og vælg “%@”.\nLinket vises her, med hvem der kan åbne det og indtil hvornår.
+emptyGuide.sharedWithMeTitle	Intet er delt med dig endnu
+emptyGuide.offlineTitle	Behold filer på denne Mac
+emptyGuide.offlineBody	Højreklik på en fil eller mappe i Gennemse, og vælg “%@”.\nMapper henter nye filer, hver gang appen synkroniserer.\n\nHentede filer kan åbnes, selv uden forbindelse.
+emptyGuide.trashTitle	Papirkurven er tom
+emptyGuide.trashRestore	Gendan lægger et emne tilbage, hvor det var, eller i en mappe efter eget valg.
+emptyGuide.trashShareLinks	Delingslinks holder op med at virke, mens filen ligger her.\nEn gendannelse kan bringe dem tilbage.
+emptyGuide.browseDropTitle	Slip filer her for at uploade

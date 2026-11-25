@@ -33,7 +33,7 @@
                     .safeAreaInset(edge: .top, spacing: .zero) {
                         MacPaneHeader(
                             title: L10n.Trash.title,
-                            subtitle: footnote.isEmpty ? nil : footnote,
+                            subtitle: footnote.isEmpty || isGuideShown ? nil : footnote,
                             inset: MacPaneInset.sectionHeader,
                             bottom: MacPaneInset.listGap
                         ) {
@@ -75,9 +75,27 @@
             return store.retentionDays.map { L10n.Trash.subtitle($0) } ?? ""
         }
 
-        private var content: some View {
-            TrashPhaseContent(phase: store.phase, isEmpty: store.items.isEmpty, onRetry: { store.send(.retryTapped) }) {
+        private var isGuideShown: Bool {
+            store.isEnabled && store.phase == .loaded && store.items.isEmpty
+        }
+
+        @ViewBuilder
+        private var emptyGuide: some View {
+            if store.isEnabled {
+                Color.clear.macEmptyGuide(.trash(retentionDays: store.retentionDays))
+            } else {
                 EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
+            }
+        }
+
+        private var content: some View {
+            TrashPhaseContent(
+                phase: store.phase,
+                isEmpty: store.items.isEmpty,
+                searchMiss: store.searchMiss,
+                onRetry: { store.send(.retryTapped) }
+            ) {
+                emptyGuide
             } loaded: {
                 table
             }
@@ -123,7 +141,7 @@
                 }
                 .width(min: Metrics.removedColumnWidth)
                 TableColumn(L10n.Sort.size, value: \.sortSize) { item in
-                    Text(item.size.map(FileSizeFormat.string) ?? "")
+                    Text(item.isDirectory ? L10n.Browse.noValue : item.size.map(FileSizeFormat.string) ?? "")
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
@@ -145,7 +163,7 @@
             .focusEffectDisabled()
             .focusedWhenOnTop($isFocused)
             .disabled(store.isBusy)
-            .onChange(of: store.items) { _, items in selection.formIntersection(items.ids) }
+            .onChange(of: store.displayedItems.map(\.id)) { _, ids in selection.formIntersection(ids) }
         }
 
         /// The store owns the sort; the table renders it and reports header clicks.
@@ -192,7 +210,7 @@
         }
 
         private func items(_ ids: Set<TrashItem.ID>) -> [TrashItem] {
-            store.items.filter { ids.contains($0.id) }
+            store.displayedItems.filter { ids.contains($0.id) }
         }
 
         private func icon(for item: TrashItem) -> some View {
@@ -230,6 +248,11 @@
 
     #Preview("Empty") {
         MacTrashView(store: TrashPreviewData.trash { $0.items = [] })
+            .overlayPreferenceValue(MacEmptyGuideKey.self) { guide in
+                if let guide {
+                    MacListGuideView(guide: guide)
+                }
+            }
             .frame(width: 900, height: 400)
     }
 

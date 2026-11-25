@@ -1436,3 +1436,17 @@ requireSignIn.keepOfflineFilesFooter	Když je vypnuto, zamčení z tohoto zaří
 shareUpload.locked	NextExplorer je zamčený. Otevřete ho, znovu se přihlaste a pak sdílejte znovu.
 requireSignIn.navigationTitle	Vyžadovat přihlášení
 requireSignIn.toggle	Vyžadovat přihlášení
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Přejít do sekce Procházet
+emptyGuide.favoritesTitle	Složky na jedno kliknutí
+emptyGuide.favoritesBody	Klikněte pravým tlačítkem na složku v sekci Procházet a vyberte „%1$@“.\nObjeví se tady a pomocí „%2$@“ jí dáte vlastní název, barvu a ikonu.
+emptyGuide.sharedTitle	Sdílet odkazem
+emptyGuide.sharedBody	Klikněte pravým tlačítkem na soubor nebo složku v sekci Procházet a vyberte „%@“.\nOdkaz se objeví tady, i s tím, kdo ho může otevřít a do kdy.
+emptyGuide.sharedWithMeTitle	Zatím s vámi nikdo nic nesdílel
+emptyGuide.offlineTitle	Mít soubory na tomto Macu
+emptyGuide.offlineBody	Klikněte pravým tlačítkem na libovolný soubor nebo složku v sekci Procházet a vyberte „%@“.\nSložky si nové soubory stáhnou při každé synchronizaci aplikace.\n\nStažené soubory se otevřou i bez připojení.
+emptyGuide.trashTitle	Koš je prázdný
+emptyGuide.trashRestore	Obnovit vrátí položku tam, kde byla, nebo do vybrané složky.
+emptyGuide.trashShareLinks	Odkazy na sdílení nefungují, dokud je soubor tady.\nObnovení je může vrátit.
+emptyGuide.browseDropTitle	Přetáhněte sem soubory k nahrání

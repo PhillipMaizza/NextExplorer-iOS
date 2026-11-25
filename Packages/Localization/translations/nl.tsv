@@ -1428,3 +1428,17 @@ requireSignIn.keepOfflineFilesFooter	Als dit uit staat, verwijdert vergrendelen 
 shareUpload.locked	NextExplorer is vergrendeld. Open de app, log opnieuw in en deel daarna opnieuw.
 requireSignIn.navigationTitle	Inloggen vereisen
 requireSignIn.toggle	Inloggen vereisen
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Naar Verkennen
+emptyGuide.favoritesTitle	Mappen op één klik afstand
+emptyGuide.favoritesBody	Klik in Verkennen met de rechtermuisknop op een map en kies ‘%1$@’.\nHij verschijnt hier, en met ‘%2$@’ geef je hem een eigen naam, kleur en symbool.
+emptyGuide.sharedTitle	Delen met een link
+emptyGuide.sharedBody	Klik in Verkennen met de rechtermuisknop op een bestand of map en kies ‘%@’.\nDe link verschijnt hier, met wie hem kan openen en tot wanneer.
+emptyGuide.sharedWithMeTitle	Nog niets met je gedeeld
+emptyGuide.offlineTitle	Bestanden op deze Mac bewaren
+emptyGuide.offlineBody	Klik in Verkennen met de rechtermuisknop op een bestand of map en kies ‘%@’.\nMappen halen nieuwe bestanden op bij elke synchronisatie van de app.\n\nGedownloade bestanden openen ook zonder verbinding.
+emptyGuide.trashTitle	De prullenmand is leeg
+emptyGuide.trashRestore	Herstellen zet een item terug waar het was, of in een map naar keuze.
+emptyGuide.trashShareLinks	Deellinks werken niet zolang hun bestand hier staat.\nHerstellen kan ze terugbrengen.
+emptyGuide.browseDropTitle	Zet bestanden hier neer om te uploaden

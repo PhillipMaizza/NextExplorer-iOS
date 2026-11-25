@@ -1428,3 +1428,17 @@ requireSignIn.keepOfflineFilesFooter	Se disattivato, il blocco rimuove da questo
 shareUpload.locked	NextExplorer è bloccato. Aprilo, accedi di nuovo e poi condividi ancora.
 requireSignIn.navigationTitle	Richiedi accesso
 requireSignIn.toggle	Richiedi accesso
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Vai a Esplora
+emptyGuide.favoritesTitle	Cartelle a portata di clic
+emptyGuide.favoritesBody	Fai clic destro su una cartella in Esplora e scegli «%1$@».\nComparirà qui, e con «%2$@» puoi darle un nome, un colore e un’icona.
+emptyGuide.sharedTitle	Condividi con un link
+emptyGuide.sharedBody	Fai clic destro su un file o una cartella in Esplora e scegli «%@».\nIl link comparirà qui, con chi può aprirlo e fino a quando.
+emptyGuide.sharedWithMeTitle	Ancora nulla condiviso con te
+emptyGuide.offlineTitle	Tieni i file su questo Mac
+emptyGuide.offlineBody	Fai clic destro su un file o una cartella in Esplora e scegli «%@».\nLe cartelle ricevono i nuovi file a ogni sincronizzazione dell’app.\n\nI file scaricati si aprono anche senza connessione.
+emptyGuide.trashTitle	Il cestino è vuoto
+emptyGuide.trashRestore	Ripristina rimette un elemento dov’era, o in una cartella a tua scelta.
+emptyGuide.trashShareLinks	I link di condivisione smettono di funzionare finché il file è qui.\nUn ripristino può riattivarli.
+emptyGuide.browseDropTitle	Trascina qui i file da caricare

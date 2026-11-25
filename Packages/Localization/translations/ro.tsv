@@ -1466,3 +1466,17 @@ requireSignIn.keepOfflineFilesFooter	Când este dezactivat, blocarea elimină de
 shareUpload.locked	NextExplorer este blocat. Deschide aplicația, autentifică-te din nou, apoi partajează din nou.
 requireSignIn.navigationTitle	Solicită autentificarea
 requireSignIn.toggle	Solicită autentificarea
+
+# Mac empty state guides.
+emptyGuide.goToBrowse	Mergi la Explorează
+emptyGuide.favoritesTitle	Dosarele la un clic distanță
+emptyGuide.favoritesBody	Fă clic dreapta pe un dosar în Explorează și alege „%1$@”.\nApare aici, iar „%2$@” îi dă un nume, o culoare și o pictogramă proprii.
+emptyGuide.sharedTitle	Partajează cu un link
+emptyGuide.sharedBody	Fă clic dreapta pe un fișier sau dosar în Explorează și alege „%@”.\nLinkul apare aici, cu cine îl poate deschide și până când.
+emptyGuide.sharedWithMeTitle	Nimic nu a fost partajat cu tine încă
+emptyGuide.offlineTitle	Păstrează fișiere pe acest Mac
+emptyGuide.offlineBody	Fă clic dreapta pe orice fișier sau dosar în Explorează și alege „%@”.\nDosarele primesc fișierele noi la fiecare sincronizare a aplicației.\n\nFișierele descărcate se deschid chiar și fără conexiune.
+emptyGuide.trashTitle	Coșul de gunoi este gol
+emptyGuide.trashRestore	Restaurarea pune un element înapoi unde era sau în orice dosar alegi.
+emptyGuide.trashShareLinks	Linkurile de partajare nu mai funcționează cât fișierul lor e aici.\nO restaurare le poate aduce înapoi.
+emptyGuide.browseDropTitle	Trage fișierele aici pentru a le încărca
