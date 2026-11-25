@@ -59,9 +59,6 @@ struct ImageGalleryPage: View {
     /// The date and size the shown image was loaded for, so a file replaced on the server loads again.
     @State private var loadedSignature: String?
     @State private var attempt = 0
-    #if os(macOS)
-        @Environment(\.macPeekFallback) private var peekFallback
-    #endif
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.offlineFileStore) private var offlineFileStore
     @Dependency(\.connectivity) private var connectivity
@@ -148,22 +145,10 @@ struct ImageGalleryPage: View {
                 .scaleEffect(phase.isFinal ? 1 : Constants.settleFromScale)
                 .animation(DSMotion.galleryFade, value: phase.isFinal)
             case let .failed(message):
-                #if os(macOS)
-                    if let peekFallback {
-                        MacPeekFileSummary(
-                            item: peekFallback.item,
-                            serverURL: peekFallback.serverURL,
-                            message: message
-                        ) {
-                            phase = .loading
-                            attempt += 1
-                        }
-                    } else {
-                        PreviewErrorView(message: message)
-                    }
-                #elseif os(iOS)
-                    PreviewErrorView(message: message)
-                #endif
+                PreviewErrorView(message: message) {
+                    phase = .loading
+                    attempt += 1
+                }
             case .loading:
                 EmptyView()
             }

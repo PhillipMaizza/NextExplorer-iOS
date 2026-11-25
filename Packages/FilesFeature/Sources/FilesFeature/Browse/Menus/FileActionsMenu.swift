@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import FilesClient
 import Localization
 import SwiftUI
 #if os(macOS)
@@ -19,6 +20,7 @@ struct FileActionsMenu: View {
 
     #if os(macOS)
         @Environment(\.openWindow) private var openWindow
+        @Dependency(\.offlineFileStore) private var offlineFileStore
     #endif
 
     var body: some View {
@@ -210,13 +212,6 @@ struct FileActionsMenu: View {
         #endif
     }
 
-    private var keptCopy: @Sendable () -> URL? {
-        @Dependency(\.offlineFileStore) var offlineFileStore
-        let store = offlineFileStore.pinned(to: store.cacheScope)
-        let item = item
-        return { store.localURLIgnoringStaleness(item) }
-    }
-
     /// On device content only a kept file can be saved or shared, from its copy on the device.
     private var isKept: Bool {
         store.offlineItemIDs.contains(item.id) || store.searchOnDeviceIDs.contains(item.id)
@@ -226,7 +221,9 @@ struct FileActionsMenu: View {
     private var sendActions: some View {
         #if os(macOS)
             if store.shouldShowDeviceContent, isKept, !item.isDirectory {
-                MacLocalFileMenuItems(resolve: keptCopy)
+                MacLocalFileMenuItems(
+                    resolve: offlineFileStore.pinned(to: store.cacheScope).keptCopy(of: item)
+                )
             }
         #endif
         if store.access?.canDownload ?? false, SaveActionStyle.isAvailable(for: item.isDirectory),
