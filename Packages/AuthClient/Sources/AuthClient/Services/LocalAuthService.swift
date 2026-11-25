@@ -1,10 +1,17 @@
 import CoreModels
 import Foundation
 import NetworkClient
+import os
 
 /// Plain JSON REST calls against NextExplorer's own session cookie auth endpoints (`/api/auth/*`).
 struct LocalAuthService: Sendable {
+    struct SignedIn: Sendable {
+        let user: User
+        let sessionCookies: [HTTPCookie]
+    }
+
     let networkClient: NetworkClient
+    private let secondFactorCookies = OSAllocatedUnfairLock<[HTTPCookie]>(initialState: [])
 
     func status(serverURL: URL) async throws -> AuthStatus {
         let request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.status, method: .get)
@@ -39,7 +46,7 @@ struct LocalAuthService: Sendable {
         return requested.host()?.lowercased() == answered.host()?.lowercased()
     }
 
-    func login(serverURL: URL, identifier: String, password: String) async throws -> User {
+    func login(serverURL: URL, identifier: String, password: String) async throws -> SignedIn {
         var request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.login, method: .post)
         request.setJSONContentType()
         do {
@@ -50,17 +57,22 @@ struct LocalAuthService: Sendable {
         } catch {
             throw AuthClientError.decoding(error.localizedDescription)
         }
-        let envelope = try await send(request, decoding: UserEnvelope.self, unauthorizedError: .invalidCredentials)
+        let (envelope, cookies) = try await signInSend(
+            request,
+            serverURL: serverURL,
+            unauthorizedError: .invalidCredentials
+        )
         if envelope.isTOTPRequired == true {
+            secondFactorCookies.withLock { $0 = cookies }
             throw AuthClientError.secondFactorRequired
         }
         guard let user = envelope.user else {
             throw AuthClientError.decoding("sign in response had no user")
         }
-        return user
+        return SignedIn(user: user, sessionCookies: cookies)
     }
 
-    func loginTOTP(serverURL: URL, code: String) async throws -> User {
+    func loginTOTP(serverURL: URL, code: String) async throws -> SignedIn {
         var request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.loginTOTP, method: .post)
         request.setJSONContentType()
         do {
@@ -68,6 +80,8 @@ struct LocalAuthService: Sendable {
         } catch {
             throw AuthClientError.decoding(error.localizedDescription)
         }
+        let pending = secondFactorCookies.withLock { $0 }
+        Self.prepareSignIn(&request, sending: pending)
         let (data, response) = try await performSend(request)
         if response.statusCode == HTTPStatus.unauthorized {
             let errorCode = (try? JSONDecoder().decode(ErrorEnvelope.self, from: data))?.error?.code
@@ -83,10 +97,12 @@ struct LocalAuthService: Sendable {
         guard let user = envelope.user else {
             throw AuthClientError.decoding("code response had no user")
         }
-        return user
+        secondFactorCookies.withLock { $0 = [] }
+        let issued = Self.sessionCookies(in: response, for: serverURL)
+        return SignedIn(user: user, sessionCookies: issued.isEmpty ? pending : issued)
     }
 
-    func exchangeOIDC(serverURL: URL, code: String, codeVerifier: String) async throws -> User {
+    func exchangeOIDC(serverURL: URL, code: String, codeVerifier: String) async throws -> SignedIn {
         var request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.oidcExchange, method: .post)
         request.setJSONContentType()
         do {
@@ -96,15 +112,49 @@ struct LocalAuthService: Sendable {
         } catch {
             throw AuthClientError.decoding(error.localizedDescription)
         }
-        let envelope = try await send(
+        let (envelope, cookies) = try await signInSend(
             request,
-            decoding: UserEnvelope.self,
+            serverURL: serverURL,
             unauthorizedError: .oidcFailed("exchange rejected")
         )
         guard let user = envelope.user else {
             throw AuthClientError.oidcFailed("no user in exchange response")
         }
-        return user
+        return SignedIn(user: user, sessionCookies: cookies)
+    }
+
+    private func signInSend(
+        _ request: URLRequest,
+        serverURL: URL,
+        unauthorizedError: AuthClientError
+    ) async throws -> (UserEnvelope, [HTTPCookie]) {
+        var request = request
+        Self.prepareSignIn(&request, sending: [])
+        let (data, response) = try await performSend(request)
+        try Self.validate(response, unauthorizedError: unauthorizedError)
+        let envelope: UserEnvelope
+        do {
+            envelope = try JSONDecoder().decode(UserEnvelope.self, from: data)
+        } catch {
+            throw AuthClientError.decoding(error.localizedDescription)
+        }
+        return (envelope, Self.sessionCookies(in: response, for: serverURL))
+    }
+
+    private static func prepareSignIn(_ request: inout URLRequest, sending cookies: [HTTPCookie]) {
+        request.httpShouldHandleCookies = false
+        for (field, value) in HTTPCookie.requestHeaderFields(with: cookies) {
+            request.setValue(value, forHTTPHeaderField: field)
+        }
+    }
+
+    private static func sessionCookies(in response: HTTPURLResponse, for serverURL: URL) -> [HTTPCookie] {
+        let fields = response.allHeaderFields.reduce(into: [String: String]()) { fields, entry in
+            if let name = entry.key as? String, let value = entry.value as? String {
+                fields[name] = value
+            }
+        }
+        return HTTPCookie.cookies(withResponseHeaderFields: fields, for: serverURL)
     }
 
     func me(serverURL: URL) async throws -> User {

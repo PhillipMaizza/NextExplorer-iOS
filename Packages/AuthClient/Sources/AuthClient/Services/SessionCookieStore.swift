@@ -202,8 +202,18 @@ struct SessionCookieStore: Sendable {
 
     func install(_ credentials: SessionCredentials) {
         guard !credentials.isLocked, let cookie = credentials.httpCookie else { return }
+        adopt([cookie], serverURL: credentials.serverBaseURL)
+    }
+
+    func adopt(_ cookies: [HTTPCookie], serverURL: URL) {
         cookieStorage.cookieAcceptPolicy = .always
-        cookieStorage.setCookie(cookie)
+        let names = Set(cookies.map(\.name))
+        for stale in cookieStorage.cookies(for: serverURL) ?? [] where names.contains(stale.name) {
+            cookieStorage.deleteCookie(stale)
+        }
+        for cookie in cookies {
+            cookieStorage.setCookie(cookie)
+        }
     }
 
     private func deleteCookies(serverURL: URL) {

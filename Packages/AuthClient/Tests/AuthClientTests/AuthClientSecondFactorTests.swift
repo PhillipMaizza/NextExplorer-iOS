@@ -43,17 +43,8 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         let cookieStorage = makeCookieStorage()
         let client = makeClient(cookieStorage: cookieStorage) { request in
             let url = try #require(request.url)
-            if let host = url.host {
-                let cookie = try #require(HTTPCookie(properties: [
-                    .name: AuthClientConfiguration.CookieName.local,
-                    .value: TestSession.loginCookieValue,
-                    .domain: host,
-                    .path: "/",
-                ]))
-                cookieStorage.setCookie(cookie)
-            }
             let body = try AuthClientFixture.secondFactorTotpDoneWithUser.data()
-            return try (body, response(statusCode: 200, url: url))
+            return try (body, signInResponse(url: url, cookieValue: TestSession.loginCookieValue))
         }
 
         let user = try await client.login(serverURL, TestAccount.username, TestAccount.password)
@@ -71,17 +62,8 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
             let body = try #require(request.httpBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
             #expect(json == ["code": TestAccount.totpCode])
-            if let host = url.host {
-                let cookie = try #require(HTTPCookie(properties: [
-                    .name: AuthClientConfiguration.CookieName.local,
-                    .value: "second-step-done",
-                    .domain: host,
-                    .path: "/",
-                ]))
-                cookieStorage.setCookie(cookie)
-            }
             let responseBody = try AuthClientFixture.secondFactorLoginAdminRecoveryUnused.data()
-            return try (responseBody, response(statusCode: 200, url: url))
+            return try (responseBody, signInResponse(url: url, cookieValue: "second-step-done"))
         }
 
         let user = try await client.loginTOTP(serverURL, TestAccount.totpCode)
@@ -102,17 +84,8 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
             let body = try #require(request.httpBody)
             let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
             #expect(json["code"] == TestAccount.recoveryCode)
-            if let host = url.host {
-                let cookie = try #require(HTTPCookie(properties: [
-                    .name: AuthClientConfiguration.CookieName.local,
-                    .value: TestSession.loginCookieValue,
-                    .domain: host,
-                    .path: "/",
-                ]))
-                cookieStorage.setCookie(cookie)
-            }
             let responseBody = try AuthClientFixture.secondFactorLoginRecoveryUsed.data()
-            return try (responseBody, response(statusCode: 200, url: url))
+            return try (responseBody, signInResponse(url: url, cookieValue: TestSession.loginCookieValue))
         }
 
         _ = try await client.loginTOTP(serverURL, TestAccount.recoveryCode)
@@ -203,5 +176,49 @@ struct AuthClientSecondFactorTests: AuthClientLiveHarness {
         await #expect(throws: AuthClientError.self) {
             _ = try await client.loginTOTP(serverURL, TestAccount.totpCode)
         }
+    }
+
+    @Test("a second factor sign in keeps its half done session out of the jar and sends it with the code")
+    func secondFactorKeepsThePendingSessionOffTheJar() async throws {
+        let cookieStorage = makeCookieStorage()
+        let keychainClient = KeychainClient.inMemory()
+        let host = try #require(serverURL.host)
+        try cookieStorage.setCookie(#require(HTTPCookie(properties: [
+            .name: AuthClientConfiguration.CookieName.local,
+            .value: TestSession.cookieValue,
+            .domain: host,
+            .path: "/",
+        ])))
+        let sent = LockedBox<URLRequest?>(nil)
+        let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { request in
+            let url = try #require(request.url)
+            guard url.path.hasSuffix(AuthPath.loginTOTP) else {
+                return try (
+                    AuthClientFixture.secondFactorTotpRequired.data(),
+                    signInResponse(url: url, cookieValue: TestSession.loginCookieValue)
+                )
+            }
+            sent.set(request)
+            return try (
+                AuthClientFixture.secondFactorLoginAdminRecoveryUnused.data(),
+                response(statusCode: 200, url: url)
+            )
+        }
+
+        await #expect(throws: AuthClientError.secondFactorRequired) {
+            _ = try await client.login(serverURL, TestUser.asmith, TestAccount.password)
+        }
+        #expect(cookieStorage.cookies(for: serverURL)?.map(\.value) == [TestSession.cookieValue])
+
+        _ = try await client.loginTOTP(serverURL, TestAccount.totpCode)
+
+        let codeRequest = try #require(sent.value)
+        #expect(
+            codeRequest.value(forHTTPHeaderField: TestHTTP.cookie)
+                == "\(AuthClientConfiguration.CookieName.local)=\(TestSession.loginCookieValue)"
+        )
+        let stored = try #require(try keychainClient.load(TestStorageKey.storedSessions))
+        let sessions = try JSONDecoder().decode(StoredSessions.self, from: stored)
+        #expect(sessions.active?.cookieValue == TestSession.loginCookieValue)
     }
 }

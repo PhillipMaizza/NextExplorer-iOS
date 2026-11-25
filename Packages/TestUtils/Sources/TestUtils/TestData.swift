@@ -88,6 +88,11 @@ public enum TestHost {
     }
 }
 
+public enum TestHTTP {
+    public static let cookie = "Cookie"
+    public static let setCookie = "Set-Cookie"
+}
+
 public enum TestSession {
     /// The session cookie name the local auth path uses.
     public static let cookieName = "connect.sid"

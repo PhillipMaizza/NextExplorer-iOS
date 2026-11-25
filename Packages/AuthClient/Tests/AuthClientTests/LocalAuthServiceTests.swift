@@ -32,13 +32,13 @@ struct LocalAuthServiceTests {
             return try answer(request, status: 200, body: AuthClientFixture.sessionUserAdmin.data())
         }
 
-        let user = try await service.exchangeOIDC(
+        let signedIn = try await service.exchangeOIDC(
             serverURL: serverURL,
             code: Constants.code,
             codeVerifier: Constants.verifier
         )
 
-        #expect(user.username == TestAccount.username)
+        #expect(signedIn.user.username == TestAccount.username)
         let request = try #require(captured.value)
         #expect(request.url?.absoluteString == "\(TestHost.serverURLString)/api/auth/oidc/exchange")
         #expect(request.httpMethod == "POST")
@@ -156,23 +156,6 @@ struct LocalAuthServiceTests {
                 try await operation.run(service, serverURL: serverURL)
             }
         }
-    }
-}
-
-private final class LockedBox<Value>: @unchecked Sendable {
-    private let lock = NSLock()
-    private var stored: Value
-
-    init(_ value: Value) {
-        stored = value
-    }
-
-    var value: Value {
-        lock.withLock { stored }
-    }
-
-    func set(_ value: Value) {
-        lock.withLock { stored = value }
     }
 }
 

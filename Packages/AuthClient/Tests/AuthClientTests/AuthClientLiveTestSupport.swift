@@ -39,6 +39,16 @@ extension AuthClientLiveHarness {
         try #require(HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil))
     }
 
+    func signInResponse(url: URL, cookieValue: String) throws -> HTTPURLResponse {
+        try #require(HTTPURLResponse(
+            url: url,
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: [TestHTTP
+                .setCookie: "\(AuthClientConfiguration.CookieName.local)=\(cookieValue); Path=/; HttpOnly"]
+        ))
+    }
+
     func credentials() throws -> SessionCredentials {
         try SessionCredentials(
             serverBaseURL: serverURL,
@@ -73,5 +83,22 @@ final class Recorded<Value>: @unchecked Sendable {
 
     func add(_ value: Value) {
         lock.withLock { stored.append(value) }
+    }
+}
+
+final class LockedBox<Value>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var stored: Value
+
+    init(_ value: Value) {
+        stored = value
+    }
+
+    var value: Value {
+        lock.withLock { stored }
+    }
+
+    func set(_ value: Value) {
+        lock.withLock { stored = value }
     }
 }
