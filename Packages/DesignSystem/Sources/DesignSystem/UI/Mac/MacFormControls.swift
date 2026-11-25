@@ -202,6 +202,7 @@
                 IconKit.chevronUpDown
                     .imageScale(.small)
                     .foregroundStyle(Color.macChromeSecondary)
+                    .accessibilityHidden(true)
             }
             .padding(.leading, .space12)
             .padding(.trailing, .space8)
