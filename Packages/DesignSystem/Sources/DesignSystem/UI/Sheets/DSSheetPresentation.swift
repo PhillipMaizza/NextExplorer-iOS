@@ -15,6 +15,7 @@ private enum Constants {
 public extension EnvironmentValues {
     /// True while a card sheet is hosted as a floating `dsSheet` card instead of a system sheet.
     @Entry var isDSCardSheet = false
+    @Entry var routesToastsToPane = false
 }
 
 public extension View {
@@ -56,9 +57,11 @@ private struct DSSheetModifier<SheetContent: View>: ViewModifier {
         content
             .sheet(
                 isPresented: Binding(get: { isPresented && !shouldUseCardSheet }, set: { isPresented = $0 }),
-                onDismiss: onDismiss,
-                content: sheetContent
-            )
+                onDismiss: onDismiss
+            ) {
+                sheetContent()
+                    .environment(\.routesToastsToPane, false)
+            }
             .fullScreenCover(isPresented: $card.coverBinding(mirroringTo: $isPresented), onDismiss: onDismiss) {
                 DSCardSheetHost(isCardShown: $card.isCardShown, onBackgroundTap: { isPresented = false }) {
                     sheetContent()
@@ -84,9 +87,11 @@ private struct DSItemSheetModifier<Item: Identifiable, SheetContent: View>: View
         content
             .sheet(
                 item: Binding(get: { shouldUseCardSheet ? nil : item }, set: { item = $0 }),
-                onDismiss: onDismiss,
-                content: sheetContent
-            )
+                onDismiss: onDismiss
+            ) { item in
+                sheetContent(item)
+                    .environment(\.routesToastsToPane, false)
+            }
             .fullScreenCover(isPresented: $card.coverBinding(mirroringTo: isItemPresented), onDismiss: onDismiss) {
                 DSCardSheetHost(isCardShown: $card.isCardShown, onBackgroundTap: { item = nil }) {
                     if let shownItem {

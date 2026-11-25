@@ -19,6 +19,7 @@
         var body: some View {
             if store.selectedTab == .settings {
                 section
+                    .macToastPane()
             } else {
                 MacPaneCard(title: nil, subtitle: nil, reserve: inspectorReserve) {
                     section.padding(.horizontal, MacPaneInset.section)
@@ -32,6 +33,7 @@
                     }
                     .animation(DSMotion.stateFade, value: guide)
                 }
+                .macToastPane()
                 .environment(\.showMacBrowse, browseOpener)
                 .onPreferenceChange(MacInspectorReserveKey.self) { reserve in
                     withAnimation(DSMotion.stateFade) { inspectorReserve = reserve }

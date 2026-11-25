@@ -12,18 +12,6 @@ private enum Constants {
     static let darkBorderOpacity: Double = .opacityFaint
     static let iconSize: CGFloat = .iconSmall
     static let bottomInset: CGFloat = .space16
-    #if os(macOS)
-        static let alignment: Alignment = .bottomTrailing
-        static let entryEdge: Edge = .trailing
-        static let trailingInset: CGFloat = .space16
-        static let hasCloseButton = true
-    #else
-        static let alignment: Alignment = .bottom
-        static let entryEdge: Edge = .bottom
-        static let trailingInset: CGFloat = 0
-        static let hasCloseButton = false
-    #endif
-    static let autoDismissDelay: Duration = .seconds(4.5)
     // How much of the surface color sits over the frosted glass: enough to keep the text legible,
     // little enough to let the glass through. Solid on the Mac, whose windows are already frosted.
     #if os(macOS)
@@ -145,6 +133,8 @@ public struct DSToastMessage: Equatable, Identifiable {
         self.action = action
     }
 
+    static let autoDismissDelay: Duration = .seconds(4.5)
+
     public static func == (lhs: DSToastMessage, rhs: DSToastMessage) -> Bool {
         lhs.id == rhs.id
     }
@@ -159,7 +149,6 @@ final class DSToastPresenter {
     static let shared = DSToastPresenter()
 
     private(set) var visibleID: String?
-    private(set) var waitingCount = 0
     @ObservationIgnored private var requests: [(owner: UUID, id: String)] = []
     @ObservationIgnored private(set) var swapTask: Task<Void, Never>?
 
@@ -167,10 +156,6 @@ final class DSToastPresenter {
         requests.removeAll { $0.owner == owner }
         if let message {
             requests.append((owner, message.id))
-        }
-        let waiting = max(requests.count - 1, 0)
-        if waiting != waitingCount {
-            waitingCount = waiting
         }
         let target = requests.last?.id
         guard target != visibleID else { return }
@@ -197,9 +182,15 @@ private struct DSToastModifier: ViewModifier {
     var extraBottomInset: CGFloat = 0
 
     func body(content: Content) -> some View {
-        content.overlay(alignment: .bottom) {
-            DSToastOverlay(message: $message, extraBottomInset: extraBottomInset)
-        }
+        #if os(macOS)
+            content.overlay(alignment: .bottomTrailing) {
+                MacToastHost(message: $message, extraBottomInset: extraBottomInset)
+            }
+        #else
+            content.overlay(alignment: .bottom) {
+                DSToastOverlay(message: $message, extraBottomInset: extraBottomInset)
+            }
+        #endif
     }
 }
 
@@ -219,7 +210,7 @@ private struct DSToastOverlay: View {
     }
 
     var body: some View {
-        ZStack(alignment: Constants.alignment) {
+        ZStack(alignment: .bottom) {
             // Keeps the overlay alive (and its lifecycle hooks firing) while nothing shows.
             Color.clear
                 .allowsHitTesting(false)
@@ -242,16 +233,15 @@ private struct DSToastOverlay: View {
     }
 
     private func toast(_ message: DSToastMessage) -> some View {
-        content(message)
+        capsule(message)
             .padding(.bottom, Constants.bottomInset + extraBottomInset)
-            .padding(.trailing, Constants.trailingInset)
-            .transition(.move(edge: Constants.entryEdge).combined(with: .opacity))
-            .accessibilityElement(children: message.action == nil && !Constants.hasCloseButton ? .combine : .contain)
-            .accessibilityAddTraits(message.action == nil && !Constants.hasCloseButton ? .isStaticText : [])
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .accessibilityElement(children: message.action == nil ? .combine : .contain)
+            .accessibilityAddTraits(message.action == nil ? .isStaticText : [])
             .task(id: message.id) {
                 AccessibilityNotification.Announcement(message.text).post()
                 guard !message.isPersistent, !(UITestEnvironment.isActive && message.action != nil) else { return }
-                try? await Task.sleep(for: Constants.autoDismissDelay)
+                try? await Task.sleep(for: DSToastMessage.autoDismissDelay)
                 guard !Task.isCancelled else { return }
                 self.message = nil
             }
@@ -260,19 +250,6 @@ private struct DSToastOverlay: View {
     private func run(_ message: DSToastMessage) {
         self.message = nil
         message.action?()
-    }
-
-    private func content(_ message: DSToastMessage) -> some View {
-        #if os(macOS)
-            MacToastCard(
-                message: message,
-                waitingCount: presenter.waitingCount,
-                onAction: { run(message) },
-                onClose: { self.message = nil }
-            )
-        #else
-            capsule(message)
-        #endif
     }
 
     private func capsule(_ message: DSToastMessage) -> some View {
