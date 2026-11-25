@@ -135,7 +135,7 @@ public struct BrowseFeature {
         /// Read live from the same in memory key `SettingsFeature` writes, so toggling
         /// "Show Hidden Files" is reflected here immediately, even in an already open folder,
         /// with no manual refresh needed.
-        @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
+        @Shared(.inMemory(UserPreferences.sharedKey)) public var preferences = UserPreferences()
         /// App wide "Copy" staging, shared under `FileClipboard.sharedKey` so the Paste
         /// action follows the user across every folder. `nil` when nothing is staged. Only
         /// ever holds copies: "Move" goes through `destinationPicker`, not the clipboard.

@@ -8,6 +8,8 @@ import Foundation
 /// A brand new user has no rows in `user_settings` at all, so any key can be absent from
 /// the response; decoding falls back to this client's own defaults rather than failing.
 public struct UserPreferences: Decodable, Equatable, Sendable {
+    public static let sharedKey = "userPreferences"
+
     public var shouldShowHiddenFiles: Bool
     public var shouldShowThumbnails: Bool
     /// The user's preferred default lifetime for a new share link, or `nil` when they
