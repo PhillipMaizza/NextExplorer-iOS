@@ -73,7 +73,18 @@
 
         /// The offline run's phase, kept here so the table updates per phase, not per progress tick.
         @State private var phase = OfflineDownloadProgress.Phase.idle
-        @State private var selection: Set<MacOfflineTableRow.ID> = []
+        @Environment(\.macOfflineSelection) private var sharedSelection
+        @State private var ownSelection: Set<MacOfflineTableRow.ID> = []
+
+        private var selectionBinding: Binding<Set<MacOfflineTableRow.ID>> {
+            sharedSelection ?? $ownSelection
+        }
+
+        private var selection: Set<MacOfflineTableRow.ID> {
+            get { selectionBinding.wrappedValue }
+            nonmutating set { selectionBinding.wrappedValue = newValue }
+        }
+
         @FocusState private var isFocused: Bool
         @State private var isPeeking = false
         @State private var width: CGFloat = .zero
@@ -96,7 +107,7 @@
 
         var body: some View {
             let rows = rows
-            Table(rows, selection: $selection, sortOrder: sortOrder) {
+            Table(rows, selection: selectionBinding, sortOrder: sortOrder) {
                 TableColumn(L10n.Sort.name, value: \.sortName) { row in
                     HStack(spacing: .space8) {
                         icon(for: row)

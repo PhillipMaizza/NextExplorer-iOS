@@ -241,6 +241,7 @@ struct OfflineTabView: View {
                     shouldFadeIntoContent: !isMacTable
                 )
             }
+            .macOfflineInspector(store, offlineStore, pinned: displayedPinned) { previewedDownload = $0 }
             // No refresh control: the tab lists what is on the device, read again on appear and
             // whenever an offline run finishes; there is nothing on the server to sync.
             // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the

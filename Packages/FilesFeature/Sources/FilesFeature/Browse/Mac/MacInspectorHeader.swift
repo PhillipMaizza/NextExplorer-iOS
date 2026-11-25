@@ -15,6 +15,7 @@
         let serverURL: URL
         var badge: String?
         var shouldShowThumbnails = true
+        var localFile: URL?
         let onClose: () -> Void
 
         private var previewKind: MacInspectorPreview.Kind? {
@@ -22,13 +23,22 @@
         }
 
         private var hasPicture: Bool {
-            previewKind != nil
+            localFile != nil || previewKind != nil
+        }
+
+        @ViewBuilder
+        private var picture: some View {
+            if let localFile {
+                MacLocalFilePicture(url: localFile, item: item)
+            } else if let previewKind {
+                MacInspectorPreview(item: item, kind: previewKind, serverURL: serverURL)
+            }
         }
 
         var body: some View {
-            if let previewKind {
+            if hasPicture {
                 VStack(alignment: .leading, spacing: .space16) {
-                    MacInspectorPreview(item: item, kind: previewKind, serverURL: serverURL)
+                    picture
                         .frame(maxWidth: .infinity)
                         .frame(height: MacInspectorMetrics.pictureHeight)
                         .background(Color.macRow)

@@ -19,6 +19,7 @@
                 }
             }
             .animation(DSMotion.stateFade, value: isOpen)
+            .onExitCommand(perform: isOpen ? onClose : nil)
             .focusedSceneValue(\.closeMacInspector, isOpen ? MacInspectorAction(perform: onClose) : nil)
             .focusedSceneValue(\.openMacInspector, isOpen ? nil : onOpen.map { MacInspectorAction(perform: $0) })
         }
