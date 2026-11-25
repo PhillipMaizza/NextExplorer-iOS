@@ -107,7 +107,9 @@ public struct LockFeature {
                 var login = LoginFormFeature.State(
                     scheme: state.account.serverURL.scheme == LoginFormFeature.URLScheme.http.rawValue ? .http : .https,
                     host: state.account.serverHost,
-                    identifier: AccountSummary.name(username: state.account.username, email: state.account.email) ?? ""
+                    identifier: [state.account.email, state.account.username]
+                        .compactMap(\.self)
+                        .first { !$0.isEmpty } ?? ""
                 )
                 login.browserSession = .ephemeral
                 state.signIn = login

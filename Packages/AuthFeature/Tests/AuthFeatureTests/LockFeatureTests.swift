@@ -14,12 +14,13 @@ struct LockFeatureTests {
     private let serverURL = URL(string: TestHost.nextExplorerURLString) ?? URL(fileURLWithPath: "/")
     private let user = LoginFormTestSupport.user
 
-    private func lockState(_ authMode: AuthMode) -> LockFeature.State {
+    private func lockState(_ authMode: AuthMode, email: String? = nil) -> LockFeature.State {
         LockFeature.State(account: AccountSummary(
             id: SessionCredentials.accountID(serverURL: serverURL, username: TestAccount.username),
             username: TestAccount.username,
             serverURL: serverURL,
             isActive: true,
+            email: email,
             authMode: authMode,
             requireSignIn: RequireSignIn(),
             isLocked: true
@@ -71,6 +72,36 @@ struct LockFeatureTests {
             $0.ssoPhase = .idle
             $0.problem = .signInFailed(.oidcFailed(TestSession.cookieValue))
         }
+    }
+
+    @Test("Sign in prefills the email over the username, since a username can name several accounts")
+    func signInPrefillsEmail() async {
+        let store = makeStore(lockState(.local, email: TestAccount.email)) {
+            $0.authClient.fetchStatus = { _ in
+                try await suspendUntilCancelled()
+                return LoginFormTestSupport.passwordOnly
+            }
+        }
+        let url = serverURL
+
+        await store.send(.signInButtonTapped) {
+            var login = LoginFormFeature.State(
+                scheme: .https,
+                host: TestHost.nextExplorer,
+                identifier: TestAccount.email
+            )
+            login.browserSession = .ephemeral
+            $0.signIn = login
+        }
+        await store.receive(\.signIn.presented.testConnectionButtonTapped) {
+            $0.signIn?.connectionPhase = .testing
+            $0.signIn?.diagnostics.record(
+                "connecting: \(LoginDiagnostics.describe(server: url))",
+                at: MockDate.date
+            )
+        }
+        await store.send(.signIn(.dismiss)) { $0.signIn = nil }
+        await store.send(.signInSheetDismissed)
     }
 
     @Test("Sign in opens the login form on the locked server and account, in a private browser session")
