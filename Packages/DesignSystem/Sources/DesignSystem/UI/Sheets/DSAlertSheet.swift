@@ -1,3 +1,4 @@
+import CoreModels
 import SwiftUI
 
 private enum Constants {
@@ -105,6 +106,7 @@ public struct DSAlertSheet: View {
             DSSheetFooter {
                 VStack(spacing: Constants.buttonSpacing) {
                     DSButton(confirmTitle, style: role.confirmStyle, isLoading: isConfirmLoading, action: onConfirm)
+                        .accessibilityIdentifier(AccessibilityIdentifiers.Alert.confirm)
                         // As a system alert: Return takes the safe default, never a destructive action.
                         .keyboardShortcut(role == .standard ? .defaultAction : nil)
                     if let neutralTitle, let onNeutral {
