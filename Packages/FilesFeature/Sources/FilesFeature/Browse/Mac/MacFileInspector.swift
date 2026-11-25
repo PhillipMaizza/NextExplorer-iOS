@@ -22,7 +22,7 @@
         let serverURL: URL
         /// While the Permissions dialog is open; closing it reloads the section.
         var isEditingPermissions = false
-        let onEditPermissions: () -> Void
+        var onEditPermissions: (() -> Void)?
         /// `nil` for a file: only folders can be favorites.
         var isFavorite: Bool?
         var onToggleFavorite: () -> Void = {}
@@ -270,19 +270,7 @@
         let onShare: (FileItem) -> Void
         @ViewBuilder let more: (FileItem) -> More
 
-        @Dependency(\.filesClient) private var filesClient
-        /// Bumped whenever a share link is created or edited anywhere in the app.
-        @Shared(.inMemory(SharedFeature.revisionKey)) private var shareLinksRevision = 0
-        /// The caller's shared by me links, loaded once while the panel is open rather than for
-        /// every selection; each item shows its own from this list.
         @State private var sharedLinks: [Share]?
-
-        private func shares(for item: FileItem) -> [Share]? {
-            // The server stores the path without leading or trailing slashes.
-            let path = item.id.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-            return sharedLinks?
-                .filter { $0.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == path }
-        }
 
         func body(content: Content) -> some View {
             HStack(spacing: 0) {
@@ -301,7 +289,7 @@
                         isFavorite: item.isDirectory ? screen.favoritePaths.contains(item.id) : nil,
                         onToggleFavorite: { screen.send(.favoriteToggleButtonTapped(item)) },
                         isFavoriteToggleEnabled: screen.hasLoadedFavorites,
-                        shares: shares(for: item),
+                        shares: MacInspectorSharedLinks.links(sharedLinks, for: item),
                         onShare: (screen.access?.canShare ?? false) ? { onShare(item) } : nil,
                         onRestored: { screen.send(.refreshButtonTapped) },
                         onOpen: item.id == screen.directoryPath ? nil : { onOpen(item) },
@@ -328,12 +316,37 @@
                     ? nil
                     : MacInspectorAction { screen.send(.infoSelectionTapped) }
             )
-            .task(id: SharesLoad(isOpen: screen.infoItem != nil, revision: shareLinksRevision)) {
-                guard screen.infoItem != nil else { return }
-                let links = try? await filesClient.mySharedLinks(screen.serverURL)
+            .modifier(MacInspectorSharedLinks(
+                isOpen: screen.infoItem != nil,
+                serverURL: screen.serverURL,
+                links: $sharedLinks
+            ))
+        }
+    }
+
+    /// The caller's shared by me links, loaded once while an inspector is open rather than for
+    /// every selection, reloaded when a link is created or edited anywhere in the app.
+    struct MacInspectorSharedLinks: ViewModifier {
+        let isOpen: Bool
+        let serverURL: URL
+        @Binding var links: [Share]?
+
+        @Dependency(\.filesClient) private var filesClient
+        @Shared(.inMemory(SharedFeature.revisionKey)) private var shareLinksRevision = 0
+
+        func body(content: Content) -> some View {
+            content.task(id: SharesLoad(isOpen: isOpen, revision: shareLinksRevision)) {
+                guard isOpen else { return }
+                let loaded = try? await filesClient.mySharedLinks(serverURL)
                 guard !Task.isCancelled else { return }
-                sharedLinks = links
+                links = loaded
             }
+        }
+
+        /// Each item shows its own links; the server stores paths without outer slashes.
+        static func links(_ all: [Share]?, for item: FileItem) -> [Share]? {
+            let path = item.id.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            return all?.filter { $0.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == path }
         }
     }
 

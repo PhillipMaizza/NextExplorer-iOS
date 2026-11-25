@@ -18,6 +18,15 @@ struct FavoriteRowContextMenu: View {
     var body: some View {
         if !isOffline {
             Section {
+                #if os(macOS)
+                    Button {
+                        store.send(.infoTapped(favorite))
+                    } label: {
+                        Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
+                    }
+                    .tint(.primaryDS)
+                    .keyboardShortcut("i", modifiers: .command)
+                #endif
                 Button {
                     store.send(.editTapped(favorite))
                 } label: {

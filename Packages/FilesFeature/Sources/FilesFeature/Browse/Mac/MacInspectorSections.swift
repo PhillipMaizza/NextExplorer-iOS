@@ -98,7 +98,7 @@
     struct MacInspectorPermissionsSection: View {
         let permissions: FilePermissions
         let isDirectory: Bool
-        let onEdit: () -> Void
+        var onEdit: (() -> Void)?
 
         var body: some View {
             VStack(alignment: .leading, spacing: Metrics.headerSpacing) {

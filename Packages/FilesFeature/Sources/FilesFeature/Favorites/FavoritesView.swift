@@ -86,6 +86,7 @@ struct FavoritesView: View {
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             rootContent
+                .macFavoritesInspector(store)
         } destination: { store in
             BrowseContentView(store: store)
                 .hidesSystemBackOnMac()
@@ -344,4 +345,14 @@ struct FavoritesView: View {
             $0.filesClient.favorites = { _ in [] }
         }
     )
+}
+
+extension View {
+    func macFavoritesInspector(_ store: StoreOf<FavoritesFeature>) -> some View {
+        #if os(macOS)
+            modifier(MacFavoritesInspector(store: store))
+        #elseif os(iOS)
+            self
+        #endif
+    }
 }

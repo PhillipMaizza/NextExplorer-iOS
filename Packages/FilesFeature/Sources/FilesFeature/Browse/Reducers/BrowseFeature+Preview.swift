@@ -42,23 +42,13 @@ extension BrowseFeature {
         state.infoMetadata = nil
         state.infoUsage = nil
         state.infoPhase = .loading
-        let serverURL = state.serverURL
-        let filesClient = filesClient
-        let clock = clock
-        let path = item.id
-        let metadata = Effect<Action>.run { send in
-            if let settle {
-                try await clock.sleep(for: settle)
-            }
-            try await send(.infoMetadataResponse(apiResult { try await filesClient.fetchMetadata(serverURL, path) }))
-        }
-        guard item.isDirectory else { return metadata.cancellable(id: CancelID.info, cancelInFlight: true) }
-        return .merge(metadata, .run { send in
-            if let settle {
-                try await clock.sleep(for: settle)
-            }
-            try await send(.infoUsageResponse(apiResult { try await filesClient.fetchUsage(serverURL, path) }))
-        })
+        return FileInfoLoad.effect(
+            for: item,
+            serverURL: state.serverURL,
+            settle: settle,
+            metadata: Action.infoMetadataResponse,
+            usage: Action.infoUsageResponse
+        )
         .cancellable(id: CancelID.info, cancelInFlight: true)
     }
 
