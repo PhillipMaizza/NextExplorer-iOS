@@ -10,54 +10,48 @@
         @State private var sharedLinks: [Share]?
 
         func body(content: Content) -> some View {
-            HStack(spacing: 0) {
-                content
-                    .frame(maxWidth: .infinity)
-                    .clipped()
-                if let item = store.infoItem {
-                    MacFileInspector(
-                        item: item,
-                        metadata: store.infoMetadata,
-                        usage: store.infoUsage,
-                        errorMessage: store.infoErrorMessage,
-                        serverURL: store.serverURL,
-                        isFavorite: store.infoFavorite != nil,
-                        onToggleFavorite: {
-                            guard let favorite = store.infoFavorite else { return }
-                            store.send(.removeTapped(favorite))
-                        },
-                        shares: MacInspectorSharedLinks.links(sharedLinks, for: item),
-                        onOpen: {
-                            guard let favorite = store.infoFavorite else { return }
-                            store.send(.rowTapped(favorite))
-                        },
-                        onRetry: {
-                            guard let favorite = store.infoFavorite else { return }
-                            store.send(.infoTapped(favorite))
-                        },
-                        shouldShowThumbnails: store.preferences.shouldShowThumbnails,
-                        onClose: { store.send(.infoDismissed) },
-                        more: { EmptyView() }
-                    )
-                    .macInspectorColumn()
+            content
+                .macInspectorPane(
+                    isOpen: store.infoItem != nil,
+                    onOpen: store.tableSelection.count == 1 ? { store.send(.infoSelectionTapped) } : nil,
+                    onClose: { store.send(.infoDismissed) }
+                ) {
+                    if let item = store.infoItem {
+                        inspector(item)
+                    }
                 }
-            }
-            .animation(DSMotion.stateFade, value: store.infoItem != nil)
-            .focusedSceneValue(
-                \.closeMacInspector,
-                store.infoItem != nil ? MacInspectorAction { store.send(.infoDismissed) } : nil
-            )
-            .focusedSceneValue(
-                \.openMacInspector,
-                store.infoItem != nil || store.tableSelection.count != 1
-                    ? nil
-                    : MacInspectorAction { store.send(.infoSelectionTapped) }
-            )
-            .modifier(MacInspectorSharedLinks(
-                isOpen: store.infoItem != nil,
+                .modifier(MacInspectorSharedLinks(
+                    isOpen: store.infoItem != nil,
+                    serverURL: store.serverURL,
+                    links: $sharedLinks
+                ))
+        }
+
+        private func inspector(_ item: FileItem) -> some View {
+            MacFileInspector(
+                item: item,
+                metadata: store.infoMetadata,
+                usage: store.infoUsage,
+                errorMessage: store.infoErrorMessage,
                 serverURL: store.serverURL,
-                links: $sharedLinks
-            ))
+                isFavorite: store.infoFavorite != nil,
+                onToggleFavorite: {
+                    guard let favorite = store.infoFavorite else { return }
+                    store.send(.removeTapped(favorite))
+                },
+                shares: MacInspectorSharedLinks.links(sharedLinks, for: item),
+                onOpen: {
+                    guard let favorite = store.infoFavorite else { return }
+                    store.send(.rowTapped(favorite))
+                },
+                onRetry: {
+                    guard let favorite = store.infoFavorite else { return }
+                    store.send(.infoTapped(favorite))
+                },
+                shouldShowThumbnails: store.preferences.shouldShowThumbnails,
+                onClose: { store.send(.infoDismissed) },
+                more: { EmptyView() }
+            )
         }
     }
 

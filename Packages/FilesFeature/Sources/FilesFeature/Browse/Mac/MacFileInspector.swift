@@ -273,54 +273,47 @@
         @State private var sharedLinks: [Share]?
 
         func body(content: Content) -> some View {
-            HStack(spacing: 0) {
-                content
-                    .frame(maxWidth: .infinity)
-                    .clipped()
-                if let item = screen.infoItem {
-                    MacFileInspector(
-                        item: item,
-                        metadata: screen.infoMetadata,
-                        usage: screen.infoUsage,
-                        errorMessage: screen.infoErrorMessage,
-                        serverURL: screen.serverURL,
-                        isEditingPermissions: screen.permissions != nil,
-                        onEditPermissions: { screen.send(.permissionsTapped(item)) },
-                        isFavorite: item.isDirectory ? screen.favoritePaths.contains(item.id) : nil,
-                        onToggleFavorite: { screen.send(.favoriteToggleButtonTapped(item)) },
-                        isFavoriteToggleEnabled: screen.hasLoadedFavorites,
-                        shares: MacInspectorSharedLinks.links(sharedLinks, for: item),
-                        onShare: (screen.access?.canShare ?? false) ? { onShare(item) } : nil,
-                        onRestored: { screen.send(.refreshButtonTapped) },
-                        onOpen: item.id == screen.directoryPath ? nil : { onOpen(item) },
-                        onRetry: { screen.send(.infoTapped(item)) },
-                        shouldShowThumbnails: screen.preferences.shouldShowThumbnails,
-                        showsMore: screen.items[id: item.id] != nil || item.id == screen.directoryPath,
-                        onClose: { screen.send(.infoDismissed) },
-                        more: { more(item) }
-                    )
-                    .macInspectorColumn()
-                } else if screen.isInfoShowingSelection {
-                    MacSelectionInspector(store: screen) { screen.send(.infoDismissed) }
-                        .macInspectorColumn()
+            content
+                .macInspectorPane(
+                    isOpen: screen.isInspectorOpen,
+                    onOpen: screen.directoryPath.isEmpty ? nil : { screen.send(.infoSelectionTapped) },
+                    onClose: { screen.send(.infoDismissed) }
+                ) {
+                    if let item = screen.infoItem {
+                        inspector(item)
+                    } else if screen.isInfoShowingSelection {
+                        MacSelectionInspector(store: screen) { screen.send(.infoDismissed) }
+                    }
                 }
-            }
-            .animation(DSMotion.stateFade, value: screen.isInspectorOpen)
-            .focusedSceneValue(
-                \.closeMacInspector,
-                screen.isInspectorOpen ? MacInspectorAction { screen.send(.infoDismissed) } : nil
-            )
-            .focusedSceneValue(
-                \.openMacInspector,
-                screen.isInspectorOpen || screen.directoryPath.isEmpty
-                    ? nil
-                    : MacInspectorAction { screen.send(.infoSelectionTapped) }
-            )
-            .modifier(MacInspectorSharedLinks(
-                isOpen: screen.infoItem != nil,
+                .modifier(MacInspectorSharedLinks(
+                    isOpen: screen.infoItem != nil,
+                    serverURL: screen.serverURL,
+                    links: $sharedLinks
+                ))
+        }
+
+        private func inspector(_ item: FileItem) -> some View {
+            MacFileInspector(
+                item: item,
+                metadata: screen.infoMetadata,
+                usage: screen.infoUsage,
+                errorMessage: screen.infoErrorMessage,
                 serverURL: screen.serverURL,
-                links: $sharedLinks
-            ))
+                isEditingPermissions: screen.permissions != nil,
+                onEditPermissions: { screen.send(.permissionsTapped(item)) },
+                isFavorite: item.isDirectory ? screen.favoritePaths.contains(item.id) : nil,
+                onToggleFavorite: { screen.send(.favoriteToggleButtonTapped(item)) },
+                isFavoriteToggleEnabled: screen.hasLoadedFavorites,
+                shares: MacInspectorSharedLinks.links(sharedLinks, for: item),
+                onShare: (screen.access?.canShare ?? false) ? { onShare(item) } : nil,
+                onRestored: { screen.send(.refreshButtonTapped) },
+                onOpen: item.id == screen.directoryPath ? nil : { onOpen(item) },
+                onRetry: { screen.send(.infoTapped(item)) },
+                shouldShowThumbnails: screen.preferences.shouldShowThumbnails,
+                showsMore: screen.items[id: item.id] != nil || item.id == screen.directoryPath,
+                onClose: { screen.send(.infoDismissed) },
+                more: { more(item) }
+            )
         }
     }
 
