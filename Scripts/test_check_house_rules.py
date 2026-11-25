@@ -227,5 +227,38 @@ class MovedFileTests(unittest.TestCase):
         self.assertEqual(statuses, {"Views/Row.swift": ("M", "Row.swift")})
 
 
+
+class IndexIsolationTests(unittest.TestCase):
+    def test_the_comment_check_leaves_the_callers_index_alone(self):
+        import os
+        import subprocess
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as temp:
+            def git(*args):
+                return subprocess.run(["git", *args], cwd=temp, capture_output=True, text=True, check=True).stdout
+
+            git("init", "-q")
+            (pathlib.Path(temp) / "Scripts").mkdir()
+            (pathlib.Path(temp) / "Scripts/comment-baseline.json").write_text("{}")
+            (pathlib.Path(temp) / "Scripts/check-comments.py").write_text("")
+            (pathlib.Path(temp) / ".swiftlint.yml").write_text("")
+            (pathlib.Path(temp) / "A.swift").write_text("let a = 1\n")
+            git("add", "-A")
+            index = pathlib.Path(git("rev-parse", "--absolute-git-dir").strip()) / "index"
+            before = index.read_bytes()
+            real_root, real_index = check.ROOT, os.environ.get("GIT_INDEX_FILE")
+            check.ROOT = pathlib.Path(temp)
+            os.environ["GIT_INDEX_FILE"] = str(index)
+            try:
+                check.check_comments(["A.swift"], None)
+            finally:
+                check.ROOT = real_root
+                if real_index is None:
+                    os.environ.pop("GIT_INDEX_FILE")
+                else:
+                    os.environ["GIT_INDEX_FILE"] = real_index
+            self.assertEqual(index.read_bytes(), before)
+
 if __name__ == "__main__":
     unittest.main()

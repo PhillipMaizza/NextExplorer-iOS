@@ -34,6 +34,7 @@ Nothing here edits, formats or stashes the working tree: staged content is read 
 checked in temporary copies.
 """
 import argparse
+import os
 import pathlib
 import re
 import shutil
@@ -298,9 +299,15 @@ def check_comments(changed, ref):
             return []
         swift = [path for path in files if path.endswith(".swift")]
         materialize([*swift, "Scripts/check-comments.py", "Scripts/comment-baseline.json"], ref, into)
-        subprocess.run(["git", "init", "-q"], cwd=into, check=True)
-        subprocess.run(["git", "add", "-A"], cwd=into, check=True)
-        run = subprocess.run([sys.executable, str(into / "Scripts/check-comments.py")], capture_output=True, text=True)
+        own_repo = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+        subprocess.run(["git", "init", "-q"], cwd=into, env=own_repo, check=True)
+        subprocess.run(["git", "add", "-A"], cwd=into, env=own_repo, check=True)
+        run = subprocess.run(
+            [sys.executable, str(into / "Scripts/check-comments.py")],
+            env=own_repo,
+            capture_output=True,
+            text=True,
+        )
     return [] if run.returncode == 0 else [(run.stdout + run.stderr).strip()]
 
 
