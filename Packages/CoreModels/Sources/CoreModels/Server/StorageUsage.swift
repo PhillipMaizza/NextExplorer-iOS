@@ -46,8 +46,8 @@ public struct StorageUsage: Codable, Equatable, Sendable {
         return min(1, max(0, Double(used) / Double(capacity)))
     }
 
-    /// Whether the server actually reported disk figures (vs an all zero denied response).
+    /// Whether the server actually reported disk figures: a folder size alone says nothing about the disk.
     public var isMeaningful: Bool {
-        capacity > 0
+        total > 0 || free > 0
     }
 }
