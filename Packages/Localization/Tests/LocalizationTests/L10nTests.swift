@@ -78,4 +78,10 @@ struct L10nTests {
         #expect(LocalizationOverride.flag(for: "pt-BR") == "\u{1F1E7}\u{1F1F7}")
         #expect(LocalizationOverride.flag(for: "xx") == nil)
     }
+
+    @Test("the system language is always one the app ships, so System Default always has a flag")
+    func systemLanguageIsSupported() {
+        #expect(LocalizationOverride.supportedLanguages.contains(LocalizationOverride.systemLanguage))
+        #expect(LocalizationOverride.flag(for: LocalizationOverride.systemLanguage) != nil)
+    }
 }

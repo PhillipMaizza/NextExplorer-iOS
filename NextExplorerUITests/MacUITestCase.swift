@@ -16,7 +16,6 @@
             static let renamedFile = "todo.txt"
             /// A language other than English, for the live language switch.
             static let otherLanguage = "de"
-            static let languageScroll: CGFloat = 120
             /// Shortcut keys: ⌘F top bar search, ⌘K search panel, ⌘R refresh, ⇧⌘G go to folder, ⌘, settings.
             static let findKey = "f"
             static let spotlightKey = "k"
