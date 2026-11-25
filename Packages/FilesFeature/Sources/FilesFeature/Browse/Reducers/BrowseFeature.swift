@@ -689,6 +689,7 @@ public struct BrowseFeature {
     }
 
     @Dependency(\.filesClient) var filesClient
+    @Dependency(\.cacheScope) var cacheScopeSource
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     static let personalSpaceCacheNamespace = "personalSpace"

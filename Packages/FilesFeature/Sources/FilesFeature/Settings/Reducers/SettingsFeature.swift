@@ -303,6 +303,7 @@ public struct SettingsFeature {
 
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
+    @Dependency(\.cacheScope) var cacheScope
 
     private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize,
                                            authMethods, authStatus, preferences
@@ -898,10 +899,12 @@ public struct SettingsFeature {
 
     private func fetchPreferences(serverURL: URL) -> Effect<Action> {
         let filesClient = filesClient
+        let cacheScope = cacheScope
+        let askingScope = cacheScope.current()
         return .run { send in
-            try await send(.preferencesResponse(apiResult {
-                try await filesClient.fetchPreferences(serverURL)
-            }))
+            let result = try await apiResult { try await filesClient.fetchPreferences(serverURL) }
+            guard cacheScope.current() == askingScope else { return }
+            await send(.preferencesResponse(result))
         }
         .cancellable(id: CancelID.preferences, cancelInFlight: true)
     }

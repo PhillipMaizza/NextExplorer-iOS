@@ -181,8 +181,12 @@ extension BrowseFeature {
         state.$preferences.withLock { $0.setFolderSort(sort, for: path) }
         let serverURL = state.serverURL
         let filesClient = filesClient
+        let cacheScopeSource = cacheScopeSource
+        let askingScope = state.cacheScope
         return .run { send in
-            guard let echoed = try? await filesClient.saveFolderSort(serverURL, path, sort) else { return }
+            guard let echoed = try? await filesClient.saveFolderSort(serverURL, path, sort),
+                  cacheScopeSource.current() == askingScope
+            else { return }
             await send(.folderSortSaved(path: path, echoed))
         }
         .cancellable(id: CancelID.folderSort(path), cancelInFlight: true)
