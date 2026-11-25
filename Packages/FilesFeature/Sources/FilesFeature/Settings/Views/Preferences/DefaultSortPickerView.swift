@@ -3,11 +3,6 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum Constants {
-    static let iconSize: CGFloat = .iconSmall
-    static let checkmarkSize: CGFloat = .iconSmall
-}
-
 struct DefaultSortPickerView: View {
     @AppStorage(AppStorageKeys.defaultSortOption) private var option = BrowseFeature.SortOption.name
     @AppStorage(AppStorageKeys.defaultSortDirection) private var direction = BrowseFeature.SortDirection.ascending
@@ -16,7 +11,7 @@ struct DefaultSortPickerView: View {
         DSGroupedList {
             Section {
                 ForEach(BrowseFeature.SortOption.allCases, id: \.self) { candidate in
-                    row(title: candidate.title, icon: candidate.icon, isSelected: candidate == option) {
+                    SettingsCheckRow(title: candidate.title, icon: candidate.icon, isSelected: candidate == option) {
                         option = candidate
                     }
                 }
@@ -27,7 +22,7 @@ struct DefaultSortPickerView: View {
 
             Section {
                 ForEach(BrowseFeature.SortDirection.allCases, id: \.self) { candidate in
-                    row(title: candidate.title, icon: candidate.icon, isSelected: candidate == direction) {
+                    SettingsCheckRow(title: candidate.title, icon: candidate.icon, isSelected: candidate == direction) {
                         direction = candidate
                     }
                 }
@@ -42,39 +37,9 @@ struct DefaultSortPickerView: View {
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .navigationTitle(L10n.Settings.rowDefaultSort)
-        #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-        #endif
-            .hapticFeedback(.selection, trigger: option)
-            .hapticFeedback(.selection, trigger: direction)
-    }
-
-    private func row(title: String, icon: Image, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack {
-                Label {
-                    Text(title).type(.body1(.regular), style: .primaryOnSurface)
-                } icon: {
-                    icon
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.secondaryDS)
-                        .frame(width: Constants.iconSize, height: Constants.iconSize)
-                }
-                Spacer()
-                if isSelected {
-                    IconKit.checkmark
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.accent)
-                        .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
-                        .transition(.scale.combined(with: .opacity))
-                }
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .animation(DSMotion.pop, value: isSelected)
+        .navigationBarTitleDisplayMode(.inline)
+        .hapticFeedback(.selection, trigger: option)
+        .hapticFeedback(.selection, trigger: direction)
     }
 }
 

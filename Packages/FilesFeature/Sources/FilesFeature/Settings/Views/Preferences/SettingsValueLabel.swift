@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -29,6 +30,6 @@ struct SettingsValueLabel: View {
 
 #Preview {
     List {
-        SettingsValueLabel(title: "Default Sort", value: "Name", icon: IconKit.sort)
+        SettingsValueLabel(title: L10n.Settings.rowDefaultSort, value: L10n.Sort.name, icon: IconKit.sort)
     }
 }
