@@ -40,6 +40,7 @@
 
         @FocusState private var isFocused: Bool
         @State private var isMoreOpen = false
+        @State private var folderSummary: String?
 
         var body: some View {
             VStack(spacing: .zero) {
@@ -52,6 +53,7 @@
                     shouldShowThumbnails: shouldShowThumbnails,
                     showsHiddenFiles: showsHiddenFiles
                 )
+                .onPreferenceChange(MacPeekFolderSummaryKey.self) { folderSummary = $0 }
                 MacPeekSeparator()
                 footer
             }
@@ -125,7 +127,7 @@
 
         private var footer: some View {
             HStack(spacing: .space16) {
-                Text(position)
+                Text([position, folderSummary].compactMap(\.self).joined(separator: " · "))
                     .type(.caption(.regular), style: .secondary)
                     .monospacedDigit()
                 Spacer(minLength: .zero)

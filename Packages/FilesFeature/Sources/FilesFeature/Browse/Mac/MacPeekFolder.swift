@@ -6,6 +6,14 @@
     import Localization
     import SwiftUI
 
+    struct MacPeekFolderSummaryKey: PreferenceKey {
+        static let defaultValue: String? = nil
+
+        static func reduce(value: inout String?, nextValue: () -> String?) {
+            value = nextValue() ?? value
+        }
+    }
+
     struct MacPeekFolder: View {
         static let shownCount = 8
 
@@ -34,23 +42,25 @@
                 Text(L10n.EmptyState.folderEmpty)
                     .type(.body2(.regular), style: .secondary)
             } else {
-                VStack(spacing: .space16) {
-                    LazyVGrid(
-                        columns: Array(
-                            repeating: GridItem(.flexible(), spacing: .space16),
-                            count: MacPeekMetrics.columns
-                        ),
-                        spacing: .space16
-                    ) {
-                        ForEach(items.prefix(Self.shownCount)) { child in
-                            GridCellView(item: child, serverURL: serverURL, shouldShowThumbnails: shouldShowThumbnails)
-                        }
+                LazyVGrid(
+                    columns: Array(
+                        repeating: GridItem(.flexible(), spacing: .space16, alignment: .top),
+                        count: MacPeekMetrics.columns
+                    ),
+                    spacing: .space16
+                ) {
+                    ForEach(items.prefix(Self.shownCount)) { child in
+                        GridCellView(
+                            item: child,
+                            serverURL: serverURL,
+                            shouldShowThumbnails: shouldShowThumbnails,
+                            isFolderWell: true
+                        )
                     }
-                    Text(Self.summary(items))
-                        .type(.body3(.regular), style: .secondary)
                 }
                 .padding(.horizontal, .space24)
                 .frame(maxHeight: .infinity)
+                .preference(key: MacPeekFolderSummaryKey.self, value: Self.summary(items))
             }
         }
 
