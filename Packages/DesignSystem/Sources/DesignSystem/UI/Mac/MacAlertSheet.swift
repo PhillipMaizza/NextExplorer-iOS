@@ -6,9 +6,9 @@
     private enum Constants {
         static let width: CGFloat = 280
         static let logoSize: CGFloat = .size56
-        static let logoRadius: CGFloat = 14
-        static let topPadding: CGFloat = 22
-        static let sidePadding: CGFloat = 18
+        static let logoRadius: CGFloat = .radiusMedium
+        static let topPadding: CGFloat = .space24
+        static let sidePadding: CGFloat = .space16
         static let bottomPadding: CGFloat = .space16
         static let buttonHeight: CGFloat = .size32
     }

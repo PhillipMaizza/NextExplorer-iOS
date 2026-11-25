@@ -201,7 +201,7 @@ struct CreateShareLinkSheet: View {
                 }
                 .padding(Constants.cardPadding)
                 .background(RoundedRectangle(cornerRadius: Constants.cardCornerRadius)
-                    .fill(Color.positive.opacity(0.12)))
+                    .fill(Color.positive.opacity(.opacityFaint)))
 
                 section(L10n.CreateShare.sectionShareLink) {
                     copyRow(value: created.shareUrl.absoluteString, field: .shareLink) {

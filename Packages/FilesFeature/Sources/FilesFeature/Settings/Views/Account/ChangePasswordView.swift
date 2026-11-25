@@ -118,7 +118,8 @@ struct ChangePasswordView: View {
             .type(.body3(.regular), style: .success)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(Metrics.cardPadding)
-            .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.positive.opacity(0.12)))
+            .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius)
+                .fill(Color.positive.opacity(.opacityFaint)))
     }
 }
 

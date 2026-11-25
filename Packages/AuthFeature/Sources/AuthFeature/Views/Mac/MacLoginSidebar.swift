@@ -11,7 +11,7 @@
         static let stepRowHeight: CGFloat = .size40
         static let stepBadgeSize: CGFloat = .size24
         static let checkSize: CGFloat = .iconXSmall
-        static let linkIconSize: CGFloat = 18
+        static let linkIconSize: CGFloat = .size18
         static let topPadding: CGFloat = .space48
     }
 

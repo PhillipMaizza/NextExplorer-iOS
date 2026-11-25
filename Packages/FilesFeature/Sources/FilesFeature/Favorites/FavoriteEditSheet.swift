@@ -13,7 +13,7 @@ private enum Metrics {
     static let iconGlyph: CGFloat = .iconMedium
     static let iconColumnMin: CGFloat = .size56
     static let swatch: CGFloat = .size32
-    static let selectionLineWidth: CGFloat = 2.5
+    static let selectionLineWidth: CGFloat = .borderWidthStrong
     static let swatchIdleBorderWidth: CGFloat = 1
     static let maxHeightFraction: CGFloat = 0.85
 }
@@ -117,7 +117,7 @@ struct FavoriteEditSheet: View {
 
     private var defaultSwatchFill: AnyShapeStyle {
         AnyShapeStyle(LinearGradient(
-            colors: [Color.secondaryDS.opacity(0.5), Color.secondaryDS.opacity(0.2)],
+            colors: [Color.secondaryDS.opacity(.opacityHalf), Color.secondaryDS.opacity(0.2)],
             startPoint: .topLeading, endPoint: .bottomTrailing
         ))
     }
@@ -136,7 +136,7 @@ struct FavoriteEditSheet: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: .radiusSmall)
                         .strokeBorder(
-                            isSelected ? Color.primaryDS : Color.borderPrimary.opacity(0.4),
+                            isSelected ? Color.primaryDS : Color.borderPrimary.opacity(.opacityDim),
                             lineWidth: isSelected ? Metrics.selectionLineWidth : Metrics.swatchIdleBorderWidth
                         )
                 )

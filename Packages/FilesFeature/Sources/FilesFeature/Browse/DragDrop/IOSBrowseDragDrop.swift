@@ -176,7 +176,7 @@
     }
 
     private enum Metrics {
-        static let dropOutlineWidth: CGFloat = 3
+        static let dropOutlineWidth: CGFloat = .borderWidthStrong
         static let dropOutlineInset: CGFloat = .space8
         static let folderOutlineWidth: CGFloat = 2
         static let previewHeight: CGFloat = 160

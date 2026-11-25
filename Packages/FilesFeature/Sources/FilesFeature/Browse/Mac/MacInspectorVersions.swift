@@ -8,8 +8,8 @@
         static let dotSize: CGFloat = .size16
         static let dotStroke: CGFloat = .borderWidthFocused
         static let lineWidth: CGFloat = .size2
-        static let rowSpacing: CGFloat = 14
-        static let headerSpacing: CGFloat = 10
+        static let rowSpacing: CGFloat = .space12
+        static let headerSpacing: CGFloat = .space8
     }
 
     struct MacInspectorVersionsSection: View {

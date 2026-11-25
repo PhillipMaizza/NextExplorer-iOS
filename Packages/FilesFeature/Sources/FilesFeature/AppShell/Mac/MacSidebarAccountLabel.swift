@@ -6,7 +6,7 @@
         static let rowRadius: CGFloat = .radiusControl
         static let avatarSize: CGFloat = .size32
         static let chevronSize: CGFloat = .iconSmall
-        static let railAvatarSize: CGFloat = 36
+        static let railAvatarSize: CGFloat = .size36
     }
 
     struct MacSidebarAccountLabel: View {

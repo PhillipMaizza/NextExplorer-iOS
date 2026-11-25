@@ -4,13 +4,13 @@
 
     enum MacBrowseTableMetrics {
         static let iconSize: CGFloat = .size20
-        static let tileSize: CGFloat = 26
-        static let tileRadius: CGFloat = 7
+        static let tileSize: CGFloat = .size24
+        static let tileRadius: CGFloat = .radiusSmall
         static let thumbnailMaxPixels: CGFloat = .size96
         static let playGlyphSize: CGFloat = 10
         static let playGlyphShadow: CGFloat = 1
         static let badgeSize: CGFloat = .iconXSmall
-        static let cutRowOpacity: Double = 0.5
+        static let cutRowOpacity: Double = .opacityHalf
         static let nameColumnMinWidth: CGFloat = 220
         static let nameColumnCompactWidth: CGFloat = 120
         static let dateColumnWidth: CGFloat = 160

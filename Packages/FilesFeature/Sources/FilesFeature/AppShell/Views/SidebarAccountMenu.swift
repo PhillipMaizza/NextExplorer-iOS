@@ -12,7 +12,7 @@ import SwiftUI
         static let rowPadding: CGFloat = .space8
         static let actionIconSize: CGFloat = .iconSmall
         static let signOutHitSize: CGFloat = .size32
-        static let inactiveOpacity: Double = 0.5
+        static let inactiveOpacity: Double = .opacityHalf
         static let hoverOpacity: Double = 0.08
         static let shownOpacity: Double = 1
         static let hiddenOpacity: Double = 0

@@ -3,11 +3,11 @@
 
     public enum MacTableMetrics {
         public static let rowHeight: CGFloat = .size40
-        public static let columnSpacing: CGFloat = 14
+        public static let columnSpacing: CGFloat = .space12
         static let rowInset: CGFloat = .space12
         static let headerHeight: CGFloat = 30
         static let sortGlyphSize: CGFloat = 9
-        static let selectionOpacity: Double = 0.22
+        static let selectionOpacity: Double = .opacitySelection
         static let listRowHeight: CGFloat = .size32
         static let rowShape = RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
     }

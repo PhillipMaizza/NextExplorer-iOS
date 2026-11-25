@@ -79,7 +79,7 @@ public struct DSFlowLayout: Layout {
                 .type(.caption(.semibold))
                 .padding(.horizontal, .space8)
                 .padding(.vertical, .space4)
-                .background(Capsule().fill(Color.categorical(for: tag).opacity(0.16)))
+                .background(Capsule().fill(Color.categorical(for: tag).opacity(.opacityWash)))
                 .foregroundStyle(Color.categorical(for: tag))
         }
     }

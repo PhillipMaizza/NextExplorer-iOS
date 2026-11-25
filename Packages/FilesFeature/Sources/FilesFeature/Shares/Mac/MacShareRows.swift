@@ -5,12 +5,12 @@
     import SwiftUI
 
     private enum Metrics {
-        static let avatarSize: CGFloat = 26
+        static let avatarSize: CGFloat = .size24
         static let personRowHeight: CGFloat = 42
         static let anyoneTint = Color.categoricalPalette[0]
-        static let anyoneIconSize: CGFloat = 34
+        static let anyoneIconSize: CGFloat = .size36
         static let valueMinimumScale: CGFloat = 0.8
-        static let anyoneTintOpacity: Double = 0.15
+        static let anyoneTintOpacity: Double = .opacityWash
     }
 
     struct MacShareAnyoneRow: View {

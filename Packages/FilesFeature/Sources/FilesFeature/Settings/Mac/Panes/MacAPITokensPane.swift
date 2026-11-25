@@ -9,7 +9,7 @@
         static let tileSize: CGFloat = 42
         static let tileGlyph: CGFloat = 21
         static let keyAngle: Double = -45
-        static let rowHeight: CGFloat = 72
+        static let rowHeight: CGFloat = .size72
         static let menuSize: CGFloat = 38
         static let menuGlyph: CGFloat = .size12
     }

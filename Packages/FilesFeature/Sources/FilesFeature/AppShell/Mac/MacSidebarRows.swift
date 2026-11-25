@@ -7,11 +7,11 @@
 
     private enum Constants {
         static let brandHeight: CGFloat = .size40
-        static let logoSize: CGFloat = 26
+        static let logoSize: CGFloat = .size24
         static let rowRadius: CGFloat = .radiusControl
         static let selectionShadowRadius: CGFloat = 1
         static let selectionShadowOffset: CGFloat = 1
-        static let railRadius: CGFloat = 14
+        static let railRadius: CGFloat = .radiusMedium
         static let railDotInset: CGFloat = 9
     }
 

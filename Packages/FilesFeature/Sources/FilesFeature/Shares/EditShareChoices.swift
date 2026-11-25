@@ -8,7 +8,7 @@
         static let tileSpacing: CGFloat = .space12
         static let tilePadding: CGFloat = .space16
         static let tileContentSpacing: CGFloat = .space4
-        static let selectedFillOpacity: Double = 0.16
+        static let selectedFillOpacity: Double = .opacityWash
         static let indicatorSize: CGFloat = .size20
         /// Glyphs are sized as type, not stretched into a square, so wide ones (people) keep their weight.
         static let glyphPointSize: CGFloat = .iconSmall

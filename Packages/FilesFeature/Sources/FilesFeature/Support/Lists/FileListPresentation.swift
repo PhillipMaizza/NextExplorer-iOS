@@ -13,7 +13,7 @@ enum FileGridMetrics {
     /// Between columns, and between folder cards.
     static let spacing: CGFloat = .space12
     /// Between rows of files: a little more than between columns, since each tile ends in text.
-    static let rowSpacing: CGFloat = 18
+    static let rowSpacing: CGFloat = .space16
     static let margin: CGFloat = .space16
     static let sectionSpacing: CGFloat = .space24
     static let headerSpacing: CGFloat = .space8

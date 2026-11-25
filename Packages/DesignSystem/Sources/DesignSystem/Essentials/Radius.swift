@@ -15,6 +15,7 @@ public extension CGFloat {
     static let radiusLarge: CGFloat = 24
     /// 10000pt: effectively circular; use for pills and chips.
     static let radiusFull: CGFloat = 10000
+    static let tileCornerRatio: CGFloat = 0.28
 
     /// The corner radius for cards and other filled containers: `radiusLarge` on iOS 26, to
     /// sit with Liquid Glass's rounder language, `radiusMedium` below it. Use this rather than

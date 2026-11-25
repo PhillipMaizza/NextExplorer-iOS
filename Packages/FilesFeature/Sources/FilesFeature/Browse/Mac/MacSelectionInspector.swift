@@ -7,11 +7,11 @@
     import SwiftUI
 
     private enum Metrics {
-        static let stackSize: CGFloat = 72
+        static let stackSize: CGFloat = .size72
         static let stackTile: CGFloat = 54
         static let stackStep: CGFloat = 9
         static let stackRing: CGFloat = 3
-        static let stackCornerFraction: CGFloat = 0.28
+        static let stackCornerFraction: CGFloat = .tileCornerRatio
         static let stackLimit = 3
         static let rowTile: CGFloat = .size24
         static let rowLimit = 50

@@ -5,7 +5,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let iconSize: CGFloat = 72
+        static let iconSize: CGFloat = .size72
     }
 
     struct MacLocalFilePicture: View {

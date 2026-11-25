@@ -10,7 +10,7 @@ private enum Metrics {
     static let rowSpacing: CGFloat = .space8
     static let rowIconSpacing: CGFloat = .space12
     static let rowIconSize: CGFloat = .iconSmall
-    static let disabledOpacity: Double = 0.5
+    static let disabledOpacity: Double = .opacityHalf
     static let sizeStep = 8
     static let qualityStep = 5
     static let concurrencyStep = 1

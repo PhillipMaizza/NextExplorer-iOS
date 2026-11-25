@@ -7,9 +7,9 @@ private enum Constants {
     static let spacing: CGFloat = .space8
     static let actionHorizontalPadding: CGFloat = .space12
     static let actionVerticalPadding: CGFloat = .space4
-    static let actionFillOpacity: Double = 0.12
+    static let actionFillOpacity: Double = .opacityFaint
     static let borderOpacity: Double = 0.25
-    static let darkBorderOpacity: Double = 0.12
+    static let darkBorderOpacity: Double = .opacityFaint
     static let iconSize: CGFloat = .iconSmall
     static let bottomInset: CGFloat = .space16
     static let autoDismissDelay: Duration = .seconds(4.5)

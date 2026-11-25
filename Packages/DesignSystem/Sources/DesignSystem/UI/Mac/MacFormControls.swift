@@ -3,7 +3,7 @@
     import SwiftUI
 
     private enum Constants {
-        static let fieldHeight: CGFloat = 34
+        static let fieldHeight: CGFloat = .size36
         static let compactFieldHeight: CGFloat = 28
         static let popupHeight: CGFloat = .size32
         static let calendarWidth: CGFloat = 280

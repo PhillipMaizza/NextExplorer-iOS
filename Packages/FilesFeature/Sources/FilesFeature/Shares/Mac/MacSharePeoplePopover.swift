@@ -7,7 +7,7 @@
     private enum Metrics {
         static let width: CGFloat = 300
         static let rowAvatar: CGFloat = .size24
-        static let estimatedRowHeight: CGFloat = 36
+        static let estimatedRowHeight: CGFloat = .size36
         static let visibleRows: CGFloat = 5.5
         static let searchIcon: CGFloat = .iconXSmall
     }

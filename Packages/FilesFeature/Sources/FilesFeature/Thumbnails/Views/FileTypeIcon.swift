@@ -3,9 +3,9 @@ import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let chipCornerFraction: CGFloat = 0.28
+    static let chipCornerFraction: CGFloat = .tileCornerRatio
     static let chipGlyphFraction: CGFloat = 0.52
-    static let lightChipOpacity: Double = 0.16
+    static let lightChipOpacity: Double = .opacityWash
     static let darkChipOpacity: Double = 0.24
     /// Colours for kinds with none of their own, kept clear of the photo, video, audio and archive colours.
     static let palette: [UInt32] = [0x14B8A6, 0xF43F5E, 0x0EA5E9, 0x84CC16, 0x6366F1, 0xEC4899]

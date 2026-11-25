@@ -9,7 +9,7 @@ private enum Constants {
     static let avatarRing: CGFloat = .size2
     static let maxAvatars = 3
     static let globeSize: CGFloat = .iconXSmall
-    static let expiredOpacity: Double = 0.45
+    static let expiredOpacity: Double = .opacityDim
 }
 
 /// Who an item's shares reach: its public link as a globe circle, live first, then each people

@@ -92,7 +92,7 @@ struct TipJarSheet: View {
             .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: .radiusControl)
-                    .strokeBorder(Color.borderPrimary.opacity(0.4), lineWidth: 1)
+                    .strokeBorder(Color.borderPrimary.opacity(.opacityDim), lineWidth: 1)
             )
         }
         .buttonStyle(DSPressableButtonStyle())

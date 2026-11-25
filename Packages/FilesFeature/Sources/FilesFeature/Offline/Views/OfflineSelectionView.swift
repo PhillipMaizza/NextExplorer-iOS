@@ -147,7 +147,7 @@ private struct OfflineSelectionRow: View {
     let onDrill: () -> Void
 
     private static let byteFormatter = Constants.byteFormatter
-    private static let alreadyOfflineOpacity: Double = 0.5
+    private static let alreadyOfflineOpacity: Double = .opacityHalf
 
     var body: some View {
         HStack(spacing: .space12) {

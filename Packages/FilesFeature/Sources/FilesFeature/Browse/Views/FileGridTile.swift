@@ -10,8 +10,8 @@ private enum Constants {
     static let overlayInset: CGFloat = .size6
     static let selectionSize: CGFloat = .size24
     static let selectionRingWidth: CGFloat = 3
-    static let openingDimOpacity: Double = 0.45
-    static let hiddenOpacity: Double = 0.5
+    static let openingDimOpacity: Double = .opacityDim
+    static let hiddenOpacity: Double = .opacityHalf
     static let fullOpacity: Double = 1
     static let previewWidth: CGFloat = 120
     #if os(macOS)

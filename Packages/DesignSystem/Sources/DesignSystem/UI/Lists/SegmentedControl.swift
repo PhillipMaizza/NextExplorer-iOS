@@ -6,7 +6,7 @@ private enum SegmentedControlConstants {
     /// Track tint over whatever surface the control sits on, so it reads on the background and in sheets.
     static let trackOpacity: Double = 0.07
     /// The dark mode pill: a lighter step above the track instead of the surface color.
-    static let darkPillOpacity: Double = 0.22
+    static let darkPillOpacity: Double = .opacitySelection
     static let pillShadowAlpha: Double = 0.18
 }
 

@@ -5,7 +5,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let expiredOpacity: Double = 0.45
+        static let expiredOpacity: Double = .opacityDim
         static let audienceGlyphSize: CGFloat = .iconXSmall
         static let sharerAvatarSize: CGFloat = .size20
     }

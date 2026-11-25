@@ -17,7 +17,7 @@ private enum Constants {
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
     static let enabledOpacity: Double = 1
-    static let disabledOpacity: Double = 0.35
+    static let disabledOpacity: Double = .opacityDim
     /// The sheet fits its content but never exceeds this fraction of the screen: past that
     /// the file list scrolls and `.large` is a drag away.
     static let maxHeightFraction: CGFloat = 0.9

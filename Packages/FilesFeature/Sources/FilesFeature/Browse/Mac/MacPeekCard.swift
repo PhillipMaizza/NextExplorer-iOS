@@ -8,7 +8,7 @@
         static let maxWidth: CGFloat = 880
         static let maxHeight: CGFloat = 760
         static let margin: CGFloat = .space32
-        static let radius: CGFloat = 22
+        static let radius: CGFloat = .radiusLarge
         static let iconSize: CGFloat = .size40
         static let columns = 4
         static let tileAspect: CGFloat = 4.0 / 3.0

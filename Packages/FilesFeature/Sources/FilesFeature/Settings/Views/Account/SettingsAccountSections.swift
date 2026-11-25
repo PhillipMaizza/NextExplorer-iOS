@@ -11,7 +11,7 @@ private enum Constants {
     static let tagVerticalPadding: CGFloat = .space4
     static let tagBorderWidth: CGFloat = 1
     /// Accent avatar dimming on an inactive account, so it reads as not current.
-    static let inactiveOpacity: Double = 0.35
+    static let inactiveOpacity: Double = .opacityDim
 }
 
 // MARK: Accounts (multiserver switcher)

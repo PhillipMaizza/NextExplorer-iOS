@@ -2,7 +2,7 @@
     import SwiftUI
 
     private enum Constants {
-        static let trackOpacity: Double = 0.18
+        static let trackOpacity: Double = .opacityWash
         static let quarterTurn: Double = -90
     }
 

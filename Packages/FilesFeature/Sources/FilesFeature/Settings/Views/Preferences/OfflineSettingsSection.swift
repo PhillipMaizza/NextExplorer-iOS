@@ -7,7 +7,7 @@ import SwiftUI
 
 private enum Constants {
     static let fullOpacity: Double = 1.0
-    static let disabledOpacity: Double = 0.5
+    static let disabledOpacity: Double = .opacityHalf
     static let progressSpacing: CGFloat = .space8
     static let statusPulseOpacity: Double = 0.55
     static let statusPulseDuration: Double = 1.1

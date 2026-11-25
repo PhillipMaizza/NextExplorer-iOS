@@ -7,16 +7,16 @@ private enum Constants {
     static let circleSize: CGFloat = 50
     static let ringWidth: CGFloat = 2
     static let ringGap: CGFloat = 3
-    static let iconSize: CGFloat = 18
+    static let iconSize: CGFloat = .size18
     static let itemWidth: CGFloat = 52
-    static let badgeHeight: CGFloat = 18
+    static let badgeHeight: CGFloat = .size18
     static let badgeBorder: CGFloat = 2
     static let badgeOffset = CGSize(width: 3, height: 2)
     static let allFillOpacity: Double = 0.2
     static let compactCircleSize: CGFloat = .size40
     static let compactIconSize: CGFloat = .iconSmall
     static let compactItemWidth: CGFloat = .size48
-    static let dimmedOpacity: Double = 0.4
+    static let dimmedOpacity: Double = .opacityDim
 }
 
 /// The filter row above the Shared list: All, Anyone, then each person with the number of
