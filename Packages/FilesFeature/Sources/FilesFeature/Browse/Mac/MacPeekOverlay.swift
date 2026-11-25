@@ -41,7 +41,7 @@
         let item: FileItem?
         let items: [FileItem]
         @Binding var isPeeking: Bool
-        let serverURL: URL
+        let serverURL: URL?
         let shouldShowThumbnails: Bool
         let showsHiddenFiles: Bool
         var isSavedOffline: (FileItem) -> Bool = { _ in false }
@@ -59,7 +59,9 @@
         func body(content: Content) -> some View {
             content
                 .onKeyPress(.space) {
-                    guard let isListFocused, isListFocused.wrappedValue, item != nil else { return .ignored }
+                    guard let isListFocused, isListFocused.wrappedValue, item != nil, serverURL != nil else {
+                        return .ignored
+                    }
                     isPeeking = true
                     return .handled
                 }
@@ -74,7 +76,7 @@
         }
 
         private func present() {
-            guard isPeeking, let item else {
+            guard isPeeking, let item, let serverURL else {
                 isPeeking = false
                 host?.hide(owner: ObjectIdentifier(owner))
                 return
