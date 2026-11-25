@@ -172,6 +172,8 @@
         /// What `slowOperations` reports before it waits, and how long it waits (a cancel ends it sooner).
         static let heldProgress = 0.4
         static let heldSeconds = 600
+        static let uploadSteps = 8
+        static let uploadStepDelay: Duration = .milliseconds(150)
         /// Signing in as this name answers "the password is right, now send a code", so a UI test
         /// can drive the second factor page.
         static let secondFactorIdentifier = UITestFixture.Credential.secondFactorUser.rawValue
@@ -310,6 +312,14 @@
                     return store.createFolder(in: path, named: name)
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
+                client.uploadFile = { _, fileURL, fileName, destination, onProgress in
+                    for step in 1 ... uploadSteps {
+                        try await Task.sleep(for: uploadStepDelay)
+                        onProgress(Double(step) / Double(uploadSteps))
+                    }
+                    let size = (try? fileURL.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? .zero
+                    store.addFile(named: fileName, size: Int64(size), in: destination)
+                }
                 client.deleteItems = { _, items, permanent, onProgress in
                     guard scenario == .slowOperations else { return store.delete(items, permanent: permanent) }
                     onProgress?(heldProgress)
