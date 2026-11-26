@@ -9,6 +9,7 @@
         static let avatarSize: CGFloat = .size40
         static let fieldWidth: CGFloat = 300
         static let tallRowHeight: CGFloat = .size64
+        static let accountActionWidth: CGFloat = 140
     }
 
     struct MacUserDetailForm: View {
@@ -101,8 +102,10 @@
                 if store.isUpdatingRoles {
                     MacSpinner()
                 } else if !user.isAdmin {
-                    Button(L10n.UserDetail.roleGrantAdmin) { store.send(.grantAdminTapped) }
-                        .buttonStyle(.macDS(.secondary, size: .small))
+                    Button { store.send(.grantAdminTapped) } label: {
+                        accountActionLabel(L10n.UserDetail.roleGrantAdmin, icon: IconKit.shield)
+                    }
+                    .buttonStyle(.macDS(.secondary, size: .small))
                 }
             }
             .frame(minHeight: Metrics.tallRowHeight)
@@ -116,13 +119,19 @@
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 } control: {
-                    Button(L10n.UserDetail.dangerZoneRemoveUser, role: .destructive) {
-                        store.send(.deleteUserTapped(user))
+                    Button(role: .destructive) { store.send(.deleteUserTapped(user)) } label: {
+                        accountActionLabel(L10n.UserDetail.dangerZoneRemoveUser, icon: IconKit.delete)
                     }
                     .buttonStyle(.macDS(.secondary, size: .small))
                 }
                 .frame(minHeight: Metrics.tallRowHeight)
             }
+        }
+
+        private func accountActionLabel(_ title: String, icon: Image) -> some View {
+            Label { Text(title) } icon: { icon }
+                .labelStyle(.titleAndIcon)
+                .frame(minWidth: Metrics.accountActionWidth)
         }
 
         private var securityTab: some View {
@@ -132,7 +141,10 @@
                         Text(user.hasLocalPassword ? L10n.UserDetail.passwordHasLocal : L10n.UserDetail.passwordSSOOnly)
                             .fixedSize(horizontal: false, vertical: true)
                     } control: {
-                        Button(user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet) {
+                        Button(L10n.ellipsized(user.hasLocalPassword
+                                ? L10n.UserDetail.passwordReset
+                                : L10n.UserDetail.passwordSet))
+                        {
                             store.send(.setPasswordTapped)
                         }
                         .buttonStyle(.macDS(.secondary, size: .small))
@@ -145,7 +157,12 @@
                             MacFormRow {
                                 MacRowTitle(title: row.title, subtitle: row.subtitle)
                             } control: {
-                                Button(row.reset.actionTitle, role: row.reset == .passkeys ? .destructive : nil) {
+                                Button(
+                                    row.reset.actionTitle,
+                                    role: row.reset == .passkeys
+                                        ? .destructive
+                                        : nil
+                                ) {
                                     store.send(.securityResetTapped(row.reset))
                                 }
                                 .buttonStyle(.macDS(.secondary, size: .small))
@@ -194,7 +211,7 @@
                     }
                 }
                 MacFormFootnote(L10n.UserDetail.volumesFootnote)
-                Button(L10n.UserDetail.volumesAssign) { store.send(.addVolumeTapped) }
+                Button(L10n.ellipsized(L10n.UserDetail.volumesAssign)) { store.send(.addVolumeTapped) }
                     .buttonStyle(.macDS(.primary, size: .small))
                     .padding(.top, .space8)
             }

@@ -16,6 +16,7 @@ struct MainTabToasts: ViewModifier {
         @Environment(\.locale) private var locale
         @State private var uploadTransfer: DSToastMessage?
         @State private var downloadTransfer: DSToastMessage?
+        @State private var isDownloadActivityShown = false
         @Binding var closedTransfers: Set<TransferQueue>
     #endif
 
@@ -35,11 +36,12 @@ struct MainTabToasts: ViewModifier {
                         closedTransfers.remove(.uploads)
                     }
                 }
-                .onChange(of: store.downloadQueue.isActive) { _, isActive in
+                .onChange(of: store.downloadQueue.isActive || store.offlineProgress.isActive) { _, isActive in
                     if !isActive {
                         closedTransfers.remove(.downloads)
                     }
                 }
+                .macDownloadActivityVisible(store, isVisible: $isDownloadActivityShown)
         #else
             outcomes(content)
         #endif
@@ -117,26 +119,10 @@ struct MainTabToasts: ViewModifier {
                     cancel: { store.send(.uploads(.cancelAllTapped)) }
                 )
             case .downloads:
-                guard store.downloadQueue.isActive, !store.downloadQueue.isSheetPresented else { return nil }
-                return .transfer(
-                    titles.downloadBarTitle,
-                    id: queue.rawValue,
-                    icon: IconKit.downloadFill,
-                    fraction: store.downloadQueue.currentJob?.progress,
-                    fileName: store.downloadQueue.currentJob?.fileName,
-                    timeLeft: DownloadProgressText.timeLeft(
-                        store.downloadQueue.currentJob?.estimatedSecondsRemaining,
-                        locale: locale
-                    ),
-                    hasFailures: store.downloadQueue.failedCount > 0,
-                    actionTitle: L10n.Menu.showAll,
-                    action: {
-                        closedTransfers.remove(.downloads)
-                        store.send(.downloadQueue(.barTapped))
-                    },
-                    cancelTitle: L10n.DownloadQueue.cancelAll,
-                    cancel: { store.send(.downloadQueue(.cancelAllTapped)) }
-                )
+                guard isDownloadActivityShown else { return nil }
+                return MacDownloadActivity(store: store, locale: locale).notification {
+                    closedTransfers.remove(.downloads)
+                }
             }
         }
     #endif

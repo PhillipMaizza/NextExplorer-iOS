@@ -116,8 +116,8 @@
 
         private var menu: some View {
             Menu {
-                Button(L10n.ApiTokens.renameAction, action: onRename)
-                Button(L10n.ApiTokens.revokeAction, role: .destructive, action: onRevoke)
+                Button(L10n.ellipsized(L10n.ApiTokens.renameAction), action: onRename)
+                Button(L10n.ellipsized(L10n.ApiTokens.revokeAction), role: .destructive, action: onRevoke)
             } label: {
                 IconKit.ellipsis
                     .resizable()
@@ -151,7 +151,7 @@
                 store.send(.newTokenTapped)
             } label: {
                 Label {
-                    Text(L10n.ApiTokens.newButton)
+                    Text(L10n.ellipsized(L10n.ApiTokens.newButton))
                 } icon: {
                     IconKit.plus
                 }

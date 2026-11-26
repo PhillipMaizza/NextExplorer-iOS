@@ -20,6 +20,7 @@ struct OfflineDownloadsRunTests: OfflineDownloadsTestSupport {
             $0.$progress.withLock {
                 $0.phase = .downloading
                 $0.filesTotal = 3
+                $0.downloadStartedAt = MockDate.date
             }
         }
         await store

@@ -15,6 +15,7 @@
     struct MacStorageSettingsTab: View {
         let store: StoreOf<SettingsFeature>
         @AppStorage(AppStorageKeys.preferOfflineMedia) private var shouldPreferOfflineMedia = true
+        @Environment(\.locale) private var locale
 
         private var progress: OfflineDownloadProgress {
             store.offlineProgress
@@ -125,7 +126,7 @@
                         HStack(spacing: .space8) {
                             Button(L10n.Offline.resyncRow) { store.send(.resyncOfflineTapped) }
                                 .buttonStyle(.macDS(.secondary, size: .small))
-                            Button(L10n.ellipsized(L10n.Offline.removeRow), role: .destructive) {
+                            Button(L10n.Offline.removeRow, role: .destructive) {
                                 store.send(.removeOfflineTapped)
                             }
                             .buttonStyle(.macDS(.secondary, size: .small))
@@ -140,9 +141,17 @@
         @ViewBuilder
         private var downloadRow: some View {
             if progress.isActive {
-                MacOfflineProgress(progress: progress) { store.send(.cancelOfflineDownloadTapped) }
-                    .padding(.horizontal, .space16)
-                    .padding(.vertical, .space12)
+                MacOfflineProgress(
+                    progress: progress,
+                    timeLeft: DownloadProgressText.timeLeft(progress.secondsRemaining(now: .now), locale: locale),
+                    onShowAll: {
+                        MacMainWindow.bringForward()
+                        store.send(.openDownloadQueueTapped)
+                    },
+                    onCancel: { store.send(.cancelOfflineDownloadTapped) }
+                )
+                .padding(.horizontal, .space16)
+                .padding(.vertical, .space12)
             } else {
                 MacFormRow {
                     VStack(alignment: .leading, spacing: .space8) {
@@ -170,19 +179,31 @@
     /// A running offline download: what it is on, how far along, and a way to stop it.
     private struct MacOfflineProgress: View {
         let progress: OfflineDownloadProgress
+        let timeLeft: String?
+        let onShowAll: () -> Void
         let onCancel: () -> Void
+
+        private var fraction: Double? {
+            progress.phase == .preparing ? nil : progress.fractionComplete
+        }
 
         var body: some View {
             VStack(alignment: .leading, spacing: .space8) {
-                Text(status)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                MacProgressBar(value: progress.phase == .preparing ? nil : progress.fractionComplete)
-                HStack {
+                HStack(alignment: .firstTextBaseline, spacing: .space16) {
+                    Text(status)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    Spacer(minLength: .zero)
+                    MacTransferProgressLabel(timeLeft: timeLeft, fraction: fraction)
+                }
+                MacProgressBar(value: fraction, tint: .positive)
+                HStack(spacing: .space8) {
                     Text(L10n.Offline.progressCount(progress.currentFileNumber, progress.filesTotal))
                         .type(.body3(.regular), style: .secondary)
                         .monospacedDigit()
                     Spacer()
+                    Button(L10n.Menu.showAll, action: onShowAll)
+                        .buttonStyle(.macDS(.secondary, size: .small))
                     Button(L10n.Common.cancel, action: onCancel)
                         .buttonStyle(.macDS(.secondary, size: .small))
                 }
@@ -215,6 +236,20 @@
         var state = SettingsFeature.State.macPreview
         state.offlineSize = Metrics.previewOfflineSizeBytes
         return MacStorageSettingsTab(store: Store(initialState: state) { SettingsFeature() })
+            .previewCanvas(.settingsPane)
+    }
+
+    #Preview("Storage: offline downloading") {
+        @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) var progress = OfflineDownloadProgress()
+        $progress.withLock {
+            $0.phase = .downloading
+            $0.currentName = "Trip plan.pdf"
+            $0.filesTotal = 12
+            $0.filesDone = 4
+            $0.unitsDone = 4.5
+            $0.downloadStartedAt = .now.addingTimeInterval(-30)
+        }
+        return MacStorageSettingsTab(store: Store(initialState: .macPreview) { SettingsFeature() })
             .previewCanvas(.settingsPane)
     }
 #endif

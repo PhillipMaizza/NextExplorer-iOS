@@ -36,11 +36,16 @@
 
     struct MacTransferPanelLayer: View {
         let store: StoreOf<MainTabFeature>
-        let onUploadMore: (() -> Void)?
         let closedNotifications: Set<TransferQueue>
         let buttonAnchors: [TransferQueue: Anchor<CGRect>]
 
         @Environment(\.colorScheme) private var colorScheme
+        @FocusedValue(\.uploadToVisibleFolder) private var uploadHere
+        @Environment(\.locale) private var locale
+
+        private var activity: MacDownloadActivity {
+            MacDownloadActivity(store: store, locale: locale)
+        }
 
         private var isShown: Bool {
             store.uploads.isSheetPresented || store.downloadQueue.isSheetPresented
@@ -63,12 +68,15 @@
                     if store.uploads.isSheetPresented {
                         UploadsView(
                             store: store.scope(state: \.uploads, action: \.uploads),
-                            onUploadMore: onUploadMore
+                            onUploadMore: uploadHere.map { upload in { upload() } }
                         )
                         .transition(transition(.uploads, isActive: store.uploads.isActive, in: proxy))
                     } else if store.downloadQueue.isSheetPresented {
-                        DownloadQueueView(store: store.scope(state: \.downloadQueue, action: \.downloadQueue))
-                            .transition(transition(.downloads, isActive: store.downloadQueue.isActive, in: proxy))
+                        DownloadQueueView(
+                            store: store.scope(state: \.downloadQueue, action: \.downloadQueue),
+                            activity: activity
+                        )
+                        .transition(transition(.downloads, isActive: activity.isActive, in: proxy))
                     }
                 }
                 .frame(width: proxy.size.width, height: proxy.size.height)
@@ -130,7 +138,6 @@
             .overlay {
                 MacTransferPanelLayer(
                     store: Store(initialState: state) { MainTabFeature() },
-                    onUploadMore: {},
                     closedNotifications: [],
                     buttonAnchors: [:]
                 )

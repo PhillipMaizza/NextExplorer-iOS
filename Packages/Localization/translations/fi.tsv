@@ -1017,7 +1017,6 @@ macSettings.support	Ohje ja tuki…
 macSettings.permission	Käyttöoikeus
 macSettings.icon	Kuvake
 menu.go	Siirry
-menu.activity	Siirrot
 menu.showAll	Näytä kaikki
 uploads.notifyDone	Lähetykset valmiit
 uploads.notifyBody#one	%lld tiedosto lähetetty

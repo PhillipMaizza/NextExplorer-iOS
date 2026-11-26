@@ -1,6 +1,16 @@
 #if os(macOS)
     import SwiftUI
 
+    public extension EnvironmentValues {
+        @Entry var macInsetFill = Color.macRow
+    }
+
+    public extension View {
+        func macSheetSurface() -> some View {
+            environment(\.macInsetFill, .backgroundPrimary)
+        }
+    }
+
     public struct MacNote: View {
         public enum Kind: Sendable {
             case error
@@ -10,6 +20,7 @@
 
         private let text: String
         private let kind: Kind
+        @Environment(\.macInsetFill) private var fill
 
         public init(_ text: String, kind: Kind) {
             self.text = text
@@ -30,7 +41,7 @@
             .padding(.space12)
             .background(
                 RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
-                    .fill(Color.macRow)
+                    .fill(fill)
             )
             .accessibilityElement(children: .combine)
         }
@@ -61,5 +72,13 @@
         .padding(.space24)
         .frame(width: MacFormSheetMetrics.width)
         .macCard()
+    }
+
+    #Preview("Notes in a sheet") {
+        MacNote("That code is not right.", kind: .error)
+            .padding(.space24)
+            .frame(width: MacFormSheetMetrics.width)
+            .macSheetSurface()
+            .background(Color.macRow)
     }
 #endif

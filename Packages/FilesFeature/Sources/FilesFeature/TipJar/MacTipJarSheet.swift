@@ -9,6 +9,14 @@
         static let width: CGFloat = 520
     }
 
+    public extension View {
+        func macTipJarSheet(_ store: Binding<StoreOf<TipJarFeature>?>) -> some View {
+            sheet(item: store) { tipStore in
+                MacTipJarSheet(store: tipStore) { store.wrappedValue = nil }
+            }
+        }
+    }
+
     struct MacTipJarSheet: View {
         @Bindable var store: StoreOf<TipJarFeature>
         let onClose: () -> Void
@@ -37,7 +45,7 @@
             }
             .padding(.space24)
             .frame(width: Metrics.width)
-            .background(Color.macCard)
+            .macSheetSurface()
             .task { store.send(.task) }
         }
 

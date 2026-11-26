@@ -18,6 +18,7 @@
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .textSelection(.enabled)
+                    .layoutPriority(1)
             }
         }
     }

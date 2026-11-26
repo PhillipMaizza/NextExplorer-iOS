@@ -1017,7 +1017,6 @@ macSettings.support	Yardım ve Destek…
 macSettings.permission	İzin
 macSettings.icon	Simge
 menu.go	Git
-menu.activity	Aktarımlar
 menu.showAll	Tümünü Göster
 uploads.notifyDone	Yüklemeler tamamlandı
 uploads.notifyBody#one	%lld dosya yüklendi

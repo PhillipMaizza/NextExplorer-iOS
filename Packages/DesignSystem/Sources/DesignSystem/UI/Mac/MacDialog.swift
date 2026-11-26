@@ -150,6 +150,7 @@
             }
             .padding(Metrics.padding)
             .frame(width: width)
+            .macSheetSurface()
         }
     }
 

@@ -8,7 +8,6 @@
 
     private enum Metrics {
         static let searchWidth: CGFloat = 240
-        static let retentionWidth: CGFloat = 80
         static let timeWidth: CGFloat = 100
         static let actorWidth: CGFloat = 120
         static let addressWidth: CGFloat = 140
@@ -43,13 +42,12 @@
             MacFormGroup {
                 MacSwitchRow(L10n.ActivityLog.enabled, isOn: $store.isEnabledDraft.sending(\.enabledChanged))
                 MacFormRow(L10n.ActivityLog.retention) {
-                    MacTextField(
-                        L10n.ActivityLog.retention,
-                        text: Binding(get: { store.retentionText }, set: { store.send(.retentionChanged($0)) })
-                    )
-                    .multilineTextAlignment(.trailing)
-                    .frame(width: Metrics.retentionWidth)
-                    .onSubmit { store.send(.saveSettingsTapped) }
+                    MacStepper(
+                        label: L10n.ActivityLog.retention,
+                        value: store.retentionDays ?? ActivitySettings.defaultRetentionDays,
+                        range: ActivitySettings.retentionRange,
+                        step: 1
+                    ) { store.send(.retentionChanged(String($0))) }
                     if store.isSavingSettings {
                         MacSpinner()
                     }

@@ -39,7 +39,6 @@ public struct MainTabView: View {
     @State private var visitedTabs: Set<MainTabFeature.Tab> = [.browse]
     @State private var offlinePhase = OfflineDownloadProgress.Phase.idle
     #if os(macOS)
-        @FocusedValue(\.uploadToVisibleFolder) private var uploadHere
         @State private var closedTransfers: Set<TransferQueue> = []
     #endif
     /// Mirrors `store.uploads.isActive` so list screens can reserve bottom inset for the bar.
@@ -106,7 +105,6 @@ public struct MainTabView: View {
             .overlayPreferenceValue(MacTransferButtonAnchorKey.self) { anchors in
                 MacTransferPanelLayer(
                     store: store,
-                    onUploadMore: uploadMore,
                     closedNotifications: closedTransfers,
                     buttonAnchors: anchors
                 )
@@ -187,13 +185,6 @@ public struct MainTabView: View {
         guard height > 0, abs(height - uploadBarHeight) >= 1 else { return }
         $uploadBarHeight.withLock { $0 = height }
     }
-
-    #if os(macOS)
-        private var uploadMore: (() -> Void)? {
-            guard let uploadHere else { return nil }
-            return { uploadHere() }
-        }
-    #endif
 
     /// The floating transfer bars; the Mac shows a toolbar activity button instead.
     private var shouldShowTransferBars: Bool {

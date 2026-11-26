@@ -32,7 +32,7 @@
                         MacRowTitle(title: L10n.Settings.clientCertificate, subtitle: detail)
                     }
                 } control: {
-                    actionButton(L10n.Login.manageClientCertificate) {
+                    actionButton(L10n.ellipsized(L10n.Login.manageClientCertificate)) {
                         store.send(.clientCertificateButtonTapped)
                     }
                 }

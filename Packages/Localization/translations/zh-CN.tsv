@@ -761,7 +761,6 @@ macSettings.support	帮助与支持…
 macSettings.permission	权限
 macSettings.icon	图标
 menu.go	前往
-menu.activity	传输
 menu.showAll	显示全部
 uploads.notifyDone	上传完成
 uploads.notifyBody#other	已上传 %lld 个文件

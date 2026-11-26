@@ -1039,7 +1039,6 @@ macSettings.support	Довідка й підтримка…
 macSettings.permission	Дозвіл
 macSettings.icon	Значок
 menu.go	Перейти
-menu.activity	Передавання
 menu.showAll	Показати все
 uploads.notifyDone	Вивантаження завершено
 uploads.notifyBody#one	Вивантажено файлів: %lld
