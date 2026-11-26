@@ -188,6 +188,8 @@
                 trailingButton(row)
             }
             .padding(.vertical, .space12)
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(row.name)
         }
 
         private func isWaiting(_ row: TransferQueueRow) -> Bool {
