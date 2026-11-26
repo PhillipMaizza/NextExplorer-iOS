@@ -7,7 +7,7 @@ struct LockAccountCard: View {
 
     var body: some View {
         HStack(spacing: .space12) {
-            AvatarView(displayName: account.displayName, size: .size48)
+            AvatarView.person(account.displayName, size: .size48)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: .space2) {
                 Text(account.displayName)

@@ -144,7 +144,7 @@ import SwiftUI
 
         var body: some View {
             HStack(spacing: Metrics.rowSpacing) {
-                AvatarView(displayName: account.displayName, size: Metrics.avatarSize)
+                AvatarView.person(account.displayName, size: Metrics.avatarSize)
                     .opacity(account.isActive ? 1 : Metrics.inactiveOpacity)
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(account.displayName)

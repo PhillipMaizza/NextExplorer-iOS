@@ -33,7 +33,7 @@ struct ShareUserPicker: View {
                         store.send(.userToggled(user.id))
                     } label: {
                         HStack(spacing: .space12) {
-                            AvatarView(displayName: user.displayLabel, size: Constants.avatarSize)
+                            AvatarView.person(user.displayLabel, size: Constants.avatarSize)
                             VStack(alignment: .leading, spacing: .space2) {
                                 Text(user.displayLabel)
                                     .type(.body3(.semibold), style: .primaryOnSurface)

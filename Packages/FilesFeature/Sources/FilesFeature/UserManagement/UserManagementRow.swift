@@ -20,7 +20,7 @@ struct UserRow: View {
 
     var body: some View {
         HStack(spacing: Metrics.rowSpacing) {
-            AvatarView(displayName: user.displayLabel, size: Metrics.avatarSize)
+            AvatarView.person(user.displayLabel, size: Metrics.avatarSize)
 
             VStack(alignment: .leading, spacing: .space2) {
                 HStack(spacing: .space8) {

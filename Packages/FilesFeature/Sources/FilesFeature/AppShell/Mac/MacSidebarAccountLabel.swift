@@ -18,7 +18,7 @@
 
         var body: some View {
             if isRail {
-                AvatarView(displayName: displayName, size: Metrics.railAvatarSize)
+                AvatarView.person(displayName, size: Metrics.railAvatarSize)
                     .frame(width: MacSidebarRail.item, height: MacSidebarRail.item)
                     .contentShape(Rectangle())
                     .frame(maxWidth: .infinity)
@@ -30,7 +30,7 @@
 
         private var label: some View {
             HStack(spacing: .space12) {
-                AvatarView(displayName: displayName, size: Metrics.avatarSize)
+                AvatarView.person(displayName, size: Metrics.avatarSize)
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(displayName)
                         .type(.body2(.semibold))
