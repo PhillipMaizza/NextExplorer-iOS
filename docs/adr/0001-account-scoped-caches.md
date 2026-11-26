@@ -19,6 +19,8 @@ A cache entry read under the wrong account shows one person's files to another.
   out. The tree is one enum case, so without this a late answer from the account just left (a
   Trash list, an upload still sending chunks under the next account's cookie on the same server)
   lands in the account switched to. Server branding is shared state and resets at the same point.
+- Open With copies live in `PreviewCache/open-with` in folders named with the account prefix, so
+  removing one account or its Clear Cache takes them; eviction still skips them.
 - Saved downloads use `DownloadAccountScope`: a hash of server URL and user id as the folder name.
 - `URLCache` is off. The app's own caches are cleared at every session boundary; the shared URL
   cache is not and would outlive the account.

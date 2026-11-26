@@ -400,7 +400,9 @@ extension FilesService {
         )) else { return [] }
         let root = cachesDirectory.appendingPathComponent(previewCacheRootDirectory, isDirectory: true)
         let prefix = CacheAccountScope.namePrefix(for: scope)
-        return ([previewCacheNamespace, rawDownloadCacheNamespace] + flatScopedCacheSubdirectories).flatMap { name in
+        let names = [previewCacheNamespace, rawDownloadCacheNamespace, CacheLayout.openWithDirectoryName]
+            + flatScopedCacheSubdirectories
+        return names.flatMap { name in
             let directory = root.appendingPathComponent(name, isDirectory: true)
             let entries = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
             return entries.filter { $0.lastPathComponent.hasPrefix(prefix) }

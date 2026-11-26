@@ -470,7 +470,7 @@ public struct DownloadQueueFeature {
     /// `nil` when the copy fails, so the file is downloaded instead.
     private static func temporaryCopy(of kept: URL) -> URL? {
         let copy = FileManager.default.temporaryDirectory
-            .appendingPathComponent(UUID().uuidString)
+            .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
             .appendingPathExtension(kept.pathExtension)
         do {
             try FileManager.default.copyItem(at: kept, to: copy)

@@ -319,6 +319,27 @@ struct AccountScopedCacheTests {
         }
     }
 
+    @Test("Open With copies: clearPreviewCache(scope:) removes only that account's copies")
+    func openWithClearScope() throws {
+        let caches = makeRoot()
+        defer { try? FileManager.default.removeItem(at: caches) }
+        let directory = caches
+            .appendingPathComponent(FilesService.previewCacheRootDirectory, isDirectory: true)
+            .appendingPathComponent(CacheLayout.openWithDirectoryName, isDirectory: true)
+        var copies: [String: URL] = [:]
+        for scope in [accountA, accountB] {
+            let folder = directory.appendingPathComponent(CacheAccountScope.scopedFileName("copy", scope: scope))
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            try Data("x".utf8).write(to: folder.appendingPathComponent("report.pdf"))
+            copies[scope] = folder
+        }
+
+        FilesService.clearPreviewCache(scope: accountA, in: caches)
+
+        #expect(try !FileManager.default.fileExists(atPath: #require(copies[accountA]).path))
+        #expect(try FileManager.default.fileExists(atPath: #require(copies[accountB]).path))
+    }
+
     @Test("Offline files: removeScope deletes the named account's directory and keeps another's")
     func offlineRemoveScope() throws {
         let unique = TestID.name()
