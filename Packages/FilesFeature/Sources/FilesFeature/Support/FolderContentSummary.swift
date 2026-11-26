@@ -2,11 +2,6 @@ import CoreModels
 import DesignSystem
 import Localization
 
-struct PathCrumb: Equatable, Sendable {
-    let title: String
-    let path: String
-}
-
 enum FolderContentSummary {
     static func text(folders: Int, files: Int) -> String? {
         switch (folders, files) {

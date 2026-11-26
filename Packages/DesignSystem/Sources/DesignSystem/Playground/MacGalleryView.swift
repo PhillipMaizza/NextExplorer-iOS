@@ -26,6 +26,14 @@
                     MacGallerySection(title: "Status") { MacGalleryStatus() }
                     MacGallerySample()
                 }
+                VStack(alignment: .leading, spacing: .space24) {
+                    MacGallerySection(title: "Inspector") { MacGalleryInspector() }
+                    MacGallerySection(title: "List") { MacGalleryList() }
+                    MacGallerySection(title: "Empty guide") {
+                        MacEmptyGuideBullet(icon: IconKit.macRestore, text: "Restore puts an item back.")
+                        MacEmptyGuideTile(icon: IconKit.macTrash, size: .size56)
+                    }
+                }
             }
             .padding(.space32)
             .macChromeBackground()
@@ -50,7 +58,7 @@
     private struct MacGallerySwatches: View {
         private let swatches: [Color] = [
             .macChrome, .macCard, .macRow, .macLine, .macSegment, .macField,
-            .macChromeText, .macChromeSecondary, .accent, .accentText, .negative, .positive,
+            .macChromeText, .macChromeSecondary, .macChromeTertiary, .accent, .accentText, .negative, .positive,
         ]
 
         var body: some View {
@@ -219,6 +227,37 @@
                     .textFieldStyle(.roundedBorder)
             }
             .macCard()
+        }
+    }
+
+    private struct MacGalleryInspector: View {
+        var body: some View {
+            MacInspectorSectionHeader(title: "Details", count: 3)
+            MacInspectorGroup {
+                MacInspectorRow("Kind", "PDF")
+                MacInspectorRow("Size", "2.4 MB")
+            }
+            MacInspectorQuickActions(actions: [
+                MacInspectorQuickAction(icon: IconKit.link, title: "Share") {},
+                MacInspectorQuickAction(icon: IconKit.star, title: "Favorite", isOn: true) {},
+            ])
+        }
+    }
+
+    private struct MacGalleryList: View {
+        @State private var selection = "projects"
+
+        var body: some View {
+            VStack(spacing: .zero) {
+                ForEach(["archive", "projects", "media"], id: \.self) { name in
+                    Text(verbatim: name)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundStyle(Color.macChromeText)
+                        .macListRow(isSelected: name == selection)
+                        .macSelectable(isSelected: name == selection) { selection = name }
+                }
+            }
+            .macListBox()
         }
     }
 

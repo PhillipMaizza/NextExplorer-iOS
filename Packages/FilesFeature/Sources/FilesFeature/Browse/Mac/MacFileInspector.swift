@@ -146,7 +146,6 @@
             var actions: [MacInspectorQuickAction] = []
             if let onOpen {
                 actions.append(MacInspectorQuickAction(
-                    id: .open,
                     icon: IconKit.openInApp,
                     title: L10n.Browse.open,
                     action: onOpen
@@ -154,7 +153,6 @@
             }
             if let onShare {
                 actions.append(MacInspectorQuickAction(
-                    id: .share,
                     icon: IconKit.link,
                     title: L10n.Common.share,
                     action: onShare
@@ -162,7 +160,6 @@
             }
             if let isFavorite {
                 actions.append(MacInspectorQuickAction(
-                    id: .favorite,
                     icon: isFavorite ? IconKit.starFill : IconKit.star,
                     title: L10n.FileInfo.quickFavorite,
                     isOn: isFavorite,
