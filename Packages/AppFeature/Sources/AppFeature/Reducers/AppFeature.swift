@@ -64,6 +64,8 @@ public struct AppFeature {
             $fileUndoStack.withLock { $0 = [] }
             $fileRedoStack.withLock { $0 = [] }
             $preferences.withLock { $0 = UserPreferences() }
+            @Shared(.inMemory(Branding.sharedKey)) var branding = Branding()
+            $branding.withLock { $0 = Branding() }
         }
 
         var currentAccountID: String? {
@@ -214,9 +216,19 @@ public struct AppFeature {
         static let unauthorizedStatusCode = 401
     }
 
+    private struct AccountWork: Hashable {
+        let accountID: String
+    }
+
     public var body: some ReducerOf<Self> {
-        Scope(state: \.destination, action: \.destination) {
-            Destination.body
+        Reduce { state, action in
+            let accountID = state.currentAccountID
+            let effect = Scope(state: \State.destination, action: \Action.Cases.destination) {
+                Destination.body
+            }
+            .reduce(into: &state, action: action)
+            guard let accountID else { return effect }
+            return effect.cancellable(id: AccountWork(accountID: accountID))
         }
 
         Reduce { state, action in
@@ -560,6 +572,11 @@ public struct AppFeature {
         }
         .ifLet(\.$tipJar, action: \.tipJar) {
             TipJarFeature()
+        }
+        .onChange(of: \.currentAccountID) { leftAccountID, _ in
+            Reduce { _, _ in
+                leftAccountID.map { .cancel(id: AccountWork(accountID: $0)) } ?? .none
+            }
         }
 
         UploadFolderRouting()

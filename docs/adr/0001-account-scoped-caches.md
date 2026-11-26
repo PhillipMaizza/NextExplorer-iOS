@@ -14,6 +14,11 @@ A cache entry read under the wrong account shows one person's files to another.
   entries; nothing is wiped and both survive.
 - Async work binds a store to the scope it started under (`bound(to:)`), so a late answer writes
   the namespace that was active when it was asked.
+- Every effect started inside an account's tree is cancellable under that account's id, and
+  `AppFeature` cancels them all when the active account changes: a switch, a lock, the last sign
+  out. The tree is one enum case, so without this a late answer from the account just left (a
+  Trash list, an upload still sending chunks under the next account's cookie on the same server)
+  lands in the account switched to. Server branding is shared state and resets at the same point.
 - Saved downloads use `DownloadAccountScope`: a hash of server URL and user id as the folder name.
 - `URLCache` is off. The app's own caches are cleared at every session boundary; the shared URL
   cache is not and would outlive the account.
