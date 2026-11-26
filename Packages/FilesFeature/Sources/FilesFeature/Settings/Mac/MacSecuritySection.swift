@@ -29,7 +29,7 @@
                     if detail.isEmpty {
                         Text(L10n.Settings.clientCertificate)
                     } else {
-                        MacRowTitle(title: L10n.Settings.clientCertificate, subtitle: detail)
+                        MacFormRowTitle(title: L10n.Settings.clientCertificate, subtitle: detail)
                     }
                 } control: {
                     actionButton(L10n.ellipsized(L10n.Login.manageClientCertificate)) {

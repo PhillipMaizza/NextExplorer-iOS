@@ -76,7 +76,7 @@
         private var cacheGroup: some View {
             MacFormGroup(L10n.MacSettings.cache) {
                 MacFormRow {
-                    MacRowTitle(title: L10n.MacSettings.cache, subtitle: L10n.Settings.storageFootnoteMac)
+                    MacFormRowTitle(title: L10n.MacSettings.cache, subtitle: L10n.Settings.storageFootnoteMac)
                 } control: {
                     sizeValue(store.cacheSize)
                 }
@@ -93,7 +93,7 @@
         private var offlineGroup: some View {
             MacFormGroup(L10n.Offline.sectionTitle) {
                 MacFormRow {
-                    MacRowTitle(title: L10n.Offline.manageTitle, subtitle: L10n.Offline.footnote)
+                    MacFormRowTitle(title: L10n.Offline.manageTitle, subtitle: L10n.Offline.footnote)
                 } control: {
                     sizeValue(store.offlineSize)
                 }

@@ -22,7 +22,7 @@
                 if !store.isPasswordRequired {
                     MacNote(L10n.ApiTokens.noPasswordWarning, kind: .warning)
                 }
-                MacSettingsRow(L10n.ApiTokens.fieldName) {
+                MacFormSheetRow(L10n.ApiTokens.fieldName) {
                     MacTextField(
                         L10n.ApiTokens.fieldName,
                         text: Binding(get: { form?.name ?? "" }, set: { store.send(.nameChanged($0)) }),
@@ -30,14 +30,14 @@
                     )
                     .accessibilityIdentifier(AccessibilityIdentifiers.Settings.apiTokenNameField)
                 }
-                MacSettingsRow(L10n.ApiTokens.fieldAccess) {
+                MacFormSheetRow(L10n.ApiTokens.fieldAccess) {
                     MacSegmentedPicker(
                         L10n.ApiTokens.fieldAccess,
                         options: APIToken.Scope.allCases,
                         selection: Binding(get: { form?.scope ?? .read }, set: { store.send(.scopeChanged($0)) })
                     ) { $0.title }
                 }
-                MacSettingsRow(L10n.ApiTokens.fieldExpiry) {
+                MacFormSheetRow(L10n.ApiTokens.fieldExpiry) {
                     let expiry = form?.expiry ?? .days90
                     MacPopup(
                         L10n.ApiTokens.fieldExpiry,
@@ -49,12 +49,12 @@
                     }
                 }
                 if store.isPasswordRequired {
-                    MacSettingsRow(L10n.ApiTokens.fieldPassword) {
+                    MacFormSheetRow(L10n.ApiTokens.fieldPassword) {
                         MacSecureField(
                             L10n.ApiTokens.fieldPassword,
                             text: Binding(get: { form?.password ?? "" }, set: { store.send(.passwordChanged($0)) })
                         )
-                        MacSettingsNote(L10n.ApiTokens.passwordHint)
+                        MacControlNote(L10n.ApiTokens.passwordHint)
                     }
                 }
             }
@@ -74,7 +74,7 @@
                 onCancel: { store.send(.renameCancelled) },
                 onConfirm: { store.send(.renameSubmitted) }
             ) {
-                MacSettingsRow(L10n.ApiTokens.fieldName) {
+                MacFormSheetRow(L10n.ApiTokens.fieldName) {
                     MacTextField(
                         L10n.ApiTokens.fieldName,
                         text: Binding(get: { store.rename?.name ?? "" }, set: { store.send(.renameNameChanged($0)) })

@@ -126,7 +126,7 @@
         var body: some View {
             MacFormGroup {
                 MacFormRow {
-                    MacRowTitle(
+                    MacFormRowTitle(
                         title: file.name,
                         subtitle: ServerSettingsMetrics.joined(
                             [VersionedFileWords.zone(file.zone), file.folder].filter { !$0.isEmpty }

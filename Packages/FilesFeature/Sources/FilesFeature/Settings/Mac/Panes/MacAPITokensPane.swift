@@ -43,7 +43,7 @@
                 MacFormGroup {
                     if store.tokens.isEmpty {
                         MacFormRow {
-                            MacRowTitle(title: L10n.ApiTokens.emptyTitle, subtitle: L10n.ApiTokens.emptyMessage)
+                            MacFormRowTitle(title: L10n.ApiTokens.emptyTitle, subtitle: L10n.ApiTokens.emptyMessage)
                         } control: {
                             EmptyView()
                         }

@@ -20,9 +20,9 @@
         }
     }
 
-    extension MacSwitchRow where Label == MacRowTitle {
+    extension MacSwitchRow where Label == MacFormRowTitle {
         init(_ title: String, help: String, isOn: Binding<Bool>) {
-            self.init(title: title, isOn: isOn) { MacRowTitle(title: title, subtitle: help) }
+            self.init(title: title, isOn: isOn) { MacFormRowTitle(title: title, subtitle: help) }
         }
     }
 
@@ -47,7 +47,7 @@
         }
     }
 
-    extension MacStepperRow where Label == MacRowTitle {
+    extension MacStepperRow where Label == MacFormRowTitle {
         init(
             _ title: String,
             help: String,
@@ -57,7 +57,7 @@
             onChange: @escaping (Int) -> Void
         ) {
             self.init(title: title, value: value, range: range, step: step, onChange: onChange) {
-                MacRowTitle(title: title, subtitle: help)
+                MacFormRowTitle(title: title, subtitle: help)
             }
         }
     }

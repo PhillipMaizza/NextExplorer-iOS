@@ -27,16 +27,16 @@
                 onCancel: { store.send(.cancelTapped) },
                 onConfirm: { store.send(.uploadTapped) }
             ) {
-                MacSettingsRow(L10n.Uploads.reviewSectionPath) {
+                MacFormSheetRow(L10n.Uploads.reviewSectionPath) {
                     MacPathField(
                         path: store.hasDestination ? PersonalSpace.trail(store.destination) : nil,
                         placeholder: L10n.Uploads.reviewChooseFolder
                     ) { store.send(.pathTapped) }
                 }
-                MacSettingsRow(L10n.Uploads.reviewSectionSize) {
+                MacFormSheetRow(L10n.Uploads.reviewSectionSize) {
                     Text(FileSizeFormat.string(store.totalSize)).monospacedDigit()
                 }
-                MacSettingsRow(L10n.Uploads.reviewSectionFiles) {
+                MacFormSheetRow(L10n.Uploads.reviewSectionFiles) {
                     filesBox
                     Button(L10n.Uploads.reviewAddMore, action: onAddFiles)
                         .buttonStyle(.macDS(.secondary, size: .small))

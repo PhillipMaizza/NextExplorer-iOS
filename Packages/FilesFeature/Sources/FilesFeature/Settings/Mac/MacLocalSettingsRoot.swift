@@ -175,7 +175,7 @@
                         MacFormRow {
                             HStack(spacing: .space12) {
                                 MacLockedAvatar(name: account.displayName, size: Metrics.paneAvatarSize)
-                                MacRowTitle(title: account.displayName, subtitle: account.serverHost)
+                                MacFormRowTitle(title: account.displayName, subtitle: account.serverHost)
                             }
                         } control: {
                             MacChip(text: L10n.Lock.status, tone: .amber)

@@ -17,7 +17,7 @@ with blue selection is not possible natively.
   the system blue. Switches keep the native control but take the accent tint (`.macSwitch`), by
   the owner's choice; the tint is scoped to the switch so pickers beside it stay neutral.
 - Settings fields and popups are drawn by the design system to match the canvas: `MacTextField`
-  (34pt, field fill, hairline, accent focus border, halo and caret, like the sign in fields) and
+  (36pt, field fill, hairline, accent focus border, halo and caret, like the sign in fields) and
   `MacPopup` (a `Menu` over an inline `Picker`, 32pt, muted up and down chevron), so VoiceOver and
   the keyboard keep the menu. Both dim when disabled.
 - Status chips use tones (`MacChip.Tone`: green, red, gray) with their own text and fill tokens
@@ -63,7 +63,7 @@ with blue selection is not possible natively.
   the server.
 - File lists (Browse, Favorites, Offline, Trash, Shared, search results) are one native `Table`
   look, by the owner's choice: the system header with sortable columns, system blue selection,
-  native separators and no zebra stripes, 44pt rows and 26pt tiles. Row height comes from the cell
+  native separators and no zebra stripes, 48pt rows and 32pt tiles. Row height comes from the cell
   content (`macBoardTableCell`), never from the table's `rowHeight` or `style`: SwiftUI resets
   both on updates, and restyling it back redraws the whole table on every click.
 - The share inspector follows the file inspector's kit, by the owner's choice: the file's own
@@ -88,7 +88,28 @@ with blue selection is not possible natively.
   way to the loaded form, a form giving way to its result) stays instant: faded, the taller state
   draws clipped inside the old window until it snaps. Swaps inside a box of fixed height (the
   destination picker, folder browsers) crossfade in place in a `ZStack`, never stacked.
+- Text size: macOS gives apps no Dynamic Type (`dynamicTypeSize`, `Font.custom(relativeTo:)` and
+  `@ScaledMetric` all render the same on the Mac), so the design system owns one scale, the
+  `macTextScale` environment value, clamped to 1 through 1.4. `.type()` reads it on the Mac; text of
+  32pt or more stops growing at 32pt so titles do not take over a pane. The app sets no scale and offers
+  no setting today; the design system is ready for one.
+- Controls that hold text take their height from one ladder, `MacControlHeight` (22, 28, 32, 36, 40,
+  44, 48 and the 52pt form row), as a minimum that grows with the text scale (`macMinHeight`), never as
+  a fixed `frame(height:)` that would clip larger text. Glyphs beside text scale with it (`macSquare`).
+- Mac colour tokens carry Increase Contrast variants (`MacLine`, `MacChromeSecondary`,
+  `MacChromeTertiary`, the `MacTag*` text colours), so field and group edges reach 3:1 and secondary
+  text gets darker when the system asks for more contrast. Tertiary text is its own colour that keeps
+  4.5:1 on chrome, card and row surfaces; the dimmer 60% tone is only for disabled text
+  (`TextStyle.disabled`).
+- A focused field's border is drawn in `accentText`, which keeps 3:1 on the white card in light mode
+  where the brand accent does not; the soft halo around it stays in the accent.
+- A list row that selects on click and opens on double click uses `macSelectable`, which also makes it
+  reachable with Full Keyboard Access (Space selects, Return opens) and gives VoiceOver the same two
+  actions.
+- Dialog forms lay out `MacFormSheetRow`s (label column, controls stacked beside it, notes as
+  `MacControlNote`) inside `MacFormSheet`'s columns form; Settings panes keep `MacFormRow` in grouped
+  rows. Both live in the design system.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
 `MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`, `MacFormControls`,
-`MacFormLayout`, `MacSwitchToggleStyle`, `MacSegmentedPicker`, `MacAlertSheet`.
+`MacFormLayout`, `MacSwitchToggleStyle`, `MacSegmentedPicker`, `MacAlertSheet`, `MacScale`.

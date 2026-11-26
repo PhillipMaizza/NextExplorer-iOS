@@ -50,7 +50,7 @@
             MacFormRow {
                 HStack(spacing: .space12) {
                     MacItemIcon(name: usage.displayName, isDirectory: usage.root.isDirectory)
-                    MacRowTitle(title: usage.displayName, subtitle: Self.location(of: usage))
+                    MacFormRowTitle(title: usage.displayName, subtitle: Self.location(of: usage))
                 }
             } control: {
                 HStack(spacing: .space16) {

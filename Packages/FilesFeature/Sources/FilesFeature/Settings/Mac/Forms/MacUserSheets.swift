@@ -20,7 +20,7 @@
                 onCancel: { store.send(.createSheetDismissed) },
                 onConfirm: { store.send(.createSubmitTapped) }
             ) {
-                MacSettingsRow(L10n.UserManagement.createEmailField) {
+                MacFormSheetRow(L10n.UserManagement.createEmailField) {
                     MacTextField(
                         L10n.UserManagement.createEmailField,
                         text: field(\.email, UserManagementFeature.Action.createEmailChanged),
@@ -30,7 +30,7 @@
                     .autocorrectionDisabled()
                     MacFieldError(message: sheet?.emailError)
                 }
-                MacSettingsRow(L10n.UserManagement.createUsernameField) {
+                MacFormSheetRow(L10n.UserManagement.createUsernameField) {
                     MacTextField(
                         L10n.UserManagement.createUsernameField,
                         text: field(\.username, UserManagementFeature.Action.createUsernameChanged),
@@ -38,7 +38,7 @@
                     )
                     .autocorrectionDisabled()
                 }
-                MacSettingsRow(L10n.Common.password) {
+                MacFormSheetRow(L10n.Common.password) {
                     MacSecureField(
                         L10n.Common.password,
                         text: field(\.password, UserManagementFeature.Action.createPasswordChanged),
@@ -93,7 +93,7 @@
                 onCancel: { store.send(.passwordSheetDismissed) },
                 onConfirm: { store.send(.passwordSubmitTapped) }
             ) {
-                MacSettingsRow(L10n.UserManagement.setPasswordNewField) {
+                MacFormSheetRow(L10n.UserManagement.setPasswordNewField) {
                     MacSecureField(L10n.UserManagement.setPasswordNewField, text: Binding(
                         get: { store.passwordSheet?.password ?? "" },
                         set: { store.send(.passwordFieldChanged($0)) }
@@ -126,7 +126,7 @@
                 onConfirm: { store.send(.submitTapped) }
             ) {
                 if store.mode == .change {
-                    MacSettingsRow(L10n.ChangePassword.fieldCurrentPassword) {
+                    MacFormSheetRow(L10n.ChangePassword.fieldCurrentPassword) {
                         MacSecureField(
                             L10n.ChangePassword.fieldCurrentPassword,
                             text: $store.currentPassword.sending(\.currentPasswordChanged)
@@ -134,7 +134,7 @@
                         .textContentType(.password)
                     }
                 }
-                MacSettingsRow(L10n.ChangePassword.fieldNewPasswordLabel) {
+                MacFormSheetRow(L10n.ChangePassword.fieldNewPasswordLabel) {
                     MacSecureField(
                         L10n.ChangePassword.fieldNewPasswordLabel,
                         text: $store.newPassword.sending(\.newPasswordChanged),
@@ -143,7 +143,7 @@
                     .textContentType(.newPassword)
                     MacFieldError(message: newPasswordError)
                 }
-                MacSettingsRow(L10n.ChangePassword.fieldConfirmPasswordLabel) {
+                MacFormSheetRow(L10n.ChangePassword.fieldConfirmPasswordLabel) {
                     MacSecureField(
                         L10n.ChangePassword.fieldConfirmPasswordLabel,
                         text: $store.confirmPassword.sending(\.confirmPasswordChanged),

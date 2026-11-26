@@ -97,7 +97,7 @@ struct NameInputSheet: View {
                 onCancel: onCancel,
                 onConfirm: submit
             ) {
-                MacSettingsRow(L10n.Browse.renameNamePlaceholder) {
+                MacFormSheetRow(L10n.Browse.renameNamePlaceholder) {
                     MacTextField(placeholder, text: $name, prompt: placeholder, isInvalid: validationError != nil)
                         .focused($isFieldFocused)
                         .autocorrectionDisabled()

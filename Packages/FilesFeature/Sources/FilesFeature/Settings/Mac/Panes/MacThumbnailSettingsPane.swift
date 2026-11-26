@@ -43,7 +43,10 @@
                 )
                 Group {
                     MacFormRow {
-                        MacRowTitle(title: L10n.ThumbnailSettings.quality, subtitle: L10n.ThumbnailSettings.qualityHelp)
+                        MacFormRowTitle(
+                            title: L10n.ThumbnailSettings.quality,
+                            subtitle: L10n.ThumbnailSettings.qualityHelp
+                        )
                     } control: {
                         HStack(spacing: .space12) {
                             MacSlider(
