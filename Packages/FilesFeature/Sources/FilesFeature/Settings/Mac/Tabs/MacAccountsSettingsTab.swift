@@ -106,7 +106,7 @@
         var body: some View {
             MacFormRow {
                 HStack(spacing: .space12) {
-                    AvatarView(displayName: account.displayName, size: Metrics.avatarSize)
+                    AvatarView.person(account.displayName, size: Metrics.avatarSize)
                     VStack(alignment: .leading, spacing: .space2) {
                         Text(account.displayName)
                             .type(.body2(.semibold))

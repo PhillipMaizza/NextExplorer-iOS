@@ -112,7 +112,7 @@
 
         private var header: some View {
             HStack(alignment: .center, spacing: .space12) {
-                AvatarView(displayName: store.activeAccount.displayName, size: Metrics.headerAvatar)
+                AvatarView.person(store.activeAccount.displayName, size: Metrics.headerAvatar)
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(store.activeAccount.displayName)
                         .type(.body1(.bold))
@@ -213,7 +213,7 @@
                 }
             } label: {
                 HStack(spacing: .space12) {
-                    AvatarView(displayName: account.displayName, size: Metrics.rowAvatar)
+                    AvatarView.person(account.displayName, size: Metrics.rowAvatar)
                     VStack(alignment: .leading, spacing: .zero) {
                         Text(account.displayName)
                             .type(.body2(.semibold))

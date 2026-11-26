@@ -200,7 +200,7 @@
         let size: CGFloat
 
         var body: some View {
-            AvatarView(displayName: name, size: size)
+            AvatarView.person(name, size: size)
                 .overlay(alignment: .bottomTrailing) {
                     IconKit.lock
                         .resizable()

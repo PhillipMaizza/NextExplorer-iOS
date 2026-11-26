@@ -107,7 +107,7 @@
         var body: some View {
             Button(action: action) {
                 HStack(spacing: .space12) {
-                    AvatarView(displayName: account.displayName, size: Constants.accountAvatarSize)
+                    AvatarView.person(account.displayName, size: Constants.accountAvatarSize)
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: .zero) {
                         Text(account.displayName)

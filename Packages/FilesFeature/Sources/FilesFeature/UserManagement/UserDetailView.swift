@@ -101,7 +101,7 @@ struct UserDetailView: View {
 
     private func header(_ user: User) -> some View {
         HStack(spacing: Metrics.cardSpacing) {
-            AvatarView(displayName: user.displayLabel, size: Metrics.avatarSize)
+            AvatarView.person(user.displayLabel, size: Metrics.avatarSize)
             VStack(alignment: .leading, spacing: .space2) {
                 HStack(spacing: .space8) {
                     Text(user.displayLabel)

@@ -313,7 +313,7 @@ struct MainTabSidebar: View {
     #if os(iOS)
         private var profileSummary: some View {
             HStack(spacing: .space12) {
-                AvatarView(displayName: store.settings.activeAccount.displayName, size: Constants.avatarSize)
+                AvatarView.person(store.settings.activeAccount.displayName, size: Constants.avatarSize)
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(store.settings.activeAccount.displayName)
                         .type(Constants.profileNameType, style: .primaryOnSurface)

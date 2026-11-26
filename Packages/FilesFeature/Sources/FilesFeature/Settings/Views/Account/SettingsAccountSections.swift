@@ -61,7 +61,7 @@ struct SettingsAccountsSection: View {
             withAnimation(DSMotion.disclosure) { isActiveAccountExpanded.toggle() }
         } label: {
             HStack(spacing: Constants.profileRowSpacing) {
-                AvatarView(displayName: account.displayName, size: Constants.avatarSize)
+                AvatarView.person(account.displayName, size: Constants.avatarSize)
 
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(account.displayName).type(.body2(.bold), style: .primaryOnSurface)
@@ -99,7 +99,7 @@ struct SettingsAccountsSection: View {
             store.send(.switchAccountTapped(account.id))
         } label: {
             HStack(spacing: Constants.profileRowSpacing) {
-                AvatarView(displayName: account.displayName, size: Constants.avatarSize)
+                AvatarView.person(account.displayName, size: Constants.avatarSize)
                     .opacity(Constants.inactiveOpacity)
 
                 VStack(alignment: .leading, spacing: .space2) {
