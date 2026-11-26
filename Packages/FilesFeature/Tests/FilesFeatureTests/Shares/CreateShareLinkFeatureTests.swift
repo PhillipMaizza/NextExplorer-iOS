@@ -31,8 +31,8 @@ struct CreateShareLinkFeatureTests {
                 accessMode: .readonly, sharingType: target, hasPassword: false,
                 createdAt: now, updatedAt: now
             ),
-            shareUrl: URL(string: "\(TestHost.serverURLString)/share/TOK123")!,
-            directFileUrl: URL(string: "\(TestHost.serverURLString)/api/share/TOK123/file")!
+            shareUrl: URL(string: "http://proxy.internal/share/TOK123")!,
+            directFileUrl: URL(string: "http://proxy.internal/api/share/TOK123/file")!
         )
     }
 
@@ -257,6 +257,13 @@ struct CreateShareLinkFeatureTests {
         let store = TestStore(initialState: state) { CreateShareLinkFeature() }
         #expect(!store.state.isCreateEnabled)
         await store.send(.createTapped)
+    }
+
+    @Test
+    func linksUseTheAccountServerRatherThanTheHostTheServerSawBehindAProxy() {
+        var state = makeState()
+        state.step = .created(makeCreated())
+        #expect(state.shareLink?.absoluteString == "\(TestHost.serverURLString)/share/TOK123")
     }
 
     @Test

@@ -175,14 +175,6 @@ public struct CreatedShare: Equatable, Sendable, Decodable {
         shareUrl = try container.decode(URL.self, forKey: .shareUrl)
         directFileUrl = try container.decode(URL.self, forKey: .directFileUrl)
     }
-
-    /// `directFileUrl` is the `auto` variant; other modes append `?mode=`.
-    public func directLink(mode: DirectLinkMode) -> URL {
-        guard mode != .auto else { return directFileUrl }
-        var components = URLComponents(url: directFileUrl, resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: "mode", value: mode.rawValue)]
-        return components?.url ?? directFileUrl
-    }
 }
 
 /// Body for `POST /api/shares`. `userIds` is only sent when `target == .users`; the server

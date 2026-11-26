@@ -87,8 +87,12 @@ public struct CreateShareLinkFeature {
             return true
         }
 
+        public var shareLink: URL? {
+            createdShare.flatMap { URL(string: $0.share.shareLink(serverURL: serverURL)) }
+        }
+
         public var directLink: URL? {
-            createdShare?.directLink(mode: directLinkMode)
+            createdShare.flatMap { URL(string: $0.share.directLink(serverURL: serverURL, mode: directLinkMode)) }
         }
     }
 

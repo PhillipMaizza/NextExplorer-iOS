@@ -204,8 +204,8 @@ struct CreateShareLinkSheet: View {
                     .fill(Color.positive.opacity(.opacityFaint)))
 
                 section(L10n.CreateShare.sectionShareLink) {
-                    copyRow(value: created.shareUrl.absoluteString, field: .shareLink) {
-                        copy(created.shareUrl.absoluteString, as: .shareLink)
+                    copyRow(value: (store.shareLink ?? created.shareUrl).absoluteString, field: .shareLink) {
+                        copy((store.shareLink ?? created.shareUrl).absoluteString, as: .shareLink)
                     }
                 }
 
