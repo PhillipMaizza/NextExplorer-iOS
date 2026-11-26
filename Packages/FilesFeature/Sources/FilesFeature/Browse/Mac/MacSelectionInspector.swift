@@ -89,14 +89,12 @@
             var actions: [MacInspectorQuickAction] = []
             if availability.canSave {
                 actions.append(MacInspectorQuickAction(
-                    id: .download,
                     icon: IconKit.menuDownload,
                     title: SaveActionStyle.title
                 ) { store.send(.bulkDownloadTapped) })
             }
             if availability.canFavorite {
                 actions.append(MacInspectorQuickAction(
-                    id: .favorite,
                     icon: availability.isAllFavorite ? IconKit.starFill : IconKit.star,
                     title: L10n.FileInfo.quickFavorite,
                     isOn: availability.isAllFavorite,

@@ -1,5 +1,4 @@
 #if os(macOS)
-    import DesignSystem
     import SwiftUI
 
     private enum Metrics {
@@ -9,24 +8,42 @@
         static let shadowOffset: CGFloat = 1
     }
 
-    enum MacPaneInset {
-        static let card: CGFloat = .space16
-        static let header: CGFloat = .size40
-        static let section: CGFloat = .space32
-        static let sectionHeader: CGFloat = .space8
-        static let listGap: CGFloat = .space16
+    public enum MacPaneInset {
+        public static let card: CGFloat = .space16
+        public static let header: CGFloat = .size40
+        public static let section: CGFloat = .space32
+        public static let sectionHeader: CGFloat = .space8
+        public static let listGap: CGFloat = .space16
     }
 
-    struct MacPaneHeader<Tools: View>: View {
-        let title: String
-        var subtitle: String?
-        var crumbs: [PathCrumb] = []
-        var onCrumbTapped: (PathCrumb) -> Void = { _ in }
-        var inset: CGFloat = MacPaneInset.header
-        var bottom: CGFloat = .zero
-        @ViewBuilder var tools: () -> Tools
+    public struct MacPaneHeader<Tools: View>: View {
+        private let title: String
+        private let subtitle: String?
+        private let crumbs: [PathCrumb]
+        private let onCrumbTapped: (PathCrumb) -> Void
+        private let inset: CGFloat
+        private let bottom: CGFloat
+        private let tools: () -> Tools
 
-        var body: some View {
+        public init(
+            title: String,
+            subtitle: String? = nil,
+            crumbs: [PathCrumb] = [],
+            onCrumbTapped: @escaping (PathCrumb) -> Void = { _ in },
+            inset: CGFloat = MacPaneInset.header,
+            bottom: CGFloat = .zero,
+            @ViewBuilder tools: @escaping () -> Tools
+        ) {
+            self.title = title
+            self.subtitle = subtitle
+            self.crumbs = crumbs
+            self.onCrumbTapped = onCrumbTapped
+            self.inset = inset
+            self.bottom = bottom
+            self.tools = tools
+        }
+
+        public var body: some View {
             HStack(spacing: .space16) {
                 VStack(alignment: .leading, spacing: .space8) {
                     if !crumbs.isEmpty {
@@ -52,7 +69,7 @@
         }
     }
 
-    extension MacPaneHeader where Tools == EmptyView {
+    public extension MacPaneHeader where Tools == EmptyView {
         init(
             title: String,
             subtitle: String? = nil,
@@ -72,18 +89,23 @@
         }
     }
 
-    struct MacPaneCrumbs: View {
-        let crumbs: [PathCrumb]
-        let onTap: (PathCrumb) -> Void
+    public struct MacPaneCrumbs: View {
+        private let crumbs: [PathCrumb]
+        private let onTap: (PathCrumb) -> Void
 
-        var body: some View {
+        public init(crumbs: [PathCrumb], onTap: @escaping (PathCrumb) -> Void) {
+            self.crumbs = crumbs
+            self.onTap = onTap
+        }
+
+        public var body: some View {
             HStack(spacing: .space4) {
                 ForEach(Array(crumbs.enumerated()), id: \.offset) { index, crumb in
                     if index > 0 {
                         IconKit.chevronRight
                             .resizable()
                             .scaledToFit()
-                            .frame(width: Metrics.crumbGlyph, height: Metrics.crumbGlyph)
+                            .macSquare(Metrics.crumbGlyph)
                             .accessibilityHidden(true)
                     }
                     if index == crumbs.count - 1 {
@@ -103,14 +125,14 @@
         }
     }
 
-    struct MacPaneCard<Content: View, Tools: View>: View {
-        let title: String?
-        let subtitle: String?
-        var reserve: CGFloat = .zero
-        @ViewBuilder let content: () -> Content
-        @ViewBuilder let tools: () -> Tools
+    public struct MacPaneCard<Content: View, Tools: View>: View {
+        private let title: String?
+        private let subtitle: String?
+        private let reserve: CGFloat
+        private let content: () -> Content
+        private let tools: () -> Tools
 
-        init(
+        public init(
             title: String?,
             subtitle: String?,
             reserve: CGFloat = .zero,
@@ -124,7 +146,7 @@
             self.tools = tools
         }
 
-        var body: some View {
+        public var body: some View {
             VStack(alignment: .leading, spacing: .zero) {
                 if let title {
                     MacPaneHeader(title: title, subtitle: subtitle, tools: tools)
@@ -143,7 +165,7 @@
         }
     }
 
-    extension MacPaneCard where Tools == EmptyView {
+    public extension MacPaneCard where Tools == EmptyView {
         init(
             title: String?,
             subtitle: String?,
@@ -154,25 +176,64 @@
         }
     }
 
+    public struct MacSplitCardShape: Shape {
+        public var reserve: CGFloat
+
+        public init(reserve: CGFloat) {
+            self.reserve = reserve
+        }
+
+        public var animatableData: CGFloat {
+            get { reserve }
+            set { reserve = newValue }
+        }
+
+        public func path(in rect: CGRect) -> Path {
+            let radius = CGFloat.radiusCard
+            var path = Path()
+            guard reserve > .zero else {
+                path.addRoundedRect(in: rect, cornerSize: CGSize(width: radius, height: radius), style: .continuous)
+                return path
+            }
+            let mainWidth = max(.zero, rect.width - reserve)
+            let side = rect.width - mainWidth - MacInspectorMetrics.gap
+            path.addRoundedRect(
+                in: CGRect(x: rect.minX, y: rect.minY, width: mainWidth, height: rect.height),
+                cornerSize: CGSize(width: radius, height: radius),
+                style: .continuous
+            )
+            if side > .zero {
+                path.addRoundedRect(
+                    in: CGRect(x: rect.maxX - side, y: rect.minY, width: side, height: rect.height),
+                    cornerSize: CGSize(width: radius, height: radius),
+                    style: .continuous
+                )
+            }
+            return path
+        }
+    }
+
     #Preview("Pane card") {
         MacPaneCard(title: "Thumbnails", subtitle: "Control how previews are generated.") {
             MacFormPage {
                 MacFormGroup("General") {
-                    MacSwitchRow("Show Hidden Files", isOn: .constant(true))
+                    MacFormRow("Show Hidden Files") { Toggle("Show Hidden Files", isOn: .constant(true)).labelsHidden()
+                    }
                 }
             }
         } tools: {
-            MacPaneSaveButton(title: "Save Changes", isSaving: false, isEnabled: true) {}
+            Button("Save Changes") {}.buttonStyle(.macDS(.primary))
         }
         .background(Color.macChrome)
         .previewCanvas(.settingsPane)
     }
 
-    #Preview("Pane card, no subtitle") {
-        MacPaneCard(title: "General", subtitle: nil) {
+    #Preview("Pane card, no subtitle, split") {
+        MacPaneCard(title: "General", subtitle: nil, reserve: MacInspectorMetrics.reserve) {
             MacFormPage {
                 MacFormGroup("General") {
-                    MacSwitchRow("Show Hidden Files", isOn: .constant(true))
+                    MacFormRow("Show Hidden Files") { Toggle("Show Hidden Files", isOn: .constant(true)).labelsHidden()
+                    }
                 }
             }
         }
@@ -188,15 +249,16 @@
         .background(Color.macCard)
     }
 
-    #Preview("Header with crumbs") {
+    #Preview("Header with crumbs, largest text") {
         MacPaneHeader(
             title: "Documents",
             subtitle: "1 folder, 13 files",
-            crumbs: FolderContentSummary.crumbs(for: "personal/Documents"),
+            crumbs: [PathCrumb(title: "Browse", path: ""), PathCrumb(title: "Documents", path: "Documents")],
             inset: MacPaneInset.sectionHeader,
             bottom: MacPaneInset.listGap
         )
         .frame(width: 700)
         .background(Color.macCard)
+        .macTextScale(MacTextScale.range.upperBound)
     }
 #endif

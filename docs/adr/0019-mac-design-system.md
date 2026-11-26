@@ -112,4 +112,4 @@ with blue selection is not possible natively.
 
 Code: `MacColors`, `Typography`, `MacButtonStyles`, `MacFields`, `MacChip`, `MacProgressRing`,
 `MacCard`, `MacDialog`, `MacGalleryView`, `MacSidebarRow`, `MacSettingsRoot`, `MacFormControls`,
-`MacFormLayout`, `MacSwitchToggleStyle`, `MacSegmentedPicker`, `MacAlertSheet`, `MacScale`.
+`MacFormLayout`, `MacSwitchToggleStyle`, `MacSegmentedPicker`, `MacAlertSheet`, `MacScale`, `MacPaneCard`, `MacInspectorKit`, `MacEmptyGuide`.

@@ -66,9 +66,8 @@ import SwiftUI
 
         private var quickActions: [MacInspectorQuickAction] {
             [
-                MacInspectorQuickAction(id: .open, icon: IconKit.openInApp, title: L10n.Browse.open, action: onOpen),
+                MacInspectorQuickAction(icon: IconKit.openInApp, title: L10n.Browse.open, action: onOpen),
                 MacInspectorQuickAction(
-                    id: .remove,
                     icon: IconKit.delete,
                     title: row.saved == nil ? L10n.Common.remove : L10n.Common.delete,
                     action: onRemove

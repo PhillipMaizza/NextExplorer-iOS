@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 @testable import FilesFeature
 import Foundation

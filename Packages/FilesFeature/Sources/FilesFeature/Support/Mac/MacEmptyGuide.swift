@@ -5,10 +5,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let tileIconRatio: CGFloat = 0.4375
-        static let tileTint: Double = .opacityWash
         static let bulletIconSize: CGFloat = .size16
-        static let bulletIconBaselineDrop: CGFloat = 5
         static let highlightTint: Double = .opacitySelection
         static let menuWidth: CGFloat = 220
     }
@@ -59,27 +56,6 @@
         }
     }
 
-    struct MacEmptyGuide<Art: View, Detail: View>: View {
-        let title: String
-        @ViewBuilder let art: () -> Art
-        @ViewBuilder let detail: () -> Detail
-
-        var body: some View {
-            HStack(spacing: .space48) {
-                art()
-                VStack(alignment: .leading, spacing: .space12) {
-                    Text(title)
-                        .type(.headline2)
-                        .foregroundStyle(Color.primaryDS)
-                    detail()
-                }
-                .fixedSize(horizontal: false, vertical: true)
-            }
-            .padding(.space40)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
-
     struct MacEmptyGuideMessage: View {
         enum Destination {
             case browse, sharedWithMe
@@ -111,45 +87,6 @@
             switch destination {
             case .browse: showBrowse
             case .sharedWithMe: showSharedWithMe
-            }
-        }
-    }
-
-    struct MacEmptyGuideTile: View {
-        let icon: Image
-        var size: CGFloat = .size96
-
-        var body: some View {
-            icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: size * Metrics.tileIconRatio, height: size * Metrics.tileIconRatio)
-                .foregroundStyle(Color.accentText)
-                .frame(width: size, height: size)
-                .background(
-                    Color.accent.opacity(Metrics.tileTint),
-                    in: RoundedRectangle(cornerRadius: size * .tileCornerRatio, style: .continuous)
-                )
-                .accessibilityHidden(true)
-        }
-    }
-
-    struct MacEmptyGuideBullet: View {
-        let icon: Image
-        let text: String
-
-        var body: some View {
-            HStack(alignment: .firstTextBaseline, spacing: .space8) {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Metrics.bulletIconSize, height: Metrics.bulletIconSize)
-                    .foregroundStyle(Color.secondaryDS)
-                    .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + Metrics.bulletIconBaselineDrop
-                    }
-                    .accessibilityHidden(true)
-                Text(text)
-                    .type(.body1(.regular), style: .secondary)
             }
         }
     }
