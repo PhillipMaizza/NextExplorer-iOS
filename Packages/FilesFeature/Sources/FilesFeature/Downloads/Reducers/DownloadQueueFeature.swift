@@ -122,6 +122,10 @@ public struct DownloadQueueFeature {
             jobs.contains { $0.status.isTerminal }
         }
 
+        var hasCompletedJobs: Bool {
+            jobs.contains { $0.status == .completed }
+        }
+
         var remainingCount: Int {
             jobs.filter { !$0.status.isTerminal }.count
         }
@@ -155,6 +159,7 @@ public struct DownloadQueueFeature {
         case retryTapped(id: UUID)
         case retryAllFailedTapped
         case clearFinishedTapped
+        case clearCompletedTapped
         case sheetPresented(Bool)
         case barTapped
         case delegate(Delegate)
@@ -311,6 +316,13 @@ public struct DownloadQueueFeature {
 
             case .clearFinishedTapped:
                 state.jobs.removeAll { $0.status.isTerminal }
+                if state.jobs.isEmpty {
+                    state.isSheetPresented = false
+                }
+                return .none
+
+            case .clearCompletedTapped:
+                state.jobs.removeAll { $0.status == .completed }
                 if state.jobs.isEmpty {
                     state.isSheetPresented = false
                 }

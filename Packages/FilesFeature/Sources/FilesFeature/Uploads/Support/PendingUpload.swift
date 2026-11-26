@@ -26,11 +26,13 @@ public struct PendingUpload: Equatable, Sendable, Identifiable {
     public let fileURL: URL
     public let fileName: String
     public let destination: String
+    public let size: Int64?
 
-    public init(id: UUID = UUID(), fileURL: URL, fileName: String, destination: String) {
+    public init(id: UUID = UUID(), fileURL: URL, fileName: String, destination: String, size: Int64? = nil) {
         self.id = id
         self.fileURL = fileURL
         self.fileName = fileName
         self.destination = destination
+        self.size = size
     }
 }

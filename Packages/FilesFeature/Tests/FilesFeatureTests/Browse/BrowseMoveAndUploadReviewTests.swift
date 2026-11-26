@@ -280,13 +280,15 @@ struct BrowseMoveAndUploadReviewTests {
                 id: UUID(0),
                 fileURL: URL(fileURLWithPath: "/tmp/a.jpg"),
                 fileName: TestFile.aPhoto,
-                destination: "Documents/Trips"
+                destination: "Documents/Trips",
+                size: files[0].size
             ),
             PendingUpload(
                 id: UUID(1),
                 fileURL: URL(fileURLWithPath: "/tmp/b.txt"),
                 fileName: TestFile.bText,
-                destination: "Documents/Trips"
+                destination: "Documents/Trips",
+                size: files[1].size
             ),
         ])))
     }

@@ -352,6 +352,16 @@ struct DownloadQueueFeatureTests {
     }
 
     @Test
+    func clearCompletedKeepsFailedDownloads() async {
+        var state = DownloadQueueFeature.State(serverURL: serverURL)
+        let failed = Job(id: UUID(1), item: file("b.mkv"), status: .failed("boom"))
+        state.jobs = [Job(id: UUID(0), item: file("a.mkv"), status: .completed), failed]
+        let store = makeStore(state)
+
+        await store.send(.clearCompletedTapped) { $0.jobs = [failed] }
+    }
+
+    @Test
     func cancelAllAfterSomeSavedReportsThemButClearingAFinishedQueueDoesNot() async {
         var state = DownloadQueueFeature.State(serverURL: serverURL)
         state.jobs = [

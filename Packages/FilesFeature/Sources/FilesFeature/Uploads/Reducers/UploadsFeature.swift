@@ -41,6 +41,7 @@ public struct UploadsFeature {
         /// "uploading" implausibly long across a background/resume so it can be restarted.
         public var startedAt: Date?
         public var fractionPerSecond: Double?
+        public var size: Int64?
         /// Whether the last failure was a transport one (offline, network) that a foreground retry can
         /// fix. Server rejections, local errors and a timeout (the server may have stored the file, so
         /// a retry could duplicate it) never are: those wait for a manual retry.
@@ -100,6 +101,10 @@ public struct UploadsFeature {
             jobs.contains { $0.status.isTerminal }
         }
 
+        var hasCompletedJobs: Bool {
+            jobs.contains { $0.status == .completed }
+        }
+
         /// Files still waiting or in flight: the only count the bar shows, so it stays honest
         /// even when a second batch is enqueued before the first drains.
         var remainingCount: Int {
@@ -140,6 +145,7 @@ public struct UploadsFeature {
         case retryTapped(id: UUID)
         case retryAllFailedTapped
         case clearFinishedTapped
+        case clearCompletedTapped
         case sheetPresented(Bool)
         case barTapped
         case delegate(Delegate)
@@ -180,7 +186,7 @@ public struct UploadsFeature {
                 for item in pending {
                     state.jobs.append(UploadJob(
                         id: item.id, fileURL: item.fileURL, fileName: item.fileName,
-                        destination: item.destination, progress: 0, status: .queued
+                        destination: item.destination, progress: 0, status: .queued, size: item.size
                     ))
                 }
                 return .send(.startNextIfIdle)
@@ -310,12 +316,10 @@ public struct UploadsFeature {
                 return .send(.startNextIfIdle)
 
             case .clearFinishedTapped:
-                let stagedURLs = state.jobs.filter(\.status.isTerminal).map(\.fileURL)
-                state.jobs.removeAll { $0.status.isTerminal }
-                if state.jobs.isEmpty {
-                    state.isSheetPresented = false
-                }
-                return discard(stagedURLs)
+                return clear(&state) { $0.isTerminal }
+
+            case .clearCompletedTapped:
+                return clear(&state) { $0 == .completed }
 
             case let .sheetPresented(isPresented):
                 state.isSheetPresented = isPresented
@@ -333,6 +337,15 @@ public struct UploadsFeature {
 
     /// Best effort delete of staged temp files once their jobs finish or are removed. Binds the
     /// dependency locally so the `@Sendable` effect closure doesn't capture `self`.
+    private func clear(_ state: inout State, where shouldClear: (UploadJob.Status) -> Bool) -> Effect<Action> {
+        let stagedURLs = state.jobs.filter { shouldClear($0.status) }.map(\.fileURL)
+        state.jobs.removeAll { shouldClear($0.status) }
+        if state.jobs.isEmpty {
+            state.isSheetPresented = false
+        }
+        return discard(stagedURLs)
+    }
+
     private func discard(_ urls: [URL]) -> Effect<Action> {
         guard !urls.isEmpty else { return .none }
         let uploadStaging = uploadStaging
