@@ -96,7 +96,7 @@
     /// sign out remove them, but outside the folders its eviction trims, so a file another app
     /// has open is never deleted under it.
     enum MacOpenWithCopy {
-        static let directoryName = "open-with"
+        static let directoryName = CacheLayout.openWithDirectoryName
 
         static func make(from source: URL, named name: String) async throws -> URL {
             try await Task.detached(priority: .userInitiated) {
@@ -108,10 +108,13 @@
                     create: true
                 )
                 let root = caches
-                    .appendingPathComponent("PreviewCache", isDirectory: true)
+                    .appendingPathComponent(CacheLayout.previewCacheName, isDirectory: true)
                     .appendingPathComponent(directoryName, isDirectory: true)
                 removeStaleCopies(in: root, now: Date())
-                let folder = root.appendingPathComponent(UUID().uuidString, isDirectory: true)
+                let folder = root.appendingPathComponent(
+                    CacheAccountScope.scopedFileName(UUID().uuidString),
+                    isDirectory: true
+                )
                 try fileManager.createDirectory(at: folder, withIntermediateDirectories: true)
                 let copy = folder.appendingPathComponent(SafeFileName.component(name))
                 try fileManager.copyItem(at: source, to: copy)

@@ -17,6 +17,7 @@ public enum CacheLayout {
     public static let thumbnailsDirectoryName = "thumbnails"
     public static let thumbnailURLsDirectoryName = "thumbnail-urls"
     public static let pdfThumbnailsDirectoryName = "pdf-thumbnails"
+    public static let openWithDirectoryName = "open-with"
     public static let flatScopedDirectories = [
         thumbnailsDirectoryName,
         thumbnailURLsDirectoryName,

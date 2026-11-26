@@ -29,6 +29,7 @@ enum AudioArtwork {
             // about the file, so nothing is remembered.
             return nil
         }
+        guard !Task.isCancelled else { return read }
         guard let image = read else {
             ThumbnailMisses.insert(key)
             return nil
