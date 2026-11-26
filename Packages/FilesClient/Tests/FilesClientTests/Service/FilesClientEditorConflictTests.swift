@@ -306,7 +306,7 @@ extension FilesClientLiveTests {
         func editorETagsAreFiledUnderTheScopeTheOperationStartedIn() async throws {
             resetStubs()
             let store = TextEditorETagStore()
-            let scopeBox = ScopeBox("scope-a")
+            let scopeBox = LockIsolated("scope-a")
             let client = FilesClient.live(
                 networkClient: .live(protocolClasses: [StubURLProtocol.self]),
                 directoryCacheStore: .testValue,
@@ -328,19 +328,5 @@ extension FilesClientLiveTests {
             #expect(store.etag(for: keyA) == nil)
             resetStubs()
         }
-    }
-}
-
-private final class ScopeBox: @unchecked Sendable {
-    private let lock = NSLock()
-    private var scope: String
-
-    init(_ scope: String) {
-        self.scope = scope
-    }
-
-    var value: String {
-        get { lock.withLock { scope } }
-        set { lock.withLock { scope = newValue } }
     }
 }

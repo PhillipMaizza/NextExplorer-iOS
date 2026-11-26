@@ -29,21 +29,6 @@ extension AppSuites {
         private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, TestUser.bob)
         private let recorder = WipeRecorder()
 
-        private func listing() -> BrowseResult {
-            BrowseResult(
-                items: [],
-                access: FileAccess(
-                    canRead: true,
-                    canWrite: false,
-                    canUpload: false,
-                    canDelete: false,
-                    canShare: false,
-                    canDownload: true
-                ),
-                path: Fixture.path
-            )
-        }
-
         private func activeState(_ serverURL: URL, _ user: User) -> AppFeature.State {
             AppFeature.State(destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user)))
         }
@@ -74,17 +59,6 @@ extension AppSuites {
                 $0.continuousClock = clock
                 configure(&$0)
             }
-        }
-
-        private func optimistic(_ serverURL: URL, username: String) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(
-                serverURL: serverURL,
-                user: User(id: "", username: username, email: nil)
-            ))
-        }
-
-        private func confirmed(_ serverURL: URL, _ user: User) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
         }
 
         // MARK: Stale signals
@@ -324,7 +298,7 @@ extension AppSuites {
             await store.receive(\.sessionExpiryConfirmed)
             await store.receive(\.activeAccountTornDown)
             await store.receive(\.activateAccount) {
-                $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
@@ -334,14 +308,14 @@ extension AppSuites {
             }
 
             directory.bound(to: AppFixtures.accountA).write(
-                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil,
+                serverURL: AppFixtures.serverA, path: Fixture.path, result: AppFixtures.readOnlyListing(), etag: nil,
                 fetchedAt: MockDate.date
             )
             secondPass.open()
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
             await store.receive(\.accountsRefreshed)
             await store.finish()
@@ -373,7 +347,7 @@ extension AppSuites {
             pending.add(AppFixtures.accountA)
             let directory = DirectoryCacheStore.inMemory()
             directory.bound(to: AppFixtures.accountA).write(
-                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil,
+                serverURL: AppFixtures.serverA, path: Fixture.path, result: AppFixtures.readOnlyListing(), etag: nil,
                 fetchedAt: MockDate.date
             )
             let confirmation = AsyncGate()
@@ -397,7 +371,7 @@ extension AppSuites {
 
             await store.send(.activateAccount(credentialsA)) {
                 $0.$preferences.withLock { $0 = UserPreferences() }
-                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountB)
             await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
@@ -408,7 +382,7 @@ extension AppSuites {
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverA, AppFixtures.userA)
             }
             await store.receive(\.accountsRefreshed)
             await store.finish()
@@ -428,7 +402,7 @@ extension AppSuites {
             pending.add(AppFixtures.accountA)
             let directory = DirectoryCacheStore.inMemory()
             directory.bound(to: AppFixtures.accountA).write(
-                serverURL: AppFixtures.serverA, path: Fixture.path, result: listing(), etag: nil,
+                serverURL: AppFixtures.serverA, path: Fixture.path, result: AppFixtures.readOnlyListing(), etag: nil,
                 fetchedAt: MockDate.date
             )
             let confirmation = AsyncGate()
@@ -449,7 +423,7 @@ extension AppSuites {
             }
 
             await store.send(.sessionRestoreResponse(credentialsA)) {
-                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             accountList.open()
             await store.receive(\.accountsRefreshed) {
@@ -458,7 +432,7 @@ extension AppSuites {
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverA, AppFixtures.userA)
             }
             await store.receive(\.accountsRefreshed)
             await store.finish()
@@ -483,7 +457,7 @@ extension AppSuites {
             ))))) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
                 $0.didAuthenticateFromLogin = true
-                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverA, AppFixtures.userA)
             }
             await store.receive(\.accountsRefreshed)
             await store.finish()
@@ -497,7 +471,7 @@ extension AppSuites {
             pending.add(AppFixtures.accountB)
             let directory = DirectoryCacheStore.inMemory()
             directory.bound(to: AppFixtures.accountB).write(
-                serverURL: AppFixtures.serverB, path: Fixture.path, result: listing(), etag: nil,
+                serverURL: AppFixtures.serverB, path: Fixture.path, result: AppFixtures.readOnlyListing(), etag: nil,
                 fetchedAt: MockDate.date
             )
             var state = activeState(AppFixtures.serverA, AppFixtures.userA)
@@ -517,7 +491,7 @@ extension AppSuites {
             await store.send(.addAccountSheetDismissed) {
                 $0.pendingAddedAccount = nil
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)

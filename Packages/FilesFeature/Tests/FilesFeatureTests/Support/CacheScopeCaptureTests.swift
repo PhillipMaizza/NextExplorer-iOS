@@ -20,21 +20,7 @@ struct CacheScopeCaptureTests {
         static let path = TestFolder.docs
     }
 
-    private final class ScopeBox: @unchecked Sendable {
-        private let lock = NSLock()
-        private var scope: String
-
-        init(_ scope: String) {
-            self.scope = scope
-        }
-
-        var value: String {
-            get { lock.withLock { scope } }
-            set { lock.withLock { scope = newValue } }
-        }
-    }
-
-    private func scopeSource(_ box: ScopeBox) -> CacheScopeSource {
+    private func scopeSource(_ box: LockIsolated<String>) -> CacheScopeSource {
         CacheScopeSource(current: { box.value })
     }
 
@@ -47,7 +33,7 @@ struct CacheScopeCaptureTests {
 
     @Test
     func preferencesAnsweredAfterAnAccountSwitchNeverReachTheNextAccount() async {
-        let box = ScopeBox(Fixture.accountA)
+        let box = LockIsolated(Fixture.accountA)
         let answer = AsyncGate()
         let state = SettingsFeature.State(serverURL: Fixture.server, user: User.janeDoeFixture)
         state.$preferences.withLock { $0 = UserPreferences() }
@@ -62,7 +48,7 @@ struct CacheScopeCaptureTests {
         }
 
         await store.send(.loadPreferences)
-        box.value = Fixture.accountB
+        box.setValue(Fixture.accountB)
         answer.open()
         await store.finish()
 
@@ -71,7 +57,7 @@ struct CacheScopeCaptureTests {
 
     @Test
     func aFolderSortSavedAfterAnAccountSwitchNeverReachesTheNextAccount() async {
-        let box = ScopeBox(Fixture.accountA)
+        let box = LockIsolated(Fixture.accountA)
         let answer = AsyncGate()
         let sort = FolderSort(field: BrowseFeature.SortOption.size.rawValue, isAscending: false)
         let echoed = FolderSort(field: BrowseFeature.SortOption.name.rawValue, isAscending: true)
@@ -92,7 +78,7 @@ struct CacheScopeCaptureTests {
         await store.send(.sortChanged(.size, .descending)) {
             $0.$preferences.withLock { $0.setFolderSort(sort, for: Fixture.path) }
         }
-        box.value = Fixture.accountB
+        box.setValue(Fixture.accountB)
         answer.open()
         await store.finish()
 
@@ -101,7 +87,7 @@ struct CacheScopeCaptureTests {
 
     @Test
     func aFavoritesResponseAfterAnAccountSwitchIsSavedUnderTheAccountThatAsked() async {
-        let box = ScopeBox(Fixture.accountA)
+        let box = LockIsolated(Fixture.accountA)
         let jsonStore = JSONCacheStore.inMemory()
         let state = withDependencies { $0.cacheScope = scopeSource(box) } operation: {
             FavoritesFeature.State(serverURL: Fixture.server)
@@ -114,7 +100,7 @@ struct CacheScopeCaptureTests {
             $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.offline }
         }
 
-        box.value = Fixture.accountB
+        box.setValue(Fixture.accountB)
         await store.send(.favoritesResponse(.success([favorite()]))) {
             $0.phase = .loaded
             $0.favorites = [favorite()]
@@ -128,7 +114,7 @@ struct CacheScopeCaptureTests {
 
     @Test
     func aSharesResponseAfterAnAccountSwitchIsSavedUnderTheAccountThatAsked() async {
-        let box = ScopeBox(Fixture.accountA)
+        let box = LockIsolated(Fixture.accountA)
         let jsonStore = JSONCacheStore.inMemory()
         let state = withDependencies { $0.cacheScope = scopeSource(box) } operation: {
             SharedFeature.State(serverURL: Fixture.server)
@@ -140,7 +126,7 @@ struct CacheScopeCaptureTests {
             $0.cacheScope = scopeSource(box)
         }
 
-        box.value = Fixture.accountB
+        box.setValue(Fixture.accountB)
         await store.send(.sharesResponse(.byMe, .success([]))) {
             $0.phases[.byMe] = .loaded
             $0.dataSources[.byMe] = .live
@@ -153,7 +139,7 @@ struct CacheScopeCaptureTests {
 
     @Test
     func aListingSyncAfterAnAccountSwitchIsWrittenUnderTheAccountThatAsked() {
-        let box = ScopeBox(Fixture.accountA)
+        let box = LockIsolated(Fixture.accountA)
         let directoryStore = DirectoryCacheStore.inMemory()
         var state = withDependencies { $0.cacheScope = scopeSource(box) } operation: {
             BrowseFeature.State(serverURL: Fixture.server, directoryPath: Fixture.path, title: Fixture.path)
@@ -167,7 +153,7 @@ struct CacheScopeCaptureTests {
             canDownload: true
         )
 
-        box.value = Fixture.accountB
+        box.setValue(Fixture.accountB)
         withDependencies {
             $0.directoryCacheStore = directoryStore
             $0.date = .constant(Fixture.timestamp)

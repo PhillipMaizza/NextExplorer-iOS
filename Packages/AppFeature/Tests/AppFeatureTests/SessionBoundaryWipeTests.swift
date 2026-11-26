@@ -37,17 +37,6 @@ extension AppSuites {
             AppFeature.State(destination: .authenticated(.init(serverURL: serverURL, user: user)))
         }
 
-        private func optimistic(_ serverURL: URL, username: String) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(
-                serverURL: serverURL,
-                user: User(id: "", username: username, email: nil)
-            ))
-        }
-
-        private func confirmed(_ serverURL: URL, _ user: User) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-        }
-
         /// Switches to `next` while `me` and the account list are held, so the strict store sees the remount,
         /// then the refreshed list, then the confirmation, in that order.
         private func switchToAccount(
@@ -62,7 +51,7 @@ extension AppSuites {
         ) async {
             await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(next)))))
             await store.receive(\.activateAccount) {
-                $0.destination = optimistic(serverURL, username: next.username ?? "")
+                $0.destination = AppFixtures.optimistic(serverURL, username: next.username ?? "")
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, leaving)
             await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
@@ -71,7 +60,7 @@ extension AppSuites {
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
                 $0.$downloadScope.withLock { $0 = downloadScope }
-                $0.destination = confirmed(serverURL, user)
+                $0.destination = AppFixtures.confirmed(serverURL, user)
             }
             await store.receive(\.accountsRefreshed)
         }
@@ -98,7 +87,7 @@ extension AppSuites {
             ))))) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
                 $0.didAuthenticateFromLogin = true
-                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverA, AppFixtures.userA)
             }
             await store.receive(\.accountsRefreshed)
             await store.finish()

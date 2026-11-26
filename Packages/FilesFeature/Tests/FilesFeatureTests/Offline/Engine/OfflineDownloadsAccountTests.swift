@@ -16,20 +16,6 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
         return ("\(TestHost.serverURLString)|alice-\(id)", "\(TestHost.serverURLString)|bob-\(id)")
     }
 
-    private final class ScopeBox: @unchecked Sendable {
-        private let lock = NSLock()
-        private var scope: String
-
-        init(_ scope: String) {
-            self.scope = scope
-        }
-
-        var value: String {
-            get { lock.withLock { scope } }
-            set { lock.withLock { scope = newValue } }
-        }
-    }
-
     /// A store whose every call records the scope it ran under.
     private func recordingStore(
         seen: LockIsolated<Set<String>>, base: OfflineFileStore
@@ -47,7 +33,7 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
         return store
     }
 
-    private func scopedState(_ box: ScopeBox) -> State {
+    private func scopedState(_ box: LockIsolated<String>) -> State {
         withDependencies {
             $0.cacheScope = CacheScopeSource(current: { box.value })
         } operation: {
@@ -55,7 +41,7 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
         }
     }
 
-    private func scopedRun(box: ScopeBox, seen: LockIsolated<Set<String>>, base: OfflineFileStore) -> Run {
+    private func scopedRun(box: LockIsolated<String>, seen: LockIsolated<Set<String>>, base: OfflineFileStore) -> Run {
         makeRun(
             scopedState(box),
             offline: recordingStore(seen: seen, base: base),
@@ -74,10 +60,10 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
     @Test
     func aSyncStartedForOneAccountKeepsUsingItAfterTheActiveAccountChanges() async {
         let (accountA, accountB) = accounts()
-        let box = ScopeBox(accountA)
+        let box = LockIsolated(accountA)
         let seen = LockIsolated<Set<String>>([])
         let run = scopedRun(box: box, seen: seen, base: pinnedStore(["A"]))
-        box.value = accountB
+        box.setValue(accountB)
 
         await run.store.send(.resyncTapped).finish()
 
@@ -88,10 +74,10 @@ struct OfflineDownloadsAccountTests: OfflineDownloadsTestSupport {
     @Test
     func aDownloadStartedForOneAccountKeepsUsingItAfterTheActiveAccountChanges() async {
         let (accountA, accountB) = accounts()
-        let box = ScopeBox(accountA)
+        let box = LockIsolated(accountA)
         let seen = LockIsolated<Set<String>>([])
         let run = scopedRun(box: box, seen: seen, base: .inMemory())
-        box.value = accountB
+        box.setValue(accountB)
 
         await run.store.send(.startDownload([folder("A")])).finish()
 

@@ -34,6 +34,10 @@ extension FilesClientLiveHarness {
         )
     }
 
+    func stub(statusCode: Int, body: String = "") {
+        stub(statusCode: statusCode, body: Data(body.utf8))
+    }
+
     func stub(statusCode: Int, body: Data, headers: [String: String]) {
         StubURLProtocol.failure = nil
         StubURLProtocol.stub = .init(statusCode: statusCode, headers: headers, body: body)
