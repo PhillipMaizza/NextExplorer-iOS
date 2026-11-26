@@ -62,7 +62,7 @@
                     Text(row.volume.name).type(.body3(.regular), style: .secondary)
                 }
                 if let usage = row.usage, isMeaningful {
-                    Text(usageCaption(usage))
+                    Text(usage.usedCaption)
                         .type(.headline1)
                         .monospacedDigit()
                     DSUsageBar(fraction: usage.fraction, height: Metrics.usageBarHeight)
@@ -70,13 +70,6 @@
                     MacSpinner()
                 }
             }
-        }
-
-        private func usageCaption(_ usage: StorageUsage) -> String {
-            L10n.Settings.serverStorageUsed(
-                FileSizeFormat.string(usage.used),
-                FileSizeFormat.string(usage.capacity)
-            )
         }
 
         private var cacheGroup: some View {

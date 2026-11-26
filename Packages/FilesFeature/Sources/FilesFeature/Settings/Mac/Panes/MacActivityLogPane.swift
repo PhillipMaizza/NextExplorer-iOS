@@ -117,9 +117,9 @@
         private var eventsTable: some View {
             VStack(alignment: .leading, spacing: .zero) {
                 if !store.isLogEnabled, store.events.isEmpty {
-                    emptyLine(L10n.ActivityLog.off)
+                    MacTableEmptyLine(L10n.ActivityLog.off)
                 } else if store.events.isEmpty, store.phase == .loaded {
-                    emptyLine(L10n.ActivityLog.none)
+                    MacTableEmptyLine(L10n.ActivityLog.none)
                 } else {
                     ForEach(Array(store.events.enumerated()), id: \.element.id) { index, event in
                         MacActivityEventRow(event: event, isShaded: index.isMultiple(of: 2))
@@ -137,13 +137,6 @@
                 }
             }
             .macTableBleed()
-        }
-
-        private func emptyLine(_ text: String) -> some View {
-            Text(text)
-                .type(.body2(.regular), style: .secondary)
-                .padding(.horizontal, .space12)
-                .frame(height: MacTableMetrics.rowHeight)
         }
     }
 
