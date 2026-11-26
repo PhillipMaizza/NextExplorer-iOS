@@ -54,7 +54,8 @@
                         MacTransferStatus(
                             fileName: transfer.fileName,
                             timeLeft: transfer.timeLeft,
-                            fraction: transfer.fraction
+                            fraction: transfer.fraction,
+                            tint: transfer.hasFailures ? .accent : .positive
                         )
                         .padding(.top, .space8)
                     }
