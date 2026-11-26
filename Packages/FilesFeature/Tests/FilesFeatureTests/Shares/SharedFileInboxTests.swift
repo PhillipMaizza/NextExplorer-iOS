@@ -211,7 +211,13 @@ struct SharedFileInboxTests {
         await store.send(.receiveSharedFiles([scan]))
         await store.receive(\.directUploadStaged)
         await store.receive(.delegate(.uploadRequested([
-            PendingUpload(id: file.id, fileURL: file.fileURL, fileName: "Scan.pdf", destination: "Inbox/Scans"),
+            PendingUpload(
+                id: file.id,
+                fileURL: file.fileURL,
+                fileName: "Scan.pdf",
+                destination: "Inbox/Scans",
+                size: file.size
+            ),
         ])))
         #expect(store.state.uploadReview == nil)
     }

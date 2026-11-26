@@ -43,6 +43,31 @@ struct UploadsQueueTests: UploadsTestSupport {
     }
 
     @Test
+    func aQueuedFileKeepsItsSizeForTheList() async {
+        let store = makeStore(state())
+        let picked = pending(TestFile.aText, 0)
+        var queued = job(TestFile.aText, 0, .queued)
+        queued.size = TestFile.byteCount
+
+        await store.send(.enqueue([PendingUpload(
+            id: picked.id,
+            fileURL: picked.fileURL,
+            fileName: picked.fileName,
+            destination: picked.destination,
+            size: TestFile.byteCount
+        )])) {
+            $0.jobs = [queued]
+        }
+        await store.receive(\.startNextIfIdle) { markUploading(&$0, 0) }
+        await store.receive(\.uploadResponse) { markCompleted(&$0, 0) }
+        await store.receive(.delegate(.queueFinished(
+            summary(uploaded: 1, failed: 0, lastDestination: TestFolder.inbox, changedPaths: [TestFolder.inbox])
+        )))
+        await store.finish()
+        #expect(store.state.jobs[id: picked.id]?.size == TestFile.byteCount)
+    }
+
+    @Test
     func enqueueingNothingDoesNothing() async {
         let store = makeStore(state())
 

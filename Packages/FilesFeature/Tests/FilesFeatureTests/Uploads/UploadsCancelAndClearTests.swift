@@ -132,6 +132,17 @@ struct UploadsCancelAndClearTests: UploadsTestSupport {
     }
 
     @Test
+    func clearCompletedKeepsFailedJobsAndTheirFiles() async {
+        let failed = job(TestFile.bText, 1, .failed(TestAccount.rejectedPassword))
+        let store = makeStore(state([job(TestFile.aText, 0, .completed), failed], isSheetPresented: true))
+
+        await store.send(.clearCompletedTapped) { $0.jobs = [failed] }
+        await store.finish()
+        #expect(store.state.isSheetPresented)
+        #expect(discarded.value == [fileURL(TestFile.aText)])
+    }
+
+    @Test
     func clearKeepsJobsThatAreStillRunningAndTheSheetOpen() async {
         let running = job(TestFile.bText, 1, .uploading)
         let store = makeStore(state([job(TestFile.aText, 0, .completed), running], isSheetPresented: true))

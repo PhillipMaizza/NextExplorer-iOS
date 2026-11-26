@@ -65,7 +65,13 @@ extension BrowseFeature {
                 return .none
             }
             return .send(.delegate(.uploadRequested(files.map {
-                PendingUpload(id: $0.id, fileURL: $0.fileURL, fileName: $0.fileName, destination: destination)
+                PendingUpload(
+                    id: $0.id,
+                    fileURL: $0.fileURL,
+                    fileName: $0.fileName,
+                    destination: destination,
+                    size: $0.size
+                )
             })))
 
         case let .receiveSharedFiles(urls):
@@ -93,7 +99,13 @@ extension BrowseFeature {
             state.uploadReview = nil
             guard !files.isEmpty, !destination.isEmpty else { return .none }
             return .send(.delegate(.uploadRequested(files.map {
-                PendingUpload(id: $0.id, fileURL: $0.fileURL, fileName: $0.fileName, destination: destination)
+                PendingUpload(
+                    id: $0.id,
+                    fileURL: $0.fileURL,
+                    fileName: $0.fileName,
+                    destination: destination,
+                    size: $0.size
+                )
             })))
 
         case .uploadReview(.presented(.delegate(.cancelled))):

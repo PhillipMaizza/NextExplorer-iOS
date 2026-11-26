@@ -268,7 +268,8 @@ struct BrowseDropReducerTests {
                 id: UUID(0),
                 fileURL: URL(fileURLWithPath: "/tmp/a.jpg"),
                 fileName: TestFile.aPhoto,
-                destination: "Docs/Archive"
+                destination: "Docs/Archive",
+                size: stagedFile(TestFile.aPhoto).size
             ),
         ])))
     }
