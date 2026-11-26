@@ -56,6 +56,7 @@
 
         private func createdSheet(_ created: CreatedShare) -> some View {
             let directLink = store.directLink ?? created.directFileUrl
+            let shareLink = store.shareLink ?? created.shareUrl
             return MacFormSheet(
                 title: L10n.CreateShare.titleCreated,
                 confirmTitle: L10n.Common.done,
@@ -71,8 +72,8 @@
                 onConfirm: { dismiss() }
             ) {
                 HStack(spacing: .space8) {
-                    MacCopyBox(created.shareUrl.absoluteString, icon: IconKit.link, isProminent: true)
-                    ShareLink(item: created.shareUrl) { IconKit.share }
+                    MacCopyBox(shareLink.absoluteString, icon: IconKit.link, isProminent: true)
+                    ShareLink(item: shareLink) { IconKit.share }
                         .buttonStyle(.macDS(.secondary))
                         .accessibilityLabel(L10n.Common.share)
                 }

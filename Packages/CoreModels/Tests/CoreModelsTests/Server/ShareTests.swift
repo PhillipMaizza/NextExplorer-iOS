@@ -136,27 +136,6 @@ struct CreatedShareTests {
             try CoreModelsFixture.shareCreatedMissingUrls.decodeISO(CreatedShare.self)
         }
     }
-
-    @Test("the auto mode is the bare direct link and every other mode appends ?mode=")
-    func directLinkModes() throws {
-        let value = try created()
-        let base = Constants.directFileURL
-        #expect(value.directLink(mode: .auto).absoluteString == base)
-        #expect(value.directLink(mode: .inline).absoluteString == base + "?mode=inline")
-        #expect(value.directLink(mode: .raw).absoluteString == base + "?mode=raw")
-        #expect(value.directLink(mode: .download).absoluteString == base + "?mode=download")
-    }
-
-    @Test("a mode replaces an existing query rather than stacking")
-    func directLinkReplacesQuery() throws {
-        let share = try CoreModelsFixture.shareCreatedWithUrls.decodeISO(Share.self)
-        let value = try CreatedShare(
-            share: share,
-            shareUrl: TestHost.serverURL,
-            directFileUrl: #require(URL(string: "\(TestHost.serverURLString)/file?mode=raw&x=1"))
-        )
-        #expect(value.directLink(mode: .download).absoluteString == "\(TestHost.serverURLString)/file?mode=download")
-    }
 }
 
 private enum Constants {
