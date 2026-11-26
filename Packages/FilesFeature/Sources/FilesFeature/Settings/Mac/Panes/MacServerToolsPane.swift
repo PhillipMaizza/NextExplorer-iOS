@@ -70,7 +70,7 @@
             switch self {
             case .installed: .positive
             case .missing: .negative
-            case .notUsed: .tertiaryDS
+            case .notUsed: .tertiaryText
             }
         }
 

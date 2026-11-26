@@ -5,7 +5,7 @@
         static let chromeButtonOpacity: Double = 0.055
         static let chromeHoverOpacity: Double = 0.045
         static let hairlineShadowOpacity: Double = 0.06
-        static let tertiaryOpacity: Double = 0.6
+        static let disabledTextOpacity: Double = 0.6
     }
 
     enum MacOpacity {
@@ -48,7 +48,8 @@
         static let macTagGrayFill = Color("MacTagGrayFill", bundle: .module)
         static let macChromeButton = Color.macChromeText.opacity(Constants.chromeButtonOpacity)
         static let macChromeHover = Color.macChromeText.opacity(Constants.chromeHoverOpacity)
-        static let macChromeTertiary = Color.macChromeSecondary.opacity(Constants.tertiaryOpacity)
+        static let macChromeTertiary = Color("MacChromeTertiary", bundle: .module)
+        static let macChromeDisabled = Color.macChromeSecondary.opacity(Constants.disabledTextOpacity)
         static let macCardShadow = Color.black.opacity(Constants.hairlineShadowOpacity)
     }
 #endif
