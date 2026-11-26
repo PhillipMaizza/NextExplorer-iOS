@@ -990,6 +990,7 @@ activityLog.retentionInvalid	1 到 3650 天之间。
 activityLog.saveButton	保存更改
 activityLog.off	日志已关闭，没有记录任何内容。
 activityLog.none	尚未记录任何内容。
+activityLog.noMatches	没有符合这些筛选条件的内容。
 activityLog.filterAction	类型
 activityLog.anyAction	所有类型
 activityLog.filterOutcome	结果

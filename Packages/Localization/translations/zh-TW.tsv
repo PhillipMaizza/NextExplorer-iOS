@@ -990,6 +990,7 @@ activityLog.retentionInvalid	1 到 3650 天之間。
 activityLog.saveButton	儲存變更
 activityLog.off	記錄已關閉，沒有記錄任何內容。
 activityLog.none	尚未記錄任何內容。
+activityLog.noMatches	沒有符合這些篩選條件的內容。
 activityLog.filterAction	類型
 activityLog.anyAction	所有類型
 activityLog.filterOutcome	結果

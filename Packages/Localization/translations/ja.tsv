@@ -990,6 +990,7 @@ activityLog.retentionInvalid	1〜3650日の間で指定してください。
 activityLog.saveButton	変更を保存
 activityLog.off	ログがオフのため、何も記録されていません。
 activityLog.none	まだ何も記録されていません。
+activityLog.noMatches	このフィルタに一致するものはありません。
 activityLog.filterAction	種類
 activityLog.anyAction	すべての種類
 activityLog.filterOutcome	結果

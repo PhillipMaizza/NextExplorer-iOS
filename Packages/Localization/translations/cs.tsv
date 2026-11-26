@@ -419,6 +419,7 @@ activityLog.retentionInvalid	Od 1 do 3650 dnů.
 activityLog.saveButton	Uložit změny
 activityLog.off	Protokol je vypnutý, takže se nic nezaznamenává.
 activityLog.none	Zatím nic nezaznamenáno.
+activityLog.noMatches	Těmto filtrům nic neodpovídá.
 activityLog.filterAction	Druh
 activityLog.anyAction	Libovolný druh
 activityLog.filterOutcome	Výsledek

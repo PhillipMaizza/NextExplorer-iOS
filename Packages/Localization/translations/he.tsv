@@ -408,6 +408,7 @@ activityLog.retentionInvalid	בין 1 ל-3650 ימים.
 activityLog.saveButton	שמירת שינויים
 activityLog.off	היומן כבוי, ולכן דבר אינו מתועד.
 activityLog.none	עדיין לא תועד דבר.
+activityLog.noMatches	שום דבר לא תואם למסננים אלה.
 activityLog.filterAction	סוג
 activityLog.anyAction	כל סוג
 activityLog.filterOutcome	תוצאה

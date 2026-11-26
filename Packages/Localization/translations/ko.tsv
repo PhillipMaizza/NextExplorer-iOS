@@ -990,6 +990,7 @@ activityLog.retentionInvalid	1일에서 3650일 사이.
 activityLog.saveButton	변경 사항 저장
 activityLog.off	로그가 꺼져 있어 아무것도 기록되지 않습니다.
 activityLog.none	아직 기록된 항목이 없습니다.
+activityLog.noMatches	이 필터와 일치하는 항목이 없습니다.
 activityLog.filterAction	종류
 activityLog.anyAction	모든 종류
 activityLog.filterOutcome	결과

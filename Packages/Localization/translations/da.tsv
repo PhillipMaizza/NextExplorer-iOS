@@ -397,6 +397,7 @@ activityLog.retentionInvalid	Mellem 1 og 3650 dage.
 activityLog.saveButton	Gem ændringer
 activityLog.off	Loggen er slået fra, så intet registreres.
 activityLog.none	Intet registreret endnu.
+activityLog.noMatches	Intet matcher disse filtre.
 activityLog.filterAction	Art
 activityLog.anyAction	Enhver art
 activityLog.filterOutcome	Resultat

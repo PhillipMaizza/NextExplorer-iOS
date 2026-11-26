@@ -1008,6 +1008,7 @@ activityLog.retentionInvalid	1 से 3650 दिनों के बीच।
 activityLog.saveButton	बदलाव सहेजें
 activityLog.off	लॉग बंद है, कुछ भी दर्ज नहीं हो रहा।.
 activityLog.none	अभी तक कुछ दर्ज नहीं हुआ।.
+activityLog.noMatches	इन फ़िल्टर से कुछ भी मेल नहीं खाता।
 activityLog.filterAction	प्रकार
 activityLog.anyAction	कोई भी प्रकार
 activityLog.filterOutcome	परिणाम

@@ -1008,6 +1008,7 @@ activityLog.retentionInvalid	Mellan 1 och 3650 dagar.
 activityLog.saveButton	Spara ändringar
 activityLog.off	Loggen är av, ingenting registreras.
 activityLog.none	Ingenting registrerat ännu.
+activityLog.noMatches	Inget matchar dessa filter.
 activityLog.filterAction	Sort
 activityLog.anyAction	Alla sorter
 activityLog.filterOutcome	Resultat

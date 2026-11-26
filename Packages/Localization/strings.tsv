@@ -465,6 +465,7 @@ activityLog.retentionInvalid	Between 1 and 3650 days.
 activityLog.saveButton	Save Changes
 activityLog.off	The log is off, so nothing is being recorded.
 activityLog.none	Nothing recorded yet.
+activityLog.noMatches	Nothing matches these filters.
 activityLog.filterAction	Kind
 activityLog.anyAction	Any kind
 activityLog.filterOutcome	Outcome

@@ -1044,6 +1044,7 @@ activityLog.retentionInvalid	От 1 до 3650 дней.
 activityLog.saveButton	Сохранить изменения
 activityLog.off	Журнал выключен, ничего не записывается.
 activityLog.none	Пока ничего не записано.
+activityLog.noMatches	Ничего не подходит под эти фильтры.
 activityLog.filterAction	Тип
 activityLog.anyAction	Любой тип
 activityLog.filterOutcome	Результат

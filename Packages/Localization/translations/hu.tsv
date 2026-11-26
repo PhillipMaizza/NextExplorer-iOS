@@ -397,6 +397,7 @@ activityLog.retentionInvalid	1 és 3650 nap között.
 activityLog.saveButton	Módosítások mentése
 activityLog.off	A napló ki van kapcsolva, ezért semmi sincs rögzítve.
 activityLog.none	Még nincs semmi rögzítve.
+activityLog.noMatches	Semmi sem felel meg ezeknek a szűrőknek.
 activityLog.filterAction	Fajta
 activityLog.anyAction	Bármilyen fajta
 activityLog.filterOutcome	Eredmény

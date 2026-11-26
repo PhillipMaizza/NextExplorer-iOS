@@ -1008,6 +1008,7 @@ activityLog.retentionInvalid	Entre 1 et 3650 jours.
 activityLog.saveButton	Enregistrer les modifications
 activityLog.off	Le journal est désactivé : rien n’est enregistré.
 activityLog.none	Rien d’enregistré pour l’instant.
+activityLog.noMatches	Rien ne correspond à ces filtres.
 activityLog.filterAction	Type
 activityLog.anyAction	Tous les types
 activityLog.filterOutcome	Résultat

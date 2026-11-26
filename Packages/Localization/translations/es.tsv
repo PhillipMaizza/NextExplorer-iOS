@@ -1008,6 +1008,7 @@ activityLog.retentionInvalid	Entre 1 y 3650 días.
 activityLog.saveButton	Guardar cambios
 activityLog.off	El registro está desactivado: no se anota nada.
 activityLog.none	Todavía no hay nada registrado.
+activityLog.noMatches	Nada coincide con estos filtros.
 activityLog.filterAction	Tipo
 activityLog.anyAction	Cualquier tipo
 activityLog.filterOutcome	Resultado

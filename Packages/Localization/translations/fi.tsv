@@ -397,6 +397,7 @@ activityLog.retentionInvalid	1–3650 päivää.
 activityLog.saveButton	Tallenna muutokset
 activityLog.off	Loki on pois päältä, joten mitään ei kirjata.
 activityLog.none	Mitään ei ole vielä kirjattu.
+activityLog.noMatches	Mikään ei vastaa näitä suodattimia.
 activityLog.filterAction	Laji
 activityLog.anyAction	Mikä tahansa laji
 activityLog.filterOutcome	Tulos

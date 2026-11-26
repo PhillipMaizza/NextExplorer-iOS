@@ -93,7 +93,7 @@
                 }
             case .activity:
                 if let activity = store.scope(state: \.activityLog, action: \.activityLog.presented) {
-                    MacActivityLogClearButton(store: activity)
+                    MacActivityLogHeaderButtons(store: activity)
                 }
             case .users:
                 if let users = store.scope(state: \.userManagement, action: \.userManagement.presented) {
