@@ -17,7 +17,7 @@ with blue selection is not possible natively.
   the system blue. Switches keep the native control but take the accent tint (`.macSwitch`), by
   the owner's choice; the tint is scoped to the switch so pickers beside it stay neutral.
 - Settings fields and popups are drawn by the design system to match the canvas: `MacTextField`
-  (36pt, field fill, hairline, accent focus border, halo and caret, like the sign in fields) and
+  (36pt, field fill, hairline, focus border in `accentText`, accent halo and caret, like the sign in fields) and
   `MacPopup` (a `Menu` over an inline `Picker`, 32pt, muted up and down chevron), so VoiceOver and
   the keyboard keep the menu. Both dim when disabled.
 - Status chips use tones (`MacChip.Tone`: green, red, gray) with their own text and fill tokens
@@ -43,10 +43,10 @@ with blue selection is not possible natively.
 - The sign in screen and the sidebar account popover stay custom by the owner's choice. Sign in is
   a branded screen: its https and http switch is the DS pill (`DSSegmentedControl` with
   `shouldAlwaysUsePill`) in the Mac colours, and its steps list shows Code only once the server asks
-  the account for one. Its large fields are drawn by the design system, so they focus in the accent
-  (border and halo) rather than the system blue ring.
-- Every field the design system draws, plain or secure, focuses in the accent, caret included. The
-  system leaves a secure field's caret blue, so `MacSecureField` tints its field editor directly.
+  the account for one. Its large fields are drawn by the design system, so they focus with an `accentText`
+  border and an accent halo rather than the system blue ring.
+- Every field the design system draws, plain or secure, focuses with an `accentText` border, an accent
+  halo and an accent caret. The system leaves a secure field's caret blue, so `MacSecureField` tints its field editor directly.
 - Form sheets follow the canvas dialogs: a larger title, labels without colons, full width popups,
   and a `MacSegmentedPicker` whose chosen option fills in the accent (the canvas shows the system
   blue, which the app has no other use for).
@@ -95,7 +95,9 @@ with blue selection is not possible natively.
   controls up through `controlSize` (large from 1.15, extra large from 1.3), so switches, checkboxes,
   segmented pickers and steppers grow with the text. Settings pages and dialog forms set the body type
   on their whole form, so native labels inside them render in Inter and scale too. The app sets no
-  scale and offers no setting today; the design system is ready for one.
+  scale and offers no setting today; the design system is ready for one. The environment does not cross
+  windows, so a setting must apply `macTextScale` on every root: the main window, the Settings scene,
+  Spotlight, the peek host and any window hosted in an `NSHostingView`.
 - Controls that hold text take their height from one ladder, `MacControlHeight` (22, 28, 32, 36, 40,
   44, 48 and the 52pt form row), as a minimum that grows with the text scale (`macMinHeight`), never as
   a fixed `frame(height:)` that would clip larger text. Glyphs beside text scale with it (`macSquare`).

@@ -33,6 +33,16 @@
                         MacEmptyGuideBullet(icon: IconKit.macRestore, text: "Restore puts an item back.")
                         MacEmptyGuideTile(icon: IconKit.macTrash, size: .size56)
                     }
+                    MacGallerySection(title: "Feedback") { MacGalleryFeedback() }
+                    MacGallerySection(title: "Alert") {
+                        MacAlertSheet(
+                            title: "Revoke Token?",
+                            message: "This can't be undone.",
+                            confirmTitle: "Revoke",
+                            onConfirm: {},
+                            onCancel: {}
+                        )
+                    }
                 }
             }
             .padding(.space32)
@@ -260,6 +270,18 @@
                 }
             }
             .macListBox()
+        }
+    }
+
+    private struct MacGalleryFeedback: View {
+        @State private var quality = 70
+        @State private var dimension = 400
+
+        var body: some View {
+            MacToastCard(message: .success("Saved to Documents"), onAction: {}, onClose: {})
+            MacTransferStatus(fileName: "brief-v2.pdf", timeLeft: "12s left", fraction: Constants.sampleProgress)
+            MacSlider(label: "Quality", value: quality, range: 1 ... 100, step: 5) { quality = $0 }
+            MacStepper(label: "Max Dimension", value: dimension, range: 64 ... 2048, step: 8) { dimension = $0 }
         }
     }
 
