@@ -130,7 +130,7 @@
     }
 
     enum MacButtonShape {
-        static let pill = RoundedRectangle(cornerRadius: .radiusLarge, style: .continuous)
+        static let pill = Capsule(style: .continuous)
     }
 
     struct MacButtonInteraction<S: InsettableShape>: ViewModifier {
