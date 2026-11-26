@@ -223,8 +223,9 @@
                 onCancel: {},
                 onConfirm: {}
             ) {
-                TextField(L10n.Common.search, text: $name)
-                    .textFieldStyle(.roundedBorder)
+                MacFormSheetRow(L10n.Common.search) {
+                    MacTextField(L10n.Common.search, text: $name, prompt: L10n.Common.search)
+                }
             }
             .macCard()
         }
@@ -251,6 +252,7 @@
             VStack(spacing: .zero) {
                 ForEach(["archive", "projects", "media"], id: \.self) { name in
                     Text(verbatim: name)
+                        .type(.body2(.regular))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundStyle(Color.macChromeText)
                         .macListRow(isSelected: name == selection)

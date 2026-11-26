@@ -120,6 +120,7 @@
         var body: some View {
             label
                 .labelStyle(.iconOnly)
+                .type(.body2(.regular))
                 .macSquare(.iconSmall)
                 .foregroundStyle(isAccent ? Color.onAccent : Color.macChromeText)
                 .macSquare(MacControlHeight.large.points)

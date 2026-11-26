@@ -91,8 +91,11 @@ with blue selection is not possible natively.
 - Text size: macOS gives apps no Dynamic Type (`dynamicTypeSize`, `Font.custom(relativeTo:)` and
   `@ScaledMetric` all render the same on the Mac), so the design system owns one scale, the
   `macTextScale` environment value, clamped to 1 through 1.4. `.type()` reads it on the Mac; text of
-  32pt or more stops growing at 32pt so titles do not take over a pane. The app sets no scale and offers
-  no setting today; the design system is ready for one.
+  32pt or more stops growing at 32pt so titles do not take over a pane. The same modifier steps native
+  controls up through `controlSize` (large from 1.15, extra large from 1.3), so switches, checkboxes,
+  segmented pickers and steppers grow with the text. Settings pages and dialog forms set the body type
+  on their whole form, so native labels inside them render in Inter and scale too. The app sets no
+  scale and offers no setting today; the design system is ready for one.
 - Controls that hold text take their height from one ladder, `MacControlHeight` (22, 28, 32, 36, 40,
   44, 48 and the 52pt form row), as a minimum that grows with the text scale (`macMinHeight`), never as
   a fixed `frame(height:)` that would clip larger text. Glyphs beside text scale with it (`macSquare`).
