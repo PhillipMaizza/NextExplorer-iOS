@@ -189,7 +189,7 @@
 
         public var body: some View {
             HStack(spacing: .space8) {
-                ForEach(Array(actions.enumerated()), id: \.offset) { _, action in
+                ForEach(actions, id: \.title) { action in
                     Button(action: action.action) {
                         tile(icon: action.icon, title: action.title, isOn: action.isOn)
                     }
