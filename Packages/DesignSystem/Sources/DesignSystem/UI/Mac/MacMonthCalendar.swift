@@ -102,7 +102,12 @@
             }
         }
 
-        static func date(picking day: Date, keepingTimeOf time: Date, minimum: Date?, calendar: Calendar) -> Date {
+        nonisolated static func date(
+            picking day: Date,
+            keepingTimeOf time: Date,
+            minimum: Date?,
+            calendar: Calendar
+        ) -> Date {
             let clock = calendar.dateComponents([.hour, .minute, .second], from: time)
             let picked = calendar.date(
                 bySettingHour: clock.hour ?? .zero,
