@@ -1443,6 +1443,9 @@ emptyGuide.sharedBody	Haz clic derecho en un archivo o carpeta en Explorar y eli
 emptyGuide.sharedWithMeTitle	Aún no han compartido nada contigo
 emptyGuide.offlineTitle	Guardar archivos en este Mac
 emptyGuide.offlineBody	Haz clic derecho en cualquier archivo o carpeta en Explorar y elige «%@».\nLas carpetas reciben los archivos nuevos cada vez que la app se sincroniza.\n\nLos archivos descargados se abren incluso sin conexión.
+emptyGuide.accessRulesTitle	Aún no hay reglas de carpetas
+emptyGuide.accessRulesReadOnly	%@ permite abrir una carpeta pero no cambiar su contenido.
+emptyGuide.accessRulesHidden	%@ quita una carpeta de todos los listados y búsquedas.
 emptyGuide.readOnlyTitle	Esta carpeta es de solo lectura
 emptyGuide.readOnlyOpen	Los archivos que se añadan aquí aparecerán para que los abras y descargues.
 emptyGuide.readOnlyOpenOnly	Los archivos que se añadan aquí aparecerán para que los abras.

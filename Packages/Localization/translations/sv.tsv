@@ -1443,6 +1443,9 @@ emptyGuide.sharedBody	Högerklicka på en fil eller mapp i Bläddra och välj �
 emptyGuide.sharedWithMeTitle	Inget har delats med dig än
 emptyGuide.offlineTitle	Behåll filer på den här Macen
 emptyGuide.offlineBody	Högerklicka på valfri fil eller mapp i Bläddra och välj ”%@”.\nMappar hämtar nya filer varje gång appen synkar.\n\nHämtade filer öppnas även utan anslutning.
+emptyGuide.accessRulesTitle	Inga mappregler än
+emptyGuide.accessRulesReadOnly	%@ låter folk öppna en mapp men inte ändra innehållet.
+emptyGuide.accessRulesHidden	%@ tar bort en mapp från alla listor och sökningar.
 emptyGuide.readOnlyTitle	Den här mappen är skrivskyddad
 emptyGuide.readOnlyOpen	Filer som läggs här kan du öppna och hämta.
 emptyGuide.readOnlyOpenOnly	Filer som läggs här kan du öppna.

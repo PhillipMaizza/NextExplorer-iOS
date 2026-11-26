@@ -404,6 +404,9 @@ public enum L10n {
         public static var usersHint: String { tr("editShare.usersHint") }  // "Only the people you pick, after they sign in."
     }
     public enum EmptyGuide {
+        public static func accessRulesHidden(_ a0: CVarArg) -> String { tr("emptyGuide.accessRulesHidden", a0) }
+        public static func accessRulesReadOnly(_ a0: CVarArg) -> String { tr("emptyGuide.accessRulesReadOnly", a0) }
+        public static var accessRulesTitle: String { tr("emptyGuide.accessRulesTitle") }  // "No folder rules yet"
         public static var browseDropTitle: String { tr("emptyGuide.browseDropTitle") }  // "Drop files here to upload"
         public static var browseRootAddFolder: String { tr("emptyGuide.browseRootAddFolder") }  // "Add a folder there on the server, then Refresh."
         public static var browseRootNoVolumesTitle: String { tr("emptyGuide.browseRootNoVolumesTitle") }  // "The server has no volumes"

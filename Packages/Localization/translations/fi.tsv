@@ -1372,6 +1372,9 @@ emptyGuide.sharedBody	Napsauta tiedostoa tai kansiota hiiren oikealla painikkeel
 emptyGuide.sharedWithMeTitle	Kanssasi ei ole vielä jaettu mitään
 emptyGuide.offlineTitle	Pidä tiedostot tällä Macilla
 emptyGuide.offlineBody	Napsauta mitä tahansa tiedostoa tai kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%@”.\nKansiot saavat uudet tiedostot aina, kun sovellus synkronoi.\n\nLadatut tiedostot aukeavat myös ilman yhteyttä.
+emptyGuide.accessRulesTitle	Ei vielä kansiosääntöjä
+emptyGuide.accessRulesReadOnly	%@ sallii kansion avaamisen mutta ei sen sisällön muuttamista.
+emptyGuide.accessRulesHidden	%@ poistaa kansion kaikista luetteloista ja hauista.
 emptyGuide.readOnlyTitle	Tämä kansio on vain luku
 emptyGuide.readOnlyOpen	Tänne lisätyt tiedostot voit avata ja ladata.
 emptyGuide.readOnlyOpenOnly	Tänne lisätyt tiedostot voit avata.

@@ -1451,6 +1451,9 @@ emptyGuide.sharedBody	Klikněte pravým tlačítkem na soubor nebo složku v sek
 emptyGuide.sharedWithMeTitle	Zatím s vámi nikdo nic nesdílel
 emptyGuide.offlineTitle	Mít soubory na tomto Macu
 emptyGuide.offlineBody	Klikněte pravým tlačítkem na libovolný soubor nebo složku v sekci Procházet a vyberte „%@“.\nSložky si nové soubory stáhnou při každé synchronizaci aplikace.\n\nStažené soubory se otevřou i bez připojení.
+emptyGuide.accessRulesTitle	Zatím žádná pravidla složek
+emptyGuide.accessRulesReadOnly	%@ umožní složku otevřít, ale ne měnit její obsah.
+emptyGuide.accessRulesHidden	%@ odstraní složku ze všech výpisů i z hledání.
 emptyGuide.readOnlyTitle	Tato složka je jen pro čtení
 emptyGuide.readOnlyOpen	Soubory přidané sem uvidíte a můžete je otevřít a stáhnout.
 emptyGuide.readOnlyOpenOnly	Soubory přidané sem uvidíte a můžete je otevřít.

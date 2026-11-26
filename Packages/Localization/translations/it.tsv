@@ -1443,6 +1443,9 @@ emptyGuide.sharedBody	Fai clic destro su un file o una cartella in Esplora e sce
 emptyGuide.sharedWithMeTitle	Ancora nulla condiviso con te
 emptyGuide.offlineTitle	Tieni i file su questo Mac
 emptyGuide.offlineBody	Fai clic destro su un file o una cartella in Esplora e scegli «%@».\nLe cartelle ricevono i nuovi file a ogni sincronizzazione dell’app.\n\nI file scaricati si aprono anche senza connessione.
+emptyGuide.accessRulesTitle	Ancora nessuna regola sulle cartelle
+emptyGuide.accessRulesReadOnly	%@ permette di aprire una cartella senza modificarne il contenuto.
+emptyGuide.accessRulesHidden	%@ toglie una cartella da ogni elenco e ricerca.
 emptyGuide.readOnlyTitle	Questa cartella è di sola lettura
 emptyGuide.readOnlyOpen	I file aggiunti qui compariranno per essere aperti e scaricati.
 emptyGuide.readOnlyOpenOnly	I file aggiunti qui compariranno per essere aperti.
