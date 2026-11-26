@@ -382,7 +382,7 @@ settings.removeAllDownloadsConfirm	すべて削除
 settings.removeAllDownloadsMessage	このデバイスからすべてのダウンロード済みファイルを削除します。サーバーには残ります。
 settings.clearCacheTitle	キャッシュを消去しますか？
 settings.clearCacheConfirm	消去
-settings.clearCacheMessage	オフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。サーバー上のものには影響しません。
+settings.clearCacheMessage	このアカウントのオフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。ほかのアカウントとサーバーには影響しません。
 settings.signOutAlertTitle	サインアウトしますか？
 settings.signOutMessage	ファイルにアクセスするには再度サインインする必要があります。
 settings.signOutButton	サインアウト

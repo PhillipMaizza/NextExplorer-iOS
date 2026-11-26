@@ -415,7 +415,7 @@ settings.removeAllDownloadsConfirm	Usuń wszystkie
 settings.removeAllDownloadsMessage	Spowoduje to usunięcie wszystkich pobranych plików z tego urządzenia. Pozostają one na serwerze.
 settings.clearCacheTitle	Wyczyścić pamięć podręczną?
 settings.clearCacheConfirm	Wyczyść
-settings.clearCacheMessage	Spowoduje to wyczyszczenie podglądów, miniatur i zapisanych list folderów używanych offline. Nic na serwerze nie zostaje naruszone.
+settings.clearCacheMessage	Spowoduje to wyczyszczenie podglądów, miniatur i zapisanych list folderów tego konta używanych offline. Inne konta i serwer pozostają nienaruszone.
 settings.signOutAlertTitle	Wylogować się?
 settings.signOutMessage	Aby uzyskać dostęp do plików, musisz zalogować się ponownie.
 settings.signOutButton	Wyloguj się

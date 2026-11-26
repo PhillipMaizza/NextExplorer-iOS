@@ -582,7 +582,7 @@ settings.removeAllDownloadsConfirm	Poista kaikki
 settings.removeAllDownloadsMessage	Tämä poistaa kaikki ladatut tiedostot tästä laitteesta. Ne säilyvät palvelimella.
 settings.clearCacheTitle	Tyhjennetäänkö välimuisti?
 settings.clearCacheConfirm	Tyhjennä
-settings.clearCacheMessage	Tämä tyhjentää offline-käytössä olevat välimuistissa olevat esikatselut, pikkukuvat ja tallennetut kansioluettelot. Palvelimeen ei vaikuteta.
+settings.clearCacheMessage	Tämä tyhjentää tämän tilin offline-käytössä olevat välimuistissa olevat esikatselut, pikkukuvat ja tallennetut kansioluettelot. Muihin tileihin ja palvelimeen ei vaikuteta.
 settings.signOutAlertTitle	Kirjaudutaanko ulos?
 settings.signOutMessage	Sinun on kirjauduttava uudelleen sisään päästäksesi tiedostoihisi. Tämän laitteen välimuistissa olevat esikatselut, pikkukuvat ja tallennetut kansioluettelot tyhjennetään.
 settings.signOutButton	Kirjaudu ulos

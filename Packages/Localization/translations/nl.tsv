@@ -393,7 +393,7 @@ settings.removeAllDownloadsConfirm	Alles verwijderen
 settings.removeAllDownloadsMessage	Hiermee worden alle gedownloade bestanden van dit apparaat verwijderd. Ze blijven op de server.
 settings.clearCacheTitle	Cache wissen?
 settings.clearCacheConfirm	Wissen
-settings.clearCacheMessage	Hiermee worden gecachte voorbeelden, miniaturen en offline bewaarde mapoverzichten gewist. Niets op de server wordt beïnvloed.
+settings.clearCacheMessage	Hiermee worden de gecachte voorbeelden, miniaturen en offline bewaarde mapoverzichten van dit account gewist. Andere accounts en de server worden niet beïnvloed.
 settings.signOutAlertTitle	Uitloggen?
 settings.signOutMessage	Je moet opnieuw inloggen om bij je bestanden te komen.
 settings.signOutButton	Uitloggen

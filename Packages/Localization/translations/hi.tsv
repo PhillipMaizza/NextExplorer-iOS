@@ -393,7 +393,7 @@ settings.removeAllDownloadsConfirm	सभी हटाएं
 settings.removeAllDownloadsMessage	यह इस डिवाइस से हर डाउनलोड की गई फ़ाइल हटा देता है। वे सर्वर पर बनी रहती हैं।
 settings.clearCacheTitle	कैश साफ़ करें?
 settings.clearCacheConfirm	साफ़ करें
-settings.clearCacheMessage	यह ऑफ़लाइन उपयोग किए गए कैश किए गए पूर्वावलोकन, थंबनेल और सहेजी गई फ़ोल्डर सूचियां साफ़ करता है। सर्वर पर कुछ भी प्रभावित नहीं होता।
+settings.clearCacheMessage	यह इस खाते के ऑफ़लाइन उपयोग किए गए कैश किए गए पूर्वावलोकन, थंबनेल और सहेजी गई फ़ोल्डर सूचियां साफ़ करता है। अन्य खाते और सर्वर प्रभावित नहीं होते।
 settings.signOutAlertTitle	साइन आउट करें?
 settings.signOutMessage	अपनी फ़ाइलों तक पहुंचने के लिए आपको फिर से साइन इन करना होगा।
 settings.signOutButton	साइन आउट करें

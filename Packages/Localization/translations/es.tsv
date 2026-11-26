@@ -392,7 +392,7 @@ settings.removeAllDownloadsConfirm	Eliminar todo
 settings.removeAllDownloadsMessage	Esto elimina todos los archivos descargados de este dispositivo. Permanecen en el servidor.
 settings.clearCacheTitle	¿Borrar la caché?
 settings.clearCacheConfirm	Borrar
-settings.clearCacheMessage	Esto borra las vistas previas, miniaturas y listados de carpetas guardados para el uso sin conexión. Nada en el servidor se ve afectado.
+settings.clearCacheMessage	Esto borra las vistas previas, miniaturas y listados de carpetas guardados de esta cuenta para el uso sin conexión. Las demás cuentas y el servidor no se ven afectados.
 settings.signOutAlertTitle	¿Cerrar sesión?
 settings.signOutMessage	Deberás iniciar sesión de nuevo para acceder a tus archivos.
 settings.signOutButton	Cerrar sesión

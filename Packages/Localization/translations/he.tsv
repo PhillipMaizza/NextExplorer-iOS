@@ -593,7 +593,7 @@ settings.removeAllDownloadsConfirm	הסרת הכול
 settings.removeAllDownloadsMessage	פעולה זו מוחקת כל קובץ שהורד ממכשיר זה. הקבצים נשארים בשרת.
 settings.clearCacheTitle	לנקות את המטמון?
 settings.clearCacheConfirm	ניקוי
-settings.clearCacheMessage	פעולה זו מנקה תצוגות מקדימות, תמונות ממוזערות ורשימות תיקיות שמורות המשמשות במצב לא מקוון. דבר בשרת לא מושפע.
+settings.clearCacheMessage	פעולה זו מנקה תצוגות מקדימות, תמונות ממוזערות ורשימות תיקיות שמורות של חשבון זה המשמשות במצב לא מקוון. חשבונות אחרים והשרת אינם מושפעים.
 settings.signOutAlertTitle	להתנתק?
 settings.signOutMessage	תצטרכו להתחבר שוב כדי לגשת לקבצים. תצוגות מקדימות, תמונות ממוזערות ורשימות תיקיות שמורות במכשיר זה יימחקו.
 settings.signOutButton	התנתקות

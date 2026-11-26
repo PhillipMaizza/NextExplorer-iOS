@@ -582,7 +582,7 @@ settings.removeAllDownloadsConfirm	Fjern alle
 settings.removeAllDownloadsMessage	Dette sletter alle nedlastede filer fra denne enheten. De blir liggende på serveren.
 settings.clearCacheTitle	Tømme hurtigbufferen?
 settings.clearCacheConfirm	Tøm
-settings.clearCacheMessage	Dette tømmer bufrede forhåndsvisninger, miniatyrbilder og lagrede mappelister som brukes frakoblet. Ingenting på serveren påvirkes.
+settings.clearCacheMessage	Dette tømmer denne kontoens bufrede forhåndsvisninger, miniatyrbilder og lagrede mappelister som brukes frakoblet. Andre kontoer og serveren påvirkes ikke.
 settings.signOutAlertTitle	Logge ut?
 settings.signOutMessage	Du må logge inn igjen for å få tilgang til filene dine. Bufrede forhåndsvisninger, miniatyrbilder og lagrede mappelister på denne enheten tømmes.
 settings.signOutButton	Logg ut

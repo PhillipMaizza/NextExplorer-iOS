@@ -593,7 +593,7 @@ settings.removeAllDownloadsConfirm	Remover todos
 settings.removeAllDownloadsMessage	Isto exclui todos os arquivos baixados deste dispositivo. Eles continuam no servidor.
 settings.clearCacheTitle	Limpar o cache?
 settings.clearCacheConfirm	Limpar
-settings.clearCacheMessage	Isto limpa pré-visualizações, miniaturas e listas de pastas salvas para uso offline. Nada no servidor é afetado.
+settings.clearCacheMessage	Isto limpa pré-visualizações, miniaturas e listas de pastas salvas desta conta para uso offline. Outras contas e o servidor não são afetados.
 settings.signOutAlertTitle	Sair?
 settings.signOutMessage	Você precisará entrar novamente para acessar seus arquivos.
 settings.signOutButton	Sair

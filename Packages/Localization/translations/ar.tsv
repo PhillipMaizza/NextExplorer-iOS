@@ -437,7 +437,7 @@ settings.removeAllDownloadsConfirm	إزالة الكل
 settings.removeAllDownloadsMessage	يؤدي هذا إلى حذف كل ملف تم تنزيله من هذا الجهاز. تبقى على الخادم.
 settings.clearCacheTitle	مسح ذاكرة التخزين المؤقت؟
 settings.clearCacheConfirm	مسح
-settings.clearCacheMessage	يؤدي هذا إلى مسح المعاينات والصور المصغّرة وقوائم المجلدات المحفوظة للاستخدام دون اتصال. لا يتأثر أي شيء على الخادم.
+settings.clearCacheMessage	يؤدي هذا إلى مسح المعاينات والصور المصغّرة وقوائم المجلدات المحفوظة لهذا الحساب للاستخدام دون اتصال. لا تتأثر الحسابات الأخرى ولا الخادم.
 settings.signOutAlertTitle	تسجيل الخروج؟
 settings.signOutMessage	ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى ملفاتك.
 settings.signOutButton	تسجيل الخروج
