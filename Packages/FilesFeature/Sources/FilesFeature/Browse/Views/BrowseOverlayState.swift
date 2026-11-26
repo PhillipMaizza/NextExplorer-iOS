@@ -15,7 +15,7 @@ enum BrowseOverlayState: Hashable {
     init(store: StoreOf<BrowseFeature>) {
         if store.phase.errorMessage != nil {
             self = .error
-        } else if store.isListingKnown, !store.isSearching, !store.hasDisplayedItems {
+        } else if store.isListingKnown, !store.isSearching, store.hasNothingToList {
             self = .empty
         } else if store.isSearchPending, store.displayedSearchResults?.isEmpty ?? true {
             // A recursive backend search is in flight with nothing to show yet (the instant

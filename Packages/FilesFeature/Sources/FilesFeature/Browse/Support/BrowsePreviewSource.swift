@@ -27,6 +27,10 @@ extension BrowseFeature.State {
         directoryPath.isEmpty && isPersonalSpaceEnabled && !isSearching && !isSelecting
     }
 
+    var hasNothingToList: Bool {
+        !hasDisplayedItems && !shouldShowPersonalSpace
+    }
+
     /// The Trash button sits in the root's toolbar on iPhone and iPad; the Mac has a sidebar row instead.
     var shouldShowTrashButton: Bool {
         #if os(iOS)
