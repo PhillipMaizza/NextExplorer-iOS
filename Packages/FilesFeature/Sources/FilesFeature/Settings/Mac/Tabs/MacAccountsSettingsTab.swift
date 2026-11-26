@@ -124,7 +124,7 @@
                     MacChip(text: L10n.Settings.badgeActive, tone: .green)
                 } else {
                     Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
-                        .buttonStyle(.macDS(.outline, size: .small))
+                        .buttonStyle(.macDS(.secondary, size: .small))
                         .fixedSize()
                 }
             }
