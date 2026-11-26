@@ -1447,3 +1447,9 @@ emptyGuide.trashTitle	Der Papierkorb ist leer
 emptyGuide.trashRestore	Wiederherstellen legt ein Objekt zurück an seinen Ort oder in einen Ordner deiner Wahl.
 emptyGuide.trashShareLinks	Freigabelinks funktionieren nicht, solange ihre Datei hier liegt.\nEine Wiederherstellung kann sie zurückbringen.
 emptyGuide.browseDropTitle	Dateien zum Hochladen hier ablegen
+emptyGuide.browseRootUnassignedTitle	Keine Volumes zugewiesen.
+emptyGuide.browseRootUnassignedBody	Volumes werden dir von einem Admin zugewiesen.\nLinks, die andere mit dir teilen, findest du unter Geteilt.
+emptyGuide.goToShared	Zu Geteilt
+emptyGuide.browseRootNoVolumesTitle	Der Server hat keine Volumes
+emptyGuide.browseRootVolumeFolders	Jeder Ordner im Volume-Verzeichnis des Servers erscheint hier als Volume.
+emptyGuide.browseRootAddFolder	Lege dort auf dem Server einen Ordner an und wähle dann Aktualisieren.

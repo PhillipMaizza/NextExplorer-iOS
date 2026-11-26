@@ -403,9 +403,15 @@ public enum L10n {
     }
     public enum EmptyGuide {
         public static var browseDropTitle: String { tr("emptyGuide.browseDropTitle") }  // "Drop files here to upload"
+        public static var browseRootAddFolder: String { tr("emptyGuide.browseRootAddFolder") }  // "Add a folder there on the server, then Refresh."
+        public static var browseRootNoVolumesTitle: String { tr("emptyGuide.browseRootNoVolumesTitle") }  // "The server has no volumes"
+        public static var browseRootUnassignedBody: String { tr("emptyGuide.browseRootUnassignedBody") }
+        public static var browseRootUnassignedTitle: String { tr("emptyGuide.browseRootUnassignedTitle") }  // "No volumes assigned."
+        public static var browseRootVolumeFolders: String { tr("emptyGuide.browseRootVolumeFolders") }
         public static func favoritesBody(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("emptyGuide.favoritesBody", a0, a1) }
         public static var favoritesTitle: String { tr("emptyGuide.favoritesTitle") }  // "Keep folders one click away"
         public static var goToBrowse: String { tr("emptyGuide.goToBrowse") }  // "Go to Browse"
+        public static var goToShared: String { tr("emptyGuide.goToShared") }  // "Go to Shared"
         public static func offlineBody(_ a0: CVarArg) -> String { tr("emptyGuide.offlineBody", a0) }
         public static var offlineTitle: String { tr("emptyGuide.offlineTitle") }  // "Keep files on this Mac"
         public static func sharedBody(_ a0: CVarArg) -> String { tr("emptyGuide.sharedBody", a0) }

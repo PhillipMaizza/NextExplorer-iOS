@@ -1409,3 +1409,9 @@ emptyGuide.trashTitle	废纸篓为空
 emptyGuide.trashRestore	恢复会将项目放回原处，或放入你选择的任意文件夹。
 emptyGuide.trashShareLinks	文件在这里期间，共享链接会失效。\n恢复后可重新启用。
 emptyGuide.browseDropTitle	将文件拖到此处上传
+emptyGuide.browseRootUnassignedTitle	未分配卷。
+emptyGuide.browseRootUnassignedBody	卷由管理员为你分配。\n其他人与你共享的链接在“共享”中。
+emptyGuide.goToShared	前往共享
+emptyGuide.browseRootNoVolumesTitle	服务器上没有卷
+emptyGuide.browseRootVolumeFolders	服务器卷目录中的每个文件夹都会在这里显示为一个卷。
+emptyGuide.browseRootAddFolder	在服务器的该目录中添加一个文件夹，然后选择刷新。

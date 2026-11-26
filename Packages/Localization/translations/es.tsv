@@ -1447,3 +1447,9 @@ emptyGuide.trashTitle	La papelera está vacía
 emptyGuide.trashRestore	Restaurar devuelve un elemento a su sitio, o a la carpeta que elijas.
 emptyGuide.trashShareLinks	Los enlaces compartidos dejan de funcionar mientras su archivo está aquí.\nUna restauración puede recuperarlos.
 emptyGuide.browseDropTitle	Suelta archivos aquí para subirlos
+emptyGuide.browseRootUnassignedTitle	No hay volúmenes asignados.
+emptyGuide.browseRootUnassignedBody	Un administrador te asigna los volúmenes.\nLos enlaces que otras personas comparten contigo están en Compartidos.
+emptyGuide.goToShared	Ir a Compartidos
+emptyGuide.browseRootNoVolumesTitle	El servidor no tiene volúmenes
+emptyGuide.browseRootVolumeFolders	Cada carpeta del directorio de volúmenes del servidor aparece aquí como un volumen.
+emptyGuide.browseRootAddFolder	Añade una carpeta allí en el servidor y luego elige Actualizar.

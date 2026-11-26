@@ -1376,3 +1376,9 @@ emptyGuide.trashTitle	Ο κάδος είναι άδειος
 emptyGuide.trashRestore	Η επαναφορά επιστρέφει ένα στοιχείο εκεί που ήταν ή σε όποιον φάκελο επιλέξετε.
 emptyGuide.trashShareLinks	Οι σύνδεσμοι κοινής χρήσης σταματούν να λειτουργούν όσο το αρχείο είναι εδώ.\nΜια επαναφορά μπορεί να τους επαναφέρει.
 emptyGuide.browseDropTitle	Αφήστε αρχεία εδώ για μεταφόρτωση
+emptyGuide.browseRootUnassignedTitle	Δεν έχουν εκχωρηθεί τόμοι.
+emptyGuide.browseRootUnassignedBody	Τους τόμους σάς τους εκχωρεί ένας διαχειριστής.\nΟι σύνδεσμοι που μοιράζονται άλλοι μαζί σας βρίσκονται στα Κοινόχρηστα.
+emptyGuide.goToShared	Μετάβαση στα Κοινόχρηστα
+emptyGuide.browseRootNoVolumesTitle	Ο διακομιστής δεν έχει τόμους
+emptyGuide.browseRootVolumeFolders	Κάθε φάκελος στον κατάλογο τόμων του διακομιστή εμφανίζεται εδώ ως τόμος.
+emptyGuide.browseRootAddFolder	Προσθέστε έναν φάκελο εκεί στον διακομιστή και μετά επιλέξτε Ανανέωση.

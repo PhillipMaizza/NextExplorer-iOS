@@ -1376,3 +1376,9 @@ emptyGuide.trashTitle	A kuka üres
 emptyGuide.trashRestore	A visszaállítás az elemet az eredeti helyére vagy egy választott mappába teszi vissza.
 emptyGuide.trashShareLinks	A megosztási linkek nem működnek, amíg a fájl itt van.\nEgy visszaállítás visszahozhatja őket.
 emptyGuide.browseDropTitle	Húzd ide a feltöltendő fájlokat
+emptyGuide.browseRootUnassignedTitle	Nincsenek hozzárendelt kötetek.
+emptyGuide.browseRootUnassignedBody	A köteteket egy rendszergazda rendeli hozzád.\nA mások által veled megosztott hivatkozások a Megosztott részben vannak.
+emptyGuide.goToShared	Ugrás a Megosztotthoz
+emptyGuide.browseRootNoVolumesTitle	A kiszolgálón nincsenek kötetek
+emptyGuide.browseRootVolumeFolders	A kiszolgáló kötetkönyvtárának minden mappája kötetként jelenik meg itt.
+emptyGuide.browseRootAddFolder	Adj hozzá egy mappát ott a kiszolgálón, majd válaszd a Frissítést.

@@ -1447,3 +1447,9 @@ emptyGuide.trashTitle	De prullenmand is leeg
 emptyGuide.trashRestore	Herstellen zet een item terug waar het was, of in een map naar keuze.
 emptyGuide.trashShareLinks	Deellinks werken niet zolang hun bestand hier staat.\nHerstellen kan ze terugbrengen.
 emptyGuide.browseDropTitle	Zet bestanden hier neer om te uploaden
+emptyGuide.browseRootUnassignedTitle	Geen volumes toegewezen.
+emptyGuide.browseRootUnassignedBody	Een beheerder wijst je volumes toe.\nLinks die anderen met je delen, staan bij Gedeeld.
+emptyGuide.goToShared	Naar Gedeeld
+emptyGuide.browseRootNoVolumesTitle	De server heeft geen volumes
+emptyGuide.browseRootVolumeFolders	Elke map in de volumemap van de server verschijnt hier als volume.
+emptyGuide.browseRootAddFolder	Voeg daar op de server een map toe en kies dan Vernieuwen.

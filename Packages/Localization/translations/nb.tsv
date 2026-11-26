@@ -1376,3 +1376,9 @@ emptyGuide.trashTitle	Papirkurven er tom
 emptyGuide.trashRestore	Gjenopprett legger et objekt tilbake der det var, eller i en mappe du velger.
 emptyGuide.trashShareLinks	Delingslenker slutter å virke mens filen ligger her.\nEn gjenoppretting kan hente dem tilbake.
 emptyGuide.browseDropTitle	Slipp filer her for å laste opp
+emptyGuide.browseRootUnassignedTitle	Ingen volumer er tildelt.
+emptyGuide.browseRootUnassignedBody	En administrator tildeler deg volumer.\nLenker andre deler med deg, finner du under Delt.
+emptyGuide.goToShared	Gå til Delt
+emptyGuide.browseRootNoVolumesTitle	Serveren har ingen volumer
+emptyGuide.browseRootVolumeFolders	Hver mappe i serverens volummappe vises her som et volum.
+emptyGuide.browseRootAddFolder	Legg til en mappe der på serveren, og velg deretter Oppdater.

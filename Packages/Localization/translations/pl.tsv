@@ -1523,3 +1523,9 @@ emptyGuide.trashTitle	Kosz jest pusty
 emptyGuide.trashRestore	Przywróć odkłada element tam, gdzie był, albo do wybranego folderu.
 emptyGuide.trashShareLinks	Linki udostępniania przestają działać, gdy plik jest tutaj.\nPrzywrócenie może je odzyskać.
 emptyGuide.browseDropTitle	Upuść tu pliki, aby je wysłać
+emptyGuide.browseRootUnassignedTitle	Brak przypisanych woluminów.
+emptyGuide.browseRootUnassignedBody	Woluminy przypisuje Ci administrator.\nLinki udostępnione Ci przez innych znajdziesz w sekcji Udostępnione.
+emptyGuide.goToShared	Przejdź do sekcji Udostępnione
+emptyGuide.browseRootNoVolumesTitle	Serwer nie ma woluminów
+emptyGuide.browseRootVolumeFolders	Każdy folder w katalogu woluminów na serwerze pojawia się tutaj jako wolumin.
+emptyGuide.browseRootAddFolder	Dodaj tam folder na serwerze, a potem wybierz Odśwież.

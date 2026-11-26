@@ -1418,3 +1418,9 @@ emptyGuide.trashTitle	הפח ריק
 emptyGuide.trashRestore	שחזור מחזיר פריט למקומו, או לכל תיקייה שתבחרו.
 emptyGuide.trashShareLinks	קישורי שיתוף מפסיקים לעבוד כל עוד הקובץ כאן.\nשחזור יכול להחזיר אותם.
 emptyGuide.browseDropTitle	שחררו קבצים כאן כדי להעלות
+emptyGuide.browseRootUnassignedTitle	לא הוקצו כרכים.
+emptyGuide.browseRootUnassignedBody	מנהל מקצה לך כרכים.\nקישורים שאחרים משתפים איתך נמצאים במשותפים.
+emptyGuide.goToShared	מעבר למשותפים
+emptyGuide.browseRootNoVolumesTitle	אין כרכים בשרת
+emptyGuide.browseRootVolumeFolders	כל תיקייה בתיקיית הכרכים של השרת מופיעה כאן ככרך.
+emptyGuide.browseRootAddFolder	הוסיפו שם תיקייה בשרת ואז בחרו רענון.

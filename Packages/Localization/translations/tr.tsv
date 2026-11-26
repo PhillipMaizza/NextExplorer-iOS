@@ -1376,3 +1376,9 @@ emptyGuide.trashTitle	Çöp kutusu boş
 emptyGuide.trashRestore	Geri yükleme, ögeyi eski yerine veya seçtiğiniz bir klasöre geri koyar.
 emptyGuide.trashShareLinks	Paylaşım bağlantıları, dosyaları burada olduğu sürece çalışmaz.\nGeri yükleme onları geri getirebilir.
 emptyGuide.browseDropTitle	Yüklemek için dosyaları buraya bırakın
+emptyGuide.browseRootUnassignedTitle	Atanmış birim yok.
+emptyGuide.browseRootUnassignedBody	Birimleri size bir yönetici atar.\nBaşkalarının sizinle paylaştığı bağlantılar Paylaşılanlar bölümündedir.
+emptyGuide.goToShared	Paylaşılanlar’a git
+emptyGuide.browseRootNoVolumesTitle	Sunucuda birim yok
+emptyGuide.browseRootVolumeFolders	Sunucunun birim dizinindeki her klasör burada bir birim olarak görünür.
+emptyGuide.browseRootAddFolder	Sunucuda oraya bir klasör ekleyin, ardından Yenile’yi seçin.

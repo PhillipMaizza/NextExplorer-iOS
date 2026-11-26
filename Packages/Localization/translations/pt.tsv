@@ -1447,3 +1447,9 @@ emptyGuide.trashTitle	O lixo está vazio
 emptyGuide.trashRestore	Restaurar volta a colocar um item onde estava, ou na pasta que escolher.
 emptyGuide.trashShareLinks	As ligações de partilha deixam de funcionar enquanto o ficheiro está aqui.\nUm restauro pode recuperá-las.
 emptyGuide.browseDropTitle	Largue ficheiros aqui para os carregar
+emptyGuide.browseRootUnassignedTitle	Nenhum volume atribuído.
+emptyGuide.browseRootUnassignedBody	Um administrador atribui-lhe volumes.\nAs ligações que outras pessoas partilham consigo estão em Partilhados.
+emptyGuide.goToShared	Ir para Partilhados
+emptyGuide.browseRootNoVolumesTitle	O servidor não tem volumes
+emptyGuide.browseRootVolumeFolders	Cada pasta no diretório de volumes do servidor aparece aqui como um volume.
+emptyGuide.browseRootAddFolder	Adicione uma pasta lá no servidor e depois escolha Atualizar.

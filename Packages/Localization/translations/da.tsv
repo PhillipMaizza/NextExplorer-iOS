@@ -1376,3 +1376,9 @@ emptyGuide.trashTitle	Papirkurven er tom
 emptyGuide.trashRestore	Gendan lægger et emne tilbage, hvor det var, eller i en mappe efter eget valg.
 emptyGuide.trashShareLinks	Delingslinks holder op med at virke, mens filen ligger her.\nEn gendannelse kan bringe dem tilbage.
 emptyGuide.browseDropTitle	Slip filer her for at uploade
+emptyGuide.browseRootUnassignedTitle	Ingen drev tildelt.
+emptyGuide.browseRootUnassignedBody	En administrator tildeler dig drev.\nLinks, som andre deler med dig, ligger under Delt.
+emptyGuide.goToShared	Gå til Delt
+emptyGuide.browseRootNoVolumesTitle	Serveren har ingen drev
+emptyGuide.browseRootVolumeFolders	Hver mappe i serverens drevmappe vises her som et drev.
+emptyGuide.browseRootAddFolder	Tilføj en mappe der på serveren, og vælg derefter Opdater.

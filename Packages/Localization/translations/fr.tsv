@@ -1447,3 +1447,9 @@ emptyGuide.trashTitle	La corbeille est vide
 emptyGuide.trashRestore	Restaurer remet un élément à sa place, ou dans le dossier de votre choix.
 emptyGuide.trashShareLinks	Les liens de partage cessent de fonctionner tant que leur fichier est ici.\nUne restauration peut les rétablir.
 emptyGuide.browseDropTitle	Déposez des fichiers ici pour les envoyer
+emptyGuide.browseRootUnassignedTitle	Aucun volume attribué.
+emptyGuide.browseRootUnassignedBody	Un administrateur vous attribue des volumes.\nLes liens que d’autres partagent avec vous se trouvent dans Partagés.
+emptyGuide.goToShared	Aller à Partagés
+emptyGuide.browseRootNoVolumesTitle	Le serveur n’a aucun volume
+emptyGuide.browseRootVolumeFolders	Chaque dossier du répertoire des volumes du serveur apparaît ici comme un volume.
+emptyGuide.browseRootAddFolder	Ajoutez-y un dossier sur le serveur, puis choisissez Actualiser.

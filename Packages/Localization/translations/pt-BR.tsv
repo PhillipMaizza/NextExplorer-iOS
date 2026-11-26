@@ -1442,3 +1442,9 @@ emptyGuide.trashTitle	A lixeira está vazia
 emptyGuide.trashRestore	Restaurar devolve um item para onde estava, ou para a pasta que você escolher.
 emptyGuide.trashShareLinks	Os links de compartilhamento param de funcionar enquanto o arquivo está aqui.\nUma restauração pode trazê-los de volta.
 emptyGuide.browseDropTitle	Solte arquivos aqui para enviar
+emptyGuide.browseRootUnassignedTitle	Nenhum volume atribuído.
+emptyGuide.browseRootUnassignedBody	Um administrador atribui volumes a você.\nOs links que outras pessoas compartilham com você ficam em Compartilhado.
+emptyGuide.goToShared	Ir para Compartilhado
+emptyGuide.browseRootNoVolumesTitle	O servidor não tem volumes
+emptyGuide.browseRootVolumeFolders	Cada pasta no diretório de volumes do servidor aparece aqui como um volume.
+emptyGuide.browseRootAddFolder	Adicione uma pasta lá no servidor e depois escolha Atualizar.

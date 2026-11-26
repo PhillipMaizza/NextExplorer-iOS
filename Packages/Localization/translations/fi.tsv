@@ -1376,3 +1376,9 @@ emptyGuide.trashTitle	Roskakori on tyhjä
 emptyGuide.trashRestore	Palauta vie kohteen takaisin paikalleen tai valitsemaasi kansioon.
 emptyGuide.trashShareLinks	Jakolinkit lakkaavat toimimasta, kun tiedosto on täällä.\nPalautus voi tuoda ne takaisin.
 emptyGuide.browseDropTitle	Pudota tiedostot tähän ladataksesi ne
+emptyGuide.browseRootUnassignedTitle	Taltioita ei ole määritetty.
+emptyGuide.browseRootUnassignedBody	Ylläpitäjä määrittää taltiot sinulle.\nLinkit, joita muut jakavat kanssasi, ovat Jaetut-näkymässä.
+emptyGuide.goToShared	Siirry Jaetut-näkymään
+emptyGuide.browseRootNoVolumesTitle	Palvelimella ei ole taltioita
+emptyGuide.browseRootVolumeFolders	Jokainen palvelimen taltiohakemiston kansio näkyy täällä taltiona.
+emptyGuide.browseRootAddFolder	Lisää kansio sinne palvelimelle ja valitse sitten Päivitä.
