@@ -153,8 +153,31 @@ public struct SettingsFeature {
             self.user = user
             uploadDefaults = UploadDefaultsFeature.State(
                 serverURL: serverURL,
-                accountID: serverURL.absoluteString + "|" + user.username
+                accountID: Self.accountID(serverURL: serverURL, username: user.username)
             )
+        }
+
+        func hasUnsavedChanges(in pane: AdminPane) -> Bool {
+            switch pane {
+            case .server: serverDetails?.isDirty == true
+            case .thumbnails: thumbnailSettings?.isDirty == true
+            case .accessRules: accessRules?.isDirty == true
+            case .uploads: uploadSettings?.isDirty == true
+            case .searchIndex: searchIndexSettings?.isDirty == true
+            case .folderSize: folderSizeSettings?.isDirty == true
+            case .ffmpeg: ffmpegSettings?.isDirty == true
+            case .activity: activityLog?.isSettingsDirty == true
+            case .trash: trashSettings?.isDirty == true
+            case .users, .versions, .serverTools: false
+            }
+        }
+
+        var accountID: String {
+            Self.accountID(serverURL: serverURL, username: user.username)
+        }
+
+        private static func accountID(serverURL: URL, username: String) -> String {
+            serverURL.absoluteString + "|" + username
         }
     }
 
@@ -219,6 +242,7 @@ public struct SettingsFeature {
         case offlineManageButtonTapped
         case offlineManage(PresentationAction<OfflineManageFeature.Action>)
         case cancelOfflineDownloadTapped
+        case openDownloadQueueTapped
         case resyncOfflineTapped
         case removeOfflineTapped
         case removeOfflineCancelled
@@ -279,6 +303,7 @@ public struct SettingsFeature {
             /// is not).
             case startOfflineDownload([FileItem])
             case cancelOfflineDownload
+            case openDownloadQueue
             case resyncOffline
             case removeOfflineFiles
         }
@@ -545,6 +570,9 @@ public struct SettingsFeature {
 
         case .cancelOfflineDownloadTapped:
             return .send(.delegate(.cancelOfflineDownload))
+
+        case .openDownloadQueueTapped:
+            return .send(.delegate(.openDownloadQueue))
 
         case .resyncOfflineTapped:
             return .send(.delegate(.resyncOffline))

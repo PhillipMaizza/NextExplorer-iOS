@@ -61,14 +61,13 @@
             }
             .frame(width: Constants.sliderWidth, height: Constants.knobSize)
             .macDisabledDim()
-            .accessibilityElement()
-            .accessibilityLabel(label)
-            .accessibilityValue("\(value)")
-            .accessibilityAdjustableAction { direction in
-                switch direction {
-                case .increment: onChange(min(value + step, range.upperBound))
-                case .decrement: onChange(max(value - step, range.lowerBound))
-                @unknown default: break
+            .accessibilityRepresentation {
+                Slider(
+                    value: Binding(get: { Double(value) }, set: { onChange(Int($0.rounded())) }),
+                    in: Double(range.lowerBound) ... Double(range.upperBound),
+                    step: Double(step)
+                ) {
+                    Text(label)
                 }
             }
         }
@@ -130,6 +129,7 @@
                 .tint(Color.accent)
                 .focused($isValueFocused)
                 .focusEffectDisabled()
+                .accessibilityLabel(label)
                 .fixedSize()
                 .frame(minWidth: Constants.stepperValueWidth)
                 .padding(.horizontal, .space4)
@@ -147,6 +147,8 @@
             )
             .clipShape(Constants.stepperShape)
             .macDisabledDim()
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel(label)
         }
 
         private func stepButton(

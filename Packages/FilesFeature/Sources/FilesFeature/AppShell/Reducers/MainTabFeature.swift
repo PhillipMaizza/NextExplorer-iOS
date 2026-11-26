@@ -544,6 +544,9 @@ public struct MainTabFeature {
                 case .settings(.delegate(.cancelOfflineDownload)):
                     return .send(.offline(.cancelTapped))
 
+                case .settings(.delegate(.openDownloadQueue)):
+                    return .send(.downloadQueue(.barTapped))
+
                 case .settings(.delegate(.resyncOffline)):
                     return .send(.offline(.resyncTapped))
 

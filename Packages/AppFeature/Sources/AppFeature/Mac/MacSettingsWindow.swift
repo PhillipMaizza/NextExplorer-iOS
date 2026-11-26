@@ -38,6 +38,7 @@
                     action: \.destination.authenticated
                 ) {
                     MacSettingsContent(store: session.scope(state: \.mainTab, action: \.mainTab))
+                        .id(mainStore.state.currentAccountID)
                 }
             case .locked:
                 if let lock = mainStore.scope(state: \.destination.locked, action: \.destination.locked) {

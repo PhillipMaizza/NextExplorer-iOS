@@ -1,7 +1,7 @@
 import Foundation
 
 struct TransferQueueRow: Identifiable {
-    enum Status {
+    enum Status: Equatable {
         case waiting
         case running(progress: Double?, detail: String?)
         case done(String)

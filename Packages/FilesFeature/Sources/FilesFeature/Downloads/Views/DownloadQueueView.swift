@@ -8,6 +8,9 @@ import SwiftUI
 /// cancel while it runs, retry on failure, and a shortcut to the Downloads tab.
 struct DownloadQueueView: View {
     @Bindable var store: StoreOf<DownloadQueueFeature>
+    #if os(macOS)
+        var activity: MacDownloadActivity?
+    #endif
     @Environment(\.locale) private var locale
 
     var body: some View {
@@ -16,19 +19,36 @@ struct DownloadQueueView: View {
                 icon: IconKit.macDownload,
                 title: L10n.DownloadQueue.navigationTitle,
                 summary: summary,
-                progress: store.overallProgress,
-                rows: rows,
+                progress: store.jobs.isEmpty ? activity?.fraction : store.overallProgress,
+                rows: (activity?.offlineRow).map { [$0] + rows } ?? rows,
                 emptyMessage: L10n.DownloadQueue.emptyList,
                 canClear: store.hasCompletedJobs,
                 canRetryFailed: store.failedCount > 0,
-                onCancel: cancel,
-                onRetry: retry,
+                onCancel: { id in
+                    if id == MacDownloadActivity.offlineRowID {
+                        activity?.cancelOfflineRow()
+                    } else {
+                        cancel(id)
+                    }
+                },
+                onRetry: { id in
+                    if id == MacDownloadActivity.offlineRowID {
+                        activity?.retryOfflineRow()
+                    } else {
+                        retry(id)
+                    }
+                },
                 onUploadMore: nil,
                 onRetryFailed: { store.send(.retryAllFailedTapped, animation: DSMotion.listDiff) },
                 onClear: { store.send(.clearCompletedTapped, animation: DSMotion.listDiff) },
                 onMinimize: minimize,
                 onClose: close
             )
+            .onChange(of: activity?.isActive) { wasActive, isActive in
+                guard wasActive == true, isActive == false, store.jobs.isEmpty,
+                      activity?.offlineRow == nil else { return }
+                close()
+            }
         #else
             PhoneTransferQueueSheet(
                 title: L10n.DownloadQueue.navigationTitle,
@@ -62,7 +82,10 @@ struct DownloadQueueView: View {
 
     #if os(macOS)
         private var summary: TransferQueueSummary {
-            TransferQueueSummary(
+            if store.jobs.isEmpty, let activity {
+                return activity.offlineSummary
+            }
+            return TransferQueueSummary(
                 done: L10n.DownloadQueue.summary(store.savedCount, store.jobs.count),
                 failure: store.failedCount > 0 ? TransferFailureText.downloads(store.failedCount) : nil,
                 timeLeft: DownloadProgressText.timeLeft(store.currentJob?.estimatedSecondsRemaining, locale: locale)
@@ -83,7 +106,11 @@ struct DownloadQueueView: View {
     }
 
     private var minimize: (() -> Void)? {
-        guard store.isActive else { return nil }
+        #if os(macOS)
+            guard store.isActive || activity?.isActive == true else { return nil }
+        #else
+            guard store.isActive else { return nil }
+        #endif
         return close
     }
 

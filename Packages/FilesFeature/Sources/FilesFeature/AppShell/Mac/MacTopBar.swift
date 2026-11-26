@@ -39,6 +39,7 @@
         var refresh: RefreshScreenAction?
         var searchText: Binding<String>?
         let actions: MacWindowActions
+        @State private var isDownloadsButtonVisible = false
 
         private var searchPrompt: String {
             if actions.isShared {
@@ -72,7 +73,7 @@
                     prompt: searchPrompt
                 ) { store.send(.spotlightOpened) }
                 HStack(spacing: MacToolbarMetrics.gap) {
-                    if store.downloadQueue.isBarVisible {
+                    if isDownloadsButtonVisible {
                         MacTransferActivityButton(store: store)
                             .buttonStyle(.macToolbarCircle)
                             .macTransferButtonAnchor(.downloads)
@@ -80,7 +81,7 @@
                     }
                     actions
                 }
-                .animation(DSMotion.controlMorph, value: store.downloadQueue.isBarVisible)
+                .animation(DSMotion.controlMorph, value: isDownloadsButtonVisible)
             }
             .padding(.leading, edgeInset)
             .padding(.trailing, Metrics.trailingInset)
@@ -92,6 +93,7 @@
                     .simultaneousGesture(TapGesture(count: 2).onEnded { TitleBarDoubleClick.perform() })
             }
             .accessibilityElement(children: .contain)
+            .macDownloadActivityVisible(store, isVisible: $isDownloadsButtonVisible)
         }
 
         static func fullScreenWidth(window: CGFloat) -> CGFloat {

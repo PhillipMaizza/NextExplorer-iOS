@@ -111,11 +111,12 @@ struct NextExplorerApp: App {
     }
 
     #if os(macOS)
-        /// The About window's coffee link: the tip jar sheet belongs to the main window, so that
-        /// window comes forward and presents it. Signed out, there is no session and nothing opens.
         private static func openTipJar() {
-            guard case .authenticated = store.destination else { return }
-            store.send(.destination(.authenticated(.mainTab(.settings(.tipJarButtonTapped)))))
+            if case .authenticated = store.destination {
+                store.send(.destination(.authenticated(.mainTab(.settings(.tipJarButtonTapped)))))
+            } else {
+                store.send(.tipJarRequested)
+            }
             NSApp.activate(ignoringOtherApps: true)
             NSApp.windows.first { $0.isVisible && $0.canBecomeMain && $0.title != L10n.Menu.about }?
                 .makeKeyAndOrderFront(nil)

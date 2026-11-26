@@ -522,6 +522,18 @@ extension AppSuites {
 
             #expect(recorder.events.value.isEmpty)
         }
+
+        @Test("Buy me a coffee opens the tip jar with no account signed in, and a tip closes it")
+        func tipJarOpensWithoutASessionAndClosesOnTip() async {
+            let store = makeStore()
+
+            await store.send(.tipJarRequested) {
+                $0.tipJar = TipJarFeature.State()
+            }
+            await store.send(.tipJar(.presented(.delegate(.tipped)))) {
+                $0.tipJar = nil
+            }
+        }
     }
 }
 

@@ -80,7 +80,6 @@
 
         func body(content: Content) -> some View {
             content
-                .modifier(MacOfflineStatusBar(store: store, leadingInset: sidebarWidth))
                 .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.top } action: { topInset = $0 }
                 .overlay(alignment: .top) {
                     if !isFullScreen {

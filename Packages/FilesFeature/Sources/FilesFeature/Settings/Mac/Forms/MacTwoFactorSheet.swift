@@ -32,6 +32,7 @@
             }
             .padding(.space24)
             .frame(width: MacFormSheetMetrics.width)
+            .macSheetSurface()
             .animation(DSMotion.stateFade, value: store.phase)
             .animation(DSMotion.stateFade, value: store.passwordPrompt?.action)
             .task { store.send(.task) }
@@ -168,7 +169,7 @@
                 Spacer(minLength: .zero)
             }
             .padding(.space16)
-            .background(RoundedRectangle(cornerRadius: .radiusMedium, style: .continuous).fill(Color.macRow))
+            .background(RoundedRectangle(cornerRadius: .radiusMedium, style: .continuous).fill(Color.backgroundPrimary))
             .accessibilityElement(children: .combine)
         }
 
@@ -212,7 +213,8 @@
                 }
             }
             .padding(.space12)
-            .background(RoundedRectangle(cornerRadius: .radiusControl, style: .continuous).fill(Color.macRow))
+            .background(RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
+                .fill(Color.backgroundPrimary))
         }
 
         private func passwordField(_ prompt: TwoFactorFeature.PasswordPrompt) -> some View {

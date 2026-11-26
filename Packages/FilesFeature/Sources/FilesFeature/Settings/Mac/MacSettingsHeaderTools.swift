@@ -98,7 +98,7 @@
             case .users:
                 if let users = store.scope(state: \.userManagement, action: \.userManagement.presented) {
                     Button { users.send(.createUserTapped) } label: {
-                        Label { Text(L10n.UserManagement.createUser) } icon: { IconKit.plus }
+                        Label { Text(L10n.ellipsized(L10n.UserManagement.createUser)) } icon: { IconKit.plus }
                             .labelStyle(.titleAndIcon)
                     }
                     .buttonStyle(.macDS(.primary))

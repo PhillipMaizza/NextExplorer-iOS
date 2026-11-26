@@ -26,6 +26,7 @@ public struct AppFeature {
         public var destination: Destination.State
         /// Login sheet for adding another server while already signed in (multi-server).
         @Presents public var addAccount: LoginFormFeature.State?
+        @Presents public var tipJar: TipJarFeature.State?
         /// An account the add account sheet just signed in, adopted once the sheet has fully
         /// dismissed (`addAccountSheetDismissed`).
         public var pendingAddedAccount: AddedAccount?
@@ -99,6 +100,8 @@ public struct AppFeature {
         case accountsRefreshed([AccountSummary])
         case addAccount(PresentationAction<LoginFormFeature.Action>)
         case addAccountSheetDismissed
+        case tipJarRequested
+        case tipJar(PresentationAction<TipJarFeature.Action>)
         /// Files opened in the app from another app's share sheet.
         case incomingFiles([URL])
         /// The user tapped an "upload finished" notification: open the folder the files went to.
@@ -503,6 +506,17 @@ public struct AppFeature {
                 guard case .authenticated = state.destination else { return .none }
                 return .send(.destination(.authenticated(.mainTab(.sharedFilesArrived))))
 
+            case .tipJarRequested:
+                state.tipJar = TipJarFeature.State()
+                return .none
+
+            case .tipJar(.presented(.delegate(.tipped))):
+                state.tipJar = nil
+                return .none
+
+            case .tipJar:
+                return .none
+
             case .addAccountSheetDismissed:
                 // Login already persisted and activated the new account; adopt it without a cache
                 // wipe so the accounts already signed in keep their caches. The real user is in
@@ -543,6 +557,9 @@ public struct AppFeature {
         }
         .ifLet(\.$addAccount, action: \.addAccount) {
             LoginFormFeature()
+        }
+        .ifLet(\.$tipJar, action: \.tipJar) {
+            TipJarFeature()
         }
 
         UploadFolderRouting()

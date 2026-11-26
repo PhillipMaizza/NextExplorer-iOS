@@ -40,6 +40,7 @@
     public struct MacCopyBox: View {
         let value: String
         var icon: Image?
+        @Environment(\.macInsetFill) private var fill
         var isProminent = false
         var isMonospaced = false
         var copyTitle = L10n.Common.copy
@@ -86,7 +87,7 @@
             .padding(.leading, isProminent ? .space16 : .space12)
             .padding(.trailing, .space8)
             .frame(height: isProminent ? Metrics.prominentBoxHeight : Metrics.boxHeight)
-            .background(RoundedRectangle(cornerRadius: .radiusControl, style: .continuous).fill(Color.macRow))
+            .background(RoundedRectangle(cornerRadius: .radiusControl, style: .continuous).fill(fill))
         }
     }
 
@@ -209,5 +210,12 @@
         }
         .padding(.space24)
         .previewCanvasWidth(.sheet)
+    }
+
+    #Preview("Copy box in a sheet") {
+        MacCopyBox("nxt_3f9a0c1e7b2d4a8f9c0e1d2b3a4f5e6d", isProminent: true, isMonospaced: true)
+            .padding(.space24)
+            .macSheetSurface()
+            .previewCanvasWidth(.sheet)
     }
 #endif

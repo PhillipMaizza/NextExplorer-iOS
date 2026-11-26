@@ -35,6 +35,17 @@ struct MainTabNavigationTests: MainTabTestSupport {
         await store.receive(\.delegate, handOff.upward)
     }
 
+    @Test("Show All on the Settings offline progress opens the Downloads panel")
+    func settingsShowAllOpensTheDownloadsPanel() async {
+        let store = makeStore()
+
+        await store.send(.settings(.openDownloadQueueTapped))
+        await store.receive(\.settings.delegate, .openDownloadQueue)
+        await store.receive(\.downloadQueue.barTapped) {
+            $0.downloadQueue.isSheetPresented = true
+        }
+    }
+
     @Test("Go to Folder opens the trimmed path in Browse and closes the dialog")
     func goToFolderOpensTheTrimmedPathInBrowse() async {
         let store = makeStore(makeState { $0.selectedTab = .shared })

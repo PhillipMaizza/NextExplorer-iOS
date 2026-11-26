@@ -761,7 +761,6 @@ macSettings.support	도움말 및 지원…
 macSettings.permission	권한
 macSettings.icon	아이콘
 menu.go	이동
-menu.activity	전송
 menu.showAll	모두 보기
 uploads.notifyDone	업로드 완료
 uploads.notifyBody#other	파일 %lld개 업로드됨

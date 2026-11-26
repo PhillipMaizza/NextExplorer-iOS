@@ -1,5 +1,7 @@
 @testable import FilesFeature
+import Foundation
 import Testing
+import TestUtils
 
 struct OfflineDownloadProgressTests {
     @Test
@@ -36,5 +38,30 @@ struct OfflineDownloadProgressTests {
         progress.filesTotal = 4
         progress.unitsDone = 1
         #expect(progress.fractionComplete == 0.25)
+    }
+
+    @Test
+    func secondsRemainingScalesElapsedTimeByWhatIsLeft() {
+        let start = MockDate.date
+        var progress = OfflineDownloadProgress()
+        progress.phase = .downloading
+        progress.filesTotal = 4
+        progress.unitsDone = 1
+        progress.downloadStartedAt = start
+        #expect(progress.secondsRemaining(now: start.addingTimeInterval(30)) == 90)
+    }
+
+    @Test
+    func secondsRemainingIsUnknownBeforeAnyProgressAndOutsideDownloading() {
+        let start = MockDate.date
+        var progress = OfflineDownloadProgress()
+        progress.phase = .downloading
+        progress.filesTotal = 4
+        progress.downloadStartedAt = start
+        #expect(progress.secondsRemaining(now: start.addingTimeInterval(30)) == nil)
+
+        progress.unitsDone = 2
+        progress.phase = .preparing
+        #expect(progress.secondsRemaining(now: start.addingTimeInterval(30)) == nil)
     }
 }

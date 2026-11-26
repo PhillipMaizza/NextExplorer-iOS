@@ -161,10 +161,10 @@
         }
 
         private func sizeText(_ item: FileItem) -> String {
-            if item.isDirectory {
-                return store.folderSizes[item.id].map { FileSizeFormat.string($0) } ?? L10n.Common.loading
+            if item.isDirectory, store.estimatingPaths.contains(item.id) {
+                return L10n.Common.loading
             }
-            return FileSizeFormat.string(item.size)
+            return FileSizeFormat.string(for: item, folderSize: store.folderSizes[item.id])
         }
 
         private var estimateText: String {

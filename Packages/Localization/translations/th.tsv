@@ -1006,7 +1006,6 @@ macSettings.support	ความช่วยเหลือและการส
 macSettings.permission	สิทธิ์
 macSettings.icon	ไอคอน
 menu.go	ไป
-menu.activity	การถ่ายโอน
 menu.showAll	แสดงทั้งหมด
 uploads.notifyDone	อัปโหลดเสร็จสิ้น
 uploads.notifyBody#other	อัปโหลดแล้ว %lld ไฟล์

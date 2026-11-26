@@ -107,48 +107,51 @@ public struct AppView: View {
         // whose extreme sizes shatter the app's fixed height chrome; buttons/rows grow with the
         // text up to that point.
         .dynamicTypeSize(...DynamicTypeSize.accessibility3)
-        .environment(\.locale, appLocale)
-        .environment(\.layoutDirection, layoutDirection)
-        .onChange(of: appLanguage, initial: true) { _, _ in
-            LocalizationOverride.apply(selectedLanguage)
-        }
-        .onChange(of: store.didAuthenticateFromLogin) { _, fromLogin in
-            guard fromLogin, !reduceMotion else {
-                authFillOpacity = 0
-                return
+        #if os(macOS)
+            .macTipJarSheet($store.scope(state: \.tipJar, action: \.tipJar))
+        #endif
+            .environment(\.locale, appLocale)
+            .environment(\.layoutDirection, layoutDirection)
+            .onChange(of: appLanguage, initial: true) { _, _ in
+                LocalizationOverride.apply(selectedLanguage)
             }
-            // The login button's circle has just filled the screen with accent; pick that up
-            // seamlessly, then fade it out over the app.
-            authFillOpacity = 1
-            withAnimation(DSMotion.fadeOut) {
-                authFillOpacity = 0
+            .onChange(of: store.didAuthenticateFromLogin) { _, fromLogin in
+                guard fromLogin, !reduceMotion else {
+                    authFillOpacity = 0
+                    return
+                }
+                // The login button's circle has just filled the screen with accent; pick that up
+                // seamlessly, then fade it out over the app.
+                authFillOpacity = 1
+                withAnimation(DSMotion.fadeOut) {
+                    authFillOpacity = 0
+                }
             }
-        }
-        .task {
-            store.send(.onAppear)
-        }
-        // Finish tip transactions that resolve outside the inline purchase (Ask to Buy approvals,
-        // interrupted purchases). Started once for the app's lifetime; without it StoreKit
-        // redelivers the same unfinished transaction on every launch.
-        .task {
-            await TipTransactionObserver.run()
-        }
-        // Tapping an "upload finished" notification opens the folder the files went to.
-        .task {
-            for await tap in UploadNotificationTaps.taps {
-                store.send(.uploadNotificationTapped(tap))
+            .task {
+                store.send(.onAppear)
             }
-        }
-        .onChange(of: store.sessionDidExpire) { _, didExpire in
-            guard didExpire else { return }
-            store.send(.sessionExpiryDetected)
-        }
-        // "Open in NextExplorer" from another app's share sheet (Info.plist document types).
-        .onOpenURL { url in
-            store.send(.incomingFiles([url]))
-        }
-        .modifier(AddAccountSheet(store: store))
-        .modifier(AppLockLifecycle(store: store))
+            // Finish tip transactions that resolve outside the inline purchase (Ask to Buy approvals,
+            // interrupted purchases). Started once for the app's lifetime; without it StoreKit
+            // redelivers the same unfinished transaction on every launch.
+            .task {
+                await TipTransactionObserver.run()
+            }
+            // Tapping an "upload finished" notification opens the folder the files went to.
+            .task {
+                for await tap in UploadNotificationTaps.taps {
+                    store.send(.uploadNotificationTapped(tap))
+                }
+            }
+            .onChange(of: store.sessionDidExpire) { _, didExpire in
+                guard didExpire else { return }
+                store.send(.sessionExpiryDetected)
+            }
+            // "Open in NextExplorer" from another app's share sheet (Info.plist document types).
+            .onOpenURL { url in
+                store.send(.incomingFiles([url]))
+            }
+            .modifier(AddAccountSheet(store: store))
+            .modifier(AppLockLifecycle(store: store))
     }
 
     private var destinationContent: some View {

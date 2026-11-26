@@ -225,9 +225,11 @@ public struct OfflineDownloadsFeature {
                 return .none
 
             case let .prepared(fileCount):
+                let now = date.now
                 state.$progress.withLock {
                     $0.phase = .downloading
                     $0.filesTotal = fileCount
+                    $0.downloadStartedAt = now
                 }
                 return .none
 

@@ -7592,7 +7592,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Record activity"
+            "value": "Record Activity"
           }
         },
         "ar": {
@@ -9997,7 +9997,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep for (days)"
+            "value": "Keep For (days)"
           }
         },
         "ar": {
@@ -82786,7 +82786,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "FFmpeg executable path"
+            "value": "FFmpeg Executable Path"
           }
         },
         "ar": {
@@ -83156,7 +83156,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "FFprobe executable path"
+            "value": "FFprobe Executable Path"
           }
         },
         "ar": {
@@ -96846,7 +96846,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Additional exclusions"
+            "value": "Additional Exclusions"
           }
         },
         "ar": {
@@ -97216,7 +97216,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Environment-defined exclusions"
+            "value": "Environment Exclusions"
           }
         },
         "ar": {
@@ -98696,7 +98696,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Measure folder sizes"
+            "value": "Measure Folder Sizes"
           }
         },
         "ar": {
@@ -117556,191 +117556,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "關於 NextExplorer"
-          }
-        }
-      }
-    },
-    "menu.activity": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transfers"
-          }
-        },
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "عمليات النقل"
-          }
-        },
-        "cs": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Přenosy"
-          }
-        },
-        "da": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overførsler"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Übertragungen"
-          }
-        },
-        "el": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Μεταφορές"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transferencias"
-          }
-        },
-        "fi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Siirrot"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transferts"
-          }
-        },
-        "he": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "העברות"
-          }
-        },
-        "hi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "स्थानांतरण"
-          }
-        },
-        "hu": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Átvitelek"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transfer"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trasferimenti"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "転送"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "전송"
-          }
-        },
-        "nb": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overføringer"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Overdrachten"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transfery"
-          }
-        },
-        "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transferências"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Downloads"
-          }
-        },
-        "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Transferuri"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Передачи"
-          }
-        },
-        "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Överföringar"
-          }
-        },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "การถ่ายโอน"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aktarımlar"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Передавання"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chuyển tệp"
-          }
-        },
-        "zh-CN": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "传输"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "傳輸"
           }
         }
       }
@@ -139026,7 +138841,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Additional exclusions"
+            "value": "Additional Exclusions"
           }
         },
         "ar": {
@@ -139396,7 +139211,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Environment-defined exclusions"
+            "value": "Environment Exclusions"
           }
         },
         "ar": {
@@ -139951,7 +139766,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No path configured"
+            "value": "No paths configured"
           }
         },
         "ar": {
@@ -140321,7 +140136,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep a search index"
+            "value": "Keep a Search Index"
           }
         },
         "ar": {
@@ -146241,7 +146056,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "ar": {
@@ -146253,13 +146068,13 @@
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "de": {
@@ -146271,7 +146086,7 @@
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "es": {
@@ -146283,7 +146098,7 @@
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "fr": {
@@ -146295,7 +146110,7 @@
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "hi": {
@@ -146307,13 +146122,13 @@
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "it": {
@@ -146337,7 +146152,7 @@
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "nl": {
@@ -146385,25 +146200,25 @@
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server tools"
+            "value": "Server Tools"
           }
         },
         "zh-CN": {
@@ -222685,7 +222500,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Office checkpoint (minutes)"
+            "value": "Office Checkpoint (minutes)"
           }
         },
         "ar": {
@@ -222870,7 +222685,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Then one per day (days)"
+            "value": "Then One per Day (days)"
           }
         },
         "ar": {
@@ -223240,7 +223055,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Send deleted items to the trash"
+            "value": "Send Deleted Items to the Trash"
           }
         },
         "ar": {
@@ -225830,7 +225645,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Then one per hour (days)"
+            "value": "Then One per Hour (days)"
           }
         },
         "ar": {
@@ -226200,7 +226015,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep every version (hours)"
+            "value": "Keep Every Version (hours)"
           }
         },
         "ar": {
@@ -226755,7 +226570,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Versions per file at most"
+            "value": "Versions per File at Most"
           }
         },
         "ar": {
@@ -226940,7 +226755,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Share of each volume (%)"
+            "value": "Share of Each Volume (%)"
           }
         },
         "ar": {
@@ -227310,7 +227125,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Size cap per volume (GiB)"
+            "value": "Size Cap per Volume (GiB)"
           }
         },
         "ar": {
@@ -231565,7 +231380,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keep earlier versions of files"
+            "value": "Keep Earlier Versions of Files"
           }
         },
         "ar": {
@@ -239335,7 +239150,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Auto-fallback to chunked"
+            "value": "Fall Back to Chunked Uploads"
           }
         },
         "ar": {
@@ -239705,7 +239520,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chunk size"
+            "value": "Chunk Size"
           }
         },
         "ar": {
@@ -240260,7 +240075,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enable chunked uploads"
+            "value": "Enable Chunked Uploads"
           }
         },
         "ar": {

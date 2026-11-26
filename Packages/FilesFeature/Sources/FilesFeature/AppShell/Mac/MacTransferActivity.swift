@@ -8,7 +8,6 @@
     import UserNotifications
 
     private enum Metrics {
-        static let popoverWidth: CGFloat = 360
         static let ringSize: CGFloat = 16
         static let ringLineWidth: CGFloat = .borderWidthStrong
         /// The progress ring sits just outside the glyph.
@@ -66,84 +65,19 @@
 
     struct MacTransferActivityButton: View {
         let store: StoreOf<MainTabFeature>
-        @State private var isShowingPopover = false
-
-        private var queue: DownloadQueueFeature.State {
-            store.downloadQueue
-        }
-
-        private var progress: Double? {
-            queue.isActive ? queue.currentJob?.progress ?? .zero : nil
-        }
-
-        var body: some View {
-            Button { isShowingPopover.toggle() } label: {
-                MacToolbarRingGlyph(glyph: IconKit.transfers, progress: progress, hasFailures: queue.failedCount > 0)
-            }
-            .accessibilityLabelWithTooltip(L10n.Menu.activity)
-            .accessibilityValue(
-                progress?.formatted(.percent.precision(.fractionLength(0)))
-                    ?? (queue.failedCount > 0 ? TransferFailureText.downloads(queue.failedCount) : "")
-            )
-            .popover(isPresented: $isShowingPopover, arrowEdge: .bottom) {
-                MacTransferActivityPopover(store: store)
-            }
-        }
-    }
-
-    private struct MacTransferActivityPopover: View {
-        let store: StoreOf<MainTabFeature>
-        @Environment(\.dismiss) private var dismiss
         @Environment(\.locale) private var locale
 
-        private var queue: DownloadQueueFeature.State {
-            store.downloadQueue
-        }
-
         var body: some View {
-            VStack(alignment: .leading, spacing: .space12) {
-                HStack(alignment: .firstTextBaseline, spacing: .space8) {
-                    Text(queue.isActive ? IconKit.downloadFill : IconKit.errorFill)
-                        .foregroundStyle(queue.isActive ? Color.accentText : Color.negativeText)
-                    Text(queue.isActive
-                        ? TransferStatusBars(store: store).downloadBarTitle
-                        : TransferFailureText
-                            .downloads(queue.failedCount))
-                        .foregroundStyle(Color.primaryDS)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                }
-                .type(.body2(.semibold))
-                if queue.isActive {
-                    MacTransferStatus(
-                        fileName: queue.currentJob?.fileName,
-                        timeLeft: DownloadProgressText.timeLeft(
-                            queue.currentJob?.estimatedSecondsRemaining,
-                            locale: locale
-                        ),
-                        fraction: queue.currentJob?.progress,
-                        tint: queue.failedCount > 0 ? .accent : .positive
-                    )
-                }
-                HStack(spacing: .space8) {
-                    Button(L10n.Menu.showAll) {
-                        dismiss()
-                        store.send(.downloadQueue(.barTapped))
-                    }
-                    .buttonStyle(.macDS(.primary, size: .small))
-                    Spacer(minLength: .zero)
-                    if queue.isActive {
-                        Button(L10n.DownloadQueue.cancelAll) { store.send(.downloadQueue(.cancelAllTapped)) }
-                    } else {
-                        Button(L10n.Common.clear) { store.send(.downloadQueue(.clearFinishedTapped)) }
-                        Button(L10n.Common.retry) { store.send(.downloadQueue(.retryAllFailedTapped)) }
-                    }
-                }
-                .buttonStyle(.macDS(.secondary, size: .small))
-                .padding(.top, .space4)
+            let activity = MacDownloadActivity(store: store, locale: locale)
+            let progress = activity.isActive ? activity.fraction ?? .zero : nil
+            Button(action: activity.showAll) {
+                MacToolbarRingGlyph(glyph: IconKit.download, progress: progress, hasFailures: activity.hasFailures)
             }
-            .padding(.space24)
-            .frame(width: Metrics.popoverWidth)
+            .accessibilityLabelWithTooltip(L10n.DownloadQueue.navigationTitle)
+            .accessibilityValue(
+                progress?.formatted(.percent.precision(.fractionLength(0)))
+                    ?? (activity.hasFailures ? activity.failureTitle : "")
+            )
         }
     }
 

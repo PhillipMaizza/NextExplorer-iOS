@@ -31,8 +31,17 @@ public struct OfflineDownloadProgress: Equatable, Sendable {
     public var unitsDone: Double = 0
     /// The file currently downloading, for the "Downloading <name>" line.
     public var currentName = ""
+    public var downloadStartedAt: Date?
 
     public init() {}
+
+    public func secondsRemaining(now: Date) -> Double? {
+        guard phase == .downloading, let downloadStartedAt else { return nil }
+        let fraction = fractionComplete
+        let elapsed = now.timeIntervalSince(downloadStartedAt)
+        guard fraction > 0, fraction < 1, elapsed > 0 else { return nil }
+        return elapsed * (1 - fraction) / fraction
+    }
 
     /// True while a run is preparing or downloading, so the Settings screen shows the progress row
     /// rather than the idle "available offline" summary.

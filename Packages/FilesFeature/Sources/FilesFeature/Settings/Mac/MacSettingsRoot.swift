@@ -52,6 +52,24 @@
             rawValue
         }
 
+        var adminPane: SettingsFeature.AdminPane? {
+            switch self {
+            case .server: .server
+            case .users: .users
+            case .thumbnails: .thumbnails
+            case .accessRules: .accessRules
+            case .uploads: .uploads
+            case .searchIndex: .searchIndex
+            case .folderSize: .folderSize
+            case .ffmpeg: .ffmpeg
+            case .activity: .activity
+            case .serverTools: .serverTools
+            case .trash: .trash
+            case .versions: .versions
+            case .accounts, .general, .storage, .apiTokens, .about: nil
+            }
+        }
+
         static let everyone: [Self] = [.accounts, .general, .storage, .apiTokens]
         static let admin: [Self] = [
             .server,
@@ -139,6 +157,8 @@
         @Bindable var store: StoreOf<SettingsFeature>
         @AppStorage(AppStorageKeys.macSettingsPane) private var selection: MacSettingsCategory = .general
         @State private var isShowingLicenses = false
+        @State private var ownerAccountID: String?
+        @State private var pendingSelection: MacSettingsCategory?
 
         private var visibleSelection: MacSettingsCategory {
             store.user.isAdmin || !MacSettingsCategory.admin.contains(selection) ? selection : .general
@@ -184,28 +204,46 @@
             // A pane left behind (another category, or the window closed) is released, so coming
             // back loads it fresh: the Users list otherwise kept showing what it first loaded.
             .onChange(of: visibleSelection) { previous, _ in release(previous) }
-            .onDisappear { release(visibleSelection) }
+            .onAppear { ownerAccountID = store.accountID }
+            .onDisappear {
+                guard store.accountID == ownerAccountID,
+                      !(visibleSelection.adminPane.map(store.state.hasUnsavedChanges(in:)) ?? false) else { return }
+                release(visibleSelection)
+            }
             .macLicensesSheet(isPresented: $isShowingLicenses)
+            .alert(
+                L10n.EditShare.discardTitle,
+                isPresented: Binding(get: { pendingSelection != nil }, set: {
+                    if !$0 {
+                        pendingSelection = nil
+                    }
+                }),
+                presenting: pendingSelection
+            ) { category in
+                Button(L10n.EditShare.discard, role: .destructive) {
+                    pendingSelection = nil
+                    selection = category
+                }
+                Button(L10n.EditShare.keepEditing, role: .cancel) { pendingSelection = nil }
+            } message: { _ in
+                Text(L10n.TextPreview.unsavedMessage)
+            }
         }
 
         private func release(_ category: MacSettingsCategory) {
-            switch category {
-            case .server: store.send(.adminPaneLeft(.server))
-            case .users: store.send(.adminPaneLeft(.users))
-            case .thumbnails: store.send(.adminPaneLeft(.thumbnails))
-            case .accessRules: store.send(.adminPaneLeft(.accessRules))
-            case .uploads: store.send(.adminPaneLeft(.uploads))
-            case .searchIndex: store.send(.adminPaneLeft(.searchIndex))
-            case .folderSize: store.send(.adminPaneLeft(.folderSize))
-            case .ffmpeg: store.send(.adminPaneLeft(.ffmpeg))
-            case .activity: store.send(.adminPaneLeft(.activity))
-            case .serverTools: store.send(.adminPaneLeft(.serverTools))
-            case .trash: store.send(.adminPaneLeft(.trash))
-            case .versions: store.send(.adminPaneLeft(.versions))
-            case .apiTokens: if store.apiTokens != nil {
-                    store.send(.apiTokens(.dismiss))
-                }
-            case .accounts, .general, .storage, .about: break
+            if let pane = category.adminPane {
+                store.send(.adminPaneLeft(pane))
+            } else if category == .apiTokens, store.apiTokens != nil {
+                store.send(.apiTokens(.dismiss))
+            }
+        }
+
+        private func select(_ category: MacSettingsCategory) {
+            guard category != visibleSelection else { return }
+            if let pane = visibleSelection.adminPane, store.state.hasUnsavedChanges(in: pane) {
+                pendingSelection = category
+            } else {
+                selection = category
             }
         }
 
@@ -215,7 +253,7 @@
                 icon: category.icon,
                 isSelected: category == visibleSelection
             ) {
-                selection = category
+                select(category)
             }
             .macSettingsSidebarRow()
         }

@@ -97,8 +97,10 @@
                 Text(summary.done)
                     .type(.body3(.regular), style: .secondary)
                 if let failure = summary.failure {
-                    Text(DownloadProgressText.separator)
-                        .type(.body3(.regular), style: .secondary)
+                    if !summary.done.isEmpty {
+                        Text(DownloadProgressText.separator)
+                            .type(.body3(.regular), style: .secondary)
+                    }
                     Text(failure)
                         .type(.body3(.semibold), style: .error)
                 }
