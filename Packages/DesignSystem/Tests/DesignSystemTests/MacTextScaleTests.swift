@@ -26,6 +26,13 @@
             #expect(Typography.TextType.headline1.macPointSize(scale: 1.4) == MacTextScale.largestScaledPointSize)
         }
 
+        @Test("native controls step up in size as the text grows")
+        func nativeControlsFollowTheScale() {
+            #expect(MacTextScale.controlSize(1) == .regular)
+            #expect(MacTextScale.controlSize(1.2) == .large)
+            #expect(MacTextScale.controlSize(1.4) == .extraLarge)
+        }
+
         @Test("control heights grow with the text and keep their order")
         func controlHeightsScale() {
             let heights = MacControlHeight.allCases.map(\.points)

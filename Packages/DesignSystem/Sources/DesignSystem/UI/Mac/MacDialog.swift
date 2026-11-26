@@ -124,6 +124,7 @@
                         content()
                     }
                     .formStyle(.columns)
+                    .type(.body2(.regular))
                 case .stacked:
                     VStack(alignment: .leading, spacing: Metrics.spacing) {
                         content()

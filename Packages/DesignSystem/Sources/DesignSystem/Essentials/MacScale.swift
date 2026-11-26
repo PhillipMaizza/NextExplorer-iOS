@@ -5,8 +5,19 @@
         public static let range: ClosedRange<CGFloat> = 1 ... 1.4
         static let largestScaledPointSize: CGFloat = 32
 
+        static let largeControlsFrom: CGFloat = 1.15
+        static let extraLargeControlsFrom: CGFloat = 1.3
+
         public static func clamped(_ scale: CGFloat) -> CGFloat {
             min(max(scale, range.lowerBound), range.upperBound)
+        }
+
+        static func controlSize(_ scale: CGFloat) -> ControlSize {
+            switch clamped(scale) {
+            case extraLargeControlsFrom...: .extraLarge
+            case largeControlsFrom...: .large
+            default: .regular
+            }
         }
 
         static func pointSize(_ size: CGFloat, scale: CGFloat) -> CGFloat {
@@ -54,6 +65,7 @@
     public extension View {
         func macTextScale(_ scale: CGFloat) -> some View {
             environment(\.macTextScale, MacTextScale.clamped(scale))
+                .controlSize(MacTextScale.controlSize(scale))
         }
 
         func macMinHeight(_ height: MacControlHeight) -> some View {
