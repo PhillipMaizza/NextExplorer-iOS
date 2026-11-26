@@ -1336,6 +1336,11 @@ emptyGuide.sharedBody	คลิกขวาที่ไฟล์หรือโ�
 emptyGuide.sharedWithMeTitle	ยังไม่มีใครแชร์อะไรกับคุณ
 emptyGuide.offlineTitle	เก็บไฟล์ไว้ใน Mac เครื่องนี้
 emptyGuide.offlineBody	คลิกขวาที่ไฟล์หรือโฟลเดอร์ใดก็ได้ในเรียกดูแล้วเลือก “%@”\nโฟลเดอร์จะได้รับไฟล์ใหม่ทุกครั้งที่แอปซิงค์\n\nไฟล์ที่ดาวน์โหลดแล้วเปิดได้แม้ไม่มีการเชื่อมต่อ
+emptyGuide.readOnlyTitle	โฟลเดอร์นี้อ่านได้อย่างเดียว
+emptyGuide.readOnlyOpen	ไฟล์ที่เพิ่มที่นี่จะแสดงให้คุณเปิดและดาวน์โหลด
+emptyGuide.readOnlyOpenOnly	ไฟล์ที่เพิ่มที่นี่จะแสดงให้คุณเปิด
+emptyGuide.readOnlyLocked	การอัปโหลด สร้างโฟลเดอร์ เปลี่ยนชื่อ และลบ ถูกปิดสำหรับคุณที่นี่
+emptyGuide.openAccessRules	เปิด %@
 settings.groupTheme	ธีม
 settings.sectionFiles	ไฟล์
 settings.groupFileLists	รายการไฟล์

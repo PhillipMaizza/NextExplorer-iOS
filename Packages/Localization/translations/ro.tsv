@@ -1481,6 +1481,11 @@ emptyGuide.sharedBody	Fă clic dreapta pe un fișier sau dosar în Explorează �
 emptyGuide.sharedWithMeTitle	Nimic nu a fost partajat cu tine încă
 emptyGuide.offlineTitle	Păstrează fișiere pe acest Mac
 emptyGuide.offlineBody	Fă clic dreapta pe orice fișier sau dosar în Explorează și alege „%@”.\nDosarele primesc fișierele noi la fiecare sincronizare a aplicației.\n\nFișierele descărcate se deschid chiar și fără conexiune.
+emptyGuide.readOnlyTitle	Acest dosar este doar pentru citire
+emptyGuide.readOnlyOpen	Fișierele adăugate aici apar pentru a le deschide și descărca.
+emptyGuide.readOnlyOpenOnly	Fișierele adăugate aici apar pentru a le deschide.
+emptyGuide.readOnlyLocked	Încărcarea, dosarele noi, redenumirea și ștergerea sunt dezactivate pentru tine aici.
+emptyGuide.openAccessRules	Deschide %@
 settings.groupTheme	Temă
 settings.sectionFiles	Fișiere
 settings.groupFileLists	Liste de fișiere

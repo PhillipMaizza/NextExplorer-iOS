@@ -1372,6 +1372,11 @@ emptyGuide.sharedBody	Gözat’ta bir dosyaya veya klasöre sağ tıklayıp “%
 emptyGuide.sharedWithMeTitle	Henüz sizinle bir şey paylaşılmadı
 emptyGuide.offlineTitle	Dosyaları bu Mac’te tut
 emptyGuide.offlineBody	Gözat’ta herhangi bir dosyaya veya klasöre sağ tıklayıp “%@” seçeneğini seçin.\nKlasörler, uygulama her eşitlendiğinde yeni dosyaları alır.\n\nİndirilen dosyalar bağlantı olmasa bile açılır.
+emptyGuide.readOnlyTitle	Bu klasör salt okunur
+emptyGuide.readOnlyOpen	Buraya eklenen dosyaları açabilir ve indirebilirsiniz.
+emptyGuide.readOnlyOpenOnly	Buraya eklenen dosyaları açabilirsiniz.
+emptyGuide.readOnlyLocked	Yükleme, yeni klasör, yeniden adlandırma ve silme burada sizin için kapalı.
+emptyGuide.openAccessRules	%@ öğesini aç
 settings.groupTheme	Tema
 settings.sectionFiles	Dosyalar
 settings.groupFileLists	Dosya Listeleri

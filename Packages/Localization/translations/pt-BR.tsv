@@ -1438,6 +1438,11 @@ emptyGuide.sharedBody	Clique com o botão direito em um arquivo ou pasta em Expl
 emptyGuide.sharedWithMeTitle	Nada foi compartilhado com você ainda
 emptyGuide.offlineTitle	Manter arquivos neste Mac
 emptyGuide.offlineBody	Clique com o botão direito em qualquer arquivo ou pasta em Explorar e escolha “%@”.\nAs pastas recebem arquivos novos sempre que o app sincroniza.\n\nOs arquivos baixados abrem mesmo sem conexão.
+emptyGuide.readOnlyTitle	Esta pasta é somente leitura
+emptyGuide.readOnlyOpen	Os arquivos adicionados aqui aparecem para você abrir e baixar.
+emptyGuide.readOnlyOpenOnly	Os arquivos adicionados aqui aparecem para você abrir.
+emptyGuide.readOnlyLocked	Enviar, criar pastas, renomear e apagar estão desativados para você aqui.
+emptyGuide.openAccessRules	Abrir %@
 settings.groupTheme	Tema
 settings.sectionFiles	Arquivos
 settings.groupFileLists	Listas de Arquivos

@@ -1372,6 +1372,11 @@ emptyGuide.sharedBody	Højreklik på en fil eller mappe i Gennemse, og vælg “
 emptyGuide.sharedWithMeTitle	Intet er delt med dig endnu
 emptyGuide.offlineTitle	Behold filer på denne Mac
 emptyGuide.offlineBody	Højreklik på en fil eller mappe i Gennemse, og vælg “%@”.\nMapper henter nye filer, hver gang appen synkroniserer.\n\nHentede filer kan åbnes, selv uden forbindelse.
+emptyGuide.readOnlyTitle	Denne mappe er skrivebeskyttet
+emptyGuide.readOnlyOpen	Filer, der lægges her, kan du åbne og hente.
+emptyGuide.readOnlyOpenOnly	Filer, der lægges her, kan du åbne.
+emptyGuide.readOnlyLocked	Upload, nye mapper, omdøbning og sletning er slået fra for dig her.
+emptyGuide.openAccessRules	Åbn %@
 settings.groupTheme	Tema
 settings.sectionFiles	Filer
 settings.groupFileLists	Fillister

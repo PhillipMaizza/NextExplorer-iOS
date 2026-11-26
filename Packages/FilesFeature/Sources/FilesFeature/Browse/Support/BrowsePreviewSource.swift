@@ -36,6 +36,13 @@ extension BrowseFeature.State {
         return isUserVolumesEnabled && !isAdmin ? .browseRootUnassigned : .browseRootNoVolumes
     }
 
+    var readOnlyEmptyGuide: MacListGuide? {
+        guard !directoryPath.isEmpty, !isSelecting, !isSearching, let access,
+              !access.canWrite, !access.canUpload, !access.canCreateFolder, !access.canCreateFile
+        else { return nil }
+        return .readOnlyFolder(canDownload: access.canDownload)
+    }
+
     /// The Trash button sits in the root's toolbar on iPhone and iPad; the Mac has a sidebar row instead.
     var shouldShowTrashButton: Bool {
         #if os(iOS)

@@ -1443,6 +1443,11 @@ emptyGuide.sharedBody	Klicke in Durchsuchen mit der rechten Maustaste auf eine D
 emptyGuide.sharedWithMeTitle	Noch nichts mit dir geteilt
 emptyGuide.offlineTitle	Dateien auf diesem Mac behalten
 emptyGuide.offlineBody	Klicke in Durchsuchen mit der rechten Maustaste auf eine Datei oder einen Ordner und wähle „%@“.\nOrdner übernehmen neue Dateien bei jedem Abgleich der App.\n\nHeruntergeladene Dateien lassen sich auch ohne Verbindung öffnen.
+emptyGuide.readOnlyTitle	Dieser Ordner ist schreibgeschützt
+emptyGuide.readOnlyOpen	Dateien, die hier hinzukommen, kannst du öffnen und laden.
+emptyGuide.readOnlyOpenOnly	Dateien, die hier hinzukommen, kannst du öffnen.
+emptyGuide.readOnlyLocked	Hochladen, neue Ordner, Umbenennen und Löschen sind hier für dich aus.
+emptyGuide.openAccessRules	%@ öffnen
 settings.groupTheme	Design
 settings.sectionFiles	Dateien
 settings.groupFileLists	Dateilisten

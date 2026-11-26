@@ -1595,6 +1595,11 @@ emptyGuide.sharedBody	انقر بزر الماوس الأيمن على ملف أ
 emptyGuide.sharedWithMeTitle	لم يُشارَك معك شيء بعد
 emptyGuide.offlineTitle	احتفظ بالملفات على هذا الـ Mac
 emptyGuide.offlineBody	انقر بزر الماوس الأيمن على أي ملف أو مجلد في تصفح واختر «%@».\nتحصل المجلدات على الملفات الجديدة في كل مزامنة للتطبيق.\n\nتُفتح الملفات التي جرى تنزيلها حتى بدون اتصال.
+emptyGuide.readOnlyTitle	هذا المجلد للقراءة فقط
+emptyGuide.readOnlyOpen	تظهر لك الملفات المضافة هنا لتفتحها وتنزّلها.
+emptyGuide.readOnlyOpenOnly	تظهر لك الملفات المضافة هنا لتفتحها.
+emptyGuide.readOnlyLocked	الرفع وإنشاء المجلدات وإعادة التسمية والحذف غير متاحة لك هنا.
+emptyGuide.openAccessRules	فتح %@
 settings.groupTheme	السمة
 settings.sectionFiles	الملفات
 settings.groupFileLists	قوائم الملفات

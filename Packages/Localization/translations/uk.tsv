@@ -1452,6 +1452,11 @@ emptyGuide.sharedBody	Натисніть правою кнопкою на фай
 emptyGuide.sharedWithMeTitle	З вами ще нічим не поділилися
 emptyGuide.offlineTitle	Зберігайте файли на цьому Mac
 emptyGuide.offlineBody	Натисніть правою кнопкою на будь-який файл або папку в Огляді й виберіть «%@».\nПапки отримують нові файли під час кожної синхронізації застосунку.\n\nЗавантажені файли відкриваються навіть без з’єднання.
+emptyGuide.readOnlyTitle	Ця папка лише для читання
+emptyGuide.readOnlyOpen	Додані сюди файли можна буде відкрити й завантажити.
+emptyGuide.readOnlyOpenOnly	Додані сюди файли можна буде відкрити.
+emptyGuide.readOnlyLocked	Вивантаження, нові папки, перейменування й видалення тут для вас вимкнено.
+emptyGuide.openAccessRules	Відкрити %@
 settings.groupTheme	Тема
 settings.sectionFiles	Файли
 settings.groupFileLists	Списки файлів

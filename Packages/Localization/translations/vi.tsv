@@ -1336,6 +1336,11 @@ emptyGuide.sharedBody	Nhấp chuột phải vào tệp hoặc thư mục trong D
 emptyGuide.sharedWithMeTitle	Chưa có gì được chia sẻ với bạn
 emptyGuide.offlineTitle	Giữ tệp trên máy Mac này
 emptyGuide.offlineBody	Nhấp chuột phải vào bất kỳ tệp hoặc thư mục nào trong Duyệt và chọn “%@”.\nThư mục nhận tệp mới mỗi lần ứng dụng đồng bộ.\n\nCác tệp đã tải xuống vẫn mở được khi không có kết nối.
+emptyGuide.readOnlyTitle	Thư mục này chỉ đọc
+emptyGuide.readOnlyOpen	Tệp được thêm vào đây sẽ hiện để bạn mở và tải xuống.
+emptyGuide.readOnlyOpenOnly	Tệp được thêm vào đây sẽ hiện để bạn mở.
+emptyGuide.readOnlyLocked	Tải lên, tạo thư mục, đổi tên và xóa đã tắt với bạn ở đây.
+emptyGuide.openAccessRules	Mở %@
 settings.groupTheme	Chủ đề
 settings.sectionFiles	Tệp
 settings.groupFileLists	Danh sách tệp

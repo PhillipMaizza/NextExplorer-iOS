@@ -1443,6 +1443,11 @@ emptyGuide.sharedBody	Klik in Verkennen met de rechtermuisknop op een bestand of
 emptyGuide.sharedWithMeTitle	Nog niets met je gedeeld
 emptyGuide.offlineTitle	Bestanden op deze Mac bewaren
 emptyGuide.offlineBody	Klik in Verkennen met de rechtermuisknop op een bestand of map en kies ‘%@’.\nMappen halen nieuwe bestanden op bij elke synchronisatie van de app.\n\nGedownloade bestanden openen ook zonder verbinding.
+emptyGuide.readOnlyTitle	Deze map is alleen-lezen
+emptyGuide.readOnlyOpen	Bestanden die hier worden toegevoegd, kun je openen en downloaden.
+emptyGuide.readOnlyOpenOnly	Bestanden die hier worden toegevoegd, kun je openen.
+emptyGuide.readOnlyLocked	Uploaden, nieuwe mappen, hernoemen en verwijderen staan hier voor jou uit.
+emptyGuide.openAccessRules	%@ openen
 settings.groupTheme	Thema
 settings.sectionFiles	Bestanden
 settings.groupFileLists	Bestandslijsten

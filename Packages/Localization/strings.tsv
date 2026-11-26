@@ -1543,6 +1543,11 @@ emptyGuide.sharedBody	Right click a file or folder in Browse and choose %@.\nIts
 emptyGuide.sharedWithMeTitle	Nothing shared with you yet
 emptyGuide.offlineTitle	Keep files on this Mac
 emptyGuide.offlineBody	Right click any file or folder in Browse and choose %@.\nFolders pick up new files each time the app syncs.\n\nDownloaded files open even without a connection.
+emptyGuide.readOnlyTitle	This folder is read only
+emptyGuide.readOnlyOpen	Files added here show up for you to open and download.
+emptyGuide.readOnlyOpenOnly	Files added here show up for you to open.
+emptyGuide.readOnlyLocked	Uploading, new folders, renaming and deleting are off for you here.
+emptyGuide.openAccessRules	Open %@
 settings.groupTheme	Theme
 settings.sectionFiles	Files
 settings.groupFileLists	File Lists
