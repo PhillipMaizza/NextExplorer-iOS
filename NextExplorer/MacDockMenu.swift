@@ -2,6 +2,7 @@
     import AppFeature
     import AppKit
     import ComposableArchitecture
+    import DesignSystem
     import FilesFeature
     import Localization
 
@@ -23,7 +24,7 @@
             let menu = NSMenu()
             for path in session.mainTab.recentFolders {
                 let item = NSMenuItem(
-                    title: (path as NSString).lastPathComponent,
+                    title: PersonalSpace.folderTitle(path),
                     action: #selector(openRecentFolder(_:)),
                     keyEquivalent: ""
                 )
