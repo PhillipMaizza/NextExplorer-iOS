@@ -1022,6 +1022,8 @@ menu.showAll	Näytä kaikki
 uploads.notifyDone	Lähetykset valmiit
 uploads.notifyBody#one	%lld tiedosto lähetetty
 uploads.notifyBody#other	%lld tiedostoa lähetetty
+uploads.summary	%1$lld/%2$lld ladattu
+uploads.uploadMore	Lataa lisää tiedostoja
 downloadQueue.notifyDone	Lataukset valmiit
 fileInfo.rowSoftware	Ohjelmisto
 fileInfo.sectionVersions	Versiot
@@ -1191,6 +1193,7 @@ downloadQueue.savedToPhotos	Tallennettu Kuviin
 downloadQueue.savedToDevice	Tallennettu laitteellesi
 downloadQueue.photosAccessDenied	Salli pääsy Kuviin Asetuksissa, jotta voit tallentaa kuvia ja videoita.
 downloadQueue.photosSaveFailed	Tätä ei voitu lisätä Kuviin.
+downloadQueue.summary	%1$lld/%2$lld tallennettu
 tab.offline	Offline
 offline.sectionSavedEarlier	Aiemmin tallennetut
 offline.newFilesBadge	Uusia tiedostoja saatavilla offline-tilassa
@@ -1321,6 +1324,8 @@ apiTokens.badgeExpired	Vanhentunut
 common.decrease	Vähennä
 common.increase	Lisää
 common.moreInfo	Lisätietoja
+common.retryFailed	Yritä epäonnistuneita uudelleen
+common.clearFinished	Tyhjennä valmiit
 versionedFiles.pathHeader	Polku
 versionedFiles.versionsHeader	Versiot
 fileInfo.sectionSelected	Valitut

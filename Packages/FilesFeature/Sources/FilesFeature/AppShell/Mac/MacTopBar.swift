@@ -70,7 +70,7 @@
                     prompt: searchPrompt
                 ) { store.send(.spotlightOpened) }
                 HStack(spacing: MacToolbarMetrics.gap) {
-                    if store.uploads.isBarVisible || store.downloadQueue.isBarVisible {
+                    if store.downloadQueue.isBarVisible {
                         MacTransferActivityButton(store: store)
                             .buttonStyle(.macToolbarCircle)
                     }

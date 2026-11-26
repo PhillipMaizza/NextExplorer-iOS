@@ -286,6 +286,7 @@ public enum L10n {
         public static var cancel: String { tr("common.cancel") }  // "Cancel"
         public static var change: String { tr("common.change") }  // "Change"
         public static var clear: String { tr("common.clear") }  // "Clear"
+        public static var clearFinished: String { tr("common.clearFinished") }  // "Clear Finished"
         public static var close: String { tr("common.close") }  // "Close"
         public static var copied: String { tr("common.copied") }  // "Copied"
         public static var copy: String { tr("common.copy") }  // "Copy"
@@ -308,6 +309,7 @@ public enum L10n {
         public static var password: String { tr("common.password") }  // "Password"
         public static var remove: String { tr("common.remove") }  // "Remove"
         public static var retry: String { tr("common.retry") }  // "Try Again"
+        public static var retryFailed: String { tr("common.retryFailed") }  // "Retry Failed"
         public static var save: String { tr("common.save") }  // "Save"
         public static var search: String { tr("common.search") }  // "Search"
         public static var select: String { tr("common.select") }  // "Select"
@@ -369,6 +371,7 @@ public enum L10n {
         public static var savedToDevice: String { tr("downloadQueue.savedToDevice") }  // "Saved to your device"
         public static var savedToPhotos: String { tr("downloadQueue.savedToPhotos") }  // "Saved to Photos"
         public static var statusSaved: String { tr("downloadQueue.statusSaved") }  // "Saved"
+        public static func summary(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("downloadQueue.summary", a0, a1) }
         public static func timeLeft(_ a0: CVarArg) -> String { tr("downloadQueue.timeLeft", a0) }
     }
     public enum Downloads {
@@ -1379,6 +1382,8 @@ public enum L10n {
         public static var stagingFailed: String { tr("uploads.stagingFailed") }  // "Couldn't add those files. Try again."
         public static func stagingSkipped(_ a0: CVarArg) -> String { tr("uploads.stagingSkipped", a0) }
         public static var statusWaiting: String { tr("uploads.statusWaiting") }  // "Waiting"
+        public static func summary(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.summary", a0, a1) }
+        public static var uploadMore: String { tr("uploads.uploadMore") }  // "Upload More Files"
     }
     public enum UserDetail {
         public static var dangerZoneRemoveUser: String { tr("userDetail.dangerZoneRemoveUser") }  // "Remove User"

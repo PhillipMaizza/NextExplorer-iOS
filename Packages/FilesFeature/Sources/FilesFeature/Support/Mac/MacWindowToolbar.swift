@@ -39,15 +39,18 @@
         let isShared: Bool
         let openInspector: MacInspectorAction?
         var closeInspector: MacInspectorAction?
+        var uploads: MacUploadsActivity?
 
         var body: some View {
             HStack(spacing: MacToolbarMetrics.gap) {
                 if let refresh, !isShared {
                     MacRefreshToolbarButton(isRefreshing: refresh.isRefreshing) { refresh() }
                 }
-                if let upload {
-                    Button { upload() } label: { IconKit.macToolbarUpload.macToolbarGlyph() }
-                        .buttonStyle(.macToolbarCircleAccent)
+                if let uploads {
+                    MacUploadsActivityButton(activity: uploads)
+                } else if let upload {
+                    Button { upload() } label: { IconKit.upload.macToolbarGlyph() }
+                        .buttonStyle(.macToolbarCircle)
                         .accessibilityLabelWithTooltip(L10n.Uploads.actionUploadFromFiles)
                         .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
                 }

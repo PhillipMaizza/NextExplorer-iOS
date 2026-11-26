@@ -76,6 +76,22 @@ struct DownloadQueueFeatureTests {
 
     #if os(macOS)
         @Test
+        func overallProgressCountsSavedItemsAndTheOneInFlight() {
+            var state = DownloadQueueFeature.State(serverURL: serverURL)
+            #expect(state.overallProgress == nil)
+            var running = Job(id: UUID(1), item: file("movie.mkv"), status: .downloading)
+            running.receivedBytes = 5
+            running.expectedBytes = 10
+            state.jobs = [
+                Job(id: UUID(0), item: file("a.txt"), status: .completed),
+                running,
+                Job(id: UUID(2), item: file("b.txt"), status: .queued),
+                Job(id: UUID(3), item: file("c.txt"), status: .queued),
+            ]
+            #expect(state.overallProgress == 0.375)
+        }
+
+        @Test
         func itemsDownloadOneAtATimeIntoDownloadsAndTheQueueFinishes() async {
             let requested = LockIsolated<[String]>([])
             let saved = LockIsolated<[String]>([])

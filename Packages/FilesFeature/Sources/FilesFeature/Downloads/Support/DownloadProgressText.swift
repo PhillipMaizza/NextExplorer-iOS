@@ -17,6 +17,16 @@ enum DownloadProgressText {
         return parts.joined(separator: separator)
     }
 
+    static func queueSummary(_ done: String, failed: String?, secondsRemaining: Double?, locale: Locale) -> String {
+        [done, failed, timeLeft(secondsRemaining, locale: locale)]
+            .compactMap(\.self)
+            .joined(separator: separator)
+    }
+
+    static func timeLeft(_ seconds: Double?, locale: Locale) -> String? {
+        seconds.map { L10n.DownloadQueue.timeLeft(duration($0, locale: locale)) }
+    }
+
     static func bytes(_ count: Int64, locale: Locale) -> String {
         count.formatted(.byteCount(style: .file).locale(locale))
     }
@@ -26,5 +36,15 @@ enum DownloadProgressText {
         return rounded
             .formatted(.units(allowed: [.hours, .minutes, .seconds], width: .narrow, maximumUnitCount: 2)
                 .locale(locale))
+    }
+}
+
+enum TransferFailureText {
+    static func uploads(_ count: Int) -> String {
+        count == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(count)
+    }
+
+    static func downloads(_ count: Int) -> String {
+        count == 1 ? L10n.DownloadQueue.barFailedOne : L10n.DownloadQueue.barFailedMany(count)
     }
 }

@@ -1010,6 +1010,8 @@ menu.activity	Transfer
 menu.showAll	Tampilkan Semua
 uploads.notifyDone	Unggahan selesai
 uploads.notifyBody#other	%lld file diunggah
+uploads.summary	%1$lld dari %2$lld diunggah
+uploads.uploadMore	Unggah File Lainnya
 downloadQueue.notifyDone	Unduhan selesai
 fileInfo.rowSoftware	Perangkat Lunak
 fileInfo.sectionVersions	Versi
@@ -1173,6 +1175,7 @@ downloadQueue.savedToPhotos	Disimpan ke Foto
 downloadQueue.savedToDevice	Disimpan ke perangkat Anda
 downloadQueue.photosAccessDenied	Izinkan akses ke Foto di Pengaturan untuk menyimpan gambar dan video.
 downloadQueue.photosSaveFailed	Tidak dapat menambahkan ini ke Foto.
+downloadQueue.summary	%1$lld dari %2$lld disimpan
 tab.offline	Offline
 offline.sectionSavedEarlier	Disimpan sebelumnya
 offline.newFilesBadge	File baru tersedia offline
@@ -1287,6 +1290,8 @@ apiTokens.badgeExpired	Sudah kedaluwarsa
 common.decrease	Kurangi
 common.increase	Tambah
 common.moreInfo	Info Lainnya
+common.retryFailed	Coba Lagi yang Gagal
+common.clearFinished	Hapus yang Selesai
 versionedFiles.pathHeader	Jalur
 versionedFiles.versionsHeader	Versi
 fileInfo.sectionSelected	Dipilih

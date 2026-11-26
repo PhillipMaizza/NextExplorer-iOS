@@ -765,6 +765,8 @@ menu.activity	传输
 menu.showAll	显示全部
 uploads.notifyDone	上传完成
 uploads.notifyBody#other	已上传 %lld 个文件
+uploads.summary	已上传 %1$lld/%2$lld
+uploads.uploadMore	上传更多文件
 downloadQueue.notifyDone	下载完成
 fileInfo.rowSoftware	软件
 fileInfo.sectionVersions	版本
@@ -1225,6 +1227,7 @@ downloadQueue.savedToPhotos	已存储到“照片”
 downloadQueue.savedToDevice	已存储到你的设备
 downloadQueue.photosAccessDenied	请在“设置”中允许访问“照片”，以存储图片和视频。
 downloadQueue.photosSaveFailed	无法添加到“照片”。
+downloadQueue.summary	已保存 %1$lld/%2$lld
 tab.offline	离线
 offline.sectionSavedEarlier	之前存储的
 offline.newFilesBadge	有新文件可离线使用
@@ -1356,6 +1359,8 @@ apiTokens.badgeExpired	已过期
 common.decrease	减少
 common.increase	增加
 common.moreInfo	更多信息
+common.retryFailed	重试失败项
+common.clearFinished	清除已完成
 versionedFiles.pathHeader	路径
 versionedFiles.versionsHeader	版本
 fileInfo.sectionSelected	已选择

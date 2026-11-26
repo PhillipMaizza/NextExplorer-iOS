@@ -1022,6 +1022,8 @@ menu.showAll	Vis alle
 uploads.notifyDone	Opplastinger ferdig
 uploads.notifyBody#one	%lld fil lastet opp
 uploads.notifyBody#other	%lld filer lastet opp
+uploads.summary	%1$lld av %2$lld lastet opp
+uploads.uploadMore	Last opp flere filer
 downloadQueue.notifyDone	Nedlastinger ferdig
 fileInfo.rowSoftware	Programvare
 fileInfo.sectionVersions	Versjoner
@@ -1191,6 +1193,7 @@ downloadQueue.savedToPhotos	Arkivert i Bilder
 downloadQueue.savedToDevice	Arkivert på enheten din
 downloadQueue.photosAccessDenied	Gi tilgang til Bilder i Innstillinger for å arkivere bilder og videoer.
 downloadQueue.photosSaveFailed	Kunne ikke legge dette til i Bilder.
+downloadQueue.summary	%1$lld av %2$lld lagret
 tab.offline	Frakoblet
 offline.sectionSavedEarlier	Arkivert tidligere
 offline.newFilesBadge	Nye filer tilgjengelig frakoblet
@@ -1321,6 +1324,8 @@ apiTokens.badgeExpired	Utløpt
 common.decrease	Reduser
 common.increase	Øk
 common.moreInfo	Mer informasjon
+common.retryFailed	Prøv mislykkede på nytt
+common.clearFinished	Fjern fullførte
 versionedFiles.pathHeader	Bane
 versionedFiles.versionsHeader	Versjoner
 fileInfo.sectionSelected	Valgt

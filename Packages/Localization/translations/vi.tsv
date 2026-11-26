@@ -1010,6 +1010,8 @@ menu.activity	Chuyển tệp
 menu.showAll	Hiện tất cả
 uploads.notifyDone	Tải lên hoàn tất
 uploads.notifyBody#other	Đã tải lên %lld tệp
+uploads.summary	Đã tải lên %1$lld/%2$lld
+uploads.uploadMore	Tải lên thêm tệp
 downloadQueue.notifyDone	Tải xuống hoàn tất
 fileInfo.rowSoftware	Phần mềm
 fileInfo.sectionVersions	Phiên bản
@@ -1173,6 +1175,7 @@ downloadQueue.savedToPhotos	Đã lưu vào Ảnh
 downloadQueue.savedToDevice	Đã lưu vào thiết bị của bạn
 downloadQueue.photosAccessDenied	Cho phép truy cập Ảnh trong Cài đặt để lưu hình ảnh và video.
 downloadQueue.photosSaveFailed	Không thể thêm mục này vào Ảnh.
+downloadQueue.summary	Đã lưu %1$lld/%2$lld
 tab.offline	Ngoại tuyến
 offline.sectionSavedEarlier	Đã lưu trước đây
 offline.newFilesBadge	Có tệp mới dùng ngoại tuyến
@@ -1287,6 +1290,8 @@ apiTokens.badgeExpired	Đã hết hạn
 common.decrease	Giảm
 common.increase	Tăng
 common.moreInfo	Thêm thông tin
+common.retryFailed	Thử lại mục lỗi
+common.clearFinished	Xóa mục đã xong
 versionedFiles.pathHeader	Đường dẫn
 versionedFiles.versionsHeader	Phiên bản
 fileInfo.sectionSelected	Đã chọn

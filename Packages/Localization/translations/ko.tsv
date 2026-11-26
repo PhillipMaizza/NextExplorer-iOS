@@ -765,6 +765,8 @@ menu.activity	전송
 menu.showAll	모두 보기
 uploads.notifyDone	업로드 완료
 uploads.notifyBody#other	파일 %lld개 업로드됨
+uploads.summary	%2$lld개 중 %1$lld개 업로드됨
+uploads.uploadMore	파일 더 업로드
 downloadQueue.notifyDone	다운로드 완료
 fileInfo.rowSoftware	소프트웨어
 fileInfo.sectionVersions	버전
@@ -1225,6 +1227,7 @@ downloadQueue.savedToPhotos	사진에 저장됨
 downloadQueue.savedToDevice	기기에 저장됨
 downloadQueue.photosAccessDenied	이미지와 비디오를 저장하려면 설정에서 사진 접근을 허용하세요.
 downloadQueue.photosSaveFailed	사진에 추가하지 못했습니다.
+downloadQueue.summary	%2$lld개 중 %1$lld개 저장됨
 tab.offline	오프라인
 offline.sectionSavedEarlier	이전에 저장됨
 offline.newFilesBadge	새 파일을 오프라인으로 사용할 수 있음
@@ -1356,6 +1359,8 @@ apiTokens.badgeExpired	만료됨
 common.decrease	감소
 common.increase	증가
 common.moreInfo	추가 정보
+common.retryFailed	실패한 항목 재시도
+common.clearFinished	완료된 항목 지우기
 versionedFiles.pathHeader	경로
 versionedFiles.versionsHeader	버전
 fileInfo.sectionSelected	선택됨

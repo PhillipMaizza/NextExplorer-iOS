@@ -1046,6 +1046,8 @@ uploads.notifyBody#one	Nahráno souborů: %lld
 uploads.notifyBody#few	Nahráno souborů: %lld
 uploads.notifyBody#many	Nahráno souborů: %lld
 uploads.notifyBody#other	Nahráno souborů: %lld
+uploads.summary	Nahráno %1$lld z %2$lld
+uploads.uploadMore	Nahrát další soubory
 downloadQueue.notifyDone	Stahování dokončeno
 fileInfo.sectionVersions	Verze
 fileInfo.versionsNone	Žádné dřívější verze
@@ -1226,6 +1228,7 @@ downloadQueue.savedToPhotos	Uloženo do Fotek
 downloadQueue.savedToDevice	Uloženo do zařízení
 downloadQueue.photosAccessDenied	Povolte v Nastavení přístup k Fotkám, abyste mohli ukládat obrázky a videa.
 downloadQueue.photosSaveFailed	Nepodařilo se přidat do Fotek.
+downloadQueue.summary	Uloženo %1$lld z %2$lld
 tab.offline	Offline
 offline.sectionSavedEarlier	Uloženo dříve
 offline.newFilesBadge	Nové soubory dostupné offline
@@ -1396,6 +1399,8 @@ apiTokens.badgeExpired	Vypršelo
 common.decrease	Snížit
 common.increase	Zvýšit
 common.moreInfo	Další informace
+common.retryFailed	Zopakovat neúspěšné
+common.clearFinished	Vymazat dokončené
 versionedFiles.pathHeader	Cesta
 versionedFiles.versionsHeader	Verze
 fileInfo.sectionSelected	Vybráno

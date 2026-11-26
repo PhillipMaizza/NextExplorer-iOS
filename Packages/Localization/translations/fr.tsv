@@ -777,6 +777,8 @@ menu.showAll	Tout afficher
 uploads.notifyDone	Envois terminés
 uploads.notifyBody#one	%lld fichier envoyé
 uploads.notifyBody#other	%lld fichiers envoyés
+uploads.summary	%1$lld sur %2$lld envoyés
+uploads.uploadMore	Envoyer d’autres fichiers
 downloadQueue.notifyDone	Téléchargements terminés
 fileInfo.rowSoftware	Logiciel
 fileInfo.sectionVersions	Versions
@@ -1243,6 +1245,7 @@ downloadQueue.savedToPhotos	Enregistré dans Photos
 downloadQueue.savedToDevice	Enregistré sur votre appareil
 downloadQueue.photosAccessDenied	Autorisez l’accès à Photos dans Réglages pour enregistrer des images et des vidéos.
 downloadQueue.photosSaveFailed	Impossible d’ajouter ceci à Photos.
+downloadQueue.summary	%1$lld sur %2$lld enregistrés
 tab.offline	Hors ligne
 offline.sectionSavedEarlier	Enregistrés précédemment
 offline.newFilesBadge	Nouveaux fichiers disponibles hors ligne
@@ -1392,6 +1395,8 @@ apiTokens.badgeExpired	Expiré
 common.decrease	Diminuer
 common.increase	Augmenter
 common.moreInfo	Plus d’infos
+common.retryFailed	Réessayer les échecs
+common.clearFinished	Effacer les terminés
 versionedFiles.pathHeader	Chemin
 versionedFiles.versionsHeader	Versions
 fileInfo.sectionSelected	Sélection

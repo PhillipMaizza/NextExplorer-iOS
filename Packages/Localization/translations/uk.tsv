@@ -1046,6 +1046,8 @@ uploads.notifyBody#one	Вивантажено файлів: %lld
 uploads.notifyBody#few	Вивантажено файлів: %lld
 uploads.notifyBody#many	Вивантажено файлів: %lld
 uploads.notifyBody#other	Вивантажено файлів: %lld
+uploads.summary	Завантажено %1$lld з %2$lld
+uploads.uploadMore	Завантажити ще файли
 downloadQueue.notifyDone	Завантаження завершено
 fileInfo.rowSoftware	Програмне забезпечення
 fileInfo.sectionVersions	Версії
@@ -1227,6 +1229,7 @@ downloadQueue.savedToPhotos	Збережено у Фото
 downloadQueue.savedToDevice	Збережено на пристрій
 downloadQueue.photosAccessDenied	Дозвольте доступ до Фото в налаштуваннях, щоб зберігати зображення й відео.
 downloadQueue.photosSaveFailed	Не вдалося додати це до Фото.
+downloadQueue.summary	Збережено %1$lld з %2$lld
 tab.offline	Офлайн
 offline.sectionSavedEarlier	Збережено раніше
 offline.newFilesBadge	Нові файли доступні офлайн
@@ -1397,6 +1400,8 @@ apiTokens.badgeExpired	Сплив
 common.decrease	Зменшити
 common.increase	Збільшити
 common.moreInfo	Докладніше
+common.retryFailed	Повторити невдалі
+common.clearFinished	Очистити завершені
 versionedFiles.pathHeader	Шлях
 versionedFiles.versionsHeader	Версії
 fileInfo.sectionSelected	Вибрано

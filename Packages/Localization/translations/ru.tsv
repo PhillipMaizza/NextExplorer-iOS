@@ -801,6 +801,8 @@ uploads.notifyBody#one	Загружено файлов: %lld
 uploads.notifyBody#few	Загружено файлов: %lld
 uploads.notifyBody#many	Загружено файлов: %lld
 uploads.notifyBody#other	Загружено файлов: %lld
+uploads.summary	Загружено %1$lld из %2$lld
+uploads.uploadMore	Загрузить ещё файлы
 downloadQueue.notifyDone	Загрузки завершены
 fileInfo.rowSoftware	Программа
 fileInfo.sectionVersions	Версии
@@ -1279,6 +1281,7 @@ downloadQueue.savedToPhotos	Сохранено в Фото
 downloadQueue.savedToDevice	Сохранено на устройство
 downloadQueue.photosAccessDenied	Разрешите доступ к Фото в настройках, чтобы сохранять изображения и видео.
 downloadQueue.photosSaveFailed	Не удалось добавить это в Фото.
+downloadQueue.summary	Сохранено %1$lld из %2$lld
 tab.offline	Офлайн
 offline.sectionSavedEarlier	Сохранено ранее
 offline.newFilesBadge	Новые файлы доступны офлайн
@@ -1464,6 +1467,8 @@ apiTokens.badgeExpired	Истёк
 common.decrease	Уменьшить
 common.increase	Увеличить
 common.moreInfo	Подробнее
+common.retryFailed	Повторить неудачные
+common.clearFinished	Очистить завершённые
 versionedFiles.pathHeader	Путь
 versionedFiles.versionsHeader	Версии
 fileInfo.sectionSelected	Выбрано

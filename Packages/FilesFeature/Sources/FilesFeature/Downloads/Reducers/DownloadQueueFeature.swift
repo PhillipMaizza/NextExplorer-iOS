@@ -130,6 +130,11 @@ public struct DownloadQueueFeature {
             jobs.filter { $0.status == .completed }.count
         }
 
+        var overallProgress: Double? {
+            guard !jobs.isEmpty else { return nil }
+            return (Double(savedCount) + (currentJob?.progress ?? .zero)) / Double(jobs.count)
+        }
+
         /// Mac: the last finished save's location in Finder.
         var lastSavedURL: URL? {
             jobs.last { $0.status == .completed && $0.savedURL != nil }?.savedURL

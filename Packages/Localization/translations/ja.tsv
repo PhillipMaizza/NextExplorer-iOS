@@ -765,6 +765,8 @@ menu.activity	転送
 menu.showAll	すべて表示
 uploads.notifyDone	アップロード完了
 uploads.notifyBody#other	%lld 個のファイルをアップロードしました
+uploads.summary	%2$lld 件中 %1$lld 件アップロード済み
+uploads.uploadMore	ほかのファイルをアップロード
 downloadQueue.notifyDone	ダウンロード完了
 fileInfo.rowSoftware	ソフトウェア
 fileInfo.sectionVersions	バージョン
@@ -1225,6 +1227,7 @@ downloadQueue.savedToPhotos	写真に保存しました
 downloadQueue.savedToDevice	デバイスに保存しました
 downloadQueue.photosAccessDenied	画像や動画を保存するには、設定で写真へのアクセスを許可してください。
 downloadQueue.photosSaveFailed	写真に追加できませんでした。
+downloadQueue.summary	%2$lld 件中 %1$lld 件保存済み
 tab.offline	オフライン
 offline.sectionSavedEarlier	以前に保存したもの
 offline.newFilesBadge	新しいファイルがオフラインで利用可能
@@ -1356,6 +1359,8 @@ apiTokens.badgeExpired	期限切れ
 common.decrease	減らす
 common.increase	増やす
 common.moreInfo	詳細情報
+common.retryFailed	失敗した項目を再試行
+common.clearFinished	完了した項目を消去
 versionedFiles.pathHeader	パス
 versionedFiles.versionsHeader	バージョン
 fileInfo.sectionSelected	選択中

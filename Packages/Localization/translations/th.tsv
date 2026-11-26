@@ -1010,6 +1010,8 @@ menu.activity	การถ่ายโอน
 menu.showAll	แสดงทั้งหมด
 uploads.notifyDone	อัปโหลดเสร็จสิ้น
 uploads.notifyBody#other	อัปโหลดแล้ว %lld ไฟล์
+uploads.summary	อัปโหลดแล้ว %1$lld จาก %2$lld
+uploads.uploadMore	อัปโหลดไฟล์เพิ่ม
 downloadQueue.notifyDone	ดาวน์โหลดเสร็จสิ้น
 fileInfo.rowSoftware	ซอฟต์แวร์
 fileInfo.sectionVersions	เวอร์ชัน
@@ -1173,6 +1175,7 @@ downloadQueue.savedToPhotos	บันทึกลงในรูปภาพแ�
 downloadQueue.savedToDevice	บันทึกลงในอุปกรณ์ของคุณแล้ว
 downloadQueue.photosAccessDenied	อนุญาตการเข้าถึงรูปภาพในการตั้งค่าเพื่อบันทึกรูปภาพและวิดีโอ
 downloadQueue.photosSaveFailed	ไม่สามารถเพิ่มลงในรูปภาพได้
+downloadQueue.summary	บันทึกแล้ว %1$lld จาก %2$lld
 tab.offline	ออฟไลน์
 offline.sectionSavedEarlier	ที่บันทึกไว้ก่อนหน้านี้
 offline.newFilesBadge	มีไฟล์ใหม่ใช้งานแบบออฟไลน์ได้
@@ -1287,6 +1290,8 @@ apiTokens.badgeExpired	หมดอายุแล้ว
 common.decrease	ลด
 common.increase	เพิ่ม
 common.moreInfo	ข้อมูลเพิ่มเติม
+common.retryFailed	ลองรายการที่ล้มเหลวอีกครั้ง
+common.clearFinished	ล้างรายการที่เสร็จแล้ว
 versionedFiles.pathHeader	เส้นทาง
 versionedFiles.versionsHeader	เวอร์ชัน
 fileInfo.sectionSelected	ที่เลือก

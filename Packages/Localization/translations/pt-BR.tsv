@@ -974,6 +974,8 @@ menu.showAll	Mostrar tudo
 uploads.notifyDone	Envios concluídos
 uploads.notifyBody#one	%lld arquivo enviado
 uploads.notifyBody#other	%lld arquivos enviados
+uploads.summary	%1$lld de %2$lld enviados
+uploads.uploadMore	Enviar mais arquivos
 downloadQueue.notifyDone	Downloads concluídos
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versões
@@ -1238,6 +1240,7 @@ downloadQueue.savedToPhotos	Salvo em Fotos
 downloadQueue.savedToDevice	Salvo no seu dispositivo
 downloadQueue.photosAccessDenied	Permita o acesso a Fotos em Ajustes para salvar imagens e vídeos.
 downloadQueue.photosSaveFailed	Não foi possível adicionar a Fotos.
+downloadQueue.summary	%1$lld de %2$lld salvos
 tab.offline	Offline
 offline.sectionSavedEarlier	Salvos anteriormente
 offline.newFilesBadge	Novos arquivos disponíveis offline
@@ -1387,6 +1390,8 @@ apiTokens.badgeExpired	Expirado
 common.decrease	Diminuir
 common.increase	Aumentar
 common.moreInfo	Mais informações
+common.retryFailed	Tentar novamente com falha
+common.clearFinished	Limpar concluídos
 versionedFiles.pathHeader	Caminho
 versionedFiles.versionsHeader	Versões
 fileInfo.sectionSelected	Selecionados

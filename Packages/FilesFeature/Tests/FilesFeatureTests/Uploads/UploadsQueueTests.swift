@@ -93,6 +93,21 @@ struct UploadsQueueTests: UploadsTestSupport {
     }
 
     @Test
+    func progressEstimatesTheTimeLeftFromTheRateSoFar() async {
+        let startedAt = now.addingTimeInterval(-4)
+        let store = makeStore(state([
+            job(TestFile.aText, 0, .uploading, startedAt: startedAt),
+            job(TestFile.bText, 1, .queued),
+        ]))
+
+        await store.send(.progress(id: UUID(0), 0.5)) {
+            $0.jobs[id: UUID(0)]?.progress = 0.5
+            $0.jobs[id: UUID(0)]?.fractionPerSecond = 0.125
+        }
+        #expect(store.state.estimatedSecondsRemaining == 12)
+    }
+
+    @Test
     func progressIsThrottledToTwoPercentStepsAndAlwaysReportsCompletion() async {
         let store = makeStore(state([job(TestFile.aText, 0, .queued)]), upload: { _, progress in
             progress(0.01)

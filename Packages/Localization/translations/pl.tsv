@@ -801,6 +801,8 @@ uploads.notifyBody#one	Wysłano plików: %lld
 uploads.notifyBody#few	Wysłano plików: %lld
 uploads.notifyBody#many	Wysłano plików: %lld
 uploads.notifyBody#other	Wysłano plików: %lld
+uploads.summary	Przesłano %1$lld z %2$lld
+uploads.uploadMore	Prześlij więcej plików
 downloadQueue.notifyDone	Pobieranie zakończone
 fileInfo.rowSoftware	Oprogramowanie
 fileInfo.sectionVersions	Wersje
@@ -1279,6 +1281,7 @@ downloadQueue.savedToPhotos	Zapisano w Zdjęciach
 downloadQueue.savedToDevice	Zapisano na urządzeniu
 downloadQueue.photosAccessDenied	Zezwól na dostęp do Zdjęć w Ustawieniach, aby zapisywać obrazy i filmy.
 downloadQueue.photosSaveFailed	Nie udało się dodać tego do Zdjęć.
+downloadQueue.summary	Zapisano %1$lld z %2$lld
 tab.offline	Offline
 offline.sectionSavedEarlier	Zapisane wcześniej
 offline.newFilesBadge	Nowe pliki dostępne offline
@@ -1464,6 +1467,8 @@ apiTokens.badgeExpired	Wygasł
 common.decrease	Zmniejsz
 common.increase	Zwiększ
 common.moreInfo	Więcej informacji
+common.retryFailed	Ponów nieudane
+common.clearFinished	Wyczyść zakończone
 versionedFiles.pathHeader	Ścieżka
 versionedFiles.versionsHeader	Wersje
 fileInfo.sectionSelected	Zaznaczone

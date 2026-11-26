@@ -765,6 +765,8 @@ menu.activity	傳輸
 menu.showAll	顯示全部
 uploads.notifyDone	上傳完成
 uploads.notifyBody#other	已上傳 %lld 個檔案
+uploads.summary	已上傳 %1$lld/%2$lld
+uploads.uploadMore	上傳更多檔案
 downloadQueue.notifyDone	下載完成
 fileInfo.rowSoftware	軟體
 fileInfo.sectionVersions	版本
@@ -1225,6 +1227,7 @@ downloadQueue.savedToPhotos	已儲存到「照片」
 downloadQueue.savedToDevice	已儲存到你的裝置
 downloadQueue.photosAccessDenied	請在「設定」中允許存取「照片」，以儲存圖片和影片。
 downloadQueue.photosSaveFailed	無法加入「照片」。
+downloadQueue.summary	已儲存 %1$lld/%2$lld
 tab.offline	離線
 offline.sectionSavedEarlier	先前儲存的
 offline.newFilesBadge	有新檔案可離線使用
@@ -1356,6 +1359,8 @@ apiTokens.badgeExpired	已過期
 common.decrease	減少
 common.increase	增加
 common.moreInfo	更多資訊
+common.retryFailed	重試失敗項目
+common.clearFinished	清除已完成
 versionedFiles.pathHeader	路徑
 versionedFiles.versionsHeader	版本
 fileInfo.sectionSelected	已選取

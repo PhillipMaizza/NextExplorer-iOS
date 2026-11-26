@@ -777,6 +777,8 @@ menu.showAll	सभी दिखाएँ
 uploads.notifyDone	अपलोड पूरे हुए
 uploads.notifyBody#one	%lld फ़ाइल अपलोड हुई
 uploads.notifyBody#other	%lld फ़ाइलें अपलोड हुईं
+uploads.summary	%2$lld में से %1$lld अपलोड हुए
+uploads.uploadMore	और फ़ाइलें अपलोड करें
 downloadQueue.notifyDone	डाउनलोड पूरे हुए
 fileInfo.rowSoftware	सॉफ़्टवेयर
 fileInfo.sectionVersions	संस्करण
@@ -1243,6 +1245,7 @@ downloadQueue.savedToPhotos	फ़ोटो में सहेजा गया
 downloadQueue.savedToDevice	आपके डिवाइस में सहेजा गया
 downloadQueue.photosAccessDenied	चित्र और वीडियो सहेजने के लिए सेटिंग में फ़ोटो की अनुमति दें।
 downloadQueue.photosSaveFailed	इसे फ़ोटो में जोड़ा नहीं जा सका।
+downloadQueue.summary	%2$lld में से %1$lld सहेजे गए
 tab.offline	ऑफ़लाइन
 offline.sectionSavedEarlier	पहले सहेजे गए
 offline.newFilesBadge	नई फ़ाइलें ऑफ़लाइन उपलब्ध हैं
@@ -1392,6 +1395,8 @@ apiTokens.badgeExpired	समाप्त
 common.decrease	घटाएँ
 common.increase	बढ़ाएँ
 common.moreInfo	अधिक जानकारी
+common.retryFailed	विफल फिर से आज़माएँ
+common.clearFinished	पूर्ण साफ़ करें
 versionedFiles.pathHeader	पथ
 versionedFiles.versionsHeader	संस्करण
 fileInfo.sectionSelected	चयनित

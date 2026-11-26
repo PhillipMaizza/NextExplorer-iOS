@@ -777,6 +777,8 @@ menu.showAll	Mostra tutto
 uploads.notifyDone	Caricamenti completati
 uploads.notifyBody#one	%lld file caricato
 uploads.notifyBody#other	%lld file caricati
+uploads.summary	%1$lld di %2$lld caricati
+uploads.uploadMore	Carica altri file
 downloadQueue.notifyDone	Download completati
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versioni
@@ -1243,6 +1245,7 @@ downloadQueue.savedToPhotos	Salvato in Foto
 downloadQueue.savedToDevice	Salvato sul tuo dispositivo
 downloadQueue.photosAccessDenied	Consenti l’accesso a Foto in Impostazioni per salvare immagini e video.
 downloadQueue.photosSaveFailed	Impossibile aggiungere questo elemento a Foto.
+downloadQueue.summary	%1$lld di %2$lld salvati
 tab.offline	Offline
 offline.sectionSavedEarlier	Salvati in precedenza
 offline.newFilesBadge	Nuovi file disponibili offline
@@ -1392,6 +1395,8 @@ apiTokens.badgeExpired	Scaduto
 common.decrease	Diminuisci
 common.increase	Aumenta
 common.moreInfo	Altre informazioni
+common.retryFailed	Riprova non riusciti
+common.clearFinished	Cancella completati
 versionedFiles.pathHeader	Percorso
 versionedFiles.versionsHeader	Versioni
 fileInfo.sectionSelected	Selezionati
