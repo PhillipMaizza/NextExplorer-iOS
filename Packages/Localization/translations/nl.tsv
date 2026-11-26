@@ -1008,6 +1008,7 @@ activityLog.retentionInvalid	Tussen 1 en 3650 dagen.
 activityLog.saveButton	Wijzigingen bewaren
 activityLog.off	Het logboek staat uit, er wordt niets vastgelegd.
 activityLog.none	Nog niets vastgelegd.
+activityLog.noMatches	Niets komt overeen met deze filters.
 activityLog.filterAction	Soort
 activityLog.anyAction	Alle soorten
 activityLog.filterOutcome	Resultaat

@@ -1044,6 +1044,7 @@ activityLog.retentionInvalid	Od 1 do 3650 dni.
 activityLog.saveButton	Zapisz zmiany
 activityLog.off	Dziennik jest wyłączony, nic nie jest zapisywane.
 activityLog.none	Jeszcze nic nie zapisano.
+activityLog.noMatches	Nic nie pasuje do tych filtrów.
 activityLog.filterAction	Rodzaj
 activityLog.anyAction	Dowolny rodzaj
 activityLog.filterOutcome	Wynik

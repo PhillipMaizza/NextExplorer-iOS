@@ -386,6 +386,7 @@ activityLog.retentionInvalid	Từ 1 đến 3650 ngày.
 activityLog.saveButton	Lưu thay đổi
 activityLog.off	Nhật ký đang tắt nên không có gì được ghi lại.
 activityLog.none	Chưa ghi lại gì.
+activityLog.noMatches	Không có gì khớp với các bộ lọc này.
 activityLog.filterAction	Loại
 activityLog.anyAction	Mọi loại
 activityLog.filterOutcome	Kết quả

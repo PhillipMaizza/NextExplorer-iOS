@@ -386,6 +386,7 @@ activityLog.retentionInvalid	Antara 1 dan 3650 hari.
 activityLog.saveButton	Simpan Perubahan
 activityLog.off	Log mati, jadi tidak ada yang dicatat.
 activityLog.none	Belum ada yang dicatat.
+activityLog.noMatches	Tidak ada yang cocok dengan filter ini.
 activityLog.filterAction	Jenis
 activityLog.anyAction	Jenis apa saja
 activityLog.filterOutcome	Hasil

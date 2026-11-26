@@ -29,8 +29,13 @@
                 onAppear: { store.send(.onAppear) }
             ) {
                 settingsGroup
+                if !store.isLogEnabled {
+                    MacNote(L10n.ActivityLog.off, kind: .info)
+                }
                 filtersRow
-                eventsTable
+                if store.isLogEnabled || !store.events.isEmpty {
+                    eventsTable
+                }
                 if let error = store.bannerError {
                     MacNote(error, kind: .error)
                 }
@@ -48,12 +53,7 @@
                         range: ActivitySettings.retentionRange,
                         step: 1
                     ) { store.send(.retentionChanged(String($0))) }
-                    if store.isSavingSettings {
-                        MacSpinner()
-                    }
-                    Button(L10n.ActivityLog.saveButton) { store.send(.saveSettingsTapped) }
-                        .buttonStyle(.macDS(.primary, size: .small))
-                        .disabled(!store.isSaveSettingsEnabled)
+                        .disabled(!store.isEnabledDraft)
                 }
                 if !store.isRetentionValid {
                     MacFormRow(L10n.ActivityLog.retentionInvalid) { EmptyView() }
@@ -109,15 +109,15 @@
                     .buttonStyle(.macDS(.secondary, size: .small))
                     .fixedSize()
             }
-            .disabled(!store.isLogEnabled)
+            .disabled(!store.isLogEnabled && store.events.isEmpty)
         }
 
         private var eventsTable: some View {
             VStack(alignment: .leading, spacing: .zero) {
-                if !store.isLogEnabled, store.events.isEmpty {
-                    MacTableEmptyLine(L10n.ActivityLog.off)
-                } else if store.events.isEmpty, store.phase == .loaded {
-                    MacTableEmptyLine(L10n.ActivityLog.none)
+                if store.events.isEmpty, store.phase == .loaded {
+                    MacTableEmptyLine(
+                        store.submittedFilter == ActivityFilter() ? L10n.ActivityLog.none : L10n.ActivityLog.noMatches
+                    )
                 } else {
                     ForEach(Array(store.events.enumerated()), id: \.element.id) { index, event in
                         MacActivityEventRow(event: event, isShaded: index.isMultiple(of: 2))
@@ -134,18 +134,24 @@
                     }
                 }
             }
-            .macTableBleed()
         }
     }
 
-    struct MacActivityLogClearButton: View {
+    struct MacActivityLogHeaderButtons: View {
         let store: StoreOf<ActivityLogFeature>
 
         var body: some View {
             if !store.isUnavailable, store.phase.errorMessage == nil {
-                Button(L10n.ActivityLog.clear, role: .destructive) { store.send(.clearTapped) }
-                    .buttonStyle(.macDS(.secondary))
-                    .disabled(store.clearPhase.isRunning || !store.isLogEnabled || store.events.isEmpty)
+                HStack(spacing: .space8) {
+                    Button(L10n.ActivityLog.clear, role: .destructive) { store.send(.clearTapped) }
+                        .buttonStyle(.macDS(.secondary))
+                        .disabled(store.clearPhase.isRunning || store.events.isEmpty)
+                    MacPaneSaveButton(
+                        title: L10n.ActivityLog.saveButton,
+                        isSaving: store.isSavingSettings,
+                        isEnabled: store.isSaveSettingsEnabled
+                    ) { store.send(.saveSettingsTapped) }
+                }
             }
         }
     }

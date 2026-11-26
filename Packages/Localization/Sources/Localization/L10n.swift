@@ -56,6 +56,7 @@ public enum L10n {
         public static func fromAddress(_ a0: CVarArg) -> String { tr("activityLog.fromAddress", a0) }
         public static var more: String { tr("activityLog.more") }  // "Show More"
         public static var navigationTitle: String { tr("activityLog.navigationTitle") }  // "Activity Log"
+        public static var noMatches: String { tr("activityLog.noMatches") }  // "Nothing matches these filters."
         public static var none: String { tr("activityLog.none") }  // "Nothing recorded yet."
         public static var off: String { tr("activityLog.off") }  // "The log is off, so nothing is being recorded."
         public static var outcomeOk: String { tr("activityLog.outcomeOk") }  // "Succeeded"

@@ -1080,6 +1080,7 @@ activityLog.retentionInvalid	بين 1 و3650 يومًا.
 activityLog.saveButton	حفظ التغييرات
 activityLog.off	السجل متوقف، لذا لا يُسجَّل شيء.
 activityLog.none	لم يُسجَّل شيء بعد.
+activityLog.noMatches	لا شيء يطابق عوامل التصفية هذه.
 activityLog.filterAction	النوع
 activityLog.anyAction	أي نوع
 activityLog.filterOutcome	النتيجة

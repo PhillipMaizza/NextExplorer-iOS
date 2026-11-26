@@ -1008,6 +1008,7 @@ activityLog.retentionInvalid	Zwischen 1 und 3650 Tagen.
 activityLog.saveButton	Änderungen speichern
 activityLog.off	Das Protokoll ist aus, es wird nichts aufgezeichnet.
 activityLog.none	Noch nichts aufgezeichnet.
+activityLog.noMatches	Nichts passt zu diesen Filtern.
 activityLog.filterAction	Art
 activityLog.anyAction	Alle Arten
 activityLog.filterOutcome	Ergebnis

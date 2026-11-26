@@ -1026,6 +1026,7 @@ activityLog.retentionInvalid	Între 1 și 3650 de zile.
 activityLog.saveButton	Salvează modificările
 activityLog.off	Jurnalul este oprit: nu se înregistrează nimic.
 activityLog.none	Încă nu s-a înregistrat nimic.
+activityLog.noMatches	Nimic nu corespunde acestor filtre.
 activityLog.filterAction	Tip
 activityLog.anyAction	Orice tip
 activityLog.filterOutcome	Rezultat

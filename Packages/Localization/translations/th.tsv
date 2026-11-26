@@ -386,6 +386,7 @@ activityLog.retentionInvalid	ระหว่าง 1 ถึง 3650 วัน
 activityLog.saveButton	บันทึกการเปลี่ยนแปลง
 activityLog.off	บันทึกปิดอยู่ จึงไม่มีการบันทึกอะไร
 activityLog.none	ยังไม่มีการบันทึก
+activityLog.noMatches	ไม่มีรายการที่ตรงกับตัวกรองเหล่านี้
 activityLog.filterAction	ชนิด
 activityLog.anyAction	ชนิดใดก็ได้
 activityLog.filterOutcome	ผลลัพธ์

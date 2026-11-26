@@ -397,6 +397,7 @@ activityLog.retentionInvalid	Mellom 1 og 3650 dager.
 activityLog.saveButton	Lagre endringer
 activityLog.off	Loggen er av, så ingenting registreres.
 activityLog.none	Ingenting registrert ennå.
+activityLog.noMatches	Ingenting samsvarer med disse filtrene.
 activityLog.filterAction	Art
 activityLog.anyAction	Alle arter
 activityLog.filterOutcome	Utfall

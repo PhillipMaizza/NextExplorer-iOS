@@ -397,6 +397,7 @@ activityLog.retentionInvalid	1 ile 3650 gün arasında.
 activityLog.saveButton	Değişiklikleri Kaydet
 activityLog.off	Günlük kapalı, bu yüzden hiçbir şey kaydedilmiyor.
 activityLog.none	Henüz kaydedilen bir şey yok.
+activityLog.noMatches	Bu filtrelerle eşleşen bir şey yok.
 activityLog.filterAction	Tür
 activityLog.anyAction	Herhangi bir tür
 activityLog.filterOutcome	Sonuç

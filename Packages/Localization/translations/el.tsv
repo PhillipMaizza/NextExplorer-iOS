@@ -397,6 +397,7 @@ activityLog.retentionInvalid	Από 1 έως 3650 ημέρες.
 activityLog.saveButton	Αποθήκευση αλλαγών
 activityLog.off	Η καταγραφή είναι απενεργοποιημένη, επομένως δεν καταγράφεται τίποτα.
 activityLog.none	Δεν έχει καταγραφεί ακόμη τίποτα.
+activityLog.noMatches	Τίποτα δεν ταιριάζει με αυτά τα φίλτρα.
 activityLog.filterAction	Είδος
 activityLog.anyAction	Οποιοδήποτε είδος
 activityLog.filterOutcome	Αποτέλεσμα
