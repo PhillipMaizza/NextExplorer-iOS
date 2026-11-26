@@ -248,11 +248,7 @@
 
     #Preview("Empty") {
         MacTrashView(store: TrashPreviewData.trash { $0.items = [] })
-            .overlayPreferenceValue(MacEmptyGuideKey.self) { guide in
-                if let guide {
-                    MacListGuideView(guide: guide)
-                }
-            }
+            .macEmptyGuideOverlay()
             .frame(width: 900, height: 400)
     }
 

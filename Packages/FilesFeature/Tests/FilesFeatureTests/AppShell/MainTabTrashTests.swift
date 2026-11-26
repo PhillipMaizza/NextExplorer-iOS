@@ -29,6 +29,23 @@ struct MainTabTrashTests: MainTabTestSupport {
         await fresh.send(.tabSelected(.trash)) { $0.selectedTab = .trash }
     }
 
+    @Test("Go to Shared from the empty Browse root opens Shared on the links shared with me")
+    func sharedWithMeRequestedOpensSharedWithMe() async {
+        let store = makeStore {
+            $0.filesClient.sharedWithMeLinks = { _ in [] }
+        }
+
+        await store.send(.sharedWithMeRequested) { $0.selectedTab = .shared }
+        await store.receive(\.shared.segmentChanged) {
+            $0.shared.segment = .withMe
+            $0.shared.phases[.withMe] = .loading
+        }
+        await store.receive(\.shared.sharesResponse) {
+            $0.shared.phases[.withMe] = .loaded
+            $0.shared.dataSources[.withMe] = .live
+        }
+    }
+
     @Test("Open Original Location leaves the trash for the folder in Browse")
     func openLocationGoesToBrowse() async {
         let store = makeStore(makeState { $0.selectedTab = .trash })

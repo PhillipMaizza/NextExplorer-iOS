@@ -69,19 +69,21 @@
             let mainStore = mainStore
             let windowID = windowID
             let windowStore = Store(initialState: FolderWindowFeature
-                .State(serverURL: session.mainTab.browse.root.serverURL))
-            {
-                FolderWindowFeature { forwarded in
-                    await MainActor.run {
-                        guard case .authenticated = mainStore.destination else { return }
-                        let action: MainTabFeature.Action = switch forwarded {
-                        case let .browse(delegate): .browse(.delegate(delegate))
-                        case let .folderChanged(change): .folderWindowChanged(change, origin: windowID)
+                .State(
+                    serverURL: session.mainTab.browse.root.serverURL,
+                    isAdmin: session.mainTab.browse.root.isAdmin
+                )) {
+                    FolderWindowFeature { forwarded in
+                        await MainActor.run {
+                            guard case .authenticated = mainStore.destination else { return }
+                            let action: MainTabFeature.Action = switch forwarded {
+                            case let .browse(delegate): .browse(.delegate(delegate))
+                            case let .folderChanged(change): .folderWindowChanged(change, origin: windowID)
+                            }
+                            mainStore.send(.destination(.authenticated(.mainTab(action))))
                         }
-                        mainStore.send(.destination(.authenticated(.mainTab(action))))
                     }
                 }
-            }
             if !route.path.isEmpty {
                 windowStore.send(.browse(.navigateToDirectory(path: route.path, title: route.title)))
             }

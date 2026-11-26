@@ -4,6 +4,7 @@ import SwiftUI
 
 enum MacListGuide: Equatable {
     case favorites, sharedByMe, sharedWithMe, offline
+    case browseRootUnassigned, browseRootNoVolumes
     case trash(retentionDays: Int?)
 }
 

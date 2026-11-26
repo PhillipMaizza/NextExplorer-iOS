@@ -83,7 +83,7 @@
 
         func testAnEmptyBrowseAreaSaysSo() {
             let app = launchApp(empty: [.browse])
-            XCTAssertTrue(text(L10n.EmptyState.folderEmpty, in: app).waitToAppear())
+            XCTAssertTrue(text(L10n.EmptyGuide.browseRootNoVolumesTitle, in: app).waitToAppear())
         }
 
         func testABrowseAreaThatFailsSaysSo() {

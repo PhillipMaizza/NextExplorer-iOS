@@ -65,7 +65,7 @@ public struct MainTabFeature {
         #endif
 
         public init(serverURL: URL, user: User) {
-            browse = BrowseTabFeature.State(serverURL: serverURL)
+            browse = BrowseTabFeature.State(serverURL: serverURL, isAdmin: user.isAdmin)
             favorites = FavoritesFeature.State(serverURL: serverURL)
             downloads = OfflineTabFeature.State(serverURL: serverURL)
             shared = SharedFeature.State(serverURL: serverURL)
@@ -97,6 +97,7 @@ public struct MainTabFeature {
 
     public enum Action: Sendable {
         case tabSelected(Tab)
+        case sharedWithMeRequested
         /// Mac menu bar commands: refresh whatever the selected tab shows, and create a folder
         /// in the visible Browse folder (only while Browse is the selected tab).
         case refreshSelectedTab
@@ -231,6 +232,10 @@ public struct MainTabFeature {
                 case let .tabSelected(tab):
                     state.selectedTab = tab
                     return tab == .trash ? Self.refreshTrashIfLoaded(state) : .none
+
+                case .sharedWithMeRequested:
+                    state.selectedTab = .shared
+                    return .send(.shared(.segmentChanged(.withMe)))
 
                 case .refreshSelectedTab:
                     switch state.selectedTab {

@@ -12,8 +12,8 @@
         public struct State: Equatable {
             public var browse: BrowseTabFeature.State
 
-            public init(serverURL: URL) {
-                browse = BrowseTabFeature.State(serverURL: serverURL)
+            public init(serverURL: URL, isAdmin: Bool = false) {
+                browse = BrowseTabFeature.State(serverURL: serverURL, isAdmin: isAdmin)
             }
         }
 
@@ -69,6 +69,7 @@
 
         public var body: some View {
             BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
+                .macEmptyGuideOverlay()
                 .macPeekHosting()
                 .macWindowToolbar()
                 .windowTitle(store.browse.path.last?.title ?? store.browse.root.title)

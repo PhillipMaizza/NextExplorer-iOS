@@ -21,7 +21,20 @@ struct BrowseTabView: View {
         }
         .platformAccentTint()
         .instantPushOnMac(depth: store.path.count)
+        #if os(macOS)
+            .transformPreference(MacEmptyGuideKey.self) { guide in
+                if !isRootVisible {
+                    guide = nil
+                }
+            }
+        #endif
     }
+
+    #if os(macOS)
+        private var isRootVisible: Bool {
+            store.path.isEmpty && store.trash == nil
+        }
+    #endif
 }
 
 #Preview {

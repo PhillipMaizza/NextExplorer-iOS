@@ -58,6 +58,8 @@ public struct BrowseFeature {
         public var isPersonalSpaceEnabled = false
         /// The server has a trash (any server since mid September 2026): the root offers a Trash row.
         public var isTrashAvailable = false
+        public var isUserVolumesEnabled = false
+        public var isAdmin = false
         var archiveExtensions: [String] = []
         /// How far the server's folder size index goes, from its last features answer (kept on disk so
         /// a pushed folder knows without asking). Folder rows show a size only while this is not `.off`.
@@ -496,6 +498,10 @@ public struct BrowseFeature {
                     jsonCacheStore, BrowseFeature.personalSpaceCacheNamespace, serverURL: serverURL, scope: cacheScope,
                     as: Bool.self
                 )?.value ?? false
+                isUserVolumesEnabled = ListCache.load(
+                    jsonCacheStore, BrowseFeature.userVolumesCacheNamespace, serverURL: serverURL, scope: cacheScope,
+                    as: Bool.self
+                )?.value ?? false
             }
         }
     }
@@ -725,6 +731,7 @@ public struct BrowseFeature {
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     static let personalSpaceCacheNamespace = "personalSpace"
+    static let userVolumesCacheNamespace = "userVolumes"
     static let folderSizeModeCacheNamespace = "folderSizeMode"
     static let archiveExtensionsCacheNamespace = "archiveExtensions"
     @Dependency(\.continuousClock) var clock
