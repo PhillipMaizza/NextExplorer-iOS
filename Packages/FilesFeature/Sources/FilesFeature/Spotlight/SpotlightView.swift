@@ -108,7 +108,7 @@
                     }
             }
             .padding(.horizontal, .space24)
-            .frame(height: Constants.fieldHeight)
+            .macMinHeight(points: Constants.fieldHeight)
             // Focus lands once the field is in the window; setting it during the first layout is dropped.
             .task {
                 await Task.yield()

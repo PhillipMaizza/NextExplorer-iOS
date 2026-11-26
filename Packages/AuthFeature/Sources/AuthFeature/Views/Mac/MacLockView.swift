@@ -93,7 +93,7 @@
                     .truncationMode(.middle)
             }
             .padding(.horizontal, .space12)
-            .frame(height: .size32)
+            .macMinHeight(.regular)
             .background(Capsule().fill(Color.macRow))
         }
     }
@@ -134,7 +134,7 @@
                     }
                 }
                 .padding(.horizontal, .space12)
-                .frame(height: Constants.accountRowHeight)
+                .macMinHeight(points: Constants.accountRowHeight)
                 .background {
                     if isCurrent {
                         RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
