@@ -34,7 +34,7 @@
 
         private var defaultSortRow: some View {
             MacFormRow {
-                MacRowTitle(title: L10n.Settings.rowDefaultSort, subtitle: L10n.Settings.defaultSortFooter)
+                MacFormRowTitle(title: L10n.Settings.rowDefaultSort, subtitle: L10n.Settings.defaultSortFooter)
             } control: {
                 HStack(spacing: .space8) {
                     MacPopup(

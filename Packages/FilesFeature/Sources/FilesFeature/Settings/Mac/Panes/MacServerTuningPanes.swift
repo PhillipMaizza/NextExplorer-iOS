@@ -29,7 +29,10 @@
                         isOn: $store.draft.isChunkedEnabled.sending(\.chunkedChanged)
                     )
                     MacFormRow {
-                        MacRowTitle(title: L10n.UploadSettings.chunkSize, subtitle: L10n.UploadSettings.chunkSizeHelp)
+                        MacFormRowTitle(
+                            title: L10n.UploadSettings.chunkSize,
+                            subtitle: L10n.UploadSettings.chunkSizeHelp
+                        )
                     } control: {
                         MacPopup(
                             L10n.UploadSettings.chunkSize,
@@ -162,7 +165,7 @@
                 VStack(alignment: .leading, spacing: .space8) {
                     MacFormGroup {
                         MacFormRow {
-                            MacRowTitle(
+                            MacFormRowTitle(
                                 title: L10n.FolderSizeSettings.running,
                                 subtitle: L10n.FolderSizeSettings.runningHelp
                             )

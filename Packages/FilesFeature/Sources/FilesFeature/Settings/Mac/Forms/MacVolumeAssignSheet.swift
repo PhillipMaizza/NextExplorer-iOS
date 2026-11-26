@@ -37,14 +37,14 @@
                 onCancel: { store.send(.volumeSheetDismissed) },
                 onConfirm: { store.send(.volumeSubmitTapped) }
             ) {
-                MacSettingsRow(L10n.UserDetail.volumeSheetLabelField) {
+                MacFormSheetRow(L10n.UserDetail.volumeSheetLabelField) {
                     MacTextField(L10n.UserDetail.volumeSheetLabelField, text: Binding(
                         get: { store.volumeSheet?.label ?? "" },
                         set: { store.send(.volumeLabelChanged($0)) }
                     ), prompt: L10n.UserDetail.volumeSheetLabelPlaceholder)
                         .autocorrectionDisabled()
                 }
-                MacSettingsRow(L10n.UserDetail.volumeSheetAccessMode) {
+                MacFormSheetRow(L10n.UserDetail.volumeSheetAccessMode) {
                     MacSegmentedPicker(
                         L10n.UserDetail.volumeSheetAccessMode,
                         options: ShareAccessMode.allCases,
@@ -54,7 +54,7 @@
                         )
                     ) { $0.title }
                 }
-                MacSettingsRow(L10n.UserDetail.volumeSheetDirectory) {
+                MacFormSheetRow(L10n.UserDetail.volumeSheetDirectory) {
                     if isEditing {
                         Text(sheet?.selectedPath ?? "")
                             .monospaced()
@@ -145,14 +145,11 @@
             }
             .foregroundStyle(Color.macChromeText)
             .macListRow(isSelected: isSelected)
-            .onTapGesture(count: 2) { browsePath = directory.path }
-            .onTapGesture { store.send(.volumePathSelected(directory.path)) }
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
-            .accessibilityAction { store.send(.volumePathSelected(directory.path)) }
-            .accessibilityAction(named: L10n.UserDetail.directoryPickerOpen(directory.name)) {
-                browsePath = directory.path
-            }
+            .macSelectable(
+                isSelected: isSelected,
+                onSelect: { store.send(.volumePathSelected(directory.path)) },
+                open: (L10n.UserDetail.directoryPickerOpen(directory.name), { browsePath = directory.path })
+            )
         }
 
         private func loadDirectories(path: String?) async {

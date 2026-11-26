@@ -219,7 +219,7 @@
 
         private func passwordField(_ prompt: TwoFactorFeature.PasswordPrompt) -> some View {
             Form {
-                MacSettingsRow(L10n.TwoFactor.passwordField) {
+                MacFormSheetRow(L10n.TwoFactor.passwordField) {
                     MacSecureField(
                         L10n.TwoFactor.passwordField,
                         text: Binding(get: { prompt.password }, set: { store.send(.passwordChanged($0)) })

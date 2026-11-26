@@ -137,14 +137,10 @@
                         .padding(.space4)
                 }
             }
-            .contentShape(Rectangle())
-            .onTapGesture(perform: onSelect)
-            .accessibilityElement(children: .combine)
+            .macSelectable(isSelected: isSelected, onSelect: onSelect)
             .accessibilityLabel(account.isActive
                 ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
                 : L10n.Common.pair(account.displayName, account.serverHost))
-                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
-                .accessibilityAction(.default, onSelect)
                 .contextMenu {
                     if !account.isActive {
                         Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }

@@ -37,7 +37,7 @@
         private var header: some View {
             HStack(spacing: .space12) {
                 AvatarView.person(user.displayLabel, size: Metrics.avatarSize)
-                MacRowTitle(title: user.displayLabel, subtitle: user.email ?? "")
+                MacFormRowTitle(title: user.displayLabel, subtitle: user.email ?? "")
                 Spacer(minLength: .space16)
                 MacSegmentedPicker(
                     L10n.UserManagement.tabProfile,
@@ -94,7 +94,7 @@
         @ViewBuilder
         private var accountRows: some View {
             MacFormRow {
-                MacRowTitle(
+                MacFormRowTitle(
                     title: L10n.UserDetail.roleAdmin,
                     subtitle: user.isAdmin ? L10n.UserDetail.roleAdminLocked : L10n.UserDetail.roleAdminSubtitle
                 )
@@ -155,7 +155,7 @@
                     MacFormGroup(L10n.UserDetail.sectionAccountRecovery) {
                         ForEach(recoveryRows) { row in
                             MacFormRow {
-                                MacRowTitle(title: row.title, subtitle: row.subtitle)
+                                MacFormRowTitle(title: row.title, subtitle: row.subtitle)
                             } control: {
                                 Button(
                                     row.reset.actionTitle,
