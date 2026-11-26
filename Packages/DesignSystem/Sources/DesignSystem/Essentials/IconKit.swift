@@ -20,6 +20,7 @@ public enum IconKit {
     public static let eyeSlash = Image(systemName: "eye.slash")
     public static let eyeCircle = Image(systemName: "eye.circle")
     public static let person = Image(systemName: "person")
+    public static let appearance = Image(systemName: "circle.lefthalf.filled")
     public static let logo = Image("logo", bundle: .module)
 
     public static let macSidebarBrowse = Image("macSidebarBrowse", bundle: .module).renderingMode(.template)

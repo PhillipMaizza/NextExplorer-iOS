@@ -1339,7 +1339,7 @@ browse.fileCount#other	%lld filer
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Standardsortering
 settings.rowSortOrder	Rækkefølge
-settings.defaultSortFooter	Mapper, du ikke har sorteret, åbnes i denne rækkefølge. En mappe, du sorterer, beholder sin egen rækkefølge på alle enheder, der er logget ind på denne server.
+settings.defaultSortFooter	Mapper, du ikke har sorteret, åbnes i denne rækkefølge.\nEn mappe, du sorterer, beholder sin egen rækkefølge på alle enheder, der er logget ind på denne server.
 settings.sectionSecurity	Sikkerhed
 settings.rowRequireSignIn	Kræv login
 lock.title	NextExplorer er låst
@@ -1372,6 +1372,10 @@ emptyGuide.sharedBody	Højreklik på en fil eller mappe i Gennemse, og vælg “
 emptyGuide.sharedWithMeTitle	Intet er delt med dig endnu
 emptyGuide.offlineTitle	Behold filer på denne Mac
 emptyGuide.offlineBody	Højreklik på en fil eller mappe i Gennemse, og vælg “%@”.\nMapper henter nye filer, hver gang appen synkroniserer.\n\nHentede filer kan åbnes, selv uden forbindelse.
+settings.groupTheme	Tema
+settings.sectionFiles	Filer
+settings.groupFileLists	Fillister
+settings.groupPreviews	Eksempler
 emptyGuide.trashTitle	Papirkurven er tom
 emptyGuide.trashRestore	Gendan lægger et emne tilbage, hvor det var, eller i en mappe efter eget valg.
 emptyGuide.trashShareLinks	Delingslinks holder op med at virke, mens filen ligger her.\nEn gendannelse kan bringe dem tilbage.

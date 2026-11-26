@@ -1410,7 +1410,7 @@ browse.fileCount#other	%lld filer
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Standardsortering
 settings.rowSortOrder	Ordning
-settings.defaultSortFooter	Mappar som du inte har sorterat öppnas i den här ordningen. En mapp som du sorterar behåller sin egen ordning på alla enheter som är inloggade på den här servern.
+settings.defaultSortFooter	Mappar som du inte har sorterat öppnas i den här ordningen.\nEn mapp som du sorterar behåller sin egen ordning på alla enheter som är inloggade på den här servern.
 settings.sectionSecurity	Säkerhet
 settings.rowRequireSignIn	Kräv inloggning
 lock.title	NextExplorer är låst
@@ -1443,6 +1443,10 @@ emptyGuide.sharedBody	Högerklicka på en fil eller mapp i Bläddra och välj �
 emptyGuide.sharedWithMeTitle	Inget har delats med dig än
 emptyGuide.offlineTitle	Behåll filer på den här Macen
 emptyGuide.offlineBody	Högerklicka på valfri fil eller mapp i Bläddra och välj ”%@”.\nMappar hämtar nya filer varje gång appen synkar.\n\nHämtade filer öppnas även utan anslutning.
+settings.groupTheme	Tema
+settings.sectionFiles	Filer
+settings.groupFileLists	Fillistor
+settings.groupPreviews	Förhandsvisningar
 emptyGuide.trashTitle	Papperskorgen är tom
 emptyGuide.trashRestore	Återställ lägger tillbaka ett objekt där det var, eller i valfri mapp.
 emptyGuide.trashShareLinks	Delningslänkar slutar fungera medan filen ligger här.\nEn återställning kan ta tillbaka dem.

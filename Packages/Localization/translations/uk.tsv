@@ -1419,7 +1419,7 @@ browse.fileCount#other	%lld файлу
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Сортування за замовчуванням
 settings.rowSortOrder	Порядок
-settings.defaultSortFooter	Теки, які ви не сортували, відкриваються в цьому порядку. Тека, яку ви відсортували, зберігає свій порядок на кожному пристрої, що увійшов на цей сервер.
+settings.defaultSortFooter	Теки, які ви не сортували, відкриваються в цьому порядку.\nТека, яку ви відсортували, зберігає свій порядок на кожному пристрої, що увійшов на цей сервер.
 settings.sectionSecurity	Безпека
 settings.rowRequireSignIn	Вимагати вхід
 lock.title	NextExplorer заблоковано
@@ -1452,6 +1452,10 @@ emptyGuide.sharedBody	Натисніть правою кнопкою на фай
 emptyGuide.sharedWithMeTitle	З вами ще нічим не поділилися
 emptyGuide.offlineTitle	Зберігайте файли на цьому Mac
 emptyGuide.offlineBody	Натисніть правою кнопкою на будь-який файл або папку в Огляді й виберіть «%@».\nПапки отримують нові файли під час кожної синхронізації застосунку.\n\nЗавантажені файли відкриваються навіть без з’єднання.
+settings.groupTheme	Тема
+settings.sectionFiles	Файли
+settings.groupFileLists	Списки файлів
+settings.groupPreviews	Попередній перегляд
 emptyGuide.trashTitle	Кошик порожній
 emptyGuide.trashRestore	Відновлення повертає об’єкт на попереднє місце або в будь-яку вибрану папку.
 emptyGuide.trashShareLinks	Посилання для спільного доступу не працюють, поки файл тут.\nВідновлення може їх повернути.

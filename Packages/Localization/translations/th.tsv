@@ -1303,7 +1303,7 @@ browse.fileCount#other	%lld ไฟล์
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	การเรียงเริ่มต้น
 settings.rowSortOrder	ลำดับ
-settings.defaultSortFooter	โฟลเดอร์ที่คุณยังไม่ได้เรียงจะเปิดตามลำดับนี้ โฟลเดอร์ที่คุณเรียงจะคงลำดับของตัวเองบนทุกอุปกรณ์ที่ลงชื่อเข้าใช้เซิร์ฟเวอร์นี้
+settings.defaultSortFooter	โฟลเดอร์ที่คุณยังไม่ได้เรียงจะเปิดตามลำดับนี้\nโฟลเดอร์ที่คุณเรียงจะคงลำดับของตัวเองบนทุกอุปกรณ์ที่ลงชื่อเข้าใช้เซิร์ฟเวอร์นี้
 settings.sectionSecurity	ความปลอดภัย
 settings.rowRequireSignIn	กำหนดให้ลงชื่อเข้าใช้
 lock.title	NextExplorer ถูกล็อก
@@ -1336,6 +1336,10 @@ emptyGuide.sharedBody	คลิกขวาที่ไฟล์หรือโ�
 emptyGuide.sharedWithMeTitle	ยังไม่มีใครแชร์อะไรกับคุณ
 emptyGuide.offlineTitle	เก็บไฟล์ไว้ใน Mac เครื่องนี้
 emptyGuide.offlineBody	คลิกขวาที่ไฟล์หรือโฟลเดอร์ใดก็ได้ในเรียกดูแล้วเลือก “%@”\nโฟลเดอร์จะได้รับไฟล์ใหม่ทุกครั้งที่แอปซิงค์\n\nไฟล์ที่ดาวน์โหลดแล้วเปิดได้แม้ไม่มีการเชื่อมต่อ
+settings.groupTheme	ธีม
+settings.sectionFiles	ไฟล์
+settings.groupFileLists	รายการไฟล์
+settings.groupPreviews	ตัวอย่าง
 emptyGuide.trashTitle	ถังขยะว่างเปล่า
 emptyGuide.trashRestore	การกู้คืนจะนำรายการกลับไปที่เดิม หรือไปยังโฟลเดอร์ใดก็ได้ที่คุณเลือก
 emptyGuide.trashShareLinks	ลิงก์แชร์จะหยุดทำงานขณะที่ไฟล์อยู่ที่นี่\nการกู้คืนสามารถนำกลับมาได้

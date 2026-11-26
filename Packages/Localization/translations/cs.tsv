@@ -1418,7 +1418,7 @@ browse.fileCount#other	%lld souborů
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Výchozí řazení
 settings.rowSortOrder	Pořadí
-settings.defaultSortFooter	Složky, které jste neseřadili, se otevírají v tomto pořadí. Složka, kterou seřadíte, si své pořadí ponechá na všech zařízeních přihlášených k tomuto serveru.
+settings.defaultSortFooter	Složky, které jste neseřadili, se otevírají v tomto pořadí.\nSložka, kterou seřadíte, si své pořadí ponechá na všech zařízeních přihlášených k tomuto serveru.
 settings.sectionSecurity	Zabezpečení
 settings.rowRequireSignIn	Vyžadovat přihlášení
 lock.title	NextExplorer je zamčený
@@ -1451,6 +1451,10 @@ emptyGuide.sharedBody	Klikněte pravým tlačítkem na soubor nebo složku v sek
 emptyGuide.sharedWithMeTitle	Zatím s vámi nikdo nic nesdílel
 emptyGuide.offlineTitle	Mít soubory na tomto Macu
 emptyGuide.offlineBody	Klikněte pravým tlačítkem na libovolný soubor nebo složku v sekci Procházet a vyberte „%@“.\nSložky si nové soubory stáhnou při každé synchronizaci aplikace.\n\nStažené soubory se otevřou i bez připojení.
+settings.groupTheme	Motiv
+settings.sectionFiles	Soubory
+settings.groupFileLists	Seznamy souborů
+settings.groupPreviews	Náhledy
 emptyGuide.trashTitle	Koš je prázdný
 emptyGuide.trashRestore	Obnovit vrátí položku tam, kde byla, nebo do vybrané složky.
 emptyGuide.trashShareLinks	Odkazy na sdílení nefungují, dokud je soubor tady.\nObnovení je může vrátit.

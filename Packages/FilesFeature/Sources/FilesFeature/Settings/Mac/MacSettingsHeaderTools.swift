@@ -109,7 +109,7 @@
                 {
                     MacTrashSettingsTools(store: trash)
                 }
-            case .general, .storage, .serverTools, .versions, .about:
+            case .appearance, .files, .storage, .serverTools, .versions, .about:
                 EmptyView()
             }
         }
@@ -136,7 +136,7 @@
         let store = StoreOf<SettingsFeature>(initialState: .macPreview) { EmptyReducer() }
         VStack(spacing: .space16) {
             MacSettingsHeaderTools(store: store, category: .accounts)
-            MacSettingsHeaderTools(store: store, category: .general)
+            MacSettingsHeaderTools(store: store, category: .appearance)
         }
         .padding()
         .background(Color.macCard)

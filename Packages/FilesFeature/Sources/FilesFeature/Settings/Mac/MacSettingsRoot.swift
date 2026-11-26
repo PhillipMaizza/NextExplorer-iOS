@@ -31,7 +31,8 @@
     /// One page of the Mac Settings window's sidebar.
     enum MacSettingsCategory: String, CaseIterable, Identifiable {
         case accounts
-        case general
+        case appearance
+        case files
         case storage
         case apiTokens
         case server
@@ -66,11 +67,11 @@
             case .serverTools: .serverTools
             case .trash: .trash
             case .versions: .versions
-            case .accounts, .general, .storage, .apiTokens, .about: nil
+            case .accounts, .appearance, .files, .storage, .apiTokens, .about: nil
             }
         }
 
-        static let everyone: [Self] = [.accounts, .general, .storage, .apiTokens]
+        static let everyone: [Self] = [.accounts, .appearance, .files, .storage, .apiTokens]
         static let admin: [Self] = [
             .server,
             .users,
@@ -101,14 +102,16 @@
             case .ffmpeg: L10n.FfmpegSettings.subtitle
             case .activity: L10n.ActivityLog.subtitle
             case .serverTools: L10n.ServerTools.subtitle
-            case .accounts, .general, .storage, .apiTokens, .server, .users, .trash, .versions, .about: nil
+            case .accounts, .appearance, .files, .storage, .apiTokens, .server, .users, .trash, .versions,
+                 .about: nil
             }
         }
 
         var title: String {
             switch self {
             case .accounts: L10n.Settings.sectionAccounts
-            case .general: L10n.Settings.sectionGeneral
+            case .appearance: L10n.Settings.rowAppearance
+            case .files: L10n.Settings.sectionFiles
             case .storage: L10n.Settings.sectionStorage
             case .apiTokens: L10n.ApiTokens.navigationTitle
             case .server: L10n.Settings.rowServer
@@ -130,7 +133,8 @@
         var icon: Image {
             switch self {
             case .accounts: IconKit.account
-            case .general: IconKit.gearshape
+            case .appearance: IconKit.appearance
+            case .files: IconKit.folder
             case .storage: IconKit.storage
             case .apiTokens: IconKit.key
             case .server: IconKit.serverRack
@@ -155,13 +159,13 @@
     /// the app's own info.
     struct MacSettingsRoot: View {
         @Bindable var store: StoreOf<SettingsFeature>
-        @AppStorage(AppStorageKeys.macSettingsPane) private var selection: MacSettingsCategory = .general
+        @AppStorage(AppStorageKeys.macSettingsPane) private var selection: MacSettingsCategory = .appearance
         @State private var isShowingLicenses = false
         @State private var ownerAccountID: String?
         @State private var pendingSelection: MacSettingsCategory?
 
         private var visibleSelection: MacSettingsCategory {
-            store.user.isAdmin || !MacSettingsCategory.admin.contains(selection) ? selection : .general
+            store.user.isAdmin || !MacSettingsCategory.admin.contains(selection) ? selection : .appearance
         }
 
         private func subtitle(for category: MacSettingsCategory) -> String? {
@@ -263,8 +267,10 @@
             switch category {
             case .accounts:
                 MacAccountsSettingsTab(store: store)
-            case .general:
-                MacGeneralSettingsTab(store: store)
+            case .appearance:
+                MacAppearanceSettingsTab()
+            case .files:
+                MacFilesSettingsTab(store: store)
             case .storage:
                 MacStorageSettingsTab(store: store)
             case .apiTokens:

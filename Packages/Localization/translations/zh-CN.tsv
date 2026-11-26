@@ -1372,7 +1372,7 @@ browse.fileCount#other	%lld 个文件
 browse.contentSummary	%1$@，%2$@
 settings.rowDefaultSort	默认排序
 settings.rowSortOrder	顺序
-settings.defaultSortFooter	未排序的文件夹按此顺序打开。你排序过的文件夹会在登录此服务器的每台设备上保持自己的顺序。
+settings.defaultSortFooter	未排序的文件夹按此顺序打开。\n你排序过的文件夹会在登录此服务器的每台设备上保持自己的顺序。
 settings.sectionSecurity	安全
 settings.rowRequireSignIn	要求登录
 lock.title	NextExplorer 已锁定
@@ -1405,6 +1405,10 @@ emptyGuide.sharedBody	在“浏览”中右键点按文件或文件夹并选择�
 emptyGuide.sharedWithMeTitle	还没有人与你共享内容
 emptyGuide.offlineTitle	将文件保留在这台 Mac 上
 emptyGuide.offlineBody	在“浏览”中右键点按任意文件或文件夹并选择“%@”。\n每次 App 同步时，文件夹都会获取新文件。\n\n已下载的文件即使没有网络也能打开。
+settings.groupTheme	主题
+settings.sectionFiles	文件
+settings.groupFileLists	文件列表
+settings.groupPreviews	预览
 emptyGuide.trashTitle	废纸篓为空
 emptyGuide.trashRestore	恢复会将项目放回原处，或放入你选择的任意文件夹。
 emptyGuide.trashShareLinks	文件在这里期间，共享链接会失效。\n恢复后可重新启用。

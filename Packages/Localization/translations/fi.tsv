@@ -1339,7 +1339,7 @@ browse.fileCount#other	%lld tiedostoa
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Oletuslajittelu
 settings.rowSortOrder	Järjestys
-settings.defaultSortFooter	Kansiot, joita et ole lajitellut, avautuvat tässä järjestyksessä. Lajittelemasi kansio säilyttää oman järjestyksensä kaikilla tähän palvelimeen kirjautuneilla laitteilla.
+settings.defaultSortFooter	Kansiot, joita et ole lajitellut, avautuvat tässä järjestyksessä.\nLajittelemasi kansio säilyttää oman järjestyksensä kaikilla tähän palvelimeen kirjautuneilla laitteilla.
 settings.sectionSecurity	Suojaus
 settings.rowRequireSignIn	Vaadi kirjautuminen
 lock.title	NextExplorer on lukittu
@@ -1372,6 +1372,10 @@ emptyGuide.sharedBody	Napsauta tiedostoa tai kansiota hiiren oikealla painikkeel
 emptyGuide.sharedWithMeTitle	Kanssasi ei ole vielä jaettu mitään
 emptyGuide.offlineTitle	Pidä tiedostot tällä Macilla
 emptyGuide.offlineBody	Napsauta mitä tahansa tiedostoa tai kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%@”.\nKansiot saavat uudet tiedostot aina, kun sovellus synkronoi.\n\nLadatut tiedostot aukeavat myös ilman yhteyttä.
+settings.groupTheme	Teema
+settings.sectionFiles	Tiedostot
+settings.groupFileLists	Tiedostoluettelot
+settings.groupPreviews	Esikatselut
 emptyGuide.trashTitle	Roskakori on tyhjä
 emptyGuide.trashRestore	Palauta vie kohteen takaisin paikalleen tai valitsemaasi kansioon.
 emptyGuide.trashShareLinks	Jakolinkit lakkaavat toimimasta, kun tiedosto on täällä.\nPalautus voi tuoda ne takaisin.

@@ -1410,7 +1410,7 @@ browse.fileCount#other	%lld bestanden
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Standaardsortering
 settings.rowSortOrder	Volgorde
-settings.defaultSortFooter	Mappen die je niet hebt gesorteerd, openen in deze volgorde. Een map die je sorteert, houdt zijn eigen volgorde op elk apparaat dat bij deze server is ingelogd.
+settings.defaultSortFooter	Mappen die je niet hebt gesorteerd, openen in deze volgorde.\nEen map die je sorteert, houdt zijn eigen volgorde op elk apparaat dat bij deze server is ingelogd.
 settings.sectionSecurity	Beveiliging
 settings.rowRequireSignIn	Inloggen vereisen
 lock.title	NextExplorer is vergrendeld
@@ -1443,6 +1443,10 @@ emptyGuide.sharedBody	Klik in Verkennen met de rechtermuisknop op een bestand of
 emptyGuide.sharedWithMeTitle	Nog niets met je gedeeld
 emptyGuide.offlineTitle	Bestanden op deze Mac bewaren
 emptyGuide.offlineBody	Klik in Verkennen met de rechtermuisknop op een bestand of map en kies ‘%@’.\nMappen halen nieuwe bestanden op bij elke synchronisatie van de app.\n\nGedownloade bestanden openen ook zonder verbinding.
+settings.groupTheme	Thema
+settings.sectionFiles	Bestanden
+settings.groupFileLists	Bestandslijsten
+settings.groupPreviews	Voorvertoningen
 emptyGuide.trashTitle	De prullenmand is leeg
 emptyGuide.trashRestore	Herstellen zet een item terug waar het was, of in een map naar keuze.
 emptyGuide.trashShareLinks	Deellinks werken niet zolang hun bestand hier staat.\nHerstellen kan ze terugbrengen.

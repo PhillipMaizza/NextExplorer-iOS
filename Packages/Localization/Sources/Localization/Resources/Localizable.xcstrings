@@ -150681,181 +150681,736 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Folders you have not sorted open in this order. A folder you sort keeps its own order on every device signed in to this server."
+            "value": "Folders you have not sorted open in this order.\nA folder you sort keeps its own order on every device signed in to this server."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "تُفتح المجلدات التي لم تفرزها بهذا الترتيب. يحتفظ المجلد الذي تفرزه بترتيبه على كل جهاز مسجّل الدخول إلى هذا الخادم."
+            "value": "تُفتح المجلدات التي لم تفرزها بهذا الترتيب.\nيحتفظ المجلد الذي تفرزه بترتيبه على كل جهاز مسجّل الدخول إلى هذا الخادم."
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Složky, které jste neseřadili, se otevírají v tomto pořadí. Složka, kterou seřadíte, si své pořadí ponechá na všech zařízeních přihlášených k tomuto serveru."
+            "value": "Složky, které jste neseřadili, se otevírají v tomto pořadí.\nSložka, kterou seřadíte, si své pořadí ponechá na všech zařízeních přihlášených k tomuto serveru."
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mapper, du ikke har sorteret, åbnes i denne rækkefølge. En mappe, du sorterer, beholder sin egen rækkefølge på alle enheder, der er logget ind på denne server."
+            "value": "Mapper, du ikke har sorteret, åbnes i denne rækkefølge.\nEn mappe, du sorterer, beholder sin egen rækkefølge på alle enheder, der er logget ind på denne server."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ordner, die du nicht sortiert hast, öffnen sich in dieser Reihenfolge. Ein Ordner, den du sortierst, behält seine eigene Reihenfolge auf jedem Gerät, das bei diesem Server angemeldet ist."
+            "value": "Ordner, die du nicht sortiert hast, öffnen sich in dieser Reihenfolge.\nEin Ordner, den du sortierst, behält seine eigene Reihenfolge auf jedem Gerät, das bei diesem Server angemeldet ist."
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Οι φάκελοι που δεν έχετε ταξινομήσει ανοίγουν με αυτή τη σειρά. Ένας φάκελος που ταξινομείτε κρατά τη δική του σειρά σε κάθε συσκευή συνδεδεμένη σε αυτόν τον διακομιστή."
+            "value": "Οι φάκελοι που δεν έχετε ταξινομήσει ανοίγουν με αυτή τη σειρά.\nΈνας φάκελος που ταξινομείτε κρατά τη δική του σειρά σε κάθε συσκευή συνδεδεμένη σε αυτόν τον διακομιστή."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las carpetas que no has ordenado se abren en este orden. Una carpeta que ordenas conserva su propio orden en todos los dispositivos conectados a este servidor."
+            "value": "Las carpetas que no has ordenado se abren en este orden.\nUna carpeta que ordenas conserva su propio orden en todos los dispositivos conectados a este servidor."
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kansiot, joita et ole lajitellut, avautuvat tässä järjestyksessä. Lajittelemasi kansio säilyttää oman järjestyksensä kaikilla tähän palvelimeen kirjautuneilla laitteilla."
+            "value": "Kansiot, joita et ole lajitellut, avautuvat tässä järjestyksessä.\nLajittelemasi kansio säilyttää oman järjestyksensä kaikilla tähän palvelimeen kirjautuneilla laitteilla."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les dossiers que vous n'avez pas triés s'ouvrent dans cet ordre. Un dossier que vous triez garde son propre ordre sur tous les appareils connectés à ce serveur."
+            "value": "Les dossiers que vous n'avez pas triés s'ouvrent dans cet ordre.\nUn dossier que vous triez garde son propre ordre sur tous les appareils connectés à ce serveur."
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "תיקיות שלא מיינת נפתחות בסדר הזה. תיקייה שאתה ממיין שומרת על הסדר שלה בכל מכשיר המחובר לשרת הזה."
+            "value": "תיקיות שלא מיינת נפתחות בסדר הזה.\nתיקייה שאתה ממיין שומרת על הסדר שלה בכל מכשיר המחובר לשרת הזה."
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "जिन फ़ोल्डरों को आपने क्रमबद्ध नहीं किया है, वे इसी क्रम में खुलते हैं। आपके द्वारा क्रमबद्ध किया गया फ़ोल्डर इस सर्वर में साइन इन हर डिवाइस पर अपना क्रम रखता है।"
+            "value": "जिन फ़ोल्डरों को आपने क्रमबद्ध नहीं किया है, वे इसी क्रम में खुलते हैं।\nआपके द्वारा क्रमबद्ध किया गया फ़ोल्डर इस सर्वर में साइन इन हर डिवाइस पर अपना क्रम रखता है।"
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "A nem rendezett mappák ebben a sorrendben nyílnak meg. Az általad rendezett mappa megtartja saját sorrendjét minden, ehhez a szerverhez bejelentkezett eszközön."
+            "value": "A nem rendezett mappák ebben a sorrendben nyílnak meg.\nAz általad rendezett mappa megtartja saját sorrendjét minden, ehhez a szerverhez bejelentkezett eszközön."
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Folder yang belum Anda urutkan terbuka dengan urutan ini. Folder yang Anda urutkan mempertahankan urutannya sendiri di setiap perangkat yang masuk ke server ini."
+            "value": "Folder yang belum Anda urutkan terbuka dengan urutan ini.\nFolder yang Anda urutkan mempertahankan urutannya sendiri di setiap perangkat yang masuk ke server ini."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le cartelle che non hai ordinato si aprono in questo ordine. Una cartella che ordini mantiene il proprio ordine su ogni dispositivo connesso a questo server."
+            "value": "Le cartelle che non hai ordinato si aprono in questo ordine.\nUna cartella che ordini mantiene il proprio ordine su ogni dispositivo connesso a questo server."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "並べ替えていないフォルダはこの順序で開きます。並べ替えたフォルダは、このサーバにサインインしているすべてのデバイスで独自の順序を保ちます。"
+            "value": "並べ替えていないフォルダはこの順序で開きます。\n並べ替えたフォルダは、このサーバにサインインしているすべてのデバイスで独自の順序を保ちます。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "정렬하지 않은 폴더는 이 순서로 열립니다. 정렬한 폴더는 이 서버에 로그인된 모든 기기에서 자체 순서를 유지합니다."
+            "value": "정렬하지 않은 폴더는 이 순서로 열립니다.\n정렬한 폴더는 이 서버에 로그인된 모든 기기에서 자체 순서를 유지합니다."
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mapper du ikke har sortert, åpnes i denne rekkefølgen. En mappe du sorterer, beholder sin egen rekkefølge på alle enheter som er logget på denne serveren."
+            "value": "Mapper du ikke har sortert, åpnes i denne rekkefølgen.\nEn mappe du sorterer, beholder sin egen rekkefølge på alle enheter som er logget på denne serveren."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mappen die je niet hebt gesorteerd, openen in deze volgorde. Een map die je sorteert, houdt zijn eigen volgorde op elk apparaat dat bij deze server is ingelogd."
+            "value": "Mappen die je niet hebt gesorteerd, openen in deze volgorde.\nEen map die je sorteert, houdt zijn eigen volgorde op elk apparaat dat bij deze server is ingelogd."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Foldery, których nie posortowano, otwierają się w tej kolejności. Posortowany folder zachowuje własną kolejność na każdym urządzeniu zalogowanym do tego serwera."
+            "value": "Foldery, których nie posortowano, otwierają się w tej kolejności.\nPosortowany folder zachowuje własną kolejność na każdym urządzeniu zalogowanym do tego serwera."
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "As pastas que não ordenou abrem por esta ordem. Uma pasta que ordena mantém a sua própria ordem em todos os dispositivos com sessão iniciada neste servidor."
+            "value": "As pastas que não ordenou abrem por esta ordem.\nUma pasta que ordena mantém a sua própria ordem em todos os dispositivos com sessão iniciada neste servidor."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "As pastas que você não ordenou abrem nesta ordem. Uma pasta que você ordena mantém sua própria ordem em todos os dispositivos conectados a este servidor."
+            "value": "As pastas que você não ordenou abrem nesta ordem.\nUma pasta que você ordena mantém sua própria ordem em todos os dispositivos conectados a este servidor."
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dosarele pe care nu le-ai sortat se deschid în această ordine. Un dosar pe care îl sortezi își păstrează propria ordine pe fiecare dispozitiv conectat la acest server."
+            "value": "Dosarele pe care nu le-ai sortat se deschid în această ordine.\nUn dosar pe care îl sortezi își păstrează propria ordine pe fiecare dispozitiv conectat la acest server."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Папки, которые вы не сортировали, открываются в этом порядке. Папка, которую вы отсортировали, сохраняет свой порядок на всех устройствах, вошедших на этот сервер."
+            "value": "Папки, которые вы не сортировали, открываются в этом порядке.\nПапка, которую вы отсортировали, сохраняет свой порядок на всех устройствах, вошедших на этот сервер."
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mappar som du inte har sorterat öppnas i den här ordningen. En mapp som du sorterar behåller sin egen ordning på alla enheter som är inloggade på den här servern."
+            "value": "Mappar som du inte har sorterat öppnas i den här ordningen.\nEn mapp som du sorterar behåller sin egen ordning på alla enheter som är inloggade på den här servern."
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "โฟลเดอร์ที่คุณยังไม่ได้เรียงจะเปิดตามลำดับนี้ โฟลเดอร์ที่คุณเรียงจะคงลำดับของตัวเองบนทุกอุปกรณ์ที่ลงชื่อเข้าใช้เซิร์ฟเวอร์นี้"
+            "value": "โฟลเดอร์ที่คุณยังไม่ได้เรียงจะเปิดตามลำดับนี้\nโฟลเดอร์ที่คุณเรียงจะคงลำดับของตัวเองบนทุกอุปกรณ์ที่ลงชื่อเข้าใช้เซิร์ฟเวอร์นี้"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sıralamadığınız klasörler bu sırayla açılır. Sıraladığınız bir klasör, bu sunucuda oturum açmış her cihazda kendi sırasını korur."
+            "value": "Sıralamadığınız klasörler bu sırayla açılır.\nSıraladığınız bir klasör, bu sunucuda oturum açmış her cihazda kendi sırasını korur."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Теки, які ви не сортували, відкриваються в цьому порядку. Тека, яку ви відсортували, зберігає свій порядок на кожному пристрої, що увійшов на цей сервер."
+            "value": "Теки, які ви не сортували, відкриваються в цьому порядку.\nТека, яку ви відсортували, зберігає свій порядок на кожному пристрої, що увійшов на цей сервер."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Các thư mục bạn chưa sắp xếp sẽ mở theo thứ tự này. Thư mục bạn sắp xếp giữ thứ tự riêng trên mọi thiết bị đăng nhập vào máy chủ này."
+            "value": "Các thư mục bạn chưa sắp xếp sẽ mở theo thứ tự này.\nThư mục bạn sắp xếp giữ thứ tự riêng trên mọi thiết bị đăng nhập vào máy chủ này."
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "未排序的文件夹按此顺序打开。你排序过的文件夹会在登录此服务器的每台设备上保持自己的顺序。"
+            "value": "未排序的文件夹按此顺序打开。\n你排序过的文件夹会在登录此服务器的每台设备上保持自己的顺序。"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "未排序的資料夾會依此順序開啟。你排序過的資料夾會在登入此伺服器的每部裝置上保留自己的順序。"
+            "value": "未排序的資料夾會依此順序開啟。\n你排序過的資料夾會在登入此伺服器的每部裝置上保留自己的順序。"
+          }
+        }
+      }
+    },
+    "settings.groupFileLists": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File Lists"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "قوائم الملفات"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seznamy souborů"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fillister"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateilisten"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Λίστες αρχείων"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listas de archivos"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiedostoluettelot"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listes de fichiers"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "רשימות קבצים"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ाइल सूचियाँ"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fájllisták"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daftar File"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elenchi dei file"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ファイルリスト"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일 목록"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fillister"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestandslijsten"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listy plików"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listas de ficheiros"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listas de Arquivos"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liste de fișiere"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Списки файлов"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fillistor"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "รายการไฟล์"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosya Listeleri"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Списки файлів"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Danh sách tệp"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件列表"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "檔案列表"
+          }
+        }
+      }
+    },
+    "settings.groupPreviews": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previews"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المعاينات"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Náhledy"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eksempler"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorschauen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Προεπισκοπήσεις"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vistas previas"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esikatselut"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aperçus"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "תצוגות מקדימות"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "पूर्वावलोकन"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Előnézetek"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pratinjau"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anteprime"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "プレビュー"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "미리보기"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forhåndsvisninger"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voorvertoningen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podglądy"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pré-visualizações"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pré-visualizações"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previzualizări"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Предпросмотр"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Förhandsvisningar"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตัวอย่าง"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Önizlemeler"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Попередній перегляд"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bản xem trước"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "预览"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "預覽"
+          }
+        }
+      }
+    },
+    "settings.groupTheme": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Theme"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "السمة"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motiv"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Design"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Θέμα"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teema"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thème"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ערכת נושא"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "थीम"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Téma"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "テーマ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "테마"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thema"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motyw"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temă"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тема"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ธีม"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tema"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тема"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chủ đề"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主题"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "主題"
           }
         }
       }
@@ -155851,6 +156406,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "顯示"
+          }
+        }
+      }
+    },
+    "settings.sectionFiles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Files"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "الملفات"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Soubory"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateien"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Αρχεία"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivos"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tiedostot"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fichiers"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "קבצים"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ाइलें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fájlok"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ファイル"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "파일"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestanden"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pliki"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ficheiros"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arquivos"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fișiere"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Файлы"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filer"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไฟล์"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyalar"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Файли"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tệp"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "檔案"
           }
         }
       }

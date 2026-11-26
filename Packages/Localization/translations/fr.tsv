@@ -1410,7 +1410,7 @@ browse.fileCount#other	%lld fichiers
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Tri par défaut
 settings.rowSortOrder	Ordre
-settings.defaultSortFooter	Les dossiers que vous n'avez pas triés s'ouvrent dans cet ordre. Un dossier que vous triez garde son propre ordre sur tous les appareils connectés à ce serveur.
+settings.defaultSortFooter	Les dossiers que vous n'avez pas triés s'ouvrent dans cet ordre.\nUn dossier que vous triez garde son propre ordre sur tous les appareils connectés à ce serveur.
 settings.sectionSecurity	Sécurité
 settings.rowRequireSignIn	Exiger la connexion
 lock.title	NextExplorer est verrouillé
@@ -1443,6 +1443,10 @@ emptyGuide.sharedBody	Faites un clic droit sur un fichier ou un dossier dans Exp
 emptyGuide.sharedWithMeTitle	Rien n’a encore été partagé avec vous
 emptyGuide.offlineTitle	Garder des fichiers sur ce Mac
 emptyGuide.offlineBody	Faites un clic droit sur un fichier ou un dossier dans Explorer et choisissez « %@ ».\nLes dossiers récupèrent les nouveaux fichiers à chaque synchronisation de l’app.\n\nLes fichiers téléchargés s'ouvrent même sans connexion.
+settings.groupTheme	Thème
+settings.sectionFiles	Fichiers
+settings.groupFileLists	Listes de fichiers
+settings.groupPreviews	Aperçus
 emptyGuide.trashTitle	La corbeille est vide
 emptyGuide.trashRestore	Restaurer remet un élément à sa place, ou dans le dossier de votre choix.
 emptyGuide.trashShareLinks	Les liens de partage cessent de fonctionner tant que leur fichier est ici.\nUne restauration peut les rétablir.
