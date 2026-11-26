@@ -9,11 +9,13 @@
     struct MacTabDetail: View {
         let store: StoreOf<MainTabFeature>
         @State private var inspectorReserve: CGFloat = .zero
-        @State private var browseOpener: MacBrowseOpener
+        @State private var browseOpener: MacSectionOpener
+        @State private var sharedWithMeOpener: MacSectionOpener
 
         init(store: StoreOf<MainTabFeature>) {
             self.store = store
-            _browseOpener = State(initialValue: MacBrowseOpener { store.send(.tabSelected(.browse)) })
+            _browseOpener = State(initialValue: MacSectionOpener { store.send(.tabSelected(.browse)) })
+            _sharedWithMeOpener = State(initialValue: MacSectionOpener { store.send(.sharedWithMeRequested) })
         }
 
         var body: some View {
@@ -24,17 +26,10 @@
                 MacPaneCard(title: nil, subtitle: nil, reserve: inspectorReserve) {
                     section.padding(.horizontal, MacPaneInset.section)
                 }
-                .overlayPreferenceValue(MacEmptyGuideKey.self) { guide in
-                    ZStack {
-                        if let guide {
-                            MacListGuideView(guide: guide)
-                                .transition(.opacity)
-                        }
-                    }
-                    .animation(DSMotion.stateFade, value: guide)
-                }
+                .macEmptyGuideOverlay()
                 .macToastPane()
                 .environment(\.showMacBrowse, browseOpener)
+                .environment(\.showMacSharedWithMe, sharedWithMeOpener)
                 .onPreferenceChange(MacInspectorReserveKey.self) { reserve in
                     withAnimation(DSMotion.stateFade) { inspectorReserve = reserve }
                 }

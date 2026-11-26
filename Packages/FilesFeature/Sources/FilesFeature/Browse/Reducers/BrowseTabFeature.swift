@@ -19,8 +19,9 @@ public struct BrowseTabFeature {
         @Presents public var trash: TrashFeature.State?
         var inspectorLeftOpenPaths: Set<String> = []
 
-        public init(serverURL: URL) {
+        public init(serverURL: URL, isAdmin: Bool = false) {
             root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
+            root.isAdmin = isAdmin
         }
 
         /// The server path of the folder on screen; empty at the volume root.

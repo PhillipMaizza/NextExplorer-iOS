@@ -23,7 +23,9 @@ struct BrowseEmptyFolderActions: View {
 
     var body: some View {
         #if os(macOS)
-            if canUpload, !store.isSelecting {
+            if let guide = store.rootEmptyGuide {
+                Color.clear.macEmptyGuide(guide)
+            } else if canUpload, !store.isSelecting {
                 MacBrowseDropZone(
                     canCreateFolder: canCreateFolder,
                     onCreateFolder: { store.send(.newFolderTapped) },

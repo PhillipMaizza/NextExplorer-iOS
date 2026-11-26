@@ -13,7 +13,7 @@
     }
 
     @MainActor
-    final class MacBrowseOpener {
+    final class MacSectionOpener {
         private let open: () -> Void
 
         init(_ open: @escaping () -> Void) {
@@ -26,7 +26,8 @@
     }
 
     extension EnvironmentValues {
-        @Entry var showMacBrowse: MacBrowseOpener?
+        @Entry var showMacBrowse: MacSectionOpener?
+        @Entry var showMacSharedWithMe: MacSectionOpener?
     }
 
     struct MacEmptyGuideKey: PreferenceKey {
@@ -40,6 +41,18 @@
     extension View {
         func macEmptyGuide(_ guide: MacListGuide?) -> some View {
             preference(key: MacEmptyGuideKey.self, value: guide)
+        }
+
+        func macEmptyGuideOverlay() -> some View {
+            overlayPreferenceValue(MacEmptyGuideKey.self) { guide in
+                ZStack {
+                    if let guide {
+                        MacListGuideView(guide: guide)
+                            .transition(.opacity)
+                    }
+                }
+                .animation(DSMotion.stateFade, value: guide)
+            }
         }
     }
 
@@ -65,17 +78,36 @@
     }
 
     struct MacEmptyGuideMessage: View {
+        enum Destination {
+            case browse, sharedWithMe
+
+            var title: String {
+                switch self {
+                case .browse: L10n.EmptyGuide.goToBrowse
+                case .sharedWithMe: L10n.EmptyGuide.goToShared
+                }
+            }
+        }
+
         let message: String
-        var showsBrowseButton = true
+        var destination: Destination? = .browse
         @Environment(\.showMacBrowse) private var showBrowse
+        @Environment(\.showMacSharedWithMe) private var showSharedWithMe
 
         var body: some View {
             Text(message)
                 .type(.body1(.regular), style: .secondary)
-            if showsBrowseButton, let showBrowse {
-                Button(L10n.EmptyGuide.goToBrowse) { showBrowse() }
+            if let destination, let open = opener(for: destination) {
+                Button(destination.title) { open() }
                     .buttonStyle(.macDS(.primary))
                     .padding(.top, .space4)
+            }
+        }
+
+        private func opener(for destination: Destination) -> MacSectionOpener? {
+            switch destination {
+            case .browse: showBrowse
+            case .sharedWithMe: showSharedWithMe
             }
         }
     }
@@ -205,7 +237,7 @@
                 MacEmptyGuide(title: L10n.EmptyGuide.sharedWithMeTitle) {
                     MacEmptyGuideTile(icon: IconKit.macSidebarShared)
                 } detail: {
-                    MacEmptyGuideMessage(message: L10n.Shared.emptyWithMe, showsBrowseButton: false)
+                    MacEmptyGuideMessage(message: L10n.Shared.emptyWithMe, destination: nil)
                 }
             case .offline:
                 MacMenuEmptyGuide(
@@ -223,6 +255,19 @@
                     MacEmptyGuideBullet(icon: IconKit.macRestore, text: L10n.EmptyGuide.trashRestore)
                     MacEmptyGuideBullet(icon: IconKit.macSidebarShared, text: L10n.EmptyGuide.trashShareLinks)
                 }
+            case .browseRootUnassigned:
+                MacEmptyGuide(title: L10n.EmptyGuide.browseRootUnassignedTitle) {
+                    MacEmptyGuideTile(icon: IconKit.macSidebarBrowse)
+                } detail: {
+                    MacEmptyGuideMessage(message: L10n.EmptyGuide.browseRootUnassignedBody, destination: .sharedWithMe)
+                }
+            case .browseRootNoVolumes:
+                MacEmptyGuide(title: L10n.EmptyGuide.browseRootNoVolumesTitle) {
+                    MacEmptyGuideTile(icon: IconKit.macSidebarBrowse)
+                } detail: {
+                    MacEmptyGuideBullet(icon: IconKit.macSidebarBrowse, text: L10n.EmptyGuide.browseRootVolumeFolders)
+                    MacEmptyGuideBullet(icon: IconKit.macToolbarRefresh, text: L10n.EmptyGuide.browseRootAddFolder)
+                }
             }
         }
     }
@@ -235,15 +280,29 @@
 
     #Preview("Menu guide") {
         MacListGuideView(guide: .favorites)
-            .environment(\.showMacBrowse, MacBrowseOpener {})
+            .environment(\.showMacBrowse, MacSectionOpener {})
             .frame(width: 900, height: 500)
             .background(Color.macCard)
     }
 
     #Preview("Menu guide, narrow, dark") {
         MacListGuideView(guide: .offline)
-            .environment(\.showMacBrowse, MacBrowseOpener {})
+            .environment(\.showMacBrowse, MacSectionOpener {})
             .frame(width: 520, height: 560)
+            .background(Color.macCard)
+            .preferredColorScheme(.dark)
+    }
+
+    #Preview("Browse root, unassigned") {
+        MacListGuideView(guide: .browseRootUnassigned)
+            .environment(\.showMacSharedWithMe, MacSectionOpener {})
+            .frame(width: 900, height: 500)
+            .background(Color.macCard)
+    }
+
+    #Preview("Browse root, no volumes, dark") {
+        MacListGuideView(guide: .browseRootNoVolumes)
+            .frame(width: 900, height: 500)
             .background(Color.macCard)
             .preferredColorScheme(.dark)
     }
