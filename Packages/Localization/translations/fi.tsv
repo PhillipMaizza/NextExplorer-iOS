@@ -209,6 +209,7 @@ uploads.cancelAll	Peruuta kaikki lähetykset
 shared.navigationTitle	Jaetut
 shared.segmentByMe	Minun
 shared.segmentWithMe	Minulle jaetut
+shared.sharedWithMe	Jaettu kanssani
 shared.sectionExpired	Vanhentunut
 shared.filterAll	Kaikki
 shared.filterAnyone	Kuka tahansa
@@ -1186,7 +1187,6 @@ trashSettings.versionsEnvironmentNote	Oletusarvot tulevat muuttujista VERSIONS_E
 versionedFiles.refresh	Päivitä
 browse.actionAvailableOffline	Saatavilla offline-tilassa
 browse.actionKeepOffline	Pidä offline-tilassa
-browse.actionShowInFolder	Näytä kansiossa
 browse.actionSaveToDevice	Tallenna laitteelle
 previewToolbar.saveToDevice	Tallenna laitteelle
 downloadQueue.savedToPhotos	Tallennettu Kuviin

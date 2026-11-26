@@ -26,6 +26,7 @@ struct MainTabFanOutTests: MainTabTestSupport {
 
         await store.send(.appBecameActive)
         await store.receive(\.browse.syncPathStack)
+        await store.receive(\.sharedBrowse.syncPathStack)
         await store.receive(\.favorites.syncPathStack)
         await store.receive(\.uploads.appResumed)
         await store.receive(\.settings.loadPreferences)
@@ -79,6 +80,7 @@ struct MainTabFanOutTests: MainTabTestSupport {
 
         await store.send(.connectivityRestored)
         await store.receive(\.browse.syncPathStack)
+        await store.receive(\.sharedBrowse.syncPathStack)
         await store.receive(\.favorites.refreshButtonTapped) {
             $0.favorites.phase = .loading
         }

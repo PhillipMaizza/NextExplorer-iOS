@@ -221,6 +221,7 @@ uploads.cancelAll	Zrušit všechna nahrávání
 shared.navigationTitle	Sdílené
 shared.segmentByMe	Mnou
 shared.segmentWithMe	Se mnou
+shared.sharedWithMe	Sdíleno se mnou
 shared.sectionExpired	Platnost vypršela
 shared.filterAll	Vše
 shared.filterAnyone	Kdokoli
@@ -1221,7 +1222,6 @@ trashSettings.versionsEnvironmentNote	Výchozí hodnoty pocházejí z VERSIONS_E
 versionedFiles.refresh	Obnovit
 browse.actionAvailableOffline	Dostupné offline
 browse.actionKeepOffline	Ponechat offline
-browse.actionShowInFolder	Zobrazit ve složce
 browse.actionSaveToDevice	Uložit do zařízení
 previewToolbar.saveToDevice	Uložit do zařízení
 downloadQueue.savedToPhotos	Uloženo do Fotek

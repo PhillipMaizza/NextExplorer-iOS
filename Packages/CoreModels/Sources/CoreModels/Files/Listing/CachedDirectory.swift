@@ -10,7 +10,7 @@ import Foundation
 public struct CachedDirectory: Codable, Equatable, Sendable {
     /// Bumped whenever the stored shape changes; a mismatch on read discards the entry rather
     /// than risking a decode against stale data.
-    public static let currentSchemaVersion = 1
+    public static let currentSchemaVersion = 2
 
     public var schemaVersion: Int
     public let path: String
@@ -21,6 +21,7 @@ public struct CachedDirectory: Codable, Equatable, Sendable {
     /// an unchanged directory answers `304` instead of re transferring. `nil` for entries
     /// written before the server exposed one, or when the response carried no `ETag`.
     public let etag: String?
+    public let shareInfo: BrowseResult.ShareInfo?
 
     public init(
         path: String,
@@ -28,6 +29,7 @@ public struct CachedDirectory: Codable, Equatable, Sendable {
         access: FileAccess,
         fetchedAt: Date,
         etag: String? = nil,
+        shareInfo: BrowseResult.ShareInfo? = nil,
         schemaVersion: Int = CachedDirectory.currentSchemaVersion
     ) {
         self.path = path
@@ -35,6 +37,7 @@ public struct CachedDirectory: Codable, Equatable, Sendable {
         self.access = access
         self.fetchedAt = fetchedAt
         self.etag = etag
+        self.shareInfo = shareInfo
         self.schemaVersion = schemaVersion
     }
 }

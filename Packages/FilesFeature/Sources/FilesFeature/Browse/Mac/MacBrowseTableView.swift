@@ -30,6 +30,7 @@
         let serverURL: URL
         let scope: String
         let canDropOnFolders: Bool
+        var canExportFiles = true
         let onDropOnFolder: ([FileItem.ID], FileItem) -> Void
         /// Rows from another Browse window dropped on a folder row, which this table doesn't list.
         var onDropForeignItemsOnFolder: ([FileItem], FileItem) -> Void = { _, _ in }
@@ -113,7 +114,8 @@
                             item: item,
                             serverURL: serverURL,
                             scope: scope,
-                            filesClient: filesClient
+                            filesClient: filesClient,
+                            canExport: canExportFiles
                         ))
                         .dropDestination(for: MacRowDrop.self) { drops in
                             guard item.isDirectory else { return }

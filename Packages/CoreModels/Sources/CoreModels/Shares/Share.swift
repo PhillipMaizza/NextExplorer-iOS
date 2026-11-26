@@ -45,6 +45,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     public let accessMode: ShareAccessMode
     public let sharingType: ShareTarget
     public let hasPassword: Bool
+    public let isDownloadAllowed: Bool
     public let expiresAt: Date?
     public let label: String?
     public let downloadCount: Int
@@ -66,6 +67,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         accessMode: ShareAccessMode,
         sharingType: ShareTarget,
         hasPassword: Bool,
+        isDownloadAllowed: Bool = true,
         expiresAt: Date? = nil,
         label: String? = nil,
         downloadCount: Int = 0,
@@ -84,6 +86,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         self.accessMode = accessMode
         self.sharingType = sharingType
         self.hasPassword = hasPassword
+        self.isDownloadAllowed = isDownloadAllowed
         self.expiresAt = expiresAt
         self.label = label
         self.downloadCount = downloadCount
@@ -97,6 +100,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         case id, shareToken, ownerId, sourcePath, sourceSpace, sourceName, isDirectory, accessMode
         case sharingType, hasPassword, expiresAt, label, downloadCount, lastAccessedAt
         case permittedUserIds, createdAt, updatedAt
+        case isDownloadAllowed = "allowDownload"
     }
 
     public init(from decoder: Decoder) throws {
@@ -111,6 +115,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         accessMode = try container.decode(ShareAccessMode.self, forKey: .accessMode)
         sharingType = try container.decode(ShareTarget.self, forKey: .sharingType)
         hasPassword = try container.decode(Bool.self, forKey: .hasPassword)
+        isDownloadAllowed = try container.decodeIfPresent(Bool.self, forKey: .isDownloadAllowed) ?? true
         expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
         label = try container.decodeIfPresent(String.self, forKey: .label)
         downloadCount = try container.decodeIfPresent(Int.self, forKey: .downloadCount) ?? 0

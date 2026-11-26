@@ -15,6 +15,7 @@ struct SelectionActionsMenu: View {
         /// Off on a screen pushed from the Offline tab, where only actions on kept files are offered.
         var canGetInfo = true
         var canWrite = false
+        var canDuplicate = false
         var canShare = false
         /// Share hands the kept copies to the system share sheet (device content), for any number of
         /// files, instead of creating a link for one.

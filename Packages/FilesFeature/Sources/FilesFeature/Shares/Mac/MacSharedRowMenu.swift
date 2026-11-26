@@ -65,6 +65,34 @@
         }
     }
 
+    struct MacReceivedShareMenu: View {
+        let share: Share
+        let store: StoreOf<SharedFeature>
+        let onOpen: (Share) -> Void
+        let onToast: (DSToastMessage) -> Void
+
+        var body: some View {
+            Button { onOpen(share) } label: {
+                Label { Text(L10n.Browse.open) } icon: { share.isDirectory ? IconKit.folder : IconKit.document }
+            }
+            .tint(.primaryDS)
+            if share.receivedFileItem != nil, share.isDownloadAllowed {
+                Button { store.send(.downloadTapped(share)) } label: {
+                    Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
+                }
+                .tint(.primaryDS)
+            }
+            Section {
+                Button {
+                    onToast(.success(share.copyShareLink(serverURL: store.serverURL)))
+                } label: {
+                    Label { Text(L10n.Shared.copyLink) } icon: { IconKit.link }
+                }
+                .tint(.primaryDS)
+            }
+        }
+    }
+
     #Preview("Row menu") {
         macSharedPreview(.byMe) { store in
             Menu(L10n.Common.copy) {

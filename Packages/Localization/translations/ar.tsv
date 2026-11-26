@@ -229,6 +229,7 @@ uploads.cancelAll	إلغاء جميع عمليات الرفع
 shared.navigationTitle	المشتركة
 shared.segmentByMe	بواسطتي
 shared.segmentWithMe	معي
+shared.sharedWithMe	تمت مشاركته معي
 shared.sectionExpired	منتهية الصلاحية
 shared.badgeExpired	منتهي
 shared.emptyByMe	شارك ملفًا أو مجلدًا لرؤية رابطه هنا.
@@ -1310,7 +1311,6 @@ twoFactor.turnOffButton	إيقاف
 twoFactor.turnOnButton	تشغيل
 browse.actionAvailableOffline	متاح دون اتصال
 browse.actionKeepOffline	الاحتفاظ دون اتصال
-browse.actionShowInFolder	إظهار في المجلد
 browse.actionSaveToDevice	حفظ على الجهاز
 previewToolbar.saveToDevice	حفظ على الجهاز
 downloadQueue.savedToPhotos	تم الحفظ في الصور

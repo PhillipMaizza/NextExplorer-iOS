@@ -19,10 +19,20 @@ extension MainTabFeature.State {
         case .favorites:
             directoryPath = favorites.path.last?.directoryPath ?? ""
             isSelecting = favorites.path.last?.isSelecting ?? false
-        case .shared, .downloads, .settings, .trash:
+        case .shared:
+            directoryPath = sharedBrowse.path.last?.directoryPath ?? ""
+            isSelecting = sharedBrowse.path.last?.isSelecting ?? false
+        case .downloads, .settings, .trash:
             return nil
         }
         return directoryPath.isEmpty || isSelecting ? nil : directoryPath
+    }
+
+    func receivedShareTitle(root: String) -> String {
+        sharedBrowse.path.last?.shareName
+            ?? shared.withMe.first { $0.receivedPath == root }?.itemName
+            ?? sharedBrowse.path.first { $0.directoryPath == root }?.title
+            ?? (root as NSString).lastPathComponent
     }
 }
 
@@ -67,6 +77,20 @@ struct SplitDetailBreadcrumb: View {
             ) { path, title in
                 store.send(.favorites(.navigateToDirectory(path: path, title: title)))
             }
+        } else if let shareRoot = ReceivedShareSpace.shareRoot(of: directoryPath) {
+            BrowseBreadcrumbBar(
+                directoryPath: directoryPath,
+                rootTitle: store.state.receivedShareTitle(root: shareRoot),
+                rootPath: shareRoot,
+                rootIcon: IconKit.folderFill,
+                containerCrumb: (L10n.Shared.sharedWithMe, "", IconKit.shareLink)
+            ) { path, title in
+                if path.isEmpty {
+                    store.send(.sharedWithMeRequested)
+                } else {
+                    store.send(.sharedBrowse(.navigateToDirectory(path: path, title: title)))
+                }
+            }
         } else {
             BrowseBreadcrumbBar(directoryPath: directoryPath) { path, title in
                 store.send(.browse(.navigateToDirectory(path: path, title: title)))
@@ -87,10 +111,10 @@ private enum PreviewSample {
         state.selectedTab = tab
         for screen in pushed {
             let folder = BrowseFeature.State(serverURL: serverURL, directoryPath: screen.path, title: screen.title)
-            if tab == .favorites {
-                state.favorites.path.append(folder)
-            } else {
-                state.browse.path.append(folder)
+            switch tab {
+            case .favorites: state.favorites.path.append(folder)
+            case .shared: state.sharedBrowse.path.append(folder)
+            default: state.browse.path.append(folder)
             }
         }
         return Store(initialState: state) { MainTabFeature() }
@@ -117,6 +141,14 @@ private enum PreviewSample {
     SplitDetailBreadcrumb(store: PreviewSample.store(
         tab: .favorites,
         pushed: [("Media/Photos", "Photos"), ("Media/Photos/2024", "2024")]
+    ))
+    .frame(maxHeight: .infinity, alignment: .bottom)
+}
+
+#Preview("Inside a received share") {
+    SplitDetailBreadcrumb(store: PreviewSample.store(
+        tab: .shared,
+        pushed: [("share/e8B5cREF5E", "OnlyImg"), ("share/e8B5cREF5E/2024", "2024")]
     ))
     .frame(maxHeight: .infinity, alignment: .bottom)
 }

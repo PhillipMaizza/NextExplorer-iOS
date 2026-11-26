@@ -79,17 +79,11 @@ struct SearchHitActionsTests {
         }
     }
 
-    @Test("Keeping a hit offline marks it on the device, and again asks to take it off")
-    func keepingAHitOfflineMarksIt() async {
-        let item = hit.actionItem
+    @Test("A hit from another folder is not kept offline: that folder's download rights are unknown here")
+    func aHitFromAnotherFolderIsNotKeptOffline() async {
         let store = BrowseFixtures.store(searching())
 
-        await store.send(.offlineToggleTapped(item)) {
-            $0.offlinePinnedItemIDs = [item.id]
-            $0.offlineItemIDs = [item.id]
-            $0.searchOnDeviceIDs = [item.id]
-        }
-        await store.receive(.delegate(.offlinePinRequested([item])))
+        await store.send(.offlineToggleTapped(hit.actionItem))
     }
 
     @Test("Open on a folder hit opens it the way the result does, ending the search")

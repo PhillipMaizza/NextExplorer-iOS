@@ -209,6 +209,7 @@ uploads.cancelAll	Az összes feltöltés megszakítása
 shared.navigationTitle	Megosztott
 shared.segmentByMe	Általam
 shared.segmentWithMe	Velem
+shared.sharedWithMe	Velem megosztott
 shared.sectionExpired	Lejárt
 shared.filterAll	Mind
 shared.filterAnyone	Bárki
@@ -1186,7 +1187,6 @@ trashSettings.versionsEnvironmentNote	Az alapértékek a következőkből szárm
 versionedFiles.refresh	Frissítés
 browse.actionAvailableOffline	Elérhető offline
 browse.actionKeepOffline	Megtartás offline
-browse.actionShowInFolder	Megjelenítés a mappában
 browse.actionSaveToDevice	Mentés az eszközre
 previewToolbar.saveToDevice	Mentés az eszközre
 downloadQueue.savedToPhotos	Mentve a Fotókba

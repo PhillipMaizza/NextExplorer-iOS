@@ -159,7 +159,6 @@ public enum L10n {
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
         public static var actionSaveToDevice: String { tr("browse.actionSaveToDevice") }  // "Save to Device"
         public static var actionShare: String { tr("browse.actionShare") }  // "Create share link"
-        public static var actionShowInFolder: String { tr("browse.actionShowInFolder") }  // "Show in Folder"
         public static var breadcrumbHint: String { tr("browse.breadcrumbHint") }  // "Opens this folder"
         public static func bulkFavoriteFailed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.bulkFavoriteFailed", a0, a1) }
         public static func clipboardCopiedMany(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedMany", a0) }
@@ -1100,6 +1099,7 @@ public enum L10n {
         public static var setNewDate: String { tr("shared.setNewDate") }  // "Set a new date"
         public static func shareCount(_ a0: CVarArg) -> String { tr("shared.shareCount", a0) }
         public static var sharedByUnknown: String { tr("shared.sharedByUnknown") }  // "Someone"
+        public static var sharedWithMe: String { tr("shared.sharedWithMe") }  // "Shared with Me"
         public static var showLess: String { tr("shared.showLess") }  // "Show Less"
         public static var showMore: String { tr("shared.showMore") }  // "Show More"
         public static var statusPassword: String { tr("shared.statusPassword") }  // "password"

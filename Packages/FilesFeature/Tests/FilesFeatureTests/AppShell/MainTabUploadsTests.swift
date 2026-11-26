@@ -65,6 +65,7 @@ struct MainTabUploadsTests: MainTabTestSupport {
             broadcastFolders(&$0, [TestPath.documentsReports])
         }
         await store.receive(\.browse.refreshDirectory)
+        await store.receive(\.sharedBrowse.refreshDirectory)
         await store.receive(\.favorites.refreshDirectory)
         await store.receive(\.offline.uploadsLanded)
         await store.send(.openUploadedLocation(TestPath.documentsReports)) {
@@ -100,6 +101,7 @@ struct MainTabUploadsTests: MainTabTestSupport {
             broadcastFolders(&$0, [TestFolder.inbox])
         }
         await store.receive(\.browse.refreshDirectory)
+        await store.receive(\.sharedBrowse.refreshDirectory)
         await store.receive(\.favorites.refreshDirectory)
         await store.receive(\.offline.uploadsLanded)
         await store.receive(\.browse.root.refreshButtonTapped) {
@@ -133,6 +135,7 @@ struct MainTabUploadsTests: MainTabTestSupport {
             broadcastFolders(&$0, ["Archive/2026"])
         }
         await store.receive(\.browse.refreshDirectory)
+        await store.receive(\.sharedBrowse.refreshDirectory)
         await store.receive(\.favorites.refreshDirectory)
         await store.receive(\.offline.uploadsLanded)
     }
@@ -160,6 +163,7 @@ struct MainTabUploadsTests: MainTabTestSupport {
 
         await store.send(.appBecameActive)
         await store.receive(\.browse.syncPathStack)
+        await store.receive(\.sharedBrowse.syncPathStack)
         await store.receive(\.favorites.syncPathStack)
         await store.receive(\.uploads.appResumed)
         await store.receive(\.settings.loadPreferences)

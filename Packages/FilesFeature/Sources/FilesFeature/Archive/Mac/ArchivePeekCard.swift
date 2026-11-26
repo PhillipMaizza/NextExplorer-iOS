@@ -7,7 +7,7 @@
 
     struct ArchivePeekCard: View {
         let store: StoreOf<ArchiveBrowserFeature>
-        let onExtract: ([String]?) -> Void
+        let onExtract: (([String]?) -> Void)?
         let onClose: () -> Void
 
         @FocusState private var isFocused: Bool
@@ -60,7 +60,7 @@
                         .lineLimit(1)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                if store.canExtract, store.phase == .loaded {
+                if let onExtract, store.canExtract, store.phase == .loaded {
                     Button(L10n.Browse.actionExtract) { onExtract(store.extractPaths) }
                         .buttonStyle(.macDS(.primary, size: .small))
                 }

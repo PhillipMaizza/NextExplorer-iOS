@@ -30,7 +30,8 @@
                     size: { $0.isDirectory ? store.folderSizes[$0.id] : $0.size },
                     onSelect: { store.send(.tableSelectionChanged([$0.id])) },
                     onOpen: onOpen,
-                    onShare: (store.access?.canShare ?? false) ? onShare : nil,
+                    onShare: item.map { store.state.actions(for: $0).canShare } ?? false ? onShare : nil,
+                    showsMore: item.map { !store.state.inspectorMoreRows(for: $0).isEmpty } ?? false,
                     more: more
                 ))
                 .onChange(of: store.directoryPath) { isPeeking = false }

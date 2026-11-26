@@ -121,7 +121,9 @@ extension BrowseHistoryState {
     /// screen has no parent of its own here, as a favorite's folder in Favorites.
     mutating func goToEnclosingFolder(serverURL: URL, isFirstScreenTop: Bool = false) {
         guard let top = path.last else { return }
-        let parent = (top.directoryPath as NSString).deletingLastPathComponent
+        let parent = ReceivedShareSpace.shareRoot(of: top.directoryPath) == top.directoryPath
+            ? ""
+            : (top.directoryPath as NSString).deletingLastPathComponent
         let below = path.count > 1 ? path[id: path.ids[path.ids.count - 2]] : nil
         if below?.directoryPath == parent || (path.count == 1 && (parent.isEmpty || isFirstScreenTop)) {
             goBack()

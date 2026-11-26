@@ -17,5 +17,14 @@ struct BrowseResultDecodingTests {
     func decodesEmptyDirectory() throws {
         let result = try CoreModelsFixture.browseResultEmptyDirectory.decode(BrowseResult.self)
         #expect(result.items.isEmpty)
+        #expect(result.shareInfo == nil)
+    }
+
+    @Test("a listing inside a received share names the shared folder, falling back to the label")
+    func decodesShareInfo() throws {
+        let result = try CoreModelsFixture.browseResultReceivedShare.decode(BrowseResult.self)
+        #expect(result.shareInfo?.name == "OnlyImg")
+        #expect(BrowseResult.ShareInfo(label: "TO-DEMOUSER", sourceFolderName: "").name == "TO-DEMOUSER")
+        #expect(BrowseResult.ShareInfo(label: nil, sourceFolderName: "").name == nil)
     }
 }

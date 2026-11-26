@@ -51,3 +51,21 @@ public struct FileAccess: Codable, Equatable, Sendable {
         )
     }
 }
+
+public extension FileAccess {
+    var canMove: Bool {
+        canWrite && canDelete
+    }
+
+    var canCompress: Bool {
+        canCreateFile
+    }
+
+    var canExtract: Bool {
+        canCreateFolder && canCreateFile
+    }
+
+    func canReceive(_ items: some Sequence<FileItem>) -> Bool {
+        canCreateFile && (canCreateFolder || !items.contains(where: \.isDirectory))
+    }
+}

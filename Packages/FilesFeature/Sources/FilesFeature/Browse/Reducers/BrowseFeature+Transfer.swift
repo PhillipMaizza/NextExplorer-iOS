@@ -9,7 +9,10 @@ import Localization
 extension BrowseFeature {
     func paste(_ state: inout State, keepItemsAfterCopy: Bool) -> Effect<Action> {
         guard let clipboard = state.clipboard,
-              clipboard.canPaste(into: state.directoryPath, canWrite: state.access?.canWrite ?? false)
+              clipboard.canPaste(
+                  into: state.directoryPath,
+                  canReceive: state.access?.canReceive(clipboard.items) ?? false
+              )
         else { return .none }
         let shouldClearClipboard = clipboard.operation == .move || !keepItemsAfterCopy
         return runTransfer(&state, retry: TransferRetry(

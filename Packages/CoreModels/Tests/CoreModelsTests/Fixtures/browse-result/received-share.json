@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "name": "x.png",
+      "path": "share/e8B5cREF5E",
+      "dateModified": 1800000000,
+      "size": 1083,
+      "kind": "png",
+      "supportsThumbnail": true
+    }
+  ],
+  "access": {
+    "canRead": true,
+    "canWrite": false,
+    "canUpload": false,
+    "canDelete": false,
+    "canCreateFolder": false,
+    "canCreateFile": false,
+    "canShare": false,
+    "canDownload": true,
+    "canSeeVersions": true,
+    "readOnly": null
+  },
+  "current": { "isDirectory": true },
+  "path": "share/e8B5cREF5E",
+  "shareInfo": { "label": "TO-DEMOUSER", "sourceFolderName": "OnlyImg" }
+}

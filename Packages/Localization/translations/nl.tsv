@@ -205,6 +205,7 @@ uploads.cancelAll	Alle uploads annuleren
 shared.navigationTitle	Gedeeld
 shared.segmentByMe	Door mij
 shared.segmentWithMe	Met mij
+shared.sharedWithMe	Gedeeld met mij
 shared.sectionExpired	Verlopen
 shared.filterAll	Alles
 shared.filterAnyone	Iedereen
@@ -1238,7 +1239,6 @@ twoFactor.turnOffButton	Uitschakelen
 twoFactor.turnOnButton	Inschakelen
 browse.actionAvailableOffline	Offline beschikbaar
 browse.actionKeepOffline	Offline bewaren
-browse.actionShowInFolder	Toon in map
 browse.actionSaveToDevice	Bewaar op apparaat
 previewToolbar.saveToDevice	Bewaar op apparaat
 downloadQueue.savedToPhotos	Bewaard in Foto’s

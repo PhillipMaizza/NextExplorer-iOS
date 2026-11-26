@@ -22,6 +22,7 @@ struct TextFilePreviewView: View {
     let onDismiss: () -> Void
     /// A file the user just created opens ready to type, once; any other file opens to read.
     var shouldStartEditing = false
+    var canEdit = true
 
     /// The edit buffer, `nil` until the user first types. While `nil`, the editor reads `content`
     /// directly, so a freshly mounted `CodeEditorView` gets the full document on its very first
@@ -107,7 +108,7 @@ struct TextFilePreviewView: View {
             // the editor follows the authoritative `content` again.
             .onChange(of: content) { _, _ in draft = nil }
             .onAppear {
-                if shouldStartEditing {
+                if shouldStartEditing, canEdit {
                     isEditing = true
                 }
             }
@@ -165,7 +166,7 @@ struct TextFilePreviewView: View {
         private var macEditButton: some View {
             if isSaving {
                 DSSpinner(size: .small)
-            } else if content != nil {
+            } else if content != nil, canEdit {
                 Button(isEditing ? L10n.Common.save : L10n.Common.edit, action: toggleEditing)
                     .buttonStyle(.macDS(.primary, size: .small))
                     .keyboardShortcut(isEditing ? KeyboardShortcut("s") : nil)
@@ -190,7 +191,7 @@ struct TextFilePreviewView: View {
         private var editToggleButton: some View {
             if isSaving {
                 DSSpinner()
-            } else if content != nil {
+            } else if content != nil, canEdit {
                 Button(action: toggleEditing) {
                     (isEditing ? IconKit.checkmark : IconKit.rename)
                         .foregroundStyle(Color.primaryDS)

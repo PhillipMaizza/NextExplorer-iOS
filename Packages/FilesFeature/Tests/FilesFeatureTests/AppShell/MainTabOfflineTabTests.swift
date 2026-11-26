@@ -22,6 +22,14 @@ struct MainTabOfflineTabTests: MainTabTestSupport {
                 name: "from a folder opened in Offline",
                 action: .downloads(.delegate(.downloadRequested([MainTabOfflineTabTests.movie])))
             ),
+            Source(
+                name: "from a file shared with me",
+                action: .shared(.delegate(.downloadRequested([MainTabOfflineTabTests.movie])))
+            ),
+            Source(
+                name: "from inside a folder shared with me",
+                action: .sharedBrowse(.delegate(.downloadRequested([MainTabOfflineTabTests.movie])))
+            ),
         ]
     )
     func downloadRequestedEnqueuesIntoTheAppWideDownloadQueue(_ source: Source) async throws {
@@ -110,6 +118,7 @@ struct MainTabOfflineTabTests: MainTabTestSupport {
             $0.downloads.phase = .loading
         }
         await store.receive(\.browse.offlineAvailabilityChanged)
+        await store.receive(\.sharedBrowse.offlineAvailabilityChanged)
         await store.receive(\.favorites.offlineAvailabilityChanged)
         await store.receive(\.downloads.offlineAvailabilityChanged)
         await store.receive(\.browse.root.computeOfflineAvailability)

@@ -70,6 +70,7 @@ public struct BrowseFeature {
         /// Folders whose rescan was asked for and is still being read back.
         var refreshingFolderSizeIDs: Set<FileItem.ID> = []
         public var access: FileAccess?
+        public var shareName: String?
         /// The folder listing load lifecycle. `phase.hasLoaded` flips true the first time a
         /// browse response lands (success or failure), so the view shows the loading skeleton
         /// rather than the empty state until then; `phase.errorMessage` carries a failed load.
@@ -641,7 +642,6 @@ public struct BrowseFeature {
         case moveTapped(FileItem)
         case copyToTapped(FileItem)
         case copySelectionToTapped
-        case showInFolderTapped(FileItem)
         case bulkCopyTapped
         case bulkMoveTapped
         case clipboardCleared

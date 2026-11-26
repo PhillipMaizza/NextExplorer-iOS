@@ -205,6 +205,7 @@ uploads.cancelAll	सभी अपलोड रद्द करें
 shared.navigationTitle	साझा किए गए
 shared.segmentByMe	मेरे द्वारा
 shared.segmentWithMe	मेरे साथ
+shared.sharedWithMe	मेरे साथ साझा
 shared.sectionExpired	समाप्त
 shared.filterAll	सभी
 shared.filterAnyone	कोई भी
@@ -1238,7 +1239,6 @@ twoFactor.turnOffButton	बंद करें
 twoFactor.turnOnButton	चालू करें
 browse.actionAvailableOffline	ऑफ़लाइन उपलब्ध
 browse.actionKeepOffline	ऑफ़लाइन रखें
-browse.actionShowInFolder	फ़ोल्डर में दिखाएँ
 browse.actionSaveToDevice	डिवाइस में सहेजें
 previewToolbar.saveToDevice	डिवाइस में सहेजें
 downloadQueue.savedToPhotos	फ़ोटो में सहेजा गया

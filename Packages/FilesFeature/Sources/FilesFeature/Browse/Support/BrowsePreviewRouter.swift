@@ -35,9 +35,11 @@ struct BrowsePreviewRouter: View {
                 .onKeyPress(.leftArrow) { step(by: -1) }
                 .onKeyPress(.rightArrow) { step(by: 1) }
                 .environment(\.previewOffline, offlineAction(for: item))
+                .environment(\.canExportPreview, store.state.actions(for: item).canExport)
         #else
             routed
                 .environment(\.previewOffline, offlineAction(for: item))
+                .environment(\.canExportPreview, store.state.actions(for: item).canExport)
                 .offlineRemovalAlert(
                     store.offlineRemoval,
                     onConfirm: { store.send(.offlineRemovalConfirmed, animation: DSMotion.listDiff) },
@@ -49,7 +51,7 @@ struct BrowsePreviewRouter: View {
     private func offlineAction(for item: FileItem) -> PreviewOfflineAction? {
         // A pinned file can always be taken off the device, even before its folder's access loads.
         let isPinned = store.offlinePinnedItemIDs.contains(item.id)
-        guard isPinned || (store.access?.canDownload ?? false) else { return nil }
+        guard isPinned || store.state.actions(for: item).canKeepOffline else { return nil }
         let isOn = store.offlineItemIDs.contains(item.id)
         return PreviewOfflineAction(
             isOn: isOn,
@@ -69,20 +71,17 @@ struct BrowsePreviewRouter: View {
 
     /// The bars' actions on a file, each only when the folder allows it.
     private var actions: FileGalleryActions {
-        let access = store.access
+        let allowed = store.state.actions(for: item)
         return FileGalleryActions(
-            onShare: (access?.canShare ?? false) ? { onShareTarget($0) } : nil,
-            onRename: (access?.canWrite ?? false) ? { store.send(.renameTapped($0)) } : nil,
-            onDownload: (access?.canDownload ?? false) ? { store.send(.downloadTapped($0)) } : nil,
+            onShare: allowed.canShare ? { onShareTarget($0) } : nil,
+            onRename: allowed.canRename ? { store.send(.renameTapped($0)) } : nil,
+            onDownload: allowed.canDownload ? { store.send(.downloadTapped($0)) } : nil,
             offline: { offlineAction(for: $0) },
-            onDelete: (access?.canDelete ?? false) ? { store.send(.deleteTapped($0)) } : nil,
+            onDelete: allowed.canDelete ? { store.send(.deleteTapped($0)) } : nil,
             onInfo: { store.send(.infoTapped($0)) },
-            // Same gates as the list's menu: a move deletes the original, a copy is checked on paste.
-            onMove: (access?.canWrite ?? false) && (access?.canDelete ?? false)
-                ? { store.send(.moveTapped($0), animation: DSMotion.listDiff) }
-                : nil,
-            onCopy: { store.send(.copyTapped($0), animation: DSMotion.listDiff) },
-            onEdit: { store.send(.previewEditTapped($0)) }
+            onMove: allowed.canMove ? { store.send(.moveTapped($0), animation: DSMotion.listDiff) } : nil,
+            onCopy: allowed.canCopy ? { store.send(.copyTapped($0), animation: DSMotion.listDiff) } : nil,
+            onEdit: allowed.canEditText ? { store.send(.previewEditTapped($0)) } : nil
         )
     }
 
@@ -182,7 +181,8 @@ struct BrowsePreviewRouter: View {
             onRetry: { store.send(.textContentRetryTapped) },
             // Opened from the gallery's Edit, closing goes back to the gallery on this file.
             onDismiss: { store.send(store.isPreviewEditing ? .previewEditorClosed : .previewDismissed) },
-            shouldStartEditing: store.newlyCreatedFileID == item.id || store.isPreviewEditing
+            shouldStartEditing: store.newlyCreatedFileID == item.id || store.isPreviewEditing,
+            canEdit: store.state.actions(for: item).canEditText
         )
         .dsAlert(isPresented: Binding(get: { store.isTextSaveConflictPresented }, set: { _ in })) {
             DSAlertSheet(

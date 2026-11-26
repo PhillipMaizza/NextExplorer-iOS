@@ -149,9 +149,9 @@ struct BrowseDropReducerTests {
         await store.send(.itemsDroppedOnFolder(ids: [report.id], folder: archive))
     }
 
-    @Test("Moving in rows from another window needs the right to write here")
-    func droppingFromAnotherWindowNeedsWriteAccess() async {
-        let store = BrowseFixtures.store(state(items: [], access: access(canWrite: false)))
+    @Test("Moving in rows from another window needs the right to create files here")
+    func droppingFromAnotherWindowNeedsCreateAccess() async {
+        let store = BrowseFixtures.store(state(items: [], access: access(canUpload: false)))
 
         await store.send(.itemsDroppedFromOtherWindow(
             [BrowseDropFixtures.entry("z.pdf", in: TestFolder.other)],

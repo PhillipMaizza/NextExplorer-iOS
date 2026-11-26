@@ -36,8 +36,8 @@ struct BrowseClipboardTests {
     func copyTappedStagesTheItemAndConfirmsWithAToast() async {
         let store = BrowseFixtures.store(makeState())
 
-        await store.send(.copyTapped(incoming)) {
-            $0.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
+        await store.send(.copyTapped(landed)) {
+            $0.$clipboard.withLock { $0 = FileClipboard(items: [landed], operation: .copy) }
             $0.clipboardStagedMessage = L10n.Browse.clipboardCopiedOne("a.txt")
         }
     }

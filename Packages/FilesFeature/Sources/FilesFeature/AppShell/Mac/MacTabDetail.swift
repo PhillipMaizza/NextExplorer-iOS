@@ -48,7 +48,10 @@
             case .favorites:
                 FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
             case .shared:
-                SharedView(store: store.scope(state: \.shared, action: \.shared))
+                SharedView(
+                    store: store.scope(state: \.shared, action: \.shared),
+                    folders: store.scope(state: \.sharedBrowse, action: \.sharedBrowse)
+                )
             case .downloads:
                 OfflineTabView(
                     store: store.scope(state: \.downloads, action: \.downloads),

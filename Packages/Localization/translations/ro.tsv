@@ -211,6 +211,7 @@ uploads.cancelAll	Anulează toate încărcările
 shared.navigationTitle	Partajate
 shared.segmentByMe	De mine
 shared.segmentWithMe	Cu mine
+shared.sharedWithMe	Partajate cu mine
 shared.sectionExpired	Expirate
 shared.filterAll	Toate
 shared.filterAnyone	Oricine
@@ -1256,7 +1257,6 @@ twoFactor.turnOffButton	Dezactivează
 twoFactor.turnOnButton	Activează
 browse.actionAvailableOffline	Disponibil offline
 browse.actionKeepOffline	Păstrează offline
-browse.actionShowInFolder	Arată în dosar
 browse.actionSaveToDevice	Salvează pe dispozitiv
 previewToolbar.saveToDevice	Salvează pe dispozitiv
 downloadQueue.savedToPhotos	Salvat în Fotografii

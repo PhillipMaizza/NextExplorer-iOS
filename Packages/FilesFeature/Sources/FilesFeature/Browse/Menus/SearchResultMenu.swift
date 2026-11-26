@@ -35,11 +35,19 @@ struct SearchResultLocationMenu: View {
 
 struct MacSearchHitMenu<FileActions: View>: View {
     let result: SearchResultItem
+    let isInOpenFolder: Bool
+    let onOpen: () -> Void
     let onShowInFolder: () -> Void
     @ViewBuilder let fileActions: () -> FileActions
 
     var body: some View {
-        fileActions()
+        if isInOpenFolder {
+            fileActions()
+        } else {
+            Button(action: onOpen) {
+                Label { Text(L10n.Browse.open) } icon: { result.isDirectory ? IconKit.folder : IconKit.document }
+            }
+        }
         Section {
             SearchResultLocationMenu(result: result, onShowInFolder: onShowInFolder)
         }

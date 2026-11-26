@@ -98,6 +98,11 @@
                 state.folderWindowSync.broadcast(change, from: nil)
                 return BrowseTabFeature.refresh(for: change).map(Action.browse)
             }
+            if case let .sharedBrowse(browseAction) = action,
+               let change = BrowseTabFeature.folderContentsChange(after: browseAction, in: state.sharedBrowse)
+            {
+                state.folderWindowSync.broadcast(change, from: nil)
+            }
             return .none
         }
     }

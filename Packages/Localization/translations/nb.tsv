@@ -209,6 +209,7 @@ uploads.cancelAll	Avbryt alle opplastinger
 shared.navigationTitle	Delt
 shared.segmentByMe	Av meg
 shared.segmentWithMe	Med meg
+shared.sharedWithMe	Delt med meg
 shared.sectionExpired	Utløpt
 shared.filterAll	Alle
 shared.filterAnyone	Enhver
@@ -1186,7 +1187,6 @@ trashSettings.versionsEnvironmentNote	Standardverdiene kommer fra VERSIONS_ENABL
 versionedFiles.refresh	Oppdater
 browse.actionAvailableOffline	Tilgjengelig frakoblet
 browse.actionKeepOffline	Behold frakoblet
-browse.actionShowInFolder	Vis i mappe
 browse.actionSaveToDevice	Arkiver på enheten
 previewToolbar.saveToDevice	Arkiver på enheten
 downloadQueue.savedToPhotos	Arkivert i Bilder

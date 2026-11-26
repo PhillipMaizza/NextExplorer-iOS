@@ -16,7 +16,7 @@ struct BrowseDeleteAndArchiveTests {
     @Test("Asking to delete shows the confirmation and checks how many shares the delete would remove")
     func deleteTappedSetsTheDeleteConfirmationItemAndChecksShareImpact() async {
         let checked = LockIsolated<[[String]]>([])
-        let store = BrowseFixtures.store {
+        let store = BrowseFixtures.store(BrowseFixtures.state(access: BrowseTestSupport.fullAccess)) {
             $0.filesClient.deleteImpact = { _, items in
                 checked.withValue { $0.append(items.map(\.name)) }
                 return DeleteImpact(shareCount: 2)
@@ -35,7 +35,7 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("A failed share impact check is shown as unavailable and does not block the delete")
     func deleteTappedTreatsAFailedShareImpactCheckAsUnavailable() async {
-        let store = BrowseFixtures.store {
+        let store = BrowseFixtures.store(BrowseFixtures.state(access: BrowseTestSupport.fullAccess)) {
             $0.filesClient.deleteImpact = { _, _ in throw FilesClientError.network(TestFailure.offline) }
         }
 
@@ -158,7 +158,7 @@ struct BrowseDeleteAndArchiveTests {
     func extractZipAddsTheExtractedFolderOnSuccess() async {
         let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
         let extracted = BrowseFixtures.folder("bundle")
-        let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: BrowseTestSupport.fullAccess)) {
             $0.filesClient.extractZip = { _, _ in extracted }
         }
 
@@ -180,7 +180,7 @@ struct BrowseDeleteAndArchiveTests {
         let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
         let extracted = BrowseFixtures.file(TestFile.notes)
         let asked = LockIsolated<[String]>([])
-        let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: BrowseTestSupport.fullAccess)) {
             $0.filesClient.extractArchiveEntries = { _, _, paths in
                 asked.setValue(paths)
                 return [extracted]
@@ -203,7 +203,7 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("A failed extraction shows a readable message")
     func extractFailureSurfacesAReadableErrorMessage() async {
-        let store = BrowseFixtures.store {
+        let store = BrowseFixtures.store(BrowseFixtures.state(access: BrowseTestSupport.fullAccess)) {
             $0.filesClient.extractZip = { _, _ in throw FilesClientError.server(statusCode: 415) }
         }
 
@@ -223,7 +223,7 @@ struct BrowseDeleteAndArchiveTests {
         let folder = BrowseFixtures.folder(TestFolder.documents)
         let archive = BrowseFixtures.file("Documents.zip")
         let favorites = AsyncGate()
-        let store = BrowseFixtures.store(BrowseFixtures.state(items: [folder])) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [folder], access: BrowseTestSupport.fullAccess)) {
             $0.filesClient.compressItem = { _, _ in archive }
             $0.serveEmptyFolders()
             $0.serveListing([folder, archive], access: BrowseTestSupport.fullAccess)
@@ -244,7 +244,6 @@ struct BrowseDeleteAndArchiveTests {
         }
         await store.receive(\.itemsResponse.success) {
             $0.phase = .loaded
-            $0.access = BrowseTestSupport.fullAccess
         }
         await store.receive(\.offlineAvailabilityComputed)
         favorites.open()
@@ -254,9 +253,29 @@ struct BrowseDeleteAndArchiveTests {
         await store.finish()
     }
 
+    @Test("Compress and Extract do nothing where the server refuses new files or folders")
+    func archiveActionsFollowTheCreateFlags() async {
+        let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
+        let filesOnly = FileAccess(
+            canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true,
+            canCreateFolder: false, canCreateFile: true
+        )
+        let readOnly = FileAccess(
+            canRead: true, canWrite: true, canUpload: false, canDelete: true, canShare: true, canDownload: true,
+            canCreateFolder: false, canCreateFile: false
+        )
+        #expect(filesOnly.canCompress && !filesOnly.canExtract)
+        #expect(!readOnly.canCompress)
+
+        await BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: filesOnly))
+            .send(.extractTapped(archive))
+        await BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: readOnly))
+            .send(.compressTapped(archive))
+    }
+
     @Test("A failed compression shows a readable message")
     func compressTappedFailureSurfacesAReadableErrorMessage() async {
-        let store = BrowseFixtures.store {
+        let store = BrowseFixtures.store(BrowseFixtures.state(access: BrowseTestSupport.fullAccess)) {
             $0.filesClient.compressItem = { _, _ in throw FilesClientError.server(statusCode: 403) }
         }
 

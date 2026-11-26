@@ -138,9 +138,11 @@ public struct DestinationPickerFeature {
         public var canConfirm: Bool {
             switch purpose {
             case .move:
-                FileClipboard(items: items, operation: .move).canPaste(into: transferDestination, canWrite: true)
+                FileClipboard(items: items, operation: .move)
+                    .canPaste(into: transferDestination, canReceive: currentAccess?.canReceive(items) ?? false)
             case .copy:
-                FileClipboard(items: items, operation: .copy).canPaste(into: transferDestination, canWrite: true)
+                FileClipboard(items: items, operation: .copy)
+                    .canPaste(into: transferDestination, canReceive: currentAccess?.canReceive(items) ?? false)
             case .upload:
                 // `nil` while the folder's listing is still loading: confirm stays disabled
                 // until the server says uploads are allowed here.

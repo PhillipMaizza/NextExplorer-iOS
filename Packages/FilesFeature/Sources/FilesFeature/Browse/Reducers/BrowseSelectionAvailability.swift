@@ -19,19 +19,21 @@ extension BrowseFeature.State {
     var selectionAvailability: SelectionActionsMenu.Availability {
         // Device content offers only what works on kept files, and only once every pick is kept.
         let isDevice = shouldShowDeviceContent
-        let isAllKept = selectedItems.allSatisfy { offlineItemIDs.contains($0.id) }
+        let picked = selectedItems
+        let actions = actions(for: picked)
+        let isAllKept = picked.allSatisfy { offlineItemIDs.contains($0.id) }
         return SelectionActionsMenu.Availability(
-            single: singleSelectedItem,
+            single: picked.count == 1 ? picked.first : nil,
             canGetInfo: !isDevice,
-            canWrite: access?.canWrite ?? false,
-            canShare: !isDevice && (access?.canShare ?? false),
-            canShareKept: isDevice && isAllKept && Self.canShareKeptFiles && selectedItems
-                .contains { !$0.isDirectory },
-            canTransfer: !isDevice && isTransferActionVisible,
-            canMove: isTransferActionVisible && (access?.canWrite ?? false) && (access?.canDelete ?? false),
-            canDelete: isDeleteActionVisible,
+            canWrite: actions.canRename,
+            canDuplicate: actions.canDuplicate,
+            canShare: actions.canShare,
+            canShareKept: isDevice && isAllKept && Self.canShareKeptFiles && picked.contains { !$0.isDirectory },
+            canTransfer: actions.canCopy,
+            canMove: actions.canMove,
+            canDelete: actions.canDelete,
             canSave: isSaveActionVisible && (!isDevice || isAllKept),
-            canKeepOffline: (access?.canDownload ?? false) && (!isDevice || isAllKept),
+            canKeepOffline: actions.canDownload && (!isDevice || isAllKept),
             offlineAction: selectedOfflineAction,
             canFavorite: isFavoriteActionVisible,
             isAllFavorite: isEntireSelectionAlreadyFavorited,
@@ -52,6 +54,10 @@ extension BrowseFeature.State {
     /// Allowed while a live folder's access is still loading, so the `+` is there from the first
     /// frame. A screen of device content offers nothing to add, also before its access lands, so
     /// its toolbar never shows the `+` only to take it away again.
+    func access(for item: FileItem) -> FileAccess? {
+        item.path == directoryPath || item.id == directoryPath ? access : nil
+    }
+
     var canUploadHere: Bool {
         !directoryPath.isEmpty && (access?.canUpload ?? !shouldShowDeviceContent)
     }
@@ -100,7 +106,7 @@ extension BrowseFeature.State {
     }
 
     var isDownloadActionVisible: Bool {
-        hasSelectionOnScreen && (access?.canDownload ?? false)
+        actions(for: selectedItems).canDownload
     }
 
     var isSaveActionVisible: Bool {
@@ -108,15 +114,7 @@ extension BrowseFeature.State {
     }
 
     var isDeleteActionVisible: Bool {
-        hasSelectionOnScreen && (access?.canDelete ?? false)
-    }
-
-    /// Copy/Move from the selection toolbar: available whenever anything is selected, except
-    /// for a lone root location (same rule the single item context menu enforces via
-    /// `isSoleRootLocation`). Copy needs no permission; the Move button adds a
-    /// `canWrite && canDelete` gate at its site.
-    var isTransferActionVisible: Bool {
-        hasSelectionOnScreen && !(directoryPath.isEmpty && items.count <= 1)
+        actions(for: selectedItems).canDelete
     }
 
     /// Whether any pick is on screen: a selection only a setting has since hidden offers nothing.

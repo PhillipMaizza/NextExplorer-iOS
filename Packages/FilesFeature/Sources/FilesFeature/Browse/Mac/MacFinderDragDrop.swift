@@ -37,6 +37,7 @@
         let serverURL: URL
         let scope: String
         let isEnabled: Bool
+        var canExport = true
 
         @Dependency(\.filesClient) private var filesClient
 
@@ -46,7 +47,8 @@
                     item: item,
                     serverURL: serverURL,
                     scope: scope,
-                    filesClient: filesClient
+                    filesClient: filesClient,
+                    canExport: canExport
                 ))
             } else {
                 content
@@ -93,12 +95,19 @@
         let serverURL: URL
         let scope: String
         let canDrag: Bool
+        var canExport = true
         let canDropHere: Bool
         let onDrop: ([FileItem.ID]) -> Void
 
         func body(content: Content) -> some View {
             content
-                .modifier(MacFileDrag(item: item, serverURL: serverURL, scope: scope, isEnabled: canDrag))
+                .modifier(MacFileDrag(
+                    item: item,
+                    serverURL: serverURL,
+                    scope: scope,
+                    isEnabled: canDrag,
+                    canExport: canExport
+                ))
                 .modifier(MacFolderDropTarget(
                     folder: item,
                     serverURL: serverURL,

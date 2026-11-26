@@ -13,6 +13,7 @@ import SwiftUI
                 serverURL: store.serverURL,
                 scope: store.cacheScope,
                 canDrag: !store.isSelecting,
+                canExport: store.access?.canDownload ?? false,
                 canDropHere: !store.isSelecting && (store.access?.canDelete ?? false),
                 onDrop: { ids in store.send(.itemsDroppedOnFolder(ids: ids, folder: item)) }
             )

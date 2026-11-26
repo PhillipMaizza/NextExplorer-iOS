@@ -236,6 +236,14 @@ public struct SharedFeature {
         case detailOpened(Segment, Item.ID)
         case detailDismissed
         case detailShareSelected(Share.ID?)
+        case openTapped(Share)
+        case downloadTapped(Share)
+        case delegate(Delegate)
+
+        public enum Delegate: Equatable, Sendable {
+            case openFolder(path: String, title: String)
+            case downloadRequested([FileItem])
+        }
     }
 
     @Dependency(\.filesClient) var filesClient
@@ -503,6 +511,21 @@ public struct SharedFeature {
                     state.editSheet = nil
                 }
                 state.detail?.pushedShareID = id
+                return .none
+
+            case let .openTapped(share):
+                guard share.isDirectory, state.withMe[id: share.id] != nil, !state.isExpired(share) else {
+                    return .none
+                }
+                return .send(.delegate(.openFolder(path: share.receivedPath, title: share.itemName)))
+
+            case let .downloadTapped(share):
+                guard state.withMe[id: share.id] != nil, !state.isExpired(share), share.isDownloadAllowed,
+                      let item = share.receivedFileItem
+                else { return .none }
+                return .send(.delegate(.downloadRequested([item])))
+
+            case .delegate:
                 return .none
             }
         }

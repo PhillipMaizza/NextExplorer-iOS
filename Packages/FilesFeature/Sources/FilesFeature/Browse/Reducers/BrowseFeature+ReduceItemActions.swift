@@ -14,10 +14,12 @@ extension BrowseFeature {
     func reduceItemActions(_ state: inout State, _ action: Action) -> Effect<Action> {
         switch action {
         case let .renameTapped(item):
+            guard state.actions(for: item).canRename else { return .none }
             state.renameSheetItem = item
             return .none
 
         case let .deleteTapped(item):
+            guard state.actions(for: item).canDelete else { return .none }
             state.deleteConfirmationItem = item
             state.deleteImpactCheck = .checking
             return checkDeleteImpact(&state, items: [item])
@@ -232,7 +234,7 @@ extension BrowseFeature {
             return refetchAfterAmbiguousFailure(&state, error)
 
         case let .extractTapped(item, entryPaths):
-            guard !state.isPerformingFileAction else { return .none }
+            guard !state.isPerformingFileAction, state.actions(for: item).canExtract else { return .none }
             state.isPerformingFileAction = true
             state.fileActionProgressMessage = L10n.Browse.progressExtracting
             let serverURL = state.serverURL
@@ -264,7 +266,7 @@ extension BrowseFeature {
             return refetchAfterAmbiguousFailure(&state, error)
 
         case let .compressTapped(item):
-            guard !state.isPerformingFileAction else { return .none }
+            guard !state.isPerformingFileAction, state.actions(for: item).canCompress else { return .none }
             state.isPerformingFileAction = true
             state.fileActionProgressMessage = L10n.Browse.progressCompressing
             let serverURL = state.serverURL
@@ -318,6 +320,7 @@ extension BrowseFeature {
             return .none
 
         case let .downloadTapped(item):
+            guard state.actions(for: item).canDownload else { return .none }
             #if os(macOS)
                 // A Mac saves where the user says, through the save panel, then the queue saves it there.
                 return startDownload(&state, item: item)

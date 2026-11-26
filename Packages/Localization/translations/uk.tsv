@@ -221,6 +221,7 @@ uploads.cancelAll	Скасувати всі вивантаження
 shared.navigationTitle	Спільні
 shared.segmentByMe	Мої
 shared.segmentWithMe	Зі мною
+shared.sharedWithMe	Доступні мені
 shared.sectionExpired	Термін дії минув
 shared.filterAll	Усі
 shared.filterAnyone	Будь-хто
@@ -1222,7 +1223,6 @@ trashSettings.versionsEnvironmentNote	Типові значення беруть
 versionedFiles.refresh	Оновити
 browse.actionAvailableOffline	Доступно офлайн
 browse.actionKeepOffline	Зберегти офлайн
-browse.actionShowInFolder	Показати в папці
 browse.actionSaveToDevice	Зберегти на пристрій
 previewToolbar.saveToDevice	Зберегти на пристрій
 downloadQueue.savedToPhotos	Збережено у Фото

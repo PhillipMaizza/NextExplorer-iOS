@@ -161,7 +161,9 @@
         private func location(_ items: [FileItem]) -> String? {
             let parents = Set(items.map(MacInspectorLocation.parent(of:)))
             guard parents.count == 1, let parent = parents.first else { return nil }
-            return MacInspectorLocation.title(parent: parent)
+            return parent == store.directoryPath && !parent.isEmpty
+                ? store.title
+                : MacInspectorLocation.title(parent: parent)
         }
 
         private func modifiedRange(_ items: [FileItem]) -> String {
@@ -190,9 +192,9 @@
 
         private static func hasOrganizeActions(
             _ availability: SelectionActionsMenu.Availability,
-            directoryPath: String
+            directoryPath _: String
         ) -> Bool {
-            (availability.canWrite && !directoryPath.isEmpty) || availability.canMove || availability.canTransfer
+            availability.canDuplicate || availability.canMove || availability.canTransfer
         }
 
         var body: some View {
@@ -207,7 +209,7 @@
                     MacActionMenuDivider()
                 }
             }
-            if availability.canWrite, !store.directoryPath.isEmpty {
+            if availability.canDuplicate {
                 MacActionMenuButton(
                     L10n.Browse.actionDuplicate,
                     icon: IconKit.menuDuplicate,

@@ -14,6 +14,7 @@ import TestUtils
 @MainActor
 struct BrowseMoveAndUploadReviewTests {
     private let incoming = BrowseFixtures.file(TestFile.aText, in: TestFolder.inbox)
+    private let here = BrowseFixtures.file(TestFile.aText, in: TestFolder.documents)
 
     private func makeState() -> BrowseFeature.State {
         BrowseFixtures.state(TestFolder.documents, title: TestFolder.docs, access: BrowseFixtures.writableAccess)
@@ -29,10 +30,10 @@ struct BrowseMoveAndUploadReviewTests {
     func moveTappedPresentsTheDestinationPicker() async {
         let store = BrowseFixtures.store(makeState())
 
-        await store.send(.moveTapped(incoming)) {
+        await store.send(.moveTapped(here)) {
             $0.destinationPicker = DestinationPickerFeature.State(
                 serverURL: BrowseTestSupport.serverURL,
-                items: [incoming]
+                items: [here]
             )
         }
     }
@@ -52,10 +53,10 @@ struct BrowseMoveAndUploadReviewTests {
             }
         }
 
-        await store.send(.copyToTapped(incoming)) {
+        await store.send(.copyToTapped(here)) {
             $0.destinationPicker = DestinationPickerFeature.State(
                 serverURL: BrowseTestSupport.serverURL,
-                items: [incoming],
+                items: [here],
                 isCopy: true
             )
         }
@@ -65,7 +66,7 @@ struct BrowseMoveAndUploadReviewTests {
             $0.isPerformingFileAction = true
             $0.transferProgress = 0
             $0.pendingTransferRetry = BrowseFeature.TransferRetry(
-                items: [incoming], destination: TestFolder.archive, operation: .copy, shouldClearClipboard: false
+                items: [here], destination: TestFolder.archive, operation: .copy, shouldClearClipboard: false
             )
         }
         await store.receive(\.transferConflictCheckResponse) {
@@ -82,7 +83,7 @@ struct BrowseMoveAndUploadReviewTests {
             }
         }
         await store.receive(.delegate(.directoryContentsChanged))
-        #expect(events.value == ["copy [\"Inbox/a.txt\"] to Archive"])
+        #expect(events.value == ["copy [\"\(here.id)\"] to Archive"])
     }
 
     @Test("Bulk move presents the picker with the selection in listing order and leaves select mode")

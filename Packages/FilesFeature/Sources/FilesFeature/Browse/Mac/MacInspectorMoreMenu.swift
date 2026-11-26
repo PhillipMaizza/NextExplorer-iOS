@@ -19,76 +19,55 @@
 
         @Dependency(\.offlineFileStore) private var offlineFileStore
 
-        private var access: FileAccess? {
-            store.access
-        }
-
-        private var canWrite: Bool {
-            access?.canWrite ?? false
-        }
-
-        private var canDelete: Bool {
-            access?.canDelete ?? false
-        }
-
-        private var isOffline: Bool {
-            store.offlineItemIDs.contains(item.id)
-        }
-
-        private var hasOrganizeActions: Bool {
-            canWrite || !store.shouldShowDeviceContent
+        private var rows: InspectorMoreRows {
+            store.state.inspectorMoreRows(for: item)
         }
 
         var body: some View {
-            if store.items[id: item.id] == nil {
-                currentFolderActions
+            let rows = rows
+            if rows.isListed {
+                listedItemActions(rows)
             } else {
-                listedItemActions
+                downloadAction(rows)
+                if rows.actions.canCopy {
+                    MacActionMenuButton(L10n.Browse.actionCopyTo, icon: IconKit.share) {
+                        store.send(.copyToTapped(item))
+                    }
+                }
             }
         }
 
         @ViewBuilder
-        private var currentFolderActions: some View {
-            if access?.canDownload ?? false {
+        private func downloadAction(_ rows: InspectorMoreRows) -> some View {
+            if rows.showsDownload {
                 MacActionMenuButton(SaveActionStyle.title, icon: IconKit.menuDownload) {
                     store.send(.downloadTapped(item))
                 }
             }
-            if !store.shouldShowDeviceContent {
-                MacActionMenuButton(L10n.Browse.actionCopyTo, icon: IconKit.share) {
-                    store.send(.copyToTapped(item))
-                }
-            }
         }
 
         @ViewBuilder
-        private var listedItemActions: some View {
-            if !item.isDirectory {
+        private func listedItemActions(_ rows: InspectorMoreRows) -> some View {
+            if rows.showsOpenWith {
                 MacInspectorOpenWithRow(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
             }
-            if store.shouldShowDeviceContent, isOffline, !item.isDirectory {
+            if rows.showsKeptCopy {
                 MacLocalFilePanelRows(resolve: offlineFileStore.pinned(to: store.cacheScope).keptCopy(of: item))
-            } else if access?.canDownload ?? false, !store.shouldShowDeviceContent {
-                MacActionMenuButton(SaveActionStyle.title, icon: IconKit.menuDownload) {
-                    store.send(.downloadTapped(item))
-                }
             }
-            if access?.canDownload ?? false, !isOffline, !store.shouldShowDeviceContent {
+            downloadAction(rows)
+            if rows.showsKeepOffline {
                 MacActionMenuButton(L10n.Browse.actionKeepOffline, icon: IconKit.menuKeepOffline) {
                     store.send(.offlineToggleTapped(item))
                 }
             }
-            MacActionMenuButton(L10n.Browse.actionShowInFolder, icon: IconKit.folder) {
-                store.send(.showInFolderTapped(item))
-            }
-            if hasOrganizeActions {
+            if rows.actions.hasOrganizeActions {
                 MacActionMenuDivider()
-                organizeActions
+                organizeActions(rows.actions)
             }
-            if isOffline || canDelete {
+            if rows.showsRemoveFromOffline || rows.actions.canDelete {
                 MacActionMenuDivider()
             }
-            if isOffline {
+            if rows.showsRemoveFromOffline {
                 MacActionMenuButton(
                     L10n.Browse.actionRemoveFromOffline,
                     icon: IconKit.menuKeepOffline,
@@ -97,7 +76,7 @@
                     store.send(.offlineToggleTapped(item))
                 }
             }
-            if canDelete {
+            if rows.actions.canDelete {
                 MacDeleteMenuButton(isTrashAvailable: store.isTrashAvailable) {
                     store.send(.deleteTapped(item))
                 }
@@ -105,8 +84,8 @@
         }
 
         @ViewBuilder
-        private var organizeActions: some View {
-            if canWrite {
+        private func organizeActions(_ actions: FileItemActions) -> some View {
+            if actions.canRename {
                 MacActionMenuButton(
                     L10n.ellipsized(L10n.Browse.actionRename),
                     icon: IconKit.pencil,
@@ -114,32 +93,71 @@
                 ) {
                     store.send(.renameTapped(item))
                 }
-                if !store.directoryPath.isEmpty {
-                    MacActionMenuButton(
-                        L10n.Browse.actionDuplicate,
-                        icon: IconKit.menuDuplicate,
-                        accessory: .shortcut(MacMenuShortcut.duplicate)
-                    ) {
-                        store.send(.tableSelectionChanged([item.id]))
-                        store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
-                    }
+            }
+            if actions.canDuplicate {
+                MacActionMenuButton(
+                    L10n.Browse.actionDuplicate,
+                    icon: IconKit.menuDuplicate,
+                    accessory: .shortcut(MacMenuShortcut.duplicate)
+                ) {
+                    store.send(.tableSelectionChanged([item.id]))
+                    store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
                 }
             }
-            if canWrite, canDelete {
+            if actions.canMove {
                 MacActionMenuButton(L10n.Browse.actionMoveTo, icon: IconKit.menuMoveTo) {
                     store.send(.moveTapped(item))
                 }
             }
-            if !store.shouldShowDeviceContent {
+            if actions.canCopy {
                 MacActionMenuButton(L10n.Browse.actionCopyTo, icon: IconKit.share) {
                     store.send(.copyToTapped(item))
                 }
             }
-            if canWrite {
-                MacActionMenuButton(L10n.Browse.actionCompress, icon: IconKit.extract) {
+            if actions.canExtract {
+                MacActionMenuButton(L10n.Browse.actionExtract, icon: IconKit.extract) {
+                    store.send(.extractTapped(item))
+                }
+            }
+            if actions.canCompress {
+                MacActionMenuButton(L10n.Browse.actionCompress, icon: IconKit.archiveDocument) {
                     store.send(.compressTapped(item))
                 }
             }
+        }
+    }
+
+    struct InspectorMoreRows: Equatable {
+        var actions = FileItemActions()
+        var isListed = false
+        var showsOpenWith = false
+        var showsKeptCopy = false
+        var showsDownload = false
+        var showsKeepOffline = false
+        var showsRemoveFromOffline = false
+
+        var isEmpty: Bool {
+            let listedRows = showsOpenWith || showsKeptCopy || showsKeepOffline || showsRemoveFromOffline
+                || actions.hasOrganizeActions || actions.canDelete
+            return !showsDownload && !(isListed ? listedRows : actions.canCopy)
+        }
+    }
+
+    extension BrowseFeature.State {
+        func inspectorMoreRows(for item: FileItem) -> InspectorMoreRows {
+            let actions = actions(for: item)
+            let isListed = items[id: item.id] != nil
+            let isOffline = offlineItemIDs.contains(item.id)
+            let showsKeptCopy = isListed && shouldShowDeviceContent && isOffline && !item.isDirectory
+            return InspectorMoreRows(
+                actions: actions,
+                isListed: isListed,
+                showsOpenWith: isListed && !item.isDirectory && actions.canExport,
+                showsKeptCopy: showsKeptCopy,
+                showsDownload: !showsKeptCopy && actions.canDownload && !shouldShowDeviceContent,
+                showsKeepOffline: isListed && actions.canKeepOffline && !isOffline,
+                showsRemoveFromOffline: isListed && isOffline
+            )
         }
     }
 
