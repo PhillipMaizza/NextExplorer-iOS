@@ -109,10 +109,6 @@
                 .contentShape(MacTableMetrics.rowShape)
         }
 
-        func macTableBleed() -> some View {
-            padding(.horizontal, -MacTableMetrics.rowInset)
-        }
-
         func macListBox() -> some View {
             let shape = RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
             return background(shape.fill(Color.macField))

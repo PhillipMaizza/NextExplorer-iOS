@@ -52,7 +52,6 @@
                     }
                 }
             }
-            .macTableBleed()
         }
 
         private func sortHeader(_ option: UserManagementFeature.SortOption) -> some View {
