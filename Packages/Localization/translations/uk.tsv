@@ -1452,6 +1452,9 @@ emptyGuide.sharedBody	Натисніть правою кнопкою на фай
 emptyGuide.sharedWithMeTitle	З вами ще нічим не поділилися
 emptyGuide.offlineTitle	Зберігайте файли на цьому Mac
 emptyGuide.offlineBody	Натисніть правою кнопкою на будь-який файл або папку в Огляді й виберіть «%@».\nПапки отримують нові файли під час кожної синхронізації застосунку.\n\nЗавантажені файли відкриваються навіть без з’єднання.
+emptyGuide.accessRulesTitle	Правил для папок ще немає
+emptyGuide.accessRulesReadOnly	«%@» дозволяє відкрити папку, але не змінювати її вміст.
+emptyGuide.accessRulesHidden	«%@» прибирає папку з усіх списків і пошуку.
 emptyGuide.readOnlyTitle	Ця папка лише для читання
 emptyGuide.readOnlyOpen	Додані сюди файли можна буде відкрити й завантажити.
 emptyGuide.readOnlyOpenOnly	Додані сюди файли можна буде відкрити.

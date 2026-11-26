@@ -1372,6 +1372,9 @@ emptyGuide.sharedBody	Kattints jobb gombbal egy fájlra vagy mappára a Böngés
 emptyGuide.sharedWithMeTitle	Még semmit sem osztottak meg veled
 emptyGuide.offlineTitle	Fájlok megtartása ezen a Macen
 emptyGuide.offlineBody	Kattints jobb gombbal bármely fájlra vagy mappára a Böngészésben, és válaszd a „%@” lehetőséget.\nA mappák minden szinkronizáláskor megkapják az új fájlokat.\n\nA letöltött fájlok kapcsolat nélkül is megnyílnak.
+emptyGuide.accessRulesTitle	Még nincsenek mappaszabályok
+emptyGuide.accessRulesReadOnly	A(z) %@ megengedi a mappa megnyitását, de a tartalma nem módosítható.
+emptyGuide.accessRulesHidden	A(z) %@ kiveszi a mappát minden listából és keresésből.
 emptyGuide.readOnlyTitle	Ez a mappa csak olvasható
 emptyGuide.readOnlyOpen	Az ide kerülő fájlokat megnyithatod és letöltheted.
 emptyGuide.readOnlyOpenOnly	Az ide kerülő fájlokat megnyithatod.

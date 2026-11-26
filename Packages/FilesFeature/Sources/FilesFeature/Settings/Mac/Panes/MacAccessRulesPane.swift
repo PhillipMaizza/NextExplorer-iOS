@@ -13,33 +13,60 @@
     struct MacAccessRulesPane: View {
         let store: StoreOf<AccessRulesFeature>
 
+        private var errorMessage: String? {
+            store.errorMessage ?? store.phase.errorMessage
+        }
+
+        private var showsEmptyGuide: Bool {
+            !store.isUnavailable && store.loaded != nil && store.drafts.isEmpty && errorMessage == nil
+        }
+
         var body: some View {
-            MacFormPage {
-                if store.isUnavailable {
-                    MacNote(L10n.AccessRules.unavailable, kind: .info)
-                } else if store.phase == .loading, store.loaded == nil {
-                    MacSpinner()
-                        .frame(maxWidth: .infinity)
+            Group {
+                if showsEmptyGuide {
+                    emptyGuide
                 } else {
-                    MacFormGroup {
-                        if store.drafts.isEmpty {
-                            MacFormRow {
-                                MacRowTitle(title: L10n.AccessRules.empty, subtitle: L10n.AccessRules.emptyHint)
-                            } control: {
-                                EmptyView()
+                    MacFormPage {
+                        if store.isUnavailable {
+                            MacNote(L10n.AccessRules.unavailable, kind: .info)
+                        } else if store.phase == .loading, store.loaded == nil {
+                            MacSpinner()
+                                .frame(maxWidth: .infinity)
+                        } else {
+                            if !store.drafts.isEmpty {
+                                MacFormGroup {
+                                    ForEach(store.drafts) { rule in
+                                        ruleRow(rule)
+                                    }
+                                }
+                            }
+                            if let errorMessage {
+                                MacNote(errorMessage, kind: .error)
                             }
                         }
-                        ForEach(store.drafts) { rule in
-                            ruleRow(rule)
-                        }
-                    }
-                    if let error = store.errorMessage ?? store.phase.errorMessage {
-                        MacNote(error, kind: .error)
                     }
                 }
             }
             .disabled(store.isSaving)
             .onAppear { store.send(.onAppear) }
+        }
+
+        private var emptyGuide: some View {
+            MacEmptyGuide(title: L10n.EmptyGuide.accessRulesTitle) {
+                MacEmptyGuideTile(icon: IconKit.accessRules)
+            } detail: {
+                MacEmptyGuideBullet(
+                    icon: IconKit.macLock,
+                    text: L10n.EmptyGuide.accessRulesReadOnly(L10n.AccessRules.permissionReadOnly)
+                )
+                MacEmptyGuideBullet(
+                    icon: IconKit.macEyeSlash,
+                    text: L10n.EmptyGuide.accessRulesHidden(L10n.AccessRules.permissionHidden)
+                )
+                Button(L10n.AccessRules.addRule) { store.send(.addRuleTapped, animation: DSMotion.listDiff) }
+                    .buttonStyle(.macDS(.primary))
+                    .padding(.top, .space4)
+            }
         }
 
         private func ruleRow(_ rule: AccessRule) -> some View {

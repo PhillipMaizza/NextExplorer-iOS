@@ -1405,6 +1405,9 @@ emptyGuide.sharedBody	在“浏览”中右键点按文件或文件夹并选择�
 emptyGuide.sharedWithMeTitle	还没有人与你共享内容
 emptyGuide.offlineTitle	将文件保留在这台 Mac 上
 emptyGuide.offlineBody	在“浏览”中右键点按任意文件或文件夹并选择“%@”。\n每次 App 同步时，文件夹都会获取新文件。\n\n已下载的文件即使没有网络也能打开。
+emptyGuide.accessRulesTitle	还没有文件夹规则
+emptyGuide.accessRulesReadOnly	“%@”允许打开文件夹，但不能更改其中的内容。
+emptyGuide.accessRulesHidden	“%@”会把文件夹从所有列表和搜索中移除。
 emptyGuide.readOnlyTitle	此文件夹为只读
 emptyGuide.readOnlyOpen	添加到此处的文件可供你打开和下载。
 emptyGuide.readOnlyOpenOnly	添加到此处的文件可供你打开。

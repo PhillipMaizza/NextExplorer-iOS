@@ -1336,6 +1336,9 @@ emptyGuide.sharedBody	Klik kanan file atau folder di Jelajahi lalu pilih “%@�
 emptyGuide.sharedWithMeTitle	Belum ada yang dibagikan dengan Anda
 emptyGuide.offlineTitle	Simpan file di Mac ini
 emptyGuide.offlineBody	Klik kanan file atau folder apa pun di Jelajahi lalu pilih “%@”.\nFolder mendapat file baru setiap kali aplikasi menyinkronkan.\n\nFile yang diunduh terbuka walau tanpa koneksi.
+emptyGuide.accessRulesTitle	Belum ada aturan folder
+emptyGuide.accessRulesReadOnly	%@ memungkinkan folder dibuka tanpa mengubah isinya.
+emptyGuide.accessRulesHidden	%@ mengeluarkan folder dari semua daftar dan pencarian.
 emptyGuide.readOnlyTitle	Folder ini hanya baca
 emptyGuide.readOnlyOpen	File yang ditambahkan di sini akan muncul untuk Anda buka dan unduh.
 emptyGuide.readOnlyOpenOnly	File yang ditambahkan di sini akan muncul untuk Anda buka.

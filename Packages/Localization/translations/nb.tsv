@@ -1372,6 +1372,9 @@ emptyGuide.sharedBody	Høyreklikk på en fil eller mappe i Utforsk og velg «%@�
 emptyGuide.sharedWithMeTitle	Ingenting er delt med deg ennå
 emptyGuide.offlineTitle	Behold filer på denne Macen
 emptyGuide.offlineBody	Høyreklikk på en fil eller mappe i Utforsk og velg «%@».\nMapper henter nye filer hver gang appen synkroniserer.\n\nNedlastede filer kan åpnes selv uten tilkobling.
+emptyGuide.accessRulesTitle	Ingen mapperegler ennå
+emptyGuide.accessRulesReadOnly	%@ lar folk åpne en mappe, men ikke endre innholdet.
+emptyGuide.accessRulesHidden	%@ fjerner en mappe fra alle lister og søk.
 emptyGuide.readOnlyTitle	Denne mappen er skrivebeskyttet
 emptyGuide.readOnlyOpen	Filer som legges her, kan du åpne og laste ned.
 emptyGuide.readOnlyOpenOnly	Filer som legges her, kan du åpne.
