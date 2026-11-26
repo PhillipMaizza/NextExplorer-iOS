@@ -393,30 +393,37 @@ extension FilesService {
             .appendingPathComponent(CacheAccountScope.scopedFileName(key, scope: scope), isDirectory: true)
     }
 
-    /// Removes one account's downloaded preview and raw bytes, leaving other accounts' slots.
-    /// Slot directories carry the account's filename prefix. Thumbnails are keyed by URL only and
-    /// are not account scoped, so they are not touched here.
-    static func clearPreviewCache(scope: String, in cachesDirectory: URL? = nil) {
+    private static func previewCacheEntries(scope: String, in cachesDirectory: URL?) -> [URL] {
         let fileManager = FileManager.default
         guard let cachesDirectory = cachesDirectory ?? (try? fileManager.url(
             for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false
-        )) else { return }
+        )) else { return [] }
         let root = cachesDirectory.appendingPathComponent(previewCacheRootDirectory, isDirectory: true)
         let prefix = CacheAccountScope.namePrefix(for: scope)
+        return ([previewCacheNamespace, rawDownloadCacheNamespace] + flatScopedCacheSubdirectories).flatMap { name in
+            let directory = root.appendingPathComponent(name, isDirectory: true)
+            let entries = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
+            return entries.filter { $0.lastPathComponent.hasPrefix(prefix) }
+        }
+    }
+
+    /// Removes one account's downloaded preview and raw bytes and thumbnails, leaving other accounts'.
+    static func clearPreviewCache(scope: String, in cachesDirectory: URL? = nil) {
         evictionLock.lock()
         defer { evictionLock.unlock() }
-        for namespace in [previewCacheNamespace, rawDownloadCacheNamespace] {
-            let namespaceRoot = root.appendingPathComponent(namespace, isDirectory: true)
-            let slots = (try? fileManager.contentsOfDirectory(at: namespaceRoot, includingPropertiesForKeys: nil)) ?? []
-            for slot in slots where slot.lastPathComponent.hasPrefix(prefix) {
-                try? fileManager.removeItem(at: slot)
-            }
+        for entry in previewCacheEntries(scope: scope, in: cachesDirectory) {
+            try? FileManager.default.removeItem(at: entry)
         }
-        for flatDirectory in flatScopedCacheSubdirectories {
-            let directory = root.appendingPathComponent(flatDirectory, isDirectory: true)
-            let files = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
-            for file in files where file.lastPathComponent.hasPrefix(prefix) {
-                try? fileManager.removeItem(at: file)
+    }
+
+    static func previewCacheSizeBytes(scope: String, in cachesDirectory: URL? = nil) -> Int64 {
+        let keys: [URLResourceKey] = [.fileSizeKey, .isRegularFileKey]
+        return previewCacheEntries(scope: scope, in: cachesDirectory).reduce(0) { total, entry in
+            let nested = FileManager.default.enumerator(at: entry, includingPropertiesForKeys: keys)?
+                .compactMap { $0 as? URL } ?? []
+            return ([entry] + nested).reduce(total) { sum, url in
+                let values = try? url.resourceValues(forKeys: Set(keys))
+                return values?.isRegularFile == true ? sum + Int64(values?.fileSize ?? 0) : sum
             }
         }
     }

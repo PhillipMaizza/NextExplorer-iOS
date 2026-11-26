@@ -69,8 +69,8 @@ public struct ProtectedCacheDirectory: Sendable {
             .sorted { $0.modified < $1.modified }
     }
 
-    public func totalSizeBytes() -> Int64 {
-        entriesByAge().reduce(0) { $0 + $1.size }
+    public func totalSizeBytes(withPrefix prefix: String) -> Int64 {
+        entriesByAge().filter { $0.url.lastPathComponent.hasPrefix(prefix) }.reduce(0) { $0 + $1.size }
     }
 
     /// Writes one entry atomically, then evicts only when the running totals cross a cap: the

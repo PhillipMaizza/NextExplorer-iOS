@@ -53,6 +53,10 @@ public enum CacheAccountScope {
         FilesService.clearPreviewCache(scope: scope)
     }
 
+    public static func previewCacheSizeBytes(scope: String) -> Int64 {
+        FilesService.previewCacheSizeBytes(scope: scope)
+    }
+
     /// Brings `Library/Caches/PreviewCache` back under its byte cap, oldest entries first, for
     /// writers that never trigger the eviction a preview download runs (thumbnails, PDF pages).
     public static func trimPreviewCache() {

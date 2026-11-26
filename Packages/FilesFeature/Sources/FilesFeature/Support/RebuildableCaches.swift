@@ -37,4 +37,13 @@ public struct RebuildableCaches: Sendable {
         localThumbnailStore.clearAll()
         forgetUploadResumes()
     }
+
+    public func clearAccount(_ scope: String) {
+        thumbnailCache.clearMemory()
+        directoryCacheStore.clearScope(scope)
+        jsonCacheStore.clearScope(scope)
+        previewCacheStore.clearAccount(scope)
+        textEditorETagStore.clear(scope: scope)
+        localThumbnailStore.clearScope(scope)
+    }
 }

@@ -8,14 +8,14 @@ import Foundation
 /// exposed from `FilesClient`, which is exclusively the server communication layer: this is a
 /// local filesystem only concern, same reasoning as `LegacyDownloadStore`.
 public struct PreviewCacheStore: Sendable {
-    public var size: @Sendable () throws -> Int64
+    public var size: @Sendable (_ scope: String) -> Int64
     public var clear: @Sendable () throws -> Void
     /// Removes only one account's downloaded preview and raw bytes, for removing an account while
     /// others stay signed in.
     public var clearAccount: @Sendable (_ scope: String) -> Void
 
     public init(
-        size: @escaping @Sendable () throws -> Int64,
+        size: @escaping @Sendable (String) -> Int64,
         clear: @escaping @Sendable () throws -> Void,
         clearAccount: @escaping @Sendable (String) -> Void = { _ in }
     ) {
@@ -39,22 +39,7 @@ extension PreviewCacheStore: DependencyKey {
     }
 
     public static let liveValue = PreviewCacheStore(
-        size: {
-            guard let cacheDirectory, FileManager.default.fileExists(atPath: cacheDirectory.path) else { return 0 }
-            let fileManager = FileManager.default
-            guard let enumerator = fileManager.enumerator(
-                at: cacheDirectory,
-                includingPropertiesForKeys: [.fileSizeKey, .isDirectoryKey]
-            ) else { return 0 }
-            var total: Int64 = 0
-            for entry in enumerator {
-                guard let url = entry as? URL else { continue }
-                let resourceValues = try? url.resourceValues(forKeys: [.fileSizeKey, .isDirectoryKey])
-                guard resourceValues?.isDirectory == false else { continue }
-                total += Int64(resourceValues?.fileSize ?? 0)
-            }
-            return total
-        },
+        size: { CacheAccountScope.previewCacheSizeBytes(scope: $0) },
         clear: {
             guard let cacheDirectory, FileManager.default.fileExists(atPath: cacheDirectory.path) else { return }
             try FileManager.default.removeItem(at: cacheDirectory)
@@ -63,7 +48,7 @@ extension PreviewCacheStore: DependencyKey {
     )
 
     public static let testValue = PreviewCacheStore(
-        size: { throw Unimplemented() },
+        size: { _ in 0 },
         clear: { throw Unimplemented() }
     )
 

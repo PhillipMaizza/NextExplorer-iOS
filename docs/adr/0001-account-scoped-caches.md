@@ -21,9 +21,13 @@ A cache entry read under the wrong account shows one person's files to another.
   `LegacyCacheCleanup` removes them once, using the names in `CacheLayout`.
 
 - `RebuildableCaches.clearAll()` empties every store the server can refill (listings, saved lists,
-  previews, decoded and upload thumbnails, editor ETags) at fresh sign in, teardown and Clear
-  Cache, off main inside the effect. Offline pins and downloads are the user's files; callers
-  that also drop those do it themselves.
+  previews, decoded and upload thumbnails, editor ETags) at fresh sign in and teardown, off main
+  inside the effect. Offline pins and downloads are the user's files; callers that also drop
+  those do it themselves.
+- Settings Storage is per account: the Cache size counts only the active account's entries, and
+  Clear Cache runs `RebuildableCaches.clearAccount(_:)`, which leaves every other signed in
+  account's caches alone. Upload resume links stay: their keys are hashed, they are not cache
+  bytes, and forgetting them would restart another account's interrupted uploads.
 
 ## Consequences
 An empty scope is the legacy unscoped namespace; tests that never set a scope use it. Wipe stamps

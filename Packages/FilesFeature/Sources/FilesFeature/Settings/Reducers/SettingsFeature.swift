@@ -326,13 +326,16 @@ public struct SettingsFeature {
     /// What "Clear Cache" frees: previews and downloads in the preview cache, the saved folder and
     /// list copies, and the thumbnails seeded for files shared into the app.
     static func cacheSizeBytes(
+        scope: String,
         preview: PreviewCacheStore,
         directories: DirectoryCacheStore,
         lists: JSONCacheStore,
         uploadThumbnails: LocalThumbnailStore
     ) -> Int64 {
-        ((try? preview.size()) ?? 0) + directories.totalSizeBytes() + lists.totalSizeBytes() + uploadThumbnails
-            .totalSizeBytes()
+        CacheAccountScope.withPinned(scope) {
+            preview.size(scope) + directories.totalSizeBytes() + lists.totalSizeBytes() + uploadThumbnails
+                .totalSizeBytes()
+        }
     }
 
     @Dependency(\.offlineFileStore) var offlineFileStore
@@ -705,9 +708,11 @@ public struct SettingsFeature {
             let directoryCacheStore = directoryCacheStore
             let jsonCacheStore = jsonCacheStore
             let localThumbnailStore = localThumbnailStore
+            let sizeScope = cacheScope.current()
             let checkCacheSize = Effect<Action>.run { send in
                 await send(.cacheSizeResponse(Self.cacheSizeBytes(
-                    preview: previewCacheStore, directories: directoryCacheStore, lists: jsonCacheStore,
+                    scope: sizeScope, preview: previewCacheStore, directories: directoryCacheStore,
+                    lists: jsonCacheStore,
                     uploadThumbnails: localThumbnailStore
                 )))
             }
@@ -873,8 +878,9 @@ public struct SettingsFeature {
         case .clearCacheConfirmed:
             state.clearCachePhase = .running
             let caches = RebuildableCaches.fromDependencies
+            let scope = cacheScope.current()
             return .run { send in
-                caches.clearAll()
+                caches.clearAccount(scope)
                 await send(.clearCacheResponse)
             }
 

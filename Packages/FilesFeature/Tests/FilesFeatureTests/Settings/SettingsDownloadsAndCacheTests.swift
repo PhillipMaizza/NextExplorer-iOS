@@ -90,23 +90,19 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         #expect(attempted.value == [URL(fileURLWithPath: "/tmp/a.pdf"), URL(fileURLWithPath: "/tmp/b.jpg")])
     }
 
-    @Test(arguments: [false, true])
-    func clearCacheConfirmedClearsTheCacheAndResetsTheSizeEvenWhenClearingFails(clearFails: Bool) async {
+    @Test
+    func clearCacheConfirmedClearsOnlyTheActiveAccountAndResetsTheSize() async {
         var state = makeState()
         state.clearCachePhase = .confirming
         state.cacheSize = 4096
-        let clears = LockIsolated(0)
-        let uploadThumbnailClears = LockIsolated(0)
+        let previewClears = LockIsolated<[String]>([])
+        let uploadThumbnailClears = LockIsolated<[String]>([])
         let store = TestStore(initialState: state) {
             SettingsFeature()
         } withDependencies: {
-            $0.localThumbnailStore.clearAll = { uploadThumbnailClears.withValue { $0 += 1 } }
-            $0.previewCacheStore.clear = {
-                clears.withValue { $0 += 1 }
-                if clearFails {
-                    throw FilesClientError.network("permission denied")
-                }
-            }
+            $0.cacheScope = CacheScopeSource(current: { Constants.accountA })
+            $0.localThumbnailStore.clearScope = { scope in uploadThumbnailClears.withValue { $0.append(scope) } }
+            $0.previewCacheStore.clearAccount = { scope in previewClears.withValue { $0.append(scope) } }
         }
 
         await store.send(.clearCacheConfirmed) {
@@ -117,8 +113,11 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
             $0.cacheSize = 0
         }
 
-        #expect(clears.value == 1)
-        #expect(uploadThumbnailClears.value == 1, "the thumbnails seeded for shared files are cache too")
+        #expect(previewClears.value == [Constants.accountA])
+        #expect(
+            uploadThumbnailClears.value == [Constants.accountA],
+            "the thumbnails seeded for shared files are cache too"
+        )
     }
 
     @Test
@@ -127,7 +126,8 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
         uploadThumbnails.totalSizeBytes = { Constants.uploadThumbnailBytes }
 
         let size = SettingsFeature.cacheSizeBytes(
-            preview: PreviewCacheStore(size: { Constants.previewBytes }, clear: {}, clearAccount: { _ in }),
+            scope: Constants.accountA,
+            preview: PreviewCacheStore(size: { _ in Constants.previewBytes }, clear: {}, clearAccount: { _ in }),
             directories: .inMemory(),
             lists: .inMemory(),
             uploadThumbnails: uploadThumbnails
@@ -135,10 +135,36 @@ struct SettingsDownloadsAndCacheTests: SettingsFeatureTestSupport {
 
         #expect(size == 1536)
     }
+
+    @Test
+    func theCacheSizeCountsOnlyTheAskingAccount() {
+        var uploadThumbnails = LocalThumbnailStore.testValue
+        uploadThumbnails.totalSizeBytes = {
+            CacheAccountScope.current == Constants.accountA ? Constants.uploadThumbnailBytes : Constants.previewBytes
+        }
+        let preview = PreviewCacheStore(
+            size: { $0 == Constants.accountA ? Constants.previewBytes : Constants.uploadThumbnailBytes },
+            clear: {},
+            clearAccount: { _ in }
+        )
+
+        let size = CacheAccountScope.withPinned(Constants.accountB) {
+            SettingsFeature.cacheSizeBytes(
+                scope: Constants.accountA,
+                preview: preview,
+                directories: .inMemory(),
+                lists: .inMemory(),
+                uploadThumbnails: uploadThumbnails
+            )
+        }
+
+        #expect(size == 1536)
+    }
 }
 
 private enum Constants {
     static let accountA = "account-a"
+    static let accountB = "account-b"
     static let previewBytes: Int64 = 1024
     static let uploadThumbnailBytes: Int64 = 512
 }

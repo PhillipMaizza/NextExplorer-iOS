@@ -38,7 +38,8 @@ struct AccountCacheWipeTests {
             directoryCacheStore: directory,
             jsonCacheStore: .inMemory(),
             previewCacheStore: PreviewCacheStore(
-                size: { 0 }, clear: {}, clearAccount: { scope in counters.previewClears.withValue { $0.append(scope) } }
+                size: { _ in 0 }, clear: {},
+                clearAccount: { scope in counters.previewClears.withValue { $0.append(scope) } }
             ),
             offlineFileStore: {
                 var store = OfflineFileStore.inMemory()
