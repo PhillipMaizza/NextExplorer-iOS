@@ -233,3 +233,32 @@ struct ReceivedSharePathTests {
         #expect(ReceivedShareSpace.shareRoot(of: path) == expected)
     }
 }
+
+@Suite(.isolatedDependencies)
+@MainActor
+struct ReceivedShareInfoTests {
+    @Test("Get Info on a folder inside a received share loads its details but never the owner's disk")
+    func infoInsideAShareSkipsTheOwnersDisk() async {
+        let folder = BrowseFixtures.folder("Sub", in: Fixture.shareRoot)
+        let metadata = FileMetadata(
+            path: folder.id,
+            name: folder.name,
+            kind: FileItem.directoryKind,
+            size: 0,
+            dateModified: MockDate.date,
+            dateCreated: MockDate.date
+        )
+        let store = BrowseFixtures.store(BrowseFixtures.state(Fixture.shareRoot, items: [folder])) {
+            $0.filesClient.fetchMetadata = { _, _ in metadata }
+        }
+
+        await store.send(.infoTapped(folder)) {
+            $0.infoItem = folder
+            $0.infoPhase = .loading
+        }
+        await store.receive(\.infoMetadataResponse) {
+            $0.infoPhase = .loaded
+            $0.infoMetadata = metadata
+        }
+    }
+}
