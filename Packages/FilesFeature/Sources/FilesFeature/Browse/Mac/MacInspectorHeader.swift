@@ -16,6 +16,7 @@
         var badge: String?
         var shouldShowThumbnails = true
         var localFile: URL?
+        var title: String?
         let onClose: () -> Void
 
         private var previewKind: MacInspectorPreview.Kind? {
@@ -72,7 +73,7 @@
 
         private var titles: some View {
             VStack(alignment: .leading, spacing: .space4) {
-                Text(PersonalSpace.displayName(forSegment: item.name, isFirstSegment: item.path.isEmpty))
+                Text(title ?? PersonalSpace.displayName(forSegment: item.name, isFirstSegment: item.path.isEmpty))
                     .type(.headline4)
                     .lineLimit(3)
                     .textSelection(.enabled)

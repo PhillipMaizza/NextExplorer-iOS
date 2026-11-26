@@ -13,6 +13,7 @@ import TestUtils
 struct OfflineWalkTests: OfflineDownloadsTestSupport {
     private func walk(
         keeps: @Sendable (String) -> Bool = { _ in true },
+        access: @escaping @Sendable (String) -> FileAccess = { _ in BrowseTestSupport.readOnlyAccess },
         _ listings: @escaping @Sendable (String) -> [FileItem]
     ) async throws -> OfflineWalkResult {
         try await OfflineDownloadsFeature.walk(
@@ -20,7 +21,7 @@ struct OfflineWalkTests: OfflineDownloadsTestSupport {
             serverURL: serverURL,
             filesClient: withDependencies {
                 $0.filesClient.browse = { _, path in
-                    BrowseResult(items: listings(path), access: BrowseTestSupport.readOnlyAccess, path: path)
+                    BrowseResult(items: listings(path), access: access(path), path: path)
                 }
             } operation: {
                 @Dependency(\.filesClient) var client
@@ -49,6 +50,21 @@ struct OfflineWalkTests: OfflineDownloadsTestSupport {
         }
 
         #expect(result.files.map(\.id) == ["A/\(TestFile.aText)"])
+    }
+
+    @Test("A folder whose files may not be downloaded is skipped and reported, not fetched")
+    func aFolderWithoutDownloadsIsSkipped() async throws {
+        let viewOnly = FileAccess(
+            canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: false
+        )
+        let result = try await walk(access: { $0 == "A/B" ? viewOnly : BrowseTestSupport.readOnlyAccess }) { path in
+            path == "A"
+                ? [file(TestFile.aText, path: "A"), folder("B", path: "A")]
+                : [file(TestFile.bText, path: "A/B")]
+        }
+
+        #expect(result.files.map(\.id) == ["A/\(TestFile.aText)"])
+        #expect(result.forbiddenFolders == ["A/B"])
     }
 
     @Test("A folder reached twice is listed once")

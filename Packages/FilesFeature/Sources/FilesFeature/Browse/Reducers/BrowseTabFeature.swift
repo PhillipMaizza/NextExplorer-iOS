@@ -18,10 +18,12 @@ public struct BrowseTabFeature {
         /// The trash, pushed over the root from its row or a delete's Open Trash.
         @Presents public var trash: TrashFeature.State?
         var inspectorLeftOpenPaths: Set<String> = []
+        var showsRoot = true
 
-        public init(serverURL: URL, isAdmin: Bool = false) {
+        public init(serverURL: URL, isAdmin: Bool = false, showsRoot: Bool = true) {
             root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
             root.isAdmin = isAdmin
+            self.showsRoot = showsRoot
         }
 
         /// The server path of the folder on screen; empty at the volume root.
@@ -31,6 +33,15 @@ public struct BrowseTabFeature {
 
         var canGoBackFromScreen: Bool {
             trash != nil || canGoBack
+        }
+
+        var isInReceivedShare: Bool {
+            path.first.map { ReceivedShareSpace.shareRoot(of: $0.directoryPath) != nil } ?? false
+        }
+
+        var isAtReceivedShareRoot: Bool {
+            guard trash == nil, path.count == 1, let top = path.last else { return false }
+            return ReceivedShareSpace.shareRoot(of: top.directoryPath) == top.directoryPath
         }
 
         /// The folder on screen: the top of the stack, or the root when nothing is pushed.
@@ -97,6 +108,8 @@ public struct BrowseTabFeature {
             case favoritesChanged
             case openDownloadsTapped
             case goToSharedTab
+            case openSharedWithMe
+            case openOutsideShare(path: String, title: String)
             case uploadRequested([PendingUpload])
             case downloadRequested([FileItem])
             case offlinePinRequested([FileItem])
@@ -144,6 +157,10 @@ public struct BrowseTabFeature {
                         }
                     }
                 #endif
+                if state.isAtReceivedShareRoot {
+                    state.goBack()
+                    return .send(.delegate(.openSharedWithMe))
+                }
                 state.goBack()
                 return .none
 
@@ -153,6 +170,10 @@ public struct BrowseTabFeature {
                 return .none
 
             case .goToEnclosingFolder:
+                if state.isAtReceivedShareRoot {
+                    state.goBack()
+                    return .send(.delegate(.openSharedWithMe))
+                }
                 state.goToEnclosingFolder(serverURL: state.root.serverURL)
                 return .none
 
@@ -282,7 +303,7 @@ public struct BrowseTabFeature {
 
             case .offlineAvailabilityChanged:
                 return .merge(
-                    [.send(.root(.computeOfflineAvailability))]
+                    (state.showsRoot ? [.send(.root(.computeOfflineAvailability))] : [])
                         + state.path.ids.map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) }
                 )
 
@@ -304,6 +325,13 @@ public struct BrowseTabFeature {
             case .path(.element(id: _, action: .delegate(.openDownloadsTapped))):
                 return .send(.delegate(.openDownloadsTapped))
 
+            case let .navigateToDirectory(path, _) where path == ReceivedShareSpace.rootPath:
+                return .send(.delegate(.openSharedWithMe))
+
+            case let .navigateToDirectory(path, title) where state.isInReceivedShare
+                && ReceivedShareSpace.shareRoot(of: path) == nil:
+                return .send(.delegate(.openOutsideShare(path: path, title: title)))
+
             case let .navigateToDirectory(path, title):
                 state.jump(to: path, title: title)
                 return .none
@@ -317,7 +345,7 @@ public struct BrowseTabFeature {
 
             case .syncPathStack:
                 return .merge(
-                    [.send(.root(.refreshButtonTapped))]
+                    (state.showsRoot ? [.send(.root(.refreshButtonTapped))] : [])
                         + state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) }
                 )
 

@@ -97,6 +97,7 @@ struct DraggedServerItem: Transferable {
     let reference: ServerItemReference
     let fileName: String
     let isDirectory: Bool
+    let canExport: Bool
     let fetch: @Sendable () async throws -> URL
 
     static var transferRepresentation: some TransferRepresentation {
@@ -104,13 +105,20 @@ struct DraggedServerItem: Transferable {
         FileRepresentation(exportedContentType: .data) { item in
             try await SentTransferredFile(item.fetch())
         }
-        .exportingCondition { !$0.isDirectory }
+        .exportingCondition { !$0.isDirectory && $0.canExport }
         .suggestedFileName { $0.fileName }
     }
 }
 
 extension DraggedServerItem {
-    init(item: FileItem, selection: [FileItem] = [], serverURL: URL, scope: String, filesClient: FilesClient) {
+    init(
+        item: FileItem,
+        selection: [FileItem] = [],
+        serverURL: URL,
+        scope: String,
+        filesClient: FilesClient,
+        canExport: Bool = true
+    ) {
         self.init(
             reference: ServerItemReference(
                 dragging: item,
@@ -118,7 +126,8 @@ extension DraggedServerItem {
                 origin: .current(serverURL: serverURL, scope: scope)
             ),
             fileName: item.name,
-            isDirectory: item.isDirectory
+            isDirectory: item.isDirectory,
+            canExport: canExport
         ) {
             try await filesClient.downloadRawFile(serverURL, item)
         }

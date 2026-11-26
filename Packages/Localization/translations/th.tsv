@@ -203,6 +203,7 @@ uploads.cancelAll	ยกเลิกการอัปโหลดทั้ง�
 shared.navigationTitle	ที่แชร์
 shared.segmentByMe	โดยฉัน
 shared.segmentWithMe	กับฉัน
+shared.sharedWithMe	แชร์กับฉัน
 shared.sectionExpired	หมดอายุแล้ว
 shared.filterAll	ทั้งหมด
 shared.filterAnyone	ทุกคน
@@ -1168,7 +1169,6 @@ trashSettings.versionsEnvironmentNote	ค่าเริ่มต้นมาจ
 versionedFiles.refresh	รีเฟรช
 browse.actionAvailableOffline	ใช้งานแบบออฟไลน์ได้
 browse.actionKeepOffline	เก็บไว้ใช้ออฟไลน์
-browse.actionShowInFolder	แสดงในโฟลเดอร์
 browse.actionSaveToDevice	บันทึกลงอุปกรณ์
 previewToolbar.saveToDevice	บันทึกลงอุปกรณ์
 downloadQueue.savedToPhotos	บันทึกลงในรูปภาพแล้ว

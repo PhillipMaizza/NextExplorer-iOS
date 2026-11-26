@@ -14,6 +14,7 @@
         @ViewBuilder let header: () -> Header
 
         @State private var selection: Set<MacSharedRow.ID> = []
+        @State private var isPeeking = false
 
         private var segment: SharedFeature.Segment {
             store.segment
@@ -55,6 +56,8 @@
                     store: store,
                     segment: segment,
                     selection: $selection,
+                    isPeeking: $isPeeking,
+                    onOpen: open,
                     onToast: onToast
                 )
                 .id(segment)
@@ -67,12 +70,44 @@
                         item: item,
                         selectedShareID: selectedShareID,
                         onSelectShare: { selection = [.share($0, item: item.id)] },
+                        onOpen: open,
                         onToast: onToast
                     )
                 }
             }
             .onChange(of: segment) { _, _ in selection = [] }
         }
+
+        private func open(_ share: Share) {
+            if share.isDirectory {
+                afterMouseUp {
+                    selection = []
+                    store.send(.openTapped(share))
+                }
+            } else if share.receivedFileItem != nil {
+                isPeeking = true
+            }
+        }
+
+        private func afterMouseUp(_ work: @escaping @MainActor () -> Void) {
+            guard NSEvent.pressedMouseButtons != 0 else {
+                DispatchQueue.main.async(execute: work)
+                return
+            }
+            let monitor = MouseUpMonitor()
+            monitor.token = NSEvent.addLocalMonitorForEvents(matching: .leftMouseUp) { event in
+                if let token = monitor.token {
+                    NSEvent.removeMonitor(token)
+                    monitor.token = nil
+                    DispatchQueue.main.async(execute: work)
+                }
+                return event
+            }
+        }
+    }
+
+    private final class MouseUpMonitor {
+        var token: Any?
     }
 
     /// A Shared store over the mock lists, for the Mac previews.

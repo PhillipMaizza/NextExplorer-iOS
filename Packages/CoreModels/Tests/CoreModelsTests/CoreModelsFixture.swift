@@ -35,6 +35,7 @@ enum CoreModelsFixture: String, FixtureFile {
 
     case browseResultDirectoryWithAccess = "browse-result/directory-with-access"
     case browseResultEmptyDirectory = "browse-result/empty-directory"
+    case browseResultReceivedShare = "browse-result/received-share"
 
     // MARK: cached-directory
 

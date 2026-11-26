@@ -252,6 +252,9 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
             items: [file(TestFile.aText, path: TestFolder.inbox)]
         )
         state.directoryPath = TestFolder.documents
+        state.currentAccess = FileAccess(
+            canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true
+        )
 
         let store = TestStore(initialState: state) { DestinationPickerFeature() }
 
@@ -280,7 +283,15 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
             items: [file(TestFile.aText, path: TestFolder.inbox)]
         )
         ok.directoryPath = TestFolder.documents
+        ok.currentAccess = FileAccess(
+            canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true
+        )
         #expect(ok.canConfirm == true)
+
+        ok.currentAccess = FileAccess(
+            canRead: true, canWrite: true, canUpload: false, canDelete: true, canShare: true, canDownload: true
+        )
+        #expect(ok.canConfirm == false)
     }
 
     @Test

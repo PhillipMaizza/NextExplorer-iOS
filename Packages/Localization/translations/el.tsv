@@ -209,6 +209,7 @@ uploads.cancelAll	Ακύρωση όλων των μεταφορτώσεων
 shared.navigationTitle	Κοινόχρηστα
 shared.segmentByMe	Από εμένα
 shared.segmentWithMe	Με εμένα
+shared.sharedWithMe	Κοινόχρηστα με εμένα
 shared.sectionExpired	Έληξε
 shared.filterAll	Όλα
 shared.filterAnyone	Οποιοσδήποτε
@@ -1186,7 +1187,6 @@ trashSettings.versionsEnvironmentNote	Οι προεπιλογές προέρχο
 versionedFiles.refresh	Ανανέωση
 browse.actionAvailableOffline	Διαθέσιμο εκτός σύνδεσης
 browse.actionKeepOffline	Διατήρηση εκτός σύνδεσης
-browse.actionShowInFolder	Εμφάνιση στον φάκελο
 browse.actionSaveToDevice	Αποθήκευση στη συσκευή
 previewToolbar.saveToDevice	Αποθήκευση στη συσκευή
 downloadQueue.savedToPhotos	Αποθηκεύτηκε στις Φωτογραφίες

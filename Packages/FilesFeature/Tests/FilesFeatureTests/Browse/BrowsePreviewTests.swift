@@ -242,7 +242,7 @@ struct BrowsePreviewTests {
 
     @Test("Saving text sends it to the server and shows it as the new content")
     func textSaveTappedSavesContentAndUpdatesState() async {
-        var state = BrowseFixtures.state()
+        var state = BrowseFixtures.state(access: BrowseTestSupport.fullAccess)
         state.previewItem = BrowseFixtures.file(TestFile.notes, size: 10)
         state.textContent = "hello"
         let saved = LockIsolated<[String]>([])
@@ -261,9 +261,19 @@ struct BrowsePreviewTests {
         #expect(saved.value == ["notes.txt: hello world"])
     }
 
+    @Test("Saving text where the server refuses writes sends nothing")
+    func savingTextWithoutWriteAccessSendsNothing() async {
+        var state = BrowseFixtures.state(access: BrowseTestSupport.readOnlyAccess)
+        state.previewItem = BrowseFixtures.file(TestFile.notes, size: 10)
+        state.textContent = "hello"
+        let store = BrowseFixtures.store(state)
+
+        await store.send(.textSaveTapped("changed"))
+    }
+
     @Test("A failed save shows a readable message and keeps the old content")
     func textSaveTappedFailureSurfacesAReadableErrorMessage() async {
-        var state = BrowseFixtures.state()
+        var state = BrowseFixtures.state(access: BrowseTestSupport.fullAccess)
         state.previewItem = BrowseFixtures.file(TestFile.notes, size: 10)
         state.textContent = "hello"
         let store = BrowseFixtures.store(state) {

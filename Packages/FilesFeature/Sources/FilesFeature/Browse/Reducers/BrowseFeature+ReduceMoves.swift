@@ -41,9 +41,7 @@ extension BrowseFeature {
         #endif
 
         case let .itemsDroppedFromOtherWindow(dropped, destination):
-            // The source folder lives in another window, so the backend enforces its canDelete. This window
-            // is the destination: canWrite is the client side guard, as the web client's paste check.
-            guard state.access?.canWrite ?? false else { return .none }
+            guard state.access?.canReceive(dropped) ?? false else { return .none }
             // Not where they already are, and never into themselves or their own subfolders.
             let items = dropped.filter { item in
                 item.path != destination && item.id != destination && !destination.hasPrefix(item.id + "/")
@@ -120,21 +118,18 @@ extension BrowseFeature {
             return .none
 
         case let .copyTapped(item):
+            guard state.actions(for: item).canCopy else { return .none }
             state.$clipboard.withLock { $0 = FileClipboard(items: [item], operation: .copy) }
             state.clipboardStagedMessage = L10n.Browse.clipboardCopiedOne(item.name)
             return .none
 
         case let .moveTapped(item):
+            guard state.actions(for: item).canMove else { return .none }
             state.destinationPicker = DestinationPickerFeature.State(serverURL: state.serverURL, items: [item])
             return .none
 
-        case let .showInFolderTapped(item):
-            guard state.items[id: item.id] != nil else { return .none }
-            state.selectedItemIDs = [item.id]
-            state.scrollTargetID = item.id
-            return .none
-
         case let .copyToTapped(item):
+            guard state.actions(for: item).canCopy else { return .none }
             state.destinationPicker = DestinationPickerFeature.State(
                 serverURL: state.serverURL,
                 items: [item],
@@ -165,7 +160,7 @@ extension BrowseFeature {
 
         case .bulkMoveTapped:
             let items = state.selectedItems
-            guard !items.isEmpty else { return .none }
+            guard state.actions(for: items).canMove else { return .none }
             state.destinationPicker = DestinationPickerFeature.State(serverURL: state.serverURL, items: items)
             leaveSelectMode(&state)
             return .none
@@ -196,7 +191,7 @@ extension BrowseFeature {
 
         case .copySelectionTapped:
             let items = state.selectedItems
-            guard !items.isEmpty else { return .none }
+            guard state.actions(for: items).canCopy else { return .none }
             state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .copy) }
             state.clipboardStagedMessage = items.count == 1
                 ? L10n.Browse.clipboardCopiedOne(items[0].name)
@@ -205,7 +200,7 @@ extension BrowseFeature {
 
         case .cutSelectionTapped:
             let items = state.selectedItems
-            guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
+            guard state.actions(for: items).canMove else { return .none }
             state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .move) }
             state.clipboardStagedMessage = items.count == 1
                 ? L10n.Browse.clipboardCutOne(items[0].name)
@@ -237,7 +232,7 @@ extension BrowseFeature {
 
         case .duplicateSelectionTapped:
             let items = state.selectedItems
-            guard !items.isEmpty, !state.directoryPath.isEmpty, state.access?.canWrite ?? false else { return .none }
+            guard state.actions(for: items).canDuplicate else { return .none }
             return performTransfer(&state, retry: TransferRetry(
                 items: items,
                 destination: state.directoryPath,
@@ -248,12 +243,12 @@ extension BrowseFeature {
 
         case .deleteSelectionTapped:
             let items = state.selectedItems
-            guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
+            guard state.actions(for: items).canDelete else { return .none }
             return items.count == 1 ? .send(.deleteTapped(items[0])) : .send(.bulkDeleteTapped)
 
         case .renameSelectionTapped:
             let items = state.selectedItems
-            guard items.count == 1, state.access?.canWrite ?? false else { return .none }
+            guard state.actions(for: items).canRename else { return .none }
             return .send(.renameTapped(items[0]))
 
         case let .itemsDroppedOnFolder(ids, folder):

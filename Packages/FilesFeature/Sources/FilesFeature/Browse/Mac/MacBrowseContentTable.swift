@@ -63,6 +63,8 @@
         private func hitActions(_ result: SearchResultItem) -> some View {
             MacSearchHitMenu(
                 result: result,
+                isInOpenFolder: store.state.access(for: result.actionItem) != nil,
+                onOpen: { store.send(.searchResultTapped(result)) },
                 onShowInFolder: { store.send(.searchResultEnclosingFolderTapped(result)) },
                 fileActions: { fileActions(result.actionItem) }
             )
@@ -92,6 +94,7 @@
                 serverURL: store.serverURL,
                 scope: store.cacheScope,
                 canDropOnFolders: store.access?.canDelete ?? false,
+                canExportFiles: store.access?.canDownload ?? false,
                 onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
                 onDropForeignItemsOnFolder: { items, folder in
                     store.send(.itemsDroppedFromOtherWindow(items, destination: folder.id))

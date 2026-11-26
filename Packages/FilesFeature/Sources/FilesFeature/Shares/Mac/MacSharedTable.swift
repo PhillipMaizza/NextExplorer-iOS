@@ -58,6 +58,8 @@
         let store: StoreOf<SharedFeature>
         let segment: SharedFeature.Segment
         @Binding var selection: Set<MacSharedRow.ID>
+        @Binding var isPeeking: Bool
+        let onOpen: (Share) -> Void
         let onToast: (DSToastMessage) -> Void
 
         /// Sorted here by the columns: By me by name, With me newest received first.
@@ -65,18 +67,21 @@
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         @FocusState private var isFocused: Bool
         @State private var width: CGFloat = .zero
-        @State private var isPeeking = false
         @State private var isSkeletonDue = false
 
         init(
             store: StoreOf<SharedFeature>,
             segment: SharedFeature.Segment,
             selection: Binding<Set<MacSharedRow.ID>>,
+            isPeeking: Binding<Bool>,
+            onOpen: @escaping (Share) -> Void,
             onToast: @escaping (DSToastMessage) -> Void
         ) {
             self.store = store
             self.segment = segment
             _selection = selection
+            _isPeeking = isPeeking
+            self.onOpen = onOpen
             self.onToast = onToast
             _sortOrder = State(initialValue: segment == .byMe
                 ? [KeyPathComparator(\.name)]
@@ -194,6 +199,13 @@
                 if let share = ownShare(for: ids, in: rows) {
                     MacSharedRowMenu(share: share, store: store, onToast: onToast)
                         .labelStyle(.titleAndIcon)
+                } else if let share = receivedShare(for: ids, in: rows) {
+                    MacReceivedShareMenu(share: share, store: store, onOpen: onOpen, onToast: onToast)
+                        .labelStyle(.titleAndIcon)
+                }
+            } primaryAction: { ids in
+                if let share = receivedShare(for: ids, in: rows) {
+                    onOpen(share)
                 }
             }
             // Escape deselects, which closes the inspector.
@@ -305,9 +317,17 @@
             return share
         }
 
+        private func receivedShare(for ids: Set<MacSharedRow.ID>, in rows: [MacSharedRow]) -> Share? {
+            guard !isByMe, !isLoading, ids.count == 1, let id = ids.first, let row = Self.row(id, in: rows)
+            else { return nil }
+            let share = row.share ?? row.item.shares[0]
+            return store.state.isExpired(share) ? nil : share
+        }
+
         private func peekItem(for id: MacSharedRow.ID?, in rows: [MacSharedRow]) -> FileItem? {
-            guard isByMe, !isLoading, let id, let row = Self.row(id, in: rows) else { return nil }
+            guard !isLoading, let id, let row = Self.row(id, in: rows) else { return nil }
             let share = row.item.shares[0]
+            guard isByMe else { return store.state.isExpired(share) ? nil : share.receivedFileItem }
             return store.shareFiles[share.id] ?? share.item()
         }
 
@@ -334,7 +354,14 @@
         mutate: (inout SharedFeature.State) -> Void = { _ in }
     ) -> some View {
         macSharedPreview(segment, mutate: mutate) {
-            MacSharedTable(store: $0, segment: segment, selection: .constant([]), onToast: { _ in })
+            MacSharedTable(
+                store: $0,
+                segment: segment,
+                selection: .constant([]),
+                isPeeking: .constant(false),
+                onOpen: { _ in },
+                onToast: { _ in }
+            )
         }
         .previewCanvas(.table)
     }

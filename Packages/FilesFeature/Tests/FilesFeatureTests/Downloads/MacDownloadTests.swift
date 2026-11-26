@@ -15,6 +15,12 @@ import TestUtils
         private let serverURL = BrowseTestSupport.serverURL
         private let access = BrowseTestSupport.fullAccess
 
+        private func screen(_ path: String, title: String) -> BrowseFeature.State {
+            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: path, title: title)
+            state.access = access
+            return state
+        }
+
         private func temporaryFolder() throws -> URL {
             let url = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
@@ -38,11 +44,7 @@ import TestUtils
                 kind: TestKind.pdf
             )
             let suggested = LockIsolated<[String]>([])
-            let store = TestStore(initialState: BrowseFeature.State(
-                serverURL: serverURL,
-                directoryPath: TestFolder.docs,
-                title: TestFolder.docs
-            )) {
+            let store = TestStore(initialState: screen(TestFolder.docs, title: TestFolder.docs)) {
                 BrowseFeature()
             } withDependencies: {
                 $0.saveLocationPicker.chooseFile = { name in
@@ -67,11 +69,7 @@ import TestUtils
                 kind: TestKind.pdf
             )
             let target = try temporaryFolder().appendingPathComponent("Saved report.pdf")
-            let store = TestStore(initialState: BrowseFeature.State(
-                serverURL: serverURL,
-                directoryPath: TestFolder.docs,
-                title: TestFolder.docs
-            )) {
+            let store = TestStore(initialState: screen(TestFolder.docs, title: TestFolder.docs)) {
                 BrowseFeature()
             } withDependencies: {
                 $0.saveLocationPicker.chooseFile = { _ in target }
@@ -101,11 +99,7 @@ import TestUtils
                 kind: TestKind.text
             )
             let folder = try temporaryFolder()
-            var state = BrowseFeature.State(
-                serverURL: serverURL,
-                directoryPath: TestFolder.docs,
-                title: TestFolder.docs
-            )
+            var state = screen(TestFolder.docs, title: TestFolder.docs)
             state.items = [first, second]
             state.isSelecting = true
             state.selectedItemIDs = [first.id, second.id]

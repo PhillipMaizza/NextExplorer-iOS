@@ -217,6 +217,7 @@ uploads.cancelAll	Anuluj wszystkie przesyłania
 shared.navigationTitle	Udostępnione
 shared.segmentByMe	Przeze mnie
 shared.segmentWithMe	Ze mną
+shared.sharedWithMe	Udostępnione mi
 shared.sectionExpired	Wygasłe
 shared.filterAll	Wszystko
 shared.filterAnyone	Każdy
@@ -1274,7 +1275,6 @@ twoFactor.turnOffButton	Wyłącz
 twoFactor.turnOnButton	Włącz
 browse.actionAvailableOffline	Dostępne offline
 browse.actionKeepOffline	Zachowaj offline
-browse.actionShowInFolder	Pokaż w folderze
 browse.actionSaveToDevice	Zapisz na urządzeniu
 previewToolbar.saveToDevice	Zapisz na urządzeniu
 downloadQueue.savedToPhotos	Zapisano w Zdjęciach

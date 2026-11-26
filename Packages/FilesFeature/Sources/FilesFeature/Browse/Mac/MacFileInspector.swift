@@ -38,6 +38,8 @@
         var onRetry: () -> Void = {}
         var shouldShowThumbnails = true
         var showsMore = false
+        var title: String?
+        var folderTitle: String?
         let onClose: () -> Void
         @ViewBuilder let more: () -> More
 
@@ -61,6 +63,7 @@
                         serverURL: serverURL,
                         badge: pictureBadge,
                         shouldShowThumbnails: shouldShowThumbnails,
+                        title: title,
                         onClose: onClose
                     )
                     MacInspectorQuickActions(actions: quickActions, showsMore: showsMore, more: more)
@@ -240,7 +243,7 @@
         }
 
         private var location: String {
-            MacInspectorLocation.title(parent: MacInspectorLocation.parent(of: item))
+            folderTitle ?? MacInspectorLocation.title(parent: MacInspectorLocation.parent(of: item))
         }
 
         private static func bytes(_ count: Int64) -> String {
@@ -297,17 +300,22 @@
                 errorMessage: screen.infoErrorMessage,
                 serverURL: screen.serverURL,
                 isEditingPermissions: screen.permissions != nil,
-                onEditPermissions: { screen.send(.permissionsTapped(item)) },
+                onEditPermissions: screen.state.actions(for: item).canEditPermissions
+                    ? { screen.send(.permissionsTapped(item)) }
+                    : nil,
                 isFavorite: item.isDirectory ? screen.favoritePaths.contains(item.id) : nil,
                 onToggleFavorite: { screen.send(.favoriteToggleButtonTapped(item)) },
                 isFavoriteToggleEnabled: screen.hasLoadedFavorites,
                 shares: MacInspectorSharedLinks.links(sharedLinks, for: item),
-                onShare: (screen.access?.canShare ?? false) ? { onShare(item) } : nil,
+                onShare: screen.state.actions(for: item).canShare ? { onShare(item) } : nil,
                 onRestored: { screen.send(.refreshButtonTapped) },
                 onOpen: item.id == screen.directoryPath ? nil : { onOpen(item) },
                 onRetry: { screen.send(.infoTapped(item)) },
                 shouldShowThumbnails: screen.preferences.shouldShowThumbnails,
-                showsMore: screen.items[id: item.id] != nil || item.id == screen.directoryPath,
+                showsMore: (screen.items[id: item.id] != nil || item.id == screen.directoryPath)
+                    && !screen.state.inspectorMoreRows(for: item).isEmpty,
+                title: item.id == screen.directoryPath ? screen.title : nil,
+                folderTitle: MacInspectorLocation.folderTitle(of: item, on: screen.state),
                 onClose: { screen.send(.infoDismissed) },
                 more: { more(item) }
             )

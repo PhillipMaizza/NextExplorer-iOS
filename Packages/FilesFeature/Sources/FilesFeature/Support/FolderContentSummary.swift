@@ -1,5 +1,6 @@
 import CoreModels
 import DesignSystem
+import Foundation
 import Localization
 
 enum FolderContentSummary {
@@ -17,7 +18,17 @@ enum FolderContentSummary {
         return text(folders: folders, files: items.count - folders)
     }
 
-    static func crumbs(for directoryPath: String) -> [PathCrumb] {
+    static func crumbs(for directoryPath: String, title: String = "", shareName: String? = nil) -> [PathCrumb] {
+        if let root = ReceivedShareSpace.shareRoot(of: directoryPath) {
+            let name = shareName ?? (directoryPath == root && !title.isEmpty
+                ? title
+                : (root as NSString).lastPathComponent)
+            let inner = directoryPath.dropFirst(root.count).split(separator: "/").map(String.init)
+            return [
+                PathCrumb(title: L10n.Shared.sharedWithMe, path: ReceivedShareSpace.rootPath),
+                PathCrumb(title: name, path: root),
+            ] + inner.indices.map { PathCrumb(title: inner[$0], path: ([root] + inner[...$0]).joined(separator: "/")) }
+        }
         let segments = directoryPath.split(separator: "/").map(String.init)
         return segments.indices.map { index in
             PathCrumb(
@@ -39,7 +50,7 @@ extension BrowseFeature.State {
 
     var headerCrumbs: [PathCrumb] {
         #if os(macOS)
-            FolderContentSummary.crumbs(for: directoryPath)
+            FolderContentSummary.crumbs(for: directoryPath, title: title, shareName: shareName)
         #else
             []
         #endif

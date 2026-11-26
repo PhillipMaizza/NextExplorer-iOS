@@ -530,6 +530,14 @@ public struct OfflineDownloadsFeature {
         }
     }
 
+    private static func downloadableListing(
+        _ path: String, serverURL: URL, filesClient: FilesClient
+    ) async throws -> BrowseResult {
+        let result = try await apiResult { try await filesClient.browse(serverURL, path) }.get()
+        guard result.access.canDownload else { throw FilesClientError.forbidden(message: nil) }
+        return result
+    }
+
     /// Depth first walk of the pinned roots into a flat list of files. Directories are expanded via
     /// `browse`. A save the user asked for passes `skipsUnreadableFolders: false` and fails instead of
     /// quietly leaving files out.
@@ -580,12 +588,20 @@ public struct OfflineDownloadsFeature {
                 while active < Constants.maxConcurrentBrowses, let dir = queue.popLast() {
                     group.addTask {
                         guard skipsUnreadableFolders else {
-                            let result = try await apiResult { try await filesClient.browse(serverURL, dir.id) }.get()
+                            let result = try await downloadableListing(
+                                dir.id,
+                                serverURL: serverURL,
+                                filesClient: filesClient
+                            )
                             onListing?(dir.id, result)
                             return (dir.id, .items(result.items))
                         }
                         do {
-                            let result = try await apiResult { try await filesClient.browse(serverURL, dir.id) }.get()
+                            let result = try await downloadableListing(
+                                dir.id,
+                                serverURL: serverURL,
+                                filesClient: filesClient
+                            )
                             onListing?(dir.id, result)
                             return (dir.id, .items(result.items))
                         } catch is CancellationError {

@@ -67,7 +67,9 @@ public extension FilesClient {
                 directoryCacheStore.touch(
                     serverURL: serverURL, path: path, expectedETag: cached.etag, fetchedAt: now()
                 )
-                return BrowseResult(items: cached.items, access: cached.access, path: cached.path)
+                return BrowseResult(
+                    items: cached.items, access: cached.access, path: cached.path, shareInfo: cached.shareInfo
+                )
             }
         }
 

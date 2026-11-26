@@ -17,7 +17,7 @@
             switch store.selectedTab {
             case .browse: store.browse.path.last?.title ?? store.browse.root.title
             case .favorites: store.favorites.path.last?.title ?? L10n.Tab.favorites
-            case .shared: L10n.Tab.shared
+            case .shared: store.sharedBrowse.path.last?.title ?? L10n.Tab.shared
             case .downloads: L10n.Tab.offline
             case .settings: L10n.Tab.settings
             case .trash: L10n.Trash.title

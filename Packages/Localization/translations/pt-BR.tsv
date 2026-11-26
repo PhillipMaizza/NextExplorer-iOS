@@ -215,6 +215,7 @@ uploads.cancelAll	Cancelar todos os envios
 shared.navigationTitle	Compartilhado
 shared.segmentByMe	Por mim
 shared.segmentWithMe	Comigo
+shared.sharedWithMe	Compartilhado comigo
 shared.sectionExpired	Expirado
 shared.filterAll	Tudo
 shared.filterAnyone	Qualquer pessoa
@@ -1233,7 +1234,6 @@ twoFactor.turnOffButton	Desativar
 twoFactor.turnOnButton	Ativar
 browse.actionAvailableOffline	Disponível offline
 browse.actionKeepOffline	Manter offline
-browse.actionShowInFolder	Mostrar na pasta
 browse.actionSaveToDevice	Salvar no dispositivo
 previewToolbar.saveToDevice	Salvar no dispositivo
 downloadQueue.savedToPhotos	Salvo em Fotos

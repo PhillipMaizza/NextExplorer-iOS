@@ -17,3 +17,14 @@ extension EnvironmentValues {
         set { self[PreviewOfflineKey.self] = newValue }
     }
 }
+
+private struct PreviewCanExportKey: EnvironmentKey {
+    static let defaultValue = true
+}
+
+extension EnvironmentValues {
+    var canExportPreview: Bool {
+        get { self[PreviewCanExportKey.self] }
+        set { self[PreviewCanExportKey.self] = newValue }
+    }
+}

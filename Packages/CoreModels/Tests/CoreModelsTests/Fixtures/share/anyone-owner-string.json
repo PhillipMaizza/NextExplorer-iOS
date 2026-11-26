@@ -7,6 +7,7 @@
   "accessMode": "readwrite",
   "sharingType": "anyone",
   "hasPassword": true,
+  "allowDownload": false,
   "expiresAt": "2023-11-14T22:13:20Z",
   "label": "Quarterly",
   "downloadCount": 7,

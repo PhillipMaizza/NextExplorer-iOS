@@ -217,6 +217,7 @@ uploads.cancelAll	Отменить все отправки
 shared.navigationTitle	Общие
 shared.segmentByMe	Мной
 shared.segmentWithMe	Со мной
+shared.sharedWithMe	Доступные мне
 shared.sectionExpired	Истёкшие
 shared.filterAll	Все
 shared.filterAnyone	Любой
@@ -1274,7 +1275,6 @@ twoFactor.turnOffButton	Выключить
 twoFactor.turnOnButton	Включить
 browse.actionAvailableOffline	Доступно офлайн
 browse.actionKeepOffline	Сохранить офлайн
-browse.actionShowInFolder	Показать в папке
 browse.actionSaveToDevice	Сохранить на устройство
 previewToolbar.saveToDevice	Сохранить на устройство
 downloadQueue.savedToPhotos	Сохранено в Фото

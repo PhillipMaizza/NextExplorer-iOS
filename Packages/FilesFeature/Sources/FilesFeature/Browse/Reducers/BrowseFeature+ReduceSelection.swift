@@ -43,7 +43,7 @@ extension BrowseFeature {
 
         case .bulkDeleteTapped:
             let selected = state.selectedItems
-            guard !selected.isEmpty else { return .none }
+            guard state.actions(for: selected).canDelete else { return .none }
             state.bulkDeletePhase = .confirming
             state.deleteImpactCheck = .checking
             return checkDeleteImpact(&state, items: selected)
@@ -100,7 +100,7 @@ extension BrowseFeature {
 
         case .bulkDownloadTapped:
             let targets = state.selectedItems
-            guard !targets.isEmpty else { return .none }
+            guard state.actions(for: targets).canDownload else { return .none }
             leaveSelectMode(&state)
             #if os(macOS)
                 return startBulkDownload(&state, targets: Array(targets))
@@ -114,7 +114,9 @@ extension BrowseFeature {
             let targets = state.selectedItems
             guard !targets.isEmpty else { return .none }
             leaveSelectMode(&state)
-            let toPin = targets.filter { !state.offlineItemIDs.contains($0.id) }
+            let toPin = state.actions(for: targets).canDownload
+                ? targets.filter { !state.offlineItemIDs.contains($0.id) }
+                : []
             if !toPin.isEmpty {
                 state.offlineItemIDs.formUnion(toPin.map(\.id))
                 state.offlinePinnedItemIDs.formUnion(toPin.map(\.id))

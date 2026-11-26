@@ -215,6 +215,7 @@ uploads.cancelAll	ביטול כל ההעלאות
 shared.navigationTitle	משותפים
 shared.segmentByMe	ששיתפתי
 shared.segmentWithMe	ששותפו איתי
+shared.sharedWithMe	שותף איתי
 shared.sectionExpired	פג תוקף
 shared.filterAll	הכול
 shared.filterAnyone	כל אחד
@@ -1204,7 +1205,6 @@ trashSettings.versionsEnvironmentNote	ערכי ברירת המחדל מגיעי�
 versionedFiles.refresh	רענון
 browse.actionAvailableOffline	זמין במצב לא מקוון
 browse.actionKeepOffline	שמירה במצב לא מקוון
-browse.actionShowInFolder	הצגה בתיקייה
 browse.actionSaveToDevice	שמירה במכשיר
 previewToolbar.saveToDevice	שמירה במכשיר
 downloadQueue.savedToPhotos	נשמר בתמונות

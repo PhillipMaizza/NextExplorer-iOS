@@ -23,6 +23,10 @@ struct FileActionsMenu: View {
         @Dependency(\.offlineFileStore) private var offlineFileStore
     #endif
 
+    private var actions: FileItemActions {
+        store.state.actions(for: item)
+    }
+
     var body: some View {
         #if os(macOS)
             // Finder's context menu starts with Open: the folder, or the in app preview.
@@ -42,7 +46,9 @@ struct FileActionsMenu: View {
                 .tint(.primaryDS)
                 Divider()
             } else {
-                MacOpenWithMenuItems(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
+                if actions.canExport {
+                    MacOpenWithMenuItems(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
+                }
                 Divider()
             }
         #endif
@@ -57,7 +63,7 @@ struct FileActionsMenu: View {
                 sendActions
                 keepActions(removals: false)
             }
-            if store.access?.canWrite ?? false {
+            if actions.canCompress {
                 Section { archiveActions }
             }
         #elseif os(iOS)
@@ -66,7 +72,7 @@ struct FileActionsMenu: View {
         #endif
         Section {
             keepActions(removals: true)
-            if store.access?.canDelete ?? false {
+            if actions.canDelete {
                 Button(role: .destructive) {
                     store.send(.deleteTapped(item))
                 } label: {
@@ -93,7 +99,7 @@ struct FileActionsMenu: View {
         #if os(macOS)
             renameAction
         #endif
-        if !store.shouldShowDeviceContent {
+        if actions.canEditPermissions {
             Button {
                 store.send(.permissionsTapped(item))
             } label: {
@@ -123,15 +129,11 @@ struct FileActionsMenu: View {
         }
         #if os(iOS)
             renameAction
-            if store.access?.canWrite ?? false {
+            if actions.canCompress {
                 archiveActions
             }
         #endif
-        // Copy needs no permission on this folder (the server checks the destination on
-        // paste); move has to delete the original, so it mirrors the web client's
-        // `canWrite && canDelete` gate. A lone root location has nowhere to go and can't be
-        // left absent, so neither is offered for it.
-        if !isSoleRootLocation, !store.shouldShowDeviceContent {
+        if actions.canCopy {
             Button {
                 store.send(.copyTapped(item), animation: DSMotion.listDiff)
             } label: {
@@ -140,7 +142,7 @@ struct FileActionsMenu: View {
             .tint(.primaryDS)
             .macMenuShortcut("c")
             #if os(macOS)
-                if store.access?.canWrite ?? false, !store.directoryPath.isEmpty, isInListing {
+                if actions.canDuplicate {
                     Button {
                         store.send(.tableSelectionChanged([item.id]))
                         store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
@@ -150,8 +152,7 @@ struct FileActionsMenu: View {
                     .tint(.primaryDS)
                     .keyboardShortcut("d")
                 }
-                // Stages the row for a move, as Command X does; Move still opens the picker.
-                if store.access?.canWrite ?? false, store.access?.canDelete ?? false, isInListing {
+                if actions.canMove, isInListing {
                     Button {
                         store.send(.tableSelectionChanged([item.id]))
                         store.send(.cutSelectionTapped, animation: DSMotion.listDiff)
@@ -162,7 +163,7 @@ struct FileActionsMenu: View {
                     .keyboardShortcut("x")
                 }
             #endif
-            if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+            if actions.canMove {
                 Button {
                     store.send(.moveTapped(item), animation: DSMotion.listDiff)
                 } label: {
@@ -170,12 +171,20 @@ struct FileActionsMenu: View {
                 }
                 .tint(.primaryDS)
             }
+            #if os(macOS)
+                Button {
+                    store.send(.copyToTapped(item))
+                } label: {
+                    Label { Text(L10n.Browse.actionCopyTo) } icon: { IconKit.share }
+                }
+                .tint(.primaryDS)
+            #endif
         }
     }
 
     @ViewBuilder
     private var renameAction: some View {
-        if store.access?.canWrite ?? false {
+        if actions.canRename {
             Button {
                 store.send(.renameTapped(item))
             } label: {
@@ -188,7 +197,7 @@ struct FileActionsMenu: View {
 
     @ViewBuilder
     private var archiveActions: some View {
-        if store.state.canExtract(item) {
+        if actions.canExtract {
             Button {
                 store.send(.extractTapped(item))
             } label: {
@@ -226,7 +235,7 @@ struct FileActionsMenu: View {
                 )
             }
         #endif
-        if store.access?.canDownload ?? false, SaveActionStyle.isAvailable(for: item.isDirectory),
+        if actions.canDownload, SaveActionStyle.isAvailable(for: item.isDirectory),
            !store.shouldShowDeviceContent || (isKept && !Self.shouldSaveKeptCopyLocally)
         {
             Button {
@@ -245,7 +254,7 @@ struct FileActionsMenu: View {
                 }
                 .tint(.primaryDS)
             }
-        } else if store.access?.canShare ?? false {
+        } else if actions.canShare {
             Button {
                 onShare(item)
             } label: {
@@ -258,7 +267,7 @@ struct FileActionsMenu: View {
     /// Available Offline and Favorites. Taking an item off either reads as a removal: red, like Delete.
     @ViewBuilder
     private func keepActions(removals: Bool) -> some View {
-        if store.access?.canDownload ?? false, !store.shouldShowDeviceContent || isKept, isKept == removals {
+        if isKept == removals, isKept || actions.canKeepOffline {
             // A file kept through a pinned folder removes that folder, after a confirmation naming it.
             RemovableMenuButton(
                 title: isKept ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
@@ -282,8 +291,6 @@ struct FileActionsMenu: View {
         }
     }
 
-    /// A top level location (root screen) that is the only one there: it has nowhere to be
-    /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
     private var isInListing: Bool {
         store.items[id: item.id] != nil
     }
@@ -294,10 +301,6 @@ struct FileActionsMenu: View {
         #elseif os(iOS)
             true
         #endif
-    }
-
-    private var isSoleRootLocation: Bool {
-        store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1
     }
 }
 

@@ -241,6 +241,7 @@ import TestUtils
                 )
             }
             await store.receive(\.browse.refreshDirectory)
+            await store.receive(\.sharedBrowse.refreshDirectory)
             await store.receive(\.favorites.refreshDirectory)
             await store.receive(\.browse.path[id: id].refreshButtonTapped) {
                 $0.browse.path[id: id]?.phase = .loading
@@ -276,8 +277,10 @@ import TestUtils
                 )
             }
             await store.receive(\.browse.refreshDirectory)
+            await store.receive(\.sharedBrowse.refreshDirectory)
             await store.receive(\.favorites.refreshDirectory)
             await store.receive(\.browse.refreshDirectory)
+            await store.receive(\.sharedBrowse.refreshDirectory)
             await store.receive(\.favorites.refreshDirectory)
             await store.receive(\.offline.uploadsLanded)
         }

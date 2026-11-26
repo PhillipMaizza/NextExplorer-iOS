@@ -204,7 +204,8 @@ extension FilesClientLiveTests {
                         canShare: false,
                         canDownload: true
                     ),
-                    path: TestPath.docsLowercase
+                    path: TestPath.docsLowercase,
+                    shareInfo: BrowseResult.ShareInfo(label: "Team", sourceFolderName: "Docs")
                 ),
                 etag: "\"v1\"",
                 fetchedAt: MockDate.date
@@ -219,6 +220,7 @@ extension FilesClientLiveTests {
 
             let result = try await client.browse(serverURL, TestPath.docsLowercase)
             #expect(result.items.map(\.name) == ["Saved"])
+            #expect(result.shareInfo?.name == "Docs")
             // The 304 refreshes the entry's timestamp so a prefetch freshness check sees it as current.
             #expect(store.read(serverURL: serverURL, path: TestPath.docsLowercase)?.fetchedAt == MockDate.date
                 .addingTimeInterval(500))

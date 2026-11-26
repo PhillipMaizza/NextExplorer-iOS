@@ -149,10 +149,28 @@ extension Share {
 
     func item(size: Int64 = 0, modified: Date? = nil) -> FileItem? {
         guard let path = browsePath else { return nil }
-        let kind = isDirectory ? FileItem.directoryKind : (path as NSString).pathExtension.lowercased()
+        return fileItem(
+            named: (path as NSString).lastPathComponent,
+            in: (path as NSString).deletingLastPathComponent,
+            size: size,
+            modified: modified
+        )
+    }
+
+    var receivedPath: String {
+        "\(ReceivedShareSpace.rootPath)/\(shareToken)"
+    }
+
+    var receivedFileItem: FileItem? {
+        guard !isDirectory, let sourceName, !sourceName.isEmpty else { return nil }
+        return fileItem(named: sourceName, in: receivedPath, size: 0, modified: nil)
+    }
+
+    private func fileItem(named name: String, in parent: String, size: Int64, modified: Date?) -> FileItem {
+        let kind = isDirectory ? FileItem.directoryKind : (name as NSString).pathExtension.lowercased()
         return FileItem(
-            name: (path as NSString).lastPathComponent,
-            path: (path as NSString).deletingLastPathComponent,
+            name: name,
+            path: parent,
             dateModified: modified ?? updatedAt,
             size: size,
             kind: kind,
@@ -166,5 +184,15 @@ extension Share {
             return "\(scheme)://\(host)\(port)"
         }
         return serverURL.absoluteString
+    }
+}
+
+enum ReceivedShareSpace {
+    static let rootPath = PersonalSpace.receivedSharesRootPath
+
+    static func shareRoot(of path: String) -> String? {
+        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
+        guard segments.count >= 2, segments[0] == rootPath else { return nil }
+        return "\(rootPath)/\(segments[1])"
     }
 }

@@ -108,6 +108,7 @@ struct MainTabDeviceSaveTests: MainTabTestSupport {
         await store.send(.offlineManage(.delegate(.changed)))
         await store.receive(\.offline.pinnedRootsRemoved)
         await store.receive(\.browse.offlineAvailabilityChanged)
+        await store.receive(\.sharedBrowse.offlineAvailabilityChanged)
         await store.receive(\.favorites.offlineAvailabilityChanged)
         await store.receive(\.downloads.offlineAvailabilityChanged)
         await store.receive(\.browse.root.computeOfflineAvailability)

@@ -158,7 +158,8 @@ extension DirectoryCacheStore: DependencyKey {
                 items: result.items,
                 access: result.access,
                 fetchedAt: fetchedAt,
-                etag: etag
+                etag: etag,
+                shareInfo: result.shareInfo
             )
             guard let data = try? JSONEncoder.cache.encode(cached) else { return }
             guard data.count <= Constants.maxEntryBytes else {
@@ -182,7 +183,8 @@ extension DirectoryCacheStore: DependencyKey {
                 items: current.items,
                 access: current.access,
                 fetchedAt: fetchedAt,
-                etag: current.etag
+                etag: current.etag,
+                shareInfo: current.shareInfo
             )
             guard let encoded = try? JSONEncoder.cache.encode(refreshed) else { return }
             try? cacheDirectory?.write(encoded, to: fileURL, maxEntries: maxEntries, maxTotalBytes: maxTotalBytes)
@@ -303,7 +305,8 @@ extension DirectoryCacheStore: DependencyKey {
         func write(scope: String, serverURL: URL, path: String, result: BrowseResult, etag: String?, fetchedAt: Date) {
             lock.lock(); defer { lock.unlock() }
             entries[key(scope, serverURL, path)] = CachedDirectory(
-                path: result.path, items: result.items, access: result.access, fetchedAt: fetchedAt, etag: etag
+                path: result.path, items: result.items, access: result.access, fetchedAt: fetchedAt, etag: etag,
+                shareInfo: result.shareInfo
             )
         }
 
@@ -313,7 +316,7 @@ extension DirectoryCacheStore: DependencyKey {
             guard let current = entries[entryKey], current.etag == expectedETag else { return }
             entries[entryKey] = CachedDirectory(
                 path: current.path, items: current.items, access: current.access, fetchedAt: fetchedAt,
-                etag: current.etag
+                etag: current.etag, shareInfo: current.shareInfo
             )
         }
 

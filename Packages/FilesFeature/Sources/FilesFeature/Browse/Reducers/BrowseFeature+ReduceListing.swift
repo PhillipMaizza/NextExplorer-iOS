@@ -99,6 +99,7 @@ extension BrowseFeature {
                 state.offlineRemoval = offlineRemoval(of: [item], state: state)
                 return .none
             }
+            guard state.actions(for: item).canKeepOffline else { return .none }
             state.offlinePinnedItemIDs.insert(item.id)
             state.offlineItemIDs.insert(item.id)
             if state.searchHit(id: item.id) != nil {
@@ -116,6 +117,7 @@ extension BrowseFeature {
                 uniquingIDsWith: { first, _ in first }
             )
             state.access = Self.shownAccess(result.access, isNarrowed: state.isKeptOffline)
+            state.shareName = result.shareInfo?.name
             listingChanged(&state)
             return .merge(
                 recheckArrivals(&state),

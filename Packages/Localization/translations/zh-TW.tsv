@@ -199,6 +199,7 @@ uploads.cancelAll	取消所有上傳
 shared.navigationTitle	共享
 shared.segmentByMe	由我共享
 shared.segmentWithMe	與我共享
+shared.sharedWithMe	與我共用
 shared.sectionExpired	已過期
 shared.filterAll	全部
 shared.filterAnyone	任何人
@@ -1220,7 +1221,6 @@ twoFactor.turnOffButton	關閉
 twoFactor.turnOnButton	開啟
 browse.actionAvailableOffline	可離線使用
 browse.actionKeepOffline	保留離線副本
-browse.actionShowInFolder	在資料夾中顯示
 browse.actionSaveToDevice	儲存到裝置
 previewToolbar.saveToDevice	儲存到裝置
 downloadQueue.savedToPhotos	已儲存到「照片」

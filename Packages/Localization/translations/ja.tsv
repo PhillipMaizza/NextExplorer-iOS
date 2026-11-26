@@ -199,6 +199,7 @@ uploads.cancelAll	すべてのアップロードをキャンセル
 shared.navigationTitle	共有
 shared.segmentByMe	自分から
 shared.segmentWithMe	自分宛て
+shared.sharedWithMe	自分と共有
 shared.sectionExpired	期限切れ
 shared.filterAll	すべて
 shared.filterAnyone	誰でも
@@ -1220,7 +1221,6 @@ twoFactor.turnOffButton	オフにする
 twoFactor.turnOnButton	オンにする
 browse.actionAvailableOffline	オフラインで利用可能
 browse.actionKeepOffline	オフラインで保持
-browse.actionShowInFolder	フォルダに表示
 browse.actionSaveToDevice	デバイスに保存
 previewToolbar.saveToDevice	デバイスに保存
 downloadQueue.savedToPhotos	写真に保存しました

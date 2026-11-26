@@ -205,6 +205,7 @@ uploads.cancelAll	Alle Uploads abbrechen
 shared.navigationTitle	Geteilt
 shared.segmentByMe	Von mir
 shared.segmentWithMe	Mit mir
+shared.sharedWithMe	Mit mir geteilt
 shared.sectionExpired	Abgelaufen
 shared.filterAll	Alle
 shared.filterAnyone	Jeder
@@ -1238,7 +1239,6 @@ twoFactor.turnOffButton	Ausschalten
 twoFactor.turnOnButton	Einschalten
 browse.actionAvailableOffline	Offline verfügbar
 browse.actionKeepOffline	Offline behalten
-browse.actionShowInFolder	Im Ordner zeigen
 browse.actionSaveToDevice	Auf Gerät sichern
 previewToolbar.saveToDevice	Auf Gerät sichern
 downloadQueue.savedToPhotos	In Fotos gesichert

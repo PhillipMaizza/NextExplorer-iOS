@@ -16,6 +16,7 @@ private enum Constants {
 struct UnsupportedFilePreviewView: View {
     let item: FileItem
     let systemShare: SystemShareSource
+    @Environment(\.canExportPreview) private var canExport
     let onDismiss: () -> Void
     var onShareLink: (() -> Void)?
     var onRename: (() -> Void)?
@@ -56,7 +57,7 @@ struct UnsupportedFilePreviewView: View {
                     item.previewTypeText, FileSizeFormat.string(item.size), L10n.UnsupportedPreview.cannotOpen
                 ))
             } actions: {
-                MacOpenWithButtons(source: systemShare)
+                MacOpenWithButtons(source: canExport ? systemShare : .unavailable)
             }
             // Fills the sheet: without it the sheet centers a content sized view, leaving empty
             // bands above the bar and below the content.

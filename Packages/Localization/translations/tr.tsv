@@ -209,6 +209,7 @@ uploads.cancelAll	Tüm yüklemeleri iptal et
 shared.navigationTitle	Paylaşılanlar
 shared.segmentByMe	Benim paylaştıklarım
 shared.segmentWithMe	Benimle paylaşılanlar
+shared.sharedWithMe	Benimle paylaşılan
 shared.sectionExpired	Süresi doldu
 shared.filterAll	Tümü
 shared.filterAnyone	Herkes
@@ -1186,7 +1187,6 @@ trashSettings.versionsEnvironmentNote	Varsayılan değerler VERSIONS_ENABLED, VE
 versionedFiles.refresh	Yenile
 browse.actionAvailableOffline	Çevrimdışı kullanılabilir
 browse.actionKeepOffline	Çevrimdışı Tut
-browse.actionShowInFolder	Klasörde Göster
 browse.actionSaveToDevice	Aygıta Kaydet
 previewToolbar.saveToDevice	Aygıta Kaydet
 downloadQueue.savedToPhotos	Fotoğraflar’a kaydedildi

@@ -186,15 +186,4 @@ struct BrowseKeyboardActionsTests {
             $0.infoPhase = .idle
         }
     }
-
-    @Test("Show in Folder selects the row and scrolls to it, and ignores an item not in this folder")
-    func showInFolderSelectsAndScrollsToTheRow() async {
-        let store = makeStore(items: [first, second], selected: [first])
-
-        await store.send(.showInFolderTapped(second)) {
-            $0.selectedItemIDs = [second.id]
-            $0.scrollTargetID = second.id
-        }
-        await store.send(.showInFolderTapped(third))
-    }
 }

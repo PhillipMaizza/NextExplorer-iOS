@@ -251,6 +251,7 @@ public struct BrowseBreadcrumbBar: View {
 /// and never lists it among the volumes, so the root screen offers it as its own entry.
 public enum PersonalSpace {
     public static let rootPath = "personal"
+    public static let receivedSharesRootPath = "share"
 
     /// A breadcrumb or title for a path segment: the leading `personal` reads as "My Files".
     public static func displayName(forSegment segment: String, isFirstSegment: Bool) -> String {
@@ -258,15 +259,20 @@ public enum PersonalSpace {
     }
 
     public static func folderTitle(_ path: String) -> String {
-        let segments = path.split(separator: "/").map(String.init)
-        guard let last = segments.last else { return L10n.Browse.navigationTitle }
-        return displayName(forSegment: last, isFirstSegment: segments.count == 1)
+        names(path).last ?? L10n.Browse.navigationTitle
     }
 
     public static func trail(_ path: String) -> String {
-        let names = path.split(separator: "/").enumerated().map { index, segment in
-            displayName(forSegment: String(segment), isFirstSegment: index == 0)
+        PathTrail.text(names(path).joined(separator: "/"))
+    }
+
+    private static func names(_ path: String) -> [String] {
+        let segments = path.split(separator: "/").map(String.init)
+        if segments.count >= 2, segments[0] == receivedSharesRootPath {
+            return [L10n.Shared.sharedWithMe] + segments.dropFirst(2)
         }
-        return PathTrail.text(names.joined(separator: "/"))
+        return segments.enumerated().map { index, segment in
+            displayName(forSegment: segment, isFirstSegment: index == 0)
+        }
     }
 }

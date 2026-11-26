@@ -32,6 +32,7 @@ public struct MainTabFeature {
         /// switch.
         public var recentFolders: [String] = []
         public var browse: BrowseTabFeature.State
+        public var sharedBrowse: BrowseTabFeature.State
         public var favorites: FavoritesFeature.State
         public var shared: SharedFeature.State
         public var downloads = OfflineTabFeature.State()
@@ -66,6 +67,7 @@ public struct MainTabFeature {
 
         public init(serverURL: URL, user: User) {
             browse = BrowseTabFeature.State(serverURL: serverURL, isAdmin: user.isAdmin)
+            sharedBrowse = BrowseTabFeature.State(serverURL: serverURL, isAdmin: user.isAdmin, showsRoot: false)
             favorites = FavoritesFeature.State(serverURL: serverURL)
             downloads = OfflineTabFeature.State(serverURL: serverURL)
             shared = SharedFeature.State(serverURL: serverURL)
@@ -92,6 +94,18 @@ public struct MainTabFeature {
         /// subfolder).
         var currentBrowseDirectory: String {
             browse.path.last?.directoryPath ?? browse.root.directoryPath
+        }
+
+        var isBrowsingReceivedShare: Bool {
+            selectedTab == .shared && !sharedBrowse.path.isEmpty
+        }
+
+        var visibleFolderPath: String? {
+            switch selectedTab {
+            case .browse: currentBrowseDirectory
+            case .shared: sharedBrowse.path.last?.directoryPath
+            case .favorites, .downloads, .settings, .trash: nil
+            }
         }
     }
 
@@ -135,6 +149,7 @@ public struct MainTabFeature {
         /// banners clear and they show live data without a manual pull.
         case connectivityRestored
         case browse(BrowseTabFeature.Action)
+        case sharedBrowse(BrowseTabFeature.Action)
         case favorites(FavoritesFeature.Action)
         case shared(SharedFeature.Action)
         case downloads(OfflineTabFeature.Action)
@@ -179,6 +194,7 @@ public struct MainTabFeature {
         #if os(macOS)
             switch action {
             case .browse(.path(.popFrom)): selectedTab != .browse
+            case .sharedBrowse(.path(.popFrom)): selectedTab != .shared
             case .favorites(.path(.popFrom)): selectedTab != .favorites
             default: false
             }
@@ -196,11 +212,15 @@ public struct MainTabFeature {
             let favorites = Scope<State, Action, FavoritesFeature>(state: \.favorites, action: \.favorites) {
                 FavoritesFeature()
             }
+            let sharedBrowse = Scope<State, Action, BrowseTabFeature>(state: \.sharedBrowse, action: \.sharedBrowse) {
+                BrowseTabFeature()
+            }
             Reduce { state, action in
                 guard !Self.isSectionTeardownPop(action, selectedTab: state.selectedTab) else { return .none }
                 return .merge(
                     browse._reduce(into: &state, action: action),
-                    favorites._reduce(into: &state, action: action)
+                    favorites._reduce(into: &state, action: action),
+                    sharedBrowse._reduce(into: &state, action: action)
                 )
             }
             Scope(state: \.shared, action: \.shared) {
@@ -235,7 +255,29 @@ public struct MainTabFeature {
 
                 case .sharedWithMeRequested:
                     state.selectedTab = .shared
+                    state.sharedBrowse.path.removeAll()
                     return .send(.shared(.segmentChanged(.withMe)))
+
+                case .refreshSelectedTab where state.isBrowsingReceivedShare:
+                    return .send(.sharedBrowse(.refreshVisibleFolder))
+
+                case .newFolderRequested where state.isBrowsingReceivedShare:
+                    return .send(.sharedBrowse(.newFolderInVisibleFolder))
+
+                case .newFileRequested where state.isBrowsingReceivedShare:
+                    return .send(.sharedBrowse(.newFileInVisibleFolder))
+
+                case let .folderCommandRequested(command) where state.isBrowsingReceivedShare:
+                    return .send(.sharedBrowse(.commandInVisibleFolder(command)))
+
+                case .backRequested where state.isBrowsingReceivedShare:
+                    return .send(.sharedBrowse(.goBack))
+
+                case .forwardRequested where state.selectedTab == .shared && state.sharedBrowse.canGoForward:
+                    return .send(.sharedBrowse(.goForward))
+
+                case .enclosingFolderRequested where state.isBrowsingReceivedShare:
+                    return .send(.sharedBrowse(.goToEnclosingFolder))
 
                 case .refreshSelectedTab:
                     switch state.selectedTab {
@@ -285,8 +327,7 @@ public struct MainTabFeature {
                 case let .goToFolderRequested(rawPath):
                     state.isGoToFolderPresented = false
                     guard let path = Self.goToFolderPath(rawPath) else { return .none }
-                    state.selectedTab = .browse
-                    return .send(.browse(.navigateToDirectory(path: path, title: (path as NSString).lastPathComponent)))
+                    return Self.open(path, title: (path as NSString).lastPathComponent, in: &state)
 
                 case .spotlightToggled where state.spotlight != nil:
                     state.spotlight = nil
@@ -333,16 +374,20 @@ public struct MainTabFeature {
                     return .send(.browse(.receiveSharedFiles(urls)))
 
                 case let .browse(.delegate(.uploadRequested(files))),
+                     let .sharedBrowse(.delegate(.uploadRequested(files))),
                      let .favorites(.delegate(.uploadRequested(files))),
                      let .downloads(.delegate(.uploadRequested(files))):
                     return .send(.uploads(.enqueue(files)))
 
                 case let .browse(.delegate(.downloadRequested(items))),
+                     let .shared(.delegate(.downloadRequested(items))),
+                     let .sharedBrowse(.delegate(.downloadRequested(items))),
                      let .favorites(.delegate(.downloadRequested(items))),
                      let .downloads(.delegate(.downloadRequested(items))):
                     return .send(.downloadQueue(.enqueue(items)))
 
                 case let .browse(.delegate(.saveRequested(requests))),
+                     let .sharedBrowse(.delegate(.saveRequested(requests))),
                      let .favorites(.delegate(.saveRequested(requests))),
                      let .downloads(.delegate(.saveRequested(requests))):
                     return .send(.downloadQueue(.enqueueSaves(requests)))
@@ -351,6 +396,7 @@ public struct MainTabFeature {
                     return .merge(
                         .send(.downloads(.refreshButtonTapped)),
                         .send(.browse(.offlineAvailabilityChanged)),
+                        .send(.sharedBrowse(.offlineAvailabilityChanged)),
                         .send(.favorites(.offlineAvailabilityChanged)),
                         .send(.downloads(.offlineAvailabilityChanged))
                     )
@@ -392,6 +438,7 @@ public struct MainTabFeature {
                     var effects: [Effect<Action>] = []
                     for path in summary.changedPaths {
                         effects.append(.send(.browse(.refreshDirectory(path: path))))
+                        effects.append(.send(.sharedBrowse(.refreshDirectory(path: path))))
                         effects.append(.send(.favorites(.refreshDirectory(path: path))))
                     }
                     // Failures are surfaced by the persistent failed bar (with its own Retry), so
@@ -400,8 +447,7 @@ public struct MainTabFeature {
                         let message = summary.uploadedCount == 1
                             ? L10n.Uploads.complete
                             : L10n.Uploads.completeMany(summary.uploadedCount)
-                        let alreadyThere = state.selectedTab == .browse
-                            && summary.lastDestination == state.currentBrowseDirectory
+                        let alreadyThere = summary.lastDestination == state.visibleFolderPath
                         state.uploadToast = UploadToast(
                             message: message,
                             openDestination: alreadyThere ? nil : summary.lastDestination
@@ -414,11 +460,10 @@ public struct MainTabFeature {
 
                 case let .openUploadedLocation(destination):
                     state.uploadToast = nil
-                    state.selectedTab = .browse
                     let title = destination.isEmpty
                         ? L10n.Browse.navigationTitle
                         : (destination as NSString).lastPathComponent
-                    return .send(.browse(.navigateToDirectory(path: destination, title: title)))
+                    return Self.open(destination, title: title, in: &state)
 
                 case .dismissUploadToast:
                     state.uploadToast = nil
@@ -427,6 +472,7 @@ public struct MainTabFeature {
                 case .appBecameActive:
                     return .merge(
                         .send(.browse(.syncPathStack)),
+                        .send(.sharedBrowse(.syncPathStack)),
                         .send(.favorites(.syncPathStack)),
                         .send(.uploads(.appResumed)),
                         .send(.settings(.loadPreferences)),
@@ -478,6 +524,7 @@ public struct MainTabFeature {
                     // the Favorites tab keeps its "saved copy" banner after the connection is back.
                     return .merge(
                         .send(.browse(.syncPathStack)),
+                        .send(.sharedBrowse(.syncPathStack)),
                         .send(.favorites(.refreshButtonTapped)),
                         .send(.favorites(.syncPathStack)),
                         .send(.shared(.refreshRequested)),
@@ -487,15 +534,19 @@ public struct MainTabFeature {
                     )
 
                 case .browse(.delegate(.favoritesChanged)),
+                     .sharedBrowse(.delegate(.favoritesChanged)),
                      .favorites(.delegate(.favoritesChanged)),
                      .downloads(.delegate(.favoritesChanged)):
                     return .send(.favorites(.refreshButtonTapped))
 
-                case .browse(.delegate(.openDownloadsTapped)), .favorites(.delegate(.openDownloadsTapped)):
+                case .browse(.delegate(.openDownloadsTapped)),
+                     .sharedBrowse(.delegate(.openDownloadsTapped)),
+                     .favorites(.delegate(.openDownloadsTapped)):
                     state.selectedTab = .downloads
                     return .send(.downloads(.refreshButtonTapped))
 
                 case .browse(.delegate(.openTrashTapped)),
+                     .sharedBrowse(.delegate(.openTrashTapped)),
                      .favorites(.delegate(.openTrashTapped)),
                      .downloads(.delegate(.openTrashTapped)):
                     #if os(macOS)
@@ -510,10 +561,18 @@ public struct MainTabFeature {
                     return .send(.browse(.syncPathStack))
 
                 case let .trash(.delegate(.openPath(path, title))):
-                    state.selectedTab = .browse
-                    return .send(.browse(.navigateToDirectory(path: path, title: title)))
+                    return Self.open(path, title: title, in: &state)
+
+                case .browse(.delegate(.openSharedWithMe)), .sharedBrowse(.delegate(.openSharedWithMe)):
+                    return .send(.sharedWithMeRequested)
+
+                case let .shared(.delegate(.openFolder(path, title))),
+                     let .sharedBrowse(.delegate(.openOutsideShare(path, title))),
+                     let .browse(.delegate(.openOutsideShare(path, title))):
+                    return Self.open(path, title: title, in: &state)
 
                 case .browse(.delegate(.goToSharedTab)),
+                     .sharedBrowse(.delegate(.goToSharedTab)),
                      .favorites(.delegate(.goToSharedTab)),
                      .downloads(.delegate(.goToSharedTab)):
                     state.selectedTab = .shared
@@ -565,12 +624,13 @@ public struct MainTabFeature {
                         state.folderWindowSync.broadcast(change, from: origin)
                         return .merge(
                             BrowseTabFeature.refresh(for: change).map(Action.browse),
+                            BrowseTabFeature.refresh(for: change).map(Action.sharedBrowse),
                             FavoritesFeature.refresh(for: change).map(Action.favorites)
                         )
                 #endif
 
-                case .browse, .favorites, .shared, .downloads, .settings, .trash, .uploads, .downloadQueue, .offline,
-                     .offlineManage, .delegate,
+                case .browse, .sharedBrowse, .favorites, .shared, .downloads, .settings, .trash, .uploads,
+                     .downloadQueue, .offline, .offlineManage, .delegate,
                      .deviceExportFinished:
                     return .none
                 }
@@ -594,6 +654,7 @@ public struct MainTabFeature {
                     return .merge(
                         .send(.offline(.pinnedRootsRemoved)),
                         .send(.browse(.offlineAvailabilityChanged)),
+                        .send(.sharedBrowse(.offlineAvailabilityChanged)),
                         .send(.favorites(.offlineAvailabilityChanged)),
                         .send(.downloads(.offlineAvailabilityChanged))
                     )
@@ -606,10 +667,12 @@ public struct MainTabFeature {
                     }
                     return .none
                 case let .browse(.delegate(.offlinePinRequested(items))),
+                     let .sharedBrowse(.delegate(.offlinePinRequested(items))),
                      let .favorites(.delegate(.offlinePinRequested(items))),
                      let .downloads(.delegate(.offlinePinRequested(items))):
                     return .send(.offline(.startDownload(items)))
                 case let .browse(.delegate(.offlineUnpinRequested(path))),
+                     let .sharedBrowse(.delegate(.offlineUnpinRequested(path))),
                      let .favorites(.delegate(.offlineUnpinRequested(path))),
                      let .downloads(.delegate(.offlineUnpinRequested(path))):
                     return .send(.offline(.unpinTapped(path: path)))
@@ -637,7 +700,7 @@ public struct MainTabFeature {
         }
         .onChange(of: \.browse.currentDirectoryPath) { _, path in
             Reduce { state, _ in
-                guard !path.isEmpty else { return .none }
+                guard !path.isEmpty, ReceivedShareSpace.shareRoot(of: path) == nil else { return .none }
                 state.recentFolders.removeAll { $0 == path }
                 state.recentFolders.insert(path, at: 0)
                 state.recentFolders = Array(state.recentFolders.prefix(Self.recentFoldersLimit))
@@ -693,6 +756,15 @@ public struct MainTabFeature {
         state.trash.phase.hasLoaded ? .send(.trash(.refreshPulled)) : .none
     }
 
+    static func open(_ path: String, title: String, in state: inout State) -> Effect<Action> {
+        guard ReceivedShareSpace.shareRoot(of: path) != nil else {
+            state.selectedTab = .browse
+            return .send(.browse(.navigateToDirectory(path: path, title: title)))
+        }
+        state.selectedTab = .shared
+        return .send(.sharedBrowse(.navigateToDirectory(path: path, title: title)))
+    }
+
     /// As many as Finder's Recent Folders menu keeps by default.
     static let recentFoldersLimit = 10
 
@@ -727,7 +799,8 @@ extension MainTabFeature.State {
         case .browse: browse.canGoBackFromScreen
         case .favorites: favorites.canGoBack
         case .trash: trash.folder != nil
-        case .shared, .downloads, .settings: false
+        case .shared: sharedBrowse.canGoBack
+        case .downloads, .settings: false
         }
     }
 
@@ -736,7 +809,8 @@ extension MainTabFeature.State {
         case .browse: browse.trash == nil && browse.canGoBack
         case .favorites: favorites.canGoBack
         case .trash: trash.folder != nil
-        case .shared, .downloads, .settings: false
+        case .shared: sharedBrowse.canGoBack
+        case .downloads, .settings: false
         }
     }
 
@@ -744,7 +818,8 @@ extension MainTabFeature.State {
         switch selectedTab {
         case .browse: browse.canGoForward
         case .favorites: favorites.canGoForward
-        case .shared, .downloads, .settings, .trash: false
+        case .shared: sharedBrowse.canGoForward
+        case .downloads, .settings, .trash: false
         }
     }
 }

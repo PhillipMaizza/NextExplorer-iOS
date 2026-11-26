@@ -20,6 +20,9 @@
         var body: some View {
             let items = store.displayedItems.filter { ids.contains($0.id) }
             if items.isEmpty {
+                if !store.shouldShowDeviceContent, let folder = store.state.folderItem(now: .now) {
+                    folderActions(folder)
+                }
                 if !store.directoryPath.isEmpty, store.canCreateFolderHere {
                     Button { store.send(.newFolderTapped) } label: {
                         Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
@@ -44,15 +47,17 @@
                 fileActions(item)
             } else {
                 Section {
-                    Button {
-                        store.send(.tableSelectionChanged(ids))
-                        store.send(.copySelectionTapped, animation: DSMotion.listDiff)
-                    } label: {
-                        Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
+                    if actions(items).canCopy {
+                        Button {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.copySelectionTapped, animation: DSMotion.listDiff)
+                        } label: {
+                            Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
+                        }
+                        .tint(.primaryDS)
+                        .keyboardShortcut("c")
                     }
-                    .tint(.primaryDS)
-                    .keyboardShortcut("c")
-                    if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
+                    if actions(items).canDuplicate {
                         Button {
                             store.send(.tableSelectionChanged(ids))
                             store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
@@ -62,7 +67,7 @@
                         .tint(.primaryDS)
                         .keyboardShortcut("d")
                     }
-                    if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    if actions(items).canMove {
                         Button {
                             store.send(.tableSelectionChanged(ids))
                             store.send(.cutSelectionTapped, animation: DSMotion.listDiff)
@@ -72,7 +77,7 @@
                         .tint(.primaryDS)
                         .keyboardShortcut("x")
                     }
-                    if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    if actions(items).canMove {
                         Button {
                             store.send(.tableSelectionChanged(ids))
                             store.send(.bulkMoveTapped, animation: DSMotion.listDiff)
@@ -84,7 +89,7 @@
                 }
                 Section {
                     // Select mode's bulk bar is iOS only, so the Mac's several row actions live here.
-                    if store.access?.canDownload ?? false {
+                    if actions(items).canDownload {
                         Button {
                             store.send(.tableSelectionChanged(ids))
                             store.send(.bulkDownloadTapped)
@@ -99,7 +104,7 @@
                 Section {
                     offlineAction(items, removals: true)
                     favoriteAction(items, removals: true)
-                    if store.access?.canDelete ?? false {
+                    if actions(items).canDelete {
                         Button(role: .destructive) {
                             store.send(.tableSelectionChanged(ids))
                             store.send(.deleteSelectionTapped)
@@ -120,9 +125,34 @@
         }
 
         @ViewBuilder
+        private func folderActions(_ folder: FileItem) -> some View {
+            Section {
+                Button { store.send(.infoTapped(folder)) } label: {
+                    Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
+                }
+                .tint(.primaryDS)
+            }
+            Section {
+                let isFavorite = store.favoritePaths.contains(folder.id)
+                RemovableMenuButton(
+                    title: isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,
+                    icon: isFavorite ? IconKit.starFill : IconKit.star,
+                    isRemoval: isFavorite
+                ) {
+                    store.send(.favoriteToggleButtonTapped(folder))
+                }
+                .disabled(!store.hasLoadedFavorites)
+            }
+        }
+
+        private func actions(_ items: some Collection<FileItem>) -> FileItemActions {
+            store.state.actions(for: Array(items))
+        }
+
+        @ViewBuilder
         private func offlineAction(_ items: some Collection<FileItem>, removals: Bool) -> some View {
             let action = OfflineBulkAction.resolve(selectedIDs: items.map(\.id), offlineIDs: store.offlineItemIDs)
-            if store.access?.canDownload ?? false, (action == .remove) == removals {
+            if action == .remove || actions(items).canKeepOffline, (action == .remove) == removals {
                 RemovableMenuButton(
                     title: action?.title ?? L10n.Browse.actionAvailableOffline,
                     icon: action?.icon ?? IconKit.availableOffline,

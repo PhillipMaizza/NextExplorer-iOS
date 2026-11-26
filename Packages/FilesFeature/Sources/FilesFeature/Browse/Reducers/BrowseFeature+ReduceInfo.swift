@@ -113,6 +113,7 @@ extension BrowseFeature {
             return loadTextContent(&state, item: item)
 
         case let .textSaveTapped(newContent):
+            guard let item = state.previewItem, state.actions(for: item).canEditText else { return .none }
             return confirmTextSave(&state, newContent: newContent)
 
         case let .textSaveResponse(path, .success(savedContent)):

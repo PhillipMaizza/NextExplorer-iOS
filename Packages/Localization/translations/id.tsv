@@ -203,6 +203,7 @@ uploads.cancelAll	Batalkan semua unggahan
 shared.navigationTitle	Dibagikan
 shared.segmentByMe	Oleh saya
 shared.segmentWithMe	Dengan saya
+shared.sharedWithMe	Dibagikan dengan Saya
 shared.sectionExpired	Kedaluwarsa
 shared.filterAll	Semua
 shared.filterAnyone	Siapa saja
@@ -1168,7 +1169,6 @@ trashSettings.versionsEnvironmentNote	Nilai default berasal dari VERSIONS_ENABLE
 versionedFiles.refresh	Segarkan
 browse.actionAvailableOffline	Tersedia offline
 browse.actionKeepOffline	Simpan Offline
-browse.actionShowInFolder	Tampilkan di Folder
 browse.actionSaveToDevice	Simpan ke Perangkat
 previewToolbar.saveToDevice	Simpan ke Perangkat
 downloadQueue.savedToPhotos	Disimpan ke Foto

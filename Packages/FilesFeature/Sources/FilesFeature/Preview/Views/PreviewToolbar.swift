@@ -62,6 +62,7 @@ private struct PreviewChrome: ViewModifier {
     /// The file on screen, which names the save action: a photo or video goes to Photos.
     let file: FileItem?
     @Environment(\.previewOffline) private var environmentOffline
+    @Environment(\.canExportPreview) private var canExport
     let title: String?
     let systemShare: SystemShareSource
     let onShareLink: (() -> Void)?
@@ -104,8 +105,12 @@ private struct PreviewChrome: ViewModifier {
         image.foregroundStyle(Color.primaryDS)
     }
 
+    private var shareSource: SystemShareSource {
+        canExport ? systemShare : .unavailable
+    }
+
     private var hasSystemShare: Bool {
-        if case .unavailable = systemShare {
+        if case .unavailable = shareSource {
             return false
         }
         return true
@@ -146,7 +151,7 @@ private struct PreviewChrome: ViewModifier {
                     }
                     if hasBottomBar {
                         ToolbarItemGroup(placement: .bottomBar) {
-                            SystemShareButton(source: systemShare)
+                            SystemShareButton(source: shareSource)
                             if let onDelete {
                                 Spacer()
                                 Button { onDelete() } label: { IconKit.delete.foregroundStyle(Color.negative) }
@@ -157,7 +162,7 @@ private struct PreviewChrome: ViewModifier {
                 }
                 .systemShareSheet(shareModel)
                 .onDisappear { shareModel.cancel() }
-                .onChange(of: systemShare.fileID) { shareModel.cancel() }
+                .onChange(of: shareSource.fileID) { shareModel.cancel() }
                 .onChange(of: shareModel.hasFailed) { _, hasFailed in
                     guard hasFailed else { return }
                     shareFailureToast = .failure(L10n.OpenWith.failed)
@@ -185,7 +190,7 @@ private struct PreviewChrome: ViewModifier {
         Section {
             menuButton(L10n.PreviewToolbar.createShareLink, icon: IconKit.shareLink, action: onShareLink)
             if includesShare, hasSystemShare {
-                Button { shareModel.prepare(systemShare) } label: {
+                Button { shareModel.prepare(shareSource) } label: {
                     Label { Text(L10n.PreviewToolbar.share) } icon: { menuIcon(IconKit.share) }
                 }
                 .disabled(shareModel.isPreparing)
@@ -238,9 +243,9 @@ private struct PreviewChrome: ViewModifier {
                     .help(L10n.Common.edit)
                 }
                 if hasSystemShare {
-                    MacOpenWithMenu(source: systemShare)
+                    MacOpenWithMenu(source: shareSource)
                         .fixedSize()
-                    SystemShareButton(source: systemShare)
+                    SystemShareButton(source: shareSource)
                 }
                 if hasFileActions {
                     Menu {

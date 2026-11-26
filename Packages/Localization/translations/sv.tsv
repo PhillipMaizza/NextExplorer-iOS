@@ -205,6 +205,7 @@ uploads.cancelAll	Avbryt alla uppladdningar
 shared.navigationTitle	Delade
 shared.segmentByMe	Av mig
 shared.segmentWithMe	Med mig
+shared.sharedWithMe	Delat med mig
 shared.sectionExpired	Utgångna
 shared.filterAll	Alla
 shared.filterAnyone	Vem som helst
@@ -1238,7 +1239,6 @@ twoFactor.turnOffButton	Slå av
 twoFactor.turnOnButton	Slå på
 browse.actionAvailableOffline	Tillgängligt offline
 browse.actionKeepOffline	Behåll offline
-browse.actionShowInFolder	Visa i mapp
 browse.actionSaveToDevice	Spara på enheten
 previewToolbar.saveToDevice	Spara på enheten
 downloadQueue.savedToPhotos	Sparad i Bilder

@@ -18,15 +18,15 @@ struct FileClipboardTests {
     @Test("root and read-only folders are never valid targets")
     func rejectsRootAndReadOnly() {
         let clip = FileClipboard(items: [file(TestFile.aText, path: TestFolder.inbox)], operation: .copy)
-        #expect(clip.canPaste(into: "", canWrite: true) == false)
-        #expect(clip.canPaste(into: TestFolder.documents, canWrite: false) == false)
+        #expect(clip.canPaste(into: "", canReceive: true) == false)
+        #expect(clip.canPaste(into: TestFolder.documents, canReceive: false) == false)
     }
 
     @Test("copy into any writable folder is allowed, including the item's own parent")
     func copyIsPermissive() {
         let clip = FileClipboard(items: [file(TestFile.aText, path: TestFolder.inbox)], operation: .copy)
-        #expect(clip.canPaste(into: TestFolder.inbox, canWrite: true) == true)
-        #expect(clip.canPaste(into: TestFolder.documents, canWrite: true) == true)
+        #expect(clip.canPaste(into: TestFolder.inbox, canReceive: true) == true)
+        #expect(clip.canPaste(into: TestFolder.documents, canReceive: true) == true)
     }
 
     @Test("copy of a folder into itself or a subdirectory of itself is blocked (server EINVAL)")
@@ -41,17 +41,17 @@ struct FileClipboardTests {
             )],
             operation: .copy
         )
-        #expect(folder.canPaste(into: TestPath.mediaPhotos, canWrite: true) == false)
-        #expect(folder.canPaste(into: TestPath.mediaPhotos2024, canWrite: true) == false)
-        #expect(folder.canPaste(into: "Media/PhotosArchive", canWrite: true) == true)
-        #expect(folder.canPaste(into: Constants.mediaOther, canWrite: true) == true)
+        #expect(folder.canPaste(into: TestPath.mediaPhotos, canReceive: true) == false)
+        #expect(folder.canPaste(into: TestPath.mediaPhotos2024, canReceive: true) == false)
+        #expect(folder.canPaste(into: "Media/PhotosArchive", canReceive: true) == true)
+        #expect(folder.canPaste(into: Constants.mediaOther, canReceive: true) == true)
     }
 
     @Test("move is blocked into the item's own parent and into a folder being moved")
     func moveGuards() {
         let file = FileClipboard(items: [file(TestFile.aText, path: TestFolder.inbox)], operation: .move)
-        #expect(file.canPaste(into: TestFolder.inbox, canWrite: true) == false)
-        #expect(file.canPaste(into: TestFolder.documents, canWrite: true) == true)
+        #expect(file.canPaste(into: TestFolder.inbox, canReceive: true) == false)
+        #expect(file.canPaste(into: TestFolder.documents, canReceive: true) == true)
 
         let folder = FileClipboard(
             items: [FileItem(
@@ -63,12 +63,54 @@ struct FileClipboardTests {
             )],
             operation: .move
         )
-        #expect(folder.canPaste(into: TestPath.mediaPhotos, canWrite: true) == false)
-        #expect(folder.canPaste(into: TestPath.mediaPhotos2024, canWrite: true) == false)
-        #expect(folder.canPaste(into: Constants.mediaOther, canWrite: true) == true)
+        #expect(folder.canPaste(into: TestPath.mediaPhotos, canReceive: true) == false)
+        #expect(folder.canPaste(into: TestPath.mediaPhotos2024, canReceive: true) == false)
+        #expect(folder.canPaste(into: Constants.mediaOther, canReceive: true) == true)
     }
 }
 
 private enum Constants {
     static let mediaOther = "Media/Other"
+}
+
+@Suite("FileAccess actions")
+struct FileAccessActionTests {
+    private func access(
+        write: Bool = false,
+        delete: Bool = false,
+        folder: Bool = false,
+        file: Bool = false
+    ) -> FileAccess {
+        FileAccess(
+            canRead: true, canWrite: write, canUpload: false, canDelete: delete, canShare: false, canDownload: true,
+            canCreateFolder: folder, canCreateFile: file
+        )
+    }
+
+    @Test("A folder takes copied files with the right to create files, and copied folders only with both create rights")
+    func receive() {
+        let file = FileItem(name: "a.txt", path: "Docs", dateModified: .distantPast, size: 1, kind: "txt")
+        let folder = FileItem(
+            name: "Sub",
+            path: "Docs",
+            dateModified: .distantPast,
+            size: 0,
+            kind: FileItem.directoryKind
+        )
+        #expect(access(file: true).canReceive([file]))
+        #expect(!access(file: true).canReceive([file, folder]))
+        #expect(access(folder: true, file: true).canReceive([file, folder]))
+        #expect(!access(folder: true).canReceive([folder]))
+        #expect(!access(write: true).canReceive([file]))
+    }
+
+    @Test("Move needs write and delete, like the web menu; extract needs both create rights; compress needs new files")
+    func moveExtractCompress() {
+        #expect(access(write: true, delete: true).canMove)
+        #expect(!access(delete: true).canMove)
+        #expect(access(folder: true, file: true).canExtract)
+        #expect(!access(file: true).canExtract)
+        #expect(access(file: true).canCompress)
+        #expect(!access(write: true, folder: true).canCompress)
+    }
 }

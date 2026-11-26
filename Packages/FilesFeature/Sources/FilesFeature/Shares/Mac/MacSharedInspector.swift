@@ -18,6 +18,7 @@
         let item: SharedFeature.Item
         var selectedShareID: Share.ID?
         var onSelectShare: (Share.ID) -> Void = { _ in }
+        var onOpen: (Share) -> Void = { _ in }
         let onToast: (DSToastMessage) -> Void
 
         private var previewItem: FileItem? {
@@ -51,6 +52,16 @@
             ScrollView {
                 VStack(alignment: .leading, spacing: MacInspectorMetrics.sectionSpacing) {
                     header
+                    if !isByMe, let share, !isExpiredShare {
+                        Button { onOpen(share) } label: {
+                            Label { Text(L10n.Browse.open) } icon: {
+                                share.isDirectory ? IconKit.folder : IconKit.document
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.macDS(.primary))
+                        .accessibilityIdentifier(AccessibilityIdentifiers.Shared.openShare)
+                    }
                     if let share {
                         MacShareDetail(
                             store: store,

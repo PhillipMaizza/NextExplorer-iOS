@@ -32,10 +32,12 @@
                 store: Store(initialState: ArchiveBrowserFeature.State(archive: archive, serverURL: browse.serverURL)) {
                     ArchiveBrowserFeature()
                 },
-                onExtract: { paths in
-                    dismiss()
-                    browse.send(.extractTapped(archive, entryPaths: paths))
-                },
+                onExtract: browse.state.actions(for: archive).canExtract
+                    ? { paths in
+                        dismiss()
+                        browse.send(.extractTapped(archive, entryPaths: paths))
+                    }
+                    : nil,
                 onClose: dismiss
             )
             host?.show(card, owner: owner, onClose: dismiss)

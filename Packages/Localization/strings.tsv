@@ -95,7 +95,6 @@ browse.actionCompress	Compress
 browse.actionDownload	Download
 browse.actionAvailableOffline	Available Offline
 browse.actionKeepOffline	Keep Offline
-browse.actionShowInFolder	Show in Folder
 browse.actionSaveToDevice	Save to Device
 browse.actionRemoveFromOffline	Remove from Offline
 browse.actionAddToFavorites	Add to Favorites
@@ -251,6 +250,7 @@ uploads.cancelAll	Cancel all uploads
 shared.navigationTitle	Shared
 shared.segmentByMe	By me
 shared.segmentWithMe	With me
+shared.sharedWithMe	Shared with Me
 shared.sectionExpired	Expired
 shared.badgeExpired	expired
 shared.emptyByMe	Share a file or folder to see its link here.

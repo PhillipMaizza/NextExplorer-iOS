@@ -33,7 +33,11 @@ struct BrowsePasteMenu: View {
 
     /// Whether the current folder is a legitimate paste target for the staged clipboard.
     static func canPaste(_ store: StoreOf<BrowseFeature>) -> Bool {
-        store.clipboard?.canPaste(into: store.directoryPath, canWrite: store.access?.canWrite ?? false) ?? false
+        guard let clipboard = store.clipboard else { return false }
+        return clipboard.canPaste(
+            into: store.directoryPath,
+            canReceive: store.access?.canReceive(clipboard.items) ?? false
+        )
     }
 
     /// "Paste" for a single staged item, "Paste N items" past that.

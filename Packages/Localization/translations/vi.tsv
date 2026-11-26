@@ -203,6 +203,7 @@ uploads.cancelAll	Hủy tất cả lượt tải lên
 shared.navigationTitle	Đã chia sẻ
 shared.segmentByMe	Bởi tôi
 shared.segmentWithMe	Với tôi
+shared.sharedWithMe	Được chia sẻ với tôi
 shared.sectionExpired	Đã hết hạn
 shared.filterAll	Tất cả
 shared.filterAnyone	Bất kỳ ai
@@ -1168,7 +1169,6 @@ trashSettings.versionsEnvironmentNote	Giá trị mặc định lấy từ VERSIO
 versionedFiles.refresh	Làm mới
 browse.actionAvailableOffline	Có sẵn ngoại tuyến
 browse.actionKeepOffline	Giữ ngoại tuyến
-browse.actionShowInFolder	Hiện trong thư mục
 browse.actionSaveToDevice	Lưu vào thiết bị
 previewToolbar.saveToDevice	Lưu vào thiết bị
 downloadQueue.savedToPhotos	Đã lưu vào Ảnh
