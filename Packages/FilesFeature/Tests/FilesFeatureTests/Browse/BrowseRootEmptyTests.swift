@@ -68,4 +68,36 @@ struct BrowseRootEmptyTests {
         #expect(BrowseTabFeature.State(serverURL: serverURL, isAdmin: true).root.isAdmin)
         #expect(!BrowseTabFeature.State(serverURL: serverURL).root.isAdmin)
     }
+
+    @Test(
+        "Only a loaded folder that refuses every change is read only; the root, a pending listing and select mode are not"
+    )
+    func readOnlyGuideNeedsLoadedReadOnlyAccess() {
+        let readOnly = BrowseFixtures.state(
+            TestFolder.files,
+            title: TestFolder.files,
+            access: BrowseTestSupport.readOnlyAccess
+        )
+        #expect(readOnly.readOnlyEmptyGuide == .readOnlyFolder(canDownload: true))
+
+        #expect(BrowseFixtures.state(TestFolder.files, title: TestFolder.files).readOnlyEmptyGuide == nil)
+        #expect(BrowseFixtures.state(TestFolder.files, title: TestFolder.files, access: BrowseTestSupport.fullAccess)
+            .readOnlyEmptyGuide == nil)
+        #expect(BrowseFixtures.state(access: BrowseTestSupport.readOnlyAccess).readOnlyEmptyGuide == nil)
+
+        var selecting = readOnly
+        selecting.isSelecting = true
+        #expect(selecting.readOnlyEmptyGuide == nil)
+
+        let noDownload = FileAccess(
+            canRead: true,
+            canWrite: false,
+            canUpload: false,
+            canDelete: false,
+            canShare: false,
+            canDownload: false
+        )
+        #expect(BrowseFixtures.state(TestFolder.files, title: TestFolder.files, access: noDownload)
+            .readOnlyEmptyGuide == .readOnlyFolder(canDownload: false))
+    }
 }

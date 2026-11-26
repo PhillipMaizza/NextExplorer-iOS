@@ -62,14 +62,18 @@
     public struct FolderWindowView: View {
         let store: StoreOf<FolderWindowFeature>
         @State private var isGoToFolderPresented = false
+        @State private var enclosingFolderOpener: MacSectionOpener
 
         public init(store: StoreOf<FolderWindowFeature>) {
             self.store = store
+            _enclosingFolderOpener = State(initialValue: MacSectionOpener { store.send(.browse(.goToEnclosingFolder)) })
         }
 
         public var body: some View {
             BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
                 .macEmptyGuideOverlay()
+                .environment(\.showMacEnclosingFolder, enclosingFolderOpener)
+                .environment(\.canOpenMacAccessRules, store.browse.root.isAdmin)
                 .macPeekHosting()
                 .macWindowToolbar()
                 .windowTitle(store.browse.path.last?.title ?? store.browse.root.title)

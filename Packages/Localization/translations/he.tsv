@@ -1414,6 +1414,11 @@ emptyGuide.sharedBody	לחצו לחיצה ימנית על קובץ או תיקי
 emptyGuide.sharedWithMeTitle	עדיין לא שיתפו איתך דבר
 emptyGuide.offlineTitle	שמירת קבצים ב־Mac הזה
 emptyGuide.offlineBody	לחצו לחיצה ימנית על כל קובץ או תיקייה בעיון ובחרו ״%@״.\nתיקיות מקבלות קבצים חדשים בכל סנכרון של האפליקציה.\n\nקבצים שהורדו נפתחים גם ללא חיבור.
+emptyGuide.readOnlyTitle	התיקייה הזו לקריאה בלבד
+emptyGuide.readOnlyOpen	קבצים שיתווספו כאן יופיעו לך לפתיחה ולהורדה.
+emptyGuide.readOnlyOpenOnly	קבצים שיתווספו כאן יופיעו לך לפתיחה.
+emptyGuide.readOnlyLocked	העלאה, תיקיות חדשות, שינוי שם ומחיקה כבויים עבורך כאן.
+emptyGuide.openAccessRules	פתיחת %@
 settings.groupTheme	ערכת נושא
 settings.sectionFiles	קבצים
 settings.groupFileLists	רשימות קבצים

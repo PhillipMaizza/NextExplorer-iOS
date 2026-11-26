@@ -1443,6 +1443,11 @@ emptyGuide.sharedBody	Faites un clic droit sur un fichier ou un dossier dans Exp
 emptyGuide.sharedWithMeTitle	Rien n’a encore été partagé avec vous
 emptyGuide.offlineTitle	Garder des fichiers sur ce Mac
 emptyGuide.offlineBody	Faites un clic droit sur un fichier ou un dossier dans Explorer et choisissez « %@ ».\nLes dossiers récupèrent les nouveaux fichiers à chaque synchronisation de l’app.\n\nLes fichiers téléchargés s'ouvrent même sans connexion.
+emptyGuide.readOnlyTitle	Ce dossier est en lecture seule
+emptyGuide.readOnlyOpen	Les fichiers ajoutés ici s'afficheront pour que vous puissiez les ouvrir et les télécharger.
+emptyGuide.readOnlyOpenOnly	Les fichiers ajoutés ici s'afficheront pour que vous puissiez les ouvrir.
+emptyGuide.readOnlyLocked	L'envoi, les nouveaux dossiers, le renommage et la suppression sont désactivés pour vous ici.
+emptyGuide.openAccessRules	Ouvrir %@
 settings.groupTheme	Thème
 settings.sectionFiles	Fichiers
 settings.groupFileLists	Listes de fichiers

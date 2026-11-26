@@ -1443,6 +1443,11 @@ emptyGuide.sharedBody	ब्राउज़ करें में किसी 
 emptyGuide.sharedWithMeTitle	अभी तक आपके साथ कुछ शेयर नहीं किया गया
 emptyGuide.offlineTitle	फ़ाइलें इस Mac पर रखें
 emptyGuide.offlineBody	ब्राउज़ करें में किसी भी फ़ाइल या फ़ोल्डर पर राइट क्लिक करें और “%@” चुनें।\nहर बार ऐप सिंक होने पर फ़ोल्डरों में नई फ़ाइलें आ जाती हैं।\n\nडाउनलोड की गई फ़ाइलें बिना कनेक्शन के भी खुलती हैं।
+emptyGuide.readOnlyTitle	यह फ़ोल्डर केवल पढ़ने के लिए है
+emptyGuide.readOnlyOpen	यहाँ जोड़ी गई फ़ाइलें आपको खोलने और डाउनलोड करने के लिए दिखेंगी।
+emptyGuide.readOnlyOpenOnly	यहाँ जोड़ी गई फ़ाइलें आपको खोलने के लिए दिखेंगी।
+emptyGuide.readOnlyLocked	अपलोड, नए फ़ोल्डर, नाम बदलना और हटाना यहाँ आपके लिए बंद हैं।
+emptyGuide.openAccessRules	%@ खोलें
 settings.groupTheme	थीम
 settings.sectionFiles	फ़ाइलें
 settings.groupFileLists	फ़ाइल सूचियाँ

@@ -1,4 +1,5 @@
 #if os(macOS)
+    import AppStorageKeys
     import DesignSystem
     import Localization
     import SwiftUI
@@ -6,8 +7,8 @@
     private enum Metrics {
         static let tileIconRatio: CGFloat = 0.4375
         static let tileTint: Double = .opacityWash
-        static let bulletIconSize: CGFloat = .size18
-        static let bulletIconNudge: CGFloat = 1
+        static let bulletIconSize: CGFloat = .size16
+        static let bulletIconBaselineDrop: CGFloat = 5
         static let highlightTint: Double = .opacitySelection
         static let menuWidth: CGFloat = 220
     }
@@ -28,6 +29,8 @@
     extension EnvironmentValues {
         @Entry var showMacBrowse: MacSectionOpener?
         @Entry var showMacSharedWithMe: MacSectionOpener?
+        @Entry var showMacEnclosingFolder: MacSectionOpener?
+        @Entry var canOpenMacAccessRules = false
     }
 
     struct MacEmptyGuideKey: PreferenceKey {
@@ -136,13 +139,14 @@
         let text: String
 
         var body: some View {
-            HStack(alignment: .top, spacing: .space8) {
+            HStack(alignment: .firstTextBaseline, spacing: .space8) {
                 icon
                     .resizable()
                     .scaledToFit()
                     .frame(width: Metrics.bulletIconSize, height: Metrics.bulletIconSize)
                     .foregroundStyle(Color.secondaryDS)
-                    .padding(.top, Metrics.bulletIconNudge)
+                    .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + Metrics.bulletIconBaselineDrop
+                    }
                     .accessibilityHidden(true)
                 Text(text)
                     .type(.body1(.regular), style: .secondary)
@@ -216,6 +220,49 @@
         }
     }
 
+    struct MacReadOnlyFolderGuide: View {
+        let canDownload: Bool
+        @Environment(\.showMacEnclosingFolder) private var enclosingFolder
+        @Environment(\.canOpenMacAccessRules) private var canOpenAccessRules
+        @Environment(\.openSettings) private var openSettings
+        @AppStorage(AppStorageKeys.macSettingsPane) private var settingsPane = MacSettingsCategory.appearance
+
+        var body: some View {
+            MacEmptyGuide(title: L10n.EmptyGuide.readOnlyTitle) {
+                MacEmptyGuideTile(icon: IconKit.macLock)
+            } detail: {
+                MacEmptyGuideBullet(
+                    icon: IconKit.macEye,
+                    text: canDownload ? L10n.EmptyGuide.readOnlyOpen : L10n.EmptyGuide.readOnlyOpenOnly
+                )
+                MacEmptyGuideBullet(icon: IconKit.macLock, text: L10n.EmptyGuide.readOnlyLocked)
+                HStack(spacing: .space8) {
+                    if let enclosingFolder {
+                        Button { enclosingFolder() } label: {
+                            Label {
+                                Text(L10n.Menu.enclosingFolder)
+                            } icon: {
+                                IconKit.macToolbarUp
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: Metrics.bulletIconSize, height: Metrics.bulletIconSize)
+                            }
+                        }
+                        .buttonStyle(.macDS(.primary))
+                    }
+                    if canOpenAccessRules {
+                        Button(L10n.EmptyGuide.openAccessRules(L10n.AccessRules.navigationTitle)) {
+                            settingsPane = .accessRules
+                            openSettings()
+                        }
+                        .buttonStyle(.macDS(.secondary))
+                    }
+                }
+                .padding(.top, .space8)
+            }
+        }
+    }
+
     struct MacListGuideView: View {
         let guide: MacListGuide
 
@@ -261,6 +308,8 @@
                 } detail: {
                     MacEmptyGuideMessage(message: L10n.EmptyGuide.browseRootUnassignedBody, destination: .sharedWithMe)
                 }
+            case let .readOnlyFolder(canDownload):
+                MacReadOnlyFolderGuide(canDownload: canDownload)
             case .browseRootNoVolumes:
                 MacEmptyGuide(title: L10n.EmptyGuide.browseRootNoVolumesTitle) {
                     MacEmptyGuideTile(icon: IconKit.macSidebarBrowse)

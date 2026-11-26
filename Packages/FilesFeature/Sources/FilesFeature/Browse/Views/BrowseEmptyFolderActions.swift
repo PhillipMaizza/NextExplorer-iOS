@@ -31,6 +31,9 @@ struct BrowseEmptyFolderActions: View {
                     onCreateFolder: { store.send(.newFolderTapped) },
                     onUpload: { isFilesPickerPresented = true }
                 )
+            } else if let guide = store.readOnlyEmptyGuide {
+                MacListGuideView(guide: guide)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 actions
             }

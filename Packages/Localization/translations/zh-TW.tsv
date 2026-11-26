@@ -1405,6 +1405,11 @@ emptyGuide.sharedBody	在「瀏覽」中右鍵點按檔案或資料夾並選擇�
 emptyGuide.sharedWithMeTitle	還沒有人與你分享內容
 emptyGuide.offlineTitle	將檔案保留在這台 Mac 上
 emptyGuide.offlineBody	在「瀏覽」中右鍵點按任何檔案或資料夾並選擇「%@」。\n每次 App 同步時，資料夾都會取得新檔案。\n\n已下載的檔案即使沒有連線也能開啟。
+emptyGuide.readOnlyTitle	此資料夾為唯讀
+emptyGuide.readOnlyOpen	加入此處的檔案可供你開啟和下載。
+emptyGuide.readOnlyOpenOnly	加入此處的檔案可供你開啟。
+emptyGuide.readOnlyLocked	你在此處無法上傳、新增檔案夾、重新命名或刪除。
+emptyGuide.openAccessRules	開啟%@
 settings.groupTheme	主題
 settings.sectionFiles	檔案
 settings.groupFileLists	檔案列表

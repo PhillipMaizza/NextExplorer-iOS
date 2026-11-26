@@ -1519,6 +1519,11 @@ emptyGuide.sharedBody	Kliknij prawym przyciskiem plik lub folder w sekcji Przegl
 emptyGuide.sharedWithMeTitle	Nikt jeszcze niczego Ci nie udostępnił
 emptyGuide.offlineTitle	Zachowaj pliki na tym Macu
 emptyGuide.offlineBody	Kliknij prawym przyciskiem dowolny plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nFoldery pobierają nowe pliki przy każdej synchronizacji aplikacji.\n\nPobrane pliki otwierają się nawet bez połączenia.
+emptyGuide.readOnlyTitle	Ten folder jest tylko do odczytu
+emptyGuide.readOnlyOpen	Pliki dodane tutaj będzie można otworzyć i pobrać.
+emptyGuide.readOnlyOpenOnly	Pliki dodane tutaj będzie można otworzyć.
+emptyGuide.readOnlyLocked	Przesyłanie, nowe foldery, zmiana nazwy i usuwanie są tu dla Ciebie wyłączone.
+emptyGuide.openAccessRules	Otwórz %@
 settings.groupTheme	Motyw
 settings.sectionFiles	Pliki
 settings.groupFileLists	Listy plików

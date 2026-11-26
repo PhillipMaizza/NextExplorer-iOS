@@ -11,11 +11,13 @@
         @State private var inspectorReserve: CGFloat = .zero
         @State private var browseOpener: MacSectionOpener
         @State private var sharedWithMeOpener: MacSectionOpener
+        @State private var enclosingFolderOpener: MacSectionOpener
 
         init(store: StoreOf<MainTabFeature>) {
             self.store = store
             _browseOpener = State(initialValue: MacSectionOpener { store.send(.tabSelected(.browse)) })
             _sharedWithMeOpener = State(initialValue: MacSectionOpener { store.send(.sharedWithMeRequested) })
+            _enclosingFolderOpener = State(initialValue: MacSectionOpener { store.send(.enclosingFolderRequested) })
         }
 
         var body: some View {
@@ -30,6 +32,8 @@
                 .macToastPane()
                 .environment(\.showMacBrowse, browseOpener)
                 .environment(\.showMacSharedWithMe, sharedWithMeOpener)
+                .environment(\.showMacEnclosingFolder, enclosingFolderOpener)
+                .environment(\.canOpenMacAccessRules, store.browse.root.isAdmin)
                 .onPreferenceChange(MacInspectorReserveKey.self) { reserve in
                     withAnimation(DSMotion.stateFade) { inspectorReserve = reserve }
                 }

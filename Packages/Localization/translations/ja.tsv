@@ -1405,6 +1405,11 @@ emptyGuide.sharedBody	ブラウズでファイルまたはフォルダを右ク�
 emptyGuide.sharedWithMeTitle	まだ共有されているものはありません
 emptyGuide.offlineTitle	このMacにファイルを保持
 emptyGuide.offlineBody	ブラウズで任意のファイルまたはフォルダを右クリックして「%@」を選択します。\nフォルダはアプリが同期するたびに新しいファイルを取り込みます。\n\nダウンロードしたファイルは接続がなくても開けます。
+emptyGuide.readOnlyTitle	このフォルダは読み取り専用です
+emptyGuide.readOnlyOpen	ここに追加されたファイルは開いたりダウンロードしたりできます。
+emptyGuide.readOnlyOpenOnly	ここに追加されたファイルは開くことができます。
+emptyGuide.readOnlyLocked	ここではアップロード、新規フォルダ、名前の変更、削除はできません。
+emptyGuide.openAccessRules	%@を開く
 settings.groupTheme	テーマ
 settings.sectionFiles	ファイル
 settings.groupFileLists	ファイルリスト

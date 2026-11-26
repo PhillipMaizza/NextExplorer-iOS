@@ -416,6 +416,11 @@ public enum L10n {
         public static var goToShared: String { tr("emptyGuide.goToShared") }  // "Go to Shared"
         public static func offlineBody(_ a0: CVarArg) -> String { tr("emptyGuide.offlineBody", a0) }
         public static var offlineTitle: String { tr("emptyGuide.offlineTitle") }  // "Keep files on this Mac"
+        public static func openAccessRules(_ a0: CVarArg) -> String { tr("emptyGuide.openAccessRules", a0) }
+        public static var readOnlyLocked: String { tr("emptyGuide.readOnlyLocked") }
+        public static var readOnlyOpen: String { tr("emptyGuide.readOnlyOpen") }  // "Files added here show up for you to open and download."
+        public static var readOnlyOpenOnly: String { tr("emptyGuide.readOnlyOpenOnly") }  // "Files added here show up for you to open."
+        public static var readOnlyTitle: String { tr("emptyGuide.readOnlyTitle") }  // "This folder is read only"
         public static func sharedBody(_ a0: CVarArg) -> String { tr("emptyGuide.sharedBody", a0) }
         public static var sharedTitle: String { tr("emptyGuide.sharedTitle") }  // "Share with a link"
         public static var sharedWithMeTitle: String { tr("emptyGuide.sharedWithMeTitle") }  // "Nothing shared with you yet"
