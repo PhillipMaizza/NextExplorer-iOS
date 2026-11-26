@@ -4,6 +4,7 @@
     import AppStorageKeys
     import ComposableArchitecture
     import CoreModels
+    import DesignSystem
     import FilesFeature
     import Localization
     import StoreKit
@@ -208,7 +209,7 @@
         private var recentFoldersMenu: some View {
             Menu(L10n.Menu.recentFolders) {
                 ForEach(recentFolders, id: \.self) { path in
-                    Button((path as NSString).lastPathComponent) { send(.goToFolderRequested(path)) }
+                    Button(PersonalSpace.folderTitle(path)) { send(.goToFolderRequested(path)) }
                 }
                 Divider()
                 Button(L10n.Menu.clearRecent) { send(.recentFoldersCleared) }
