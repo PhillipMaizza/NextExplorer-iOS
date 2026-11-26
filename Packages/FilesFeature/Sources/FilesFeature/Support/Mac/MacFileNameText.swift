@@ -7,9 +7,11 @@
         let name: String
         let isDirectory: Bool
         @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
+        @Environment(\.backgroundProminence) private var prominence
 
         var body: some View {
             Text(displayFileName(name, isDirectory: isDirectory, showExtension: shouldShowFilenameExtensions))
+                .fontWeight(prominence == .increased ? .semibold : .regular)
                 .lineLimit(1)
                 .truncationMode(.middle)
         }

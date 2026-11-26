@@ -4,7 +4,7 @@
     import SwiftUI
 
     enum MacBoardTableMetrics {
-        static let rowHeight: CGFloat = .size44
+        static let rowHeight: CGFloat = .size48
         static let cellHeight: CGFloat = rowHeight - .space8
     }
 

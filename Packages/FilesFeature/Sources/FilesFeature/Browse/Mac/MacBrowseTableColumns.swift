@@ -4,7 +4,7 @@
 
     enum MacBrowseTableMetrics {
         static let iconSize: CGFloat = .size20
-        static let tileSize: CGFloat = .size24
+        static let tileSize: CGFloat = .size32
         static let tileRadius: CGFloat = .radiusSmall
         static let thumbnailMaxPixels: CGFloat = .size96
         static let playGlyphSize: CGFloat = 10
