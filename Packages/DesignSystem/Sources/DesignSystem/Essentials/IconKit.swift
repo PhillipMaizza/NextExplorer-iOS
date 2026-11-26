@@ -38,6 +38,8 @@ public enum IconKit {
     public static let macSidebarHelp = Image("macSidebarHelp", bundle: .module).renderingMode(.template)
     public static let macSidebarCoffee = Image("macSidebarCoffee", bundle: .module).renderingMode(.template)
     public static let macLock = Image("macLock", bundle: .module).renderingMode(.template)
+    public static let macEye = Image("macEye", bundle: .module).renderingMode(.template)
+    public static let macEyeSlash = Image("macEyeSlash", bundle: .module).renderingMode(.template)
     public static let macCopy = Image("macCopy", bundle: .module).renderingMode(.template)
     public static let macTrash = Image("macTrash", bundle: .module).renderingMode(.template)
     public static let macClock = Image("macClock", bundle: .module).renderingMode(.template)

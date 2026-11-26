@@ -33,7 +33,7 @@
                     isRevealed.toggle()
                     isFocused = true
                 } label: {
-                    (isRevealed ? IconKit.eyeSlash : IconKit.eye)
+                    (isRevealed ? IconKit.macEyeSlash : IconKit.macEye)
                         .foregroundStyle(Color.macChromeSecondary)
                         .frame(width: .iconSmall, height: .iconSmall)
                 }
