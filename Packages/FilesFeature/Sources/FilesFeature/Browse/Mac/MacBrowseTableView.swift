@@ -251,10 +251,9 @@
                 get: { [sortOption.tableComparator(sortDirection)] },
                 set: { newValue in
                     guard let first = newValue.first else { return }
-                    onSortChanged(
-                        BrowseFeature.SortOption(tableComparator: first),
-                        first.order == .forward ? .ascending : .descending
-                    )
+                    let option = BrowseFeature.SortOption(tableComparator: first)
+                    let direction: BrowseFeature.SortDirection = first.order == .forward ? .ascending : .descending
+                    Task { @MainActor in onSortChanged(option, direction) }
                 }
             )
         }
