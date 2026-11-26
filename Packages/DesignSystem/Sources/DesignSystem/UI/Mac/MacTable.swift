@@ -12,6 +12,21 @@
         static let rowShape = RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
     }
 
+    public struct MacTableEmptyLine: View {
+        private let text: String
+
+        public init(_ text: String) {
+            self.text = text
+        }
+
+        public var body: some View {
+            Text(text)
+                .type(.body2(.regular), style: .secondary)
+                .padding(.horizontal, MacTableMetrics.rowInset)
+                .frame(height: MacTableMetrics.rowHeight)
+        }
+    }
+
     public struct MacTableHeader<Content: View>: View {
         private let content: () -> Content
 

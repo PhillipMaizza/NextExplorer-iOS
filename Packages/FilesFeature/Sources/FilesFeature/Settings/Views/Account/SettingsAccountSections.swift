@@ -286,7 +286,7 @@ struct SettingsServerStorageSection: View {
                             Text(row.volume.name).type(.body2(.regular), style: .primaryOnSurface)
                             Spacer()
                             if let usage = row.usage, usage.isMeaningful {
-                                Text(usageCaption(usage)).type(.body3(.regular), style: .secondary)
+                                Text(usage.usedCaption).type(.body3(.regular), style: .secondary)
                             } else if row.usage == nil {
                                 DSSpinner(size: .small)
                             }
@@ -303,11 +303,14 @@ struct SettingsServerStorageSection: View {
             .listRowBackground(Color.backgroundSecondary)
         }
     }
+}
 
-    private func usageCaption(_ usage: StorageUsage) -> String {
+@MainActor
+extension StorageUsage {
+    var usedCaption: String {
         L10n.Settings.serverStorageUsed(
-            FileSizeFormat.string(usage.used),
-            FileSizeFormat.string(usage.capacity)
+            FileSizeFormat.string(used),
+            FileSizeFormat.string(capacity)
         )
     }
 }

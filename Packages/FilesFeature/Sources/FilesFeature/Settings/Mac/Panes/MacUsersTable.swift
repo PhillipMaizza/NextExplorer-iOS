@@ -35,9 +35,9 @@
                     }
                     .padding(.horizontal, .space12)
                 } else if store.isSearchWithoutResults {
-                    emptyLine(L10n.UserManagement.noSearchMatches(store.searchQuery))
+                    MacTableEmptyLine(L10n.UserManagement.noSearchMatches(store.searchQuery))
                 } else if store.users.isEmpty {
-                    emptyLine(L10n.UserManagement.emptyList)
+                    MacTableEmptyLine(L10n.UserManagement.emptyList)
                 } else {
                     ForEach(Array(store.displayedUsers.enumerated()), id: \.element.id) { index, user in
                         MacUserTableRow(
@@ -68,13 +68,6 @@
                 }
             }
             .disabled(store.users.isEmpty)
-        }
-
-        private func emptyLine(_ text: String) -> some View {
-            Text(text)
-                .type(.body2(.regular), style: .secondary)
-                .padding(.horizontal, .space12)
-                .frame(height: MacTableMetrics.rowHeight)
         }
     }
 
