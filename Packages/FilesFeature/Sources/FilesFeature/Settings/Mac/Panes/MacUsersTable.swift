@@ -26,7 +26,7 @@
                 if store.phase == .loading, store.users.isEmpty {
                     MacSpinner()
                         .frame(maxWidth: .infinity)
-                        .frame(height: MacTableMetrics.rowHeight)
+                        .macMinHeight(.large)
                 } else if let error = store.phase.errorMessage, store.users.isEmpty {
                     HStack(spacing: .space12) {
                         MacNote(error, kind: .error)

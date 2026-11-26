@@ -4,7 +4,6 @@
     public enum MacActionMenuMetrics {
         static let width: CGFloat = 250
         static let padding: CGFloat = 5
-        static let rowHeight: CGFloat = 28
         static let rowRadius: CGFloat = .radiusSmall
         static let rowSpacing: CGFloat = .space8
         static let iconSize: CGFloat = 15
@@ -64,7 +63,7 @@
                 icon
                     .resizable()
                     .scaledToFit()
-                    .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+                    .macSquare(Metrics.iconSize)
                     .foregroundStyle(isDestructive ? Color.negativeText : Color.macChromeSecondary)
                 Text(title)
                     .type(.body2(.regular))
@@ -81,12 +80,12 @@
                     IconKit.chevronRight
                         .resizable()
                         .scaledToFit()
-                        .frame(width: Metrics.chevronSize, height: Metrics.chevronSize)
+                        .macSquare(Metrics.chevronSize)
                         .foregroundStyle(Color.macChromeSecondary)
                 }
             }
             .padding(.horizontal, Metrics.rowSpacing)
-            .frame(height: Metrics.rowHeight)
+            .macMinHeight(.small)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: Metrics.rowRadius, style: .continuous)

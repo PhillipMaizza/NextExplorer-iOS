@@ -90,7 +90,7 @@
                     icon
                         .resizable()
                         .scaledToFit()
-                        .frame(width: .iconXSmall, height: .iconXSmall)
+                        .macSquare(.iconXSmall)
                         .accessibilityHidden(true)
                 }
                 Text(text)

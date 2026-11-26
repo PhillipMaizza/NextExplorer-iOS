@@ -2,13 +2,11 @@
     import SwiftUI
 
     public enum MacTableMetrics {
-        public static let rowHeight: CGFloat = .size40
         public static let columnSpacing: CGFloat = .space12
         static let rowInset: CGFloat = .space12
         static let headerHeight: CGFloat = 30
         static let sortGlyphSize: CGFloat = 9
         static let selectionOpacity: Double = .opacitySelection
-        static let listRowHeight: CGFloat = .size32
         static let rowShape = RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
     }
 
@@ -23,7 +21,7 @@
             Text(text)
                 .type(.body2(.regular), style: .secondary)
                 .padding(.horizontal, MacTableMetrics.rowInset)
-                .frame(height: MacTableMetrics.rowHeight)
+                .macMinHeight(.large)
         }
     }
 
@@ -39,7 +37,7 @@
                 content()
             }
             .padding(.horizontal, MacTableMetrics.rowInset)
-            .frame(height: MacTableMetrics.headerHeight)
+            .macMinHeight(points: MacTableMetrics.headerHeight)
             .overlay(alignment: .bottom) {
                 Rectangle()
                     .fill(Color.macLine)
@@ -99,7 +97,7 @@
     public extension View {
         func macTableRow(isShaded: Bool, isSelected: Bool = false) -> some View {
             padding(.horizontal, MacTableMetrics.rowInset)
-                .frame(height: MacTableMetrics.rowHeight)
+                .macMinHeight(.large)
                 .background(
                     MacTableMetrics.rowShape
                         .fill(isSelected
@@ -118,9 +116,52 @@
 
         func macListRow(isSelected: Bool) -> some View {
             padding(.horizontal, MacTableMetrics.rowInset)
-                .frame(minHeight: MacTableMetrics.listRowHeight)
+                .macMinHeight(.regular)
                 .background(isSelected ? Color.accent.opacity(MacTableMetrics.selectionOpacity) : .clear)
                 .contentShape(Rectangle())
+        }
+
+        func macSelectable(
+            isSelected: Bool,
+            onSelect: @escaping () -> Void,
+            open: (label: String, action: () -> Void)? = nil
+        ) -> some View {
+            modifier(MacSelectableRow(isSelected: isSelected, onSelect: onSelect, open: open))
+        }
+    }
+
+    private struct MacSelectableRow: ViewModifier {
+        let isSelected: Bool
+        let onSelect: () -> Void
+        let open: (label: String, action: () -> Void)?
+
+        func body(content: Content) -> some View {
+            gestures(content.contentShape(Rectangle()))
+                .focusable(interactions: .activate)
+                .onKeyPress(.space) {
+                    onSelect()
+                    return .handled
+                }
+                .onKeyPress(.return) {
+                    guard let open else { return .ignored }
+                    open.action()
+                    return .handled
+                }
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+                .accessibilityAction(.default, onSelect)
+        }
+
+        @ViewBuilder
+        private func gestures(_ view: some View) -> some View {
+            if let open {
+                view
+                    .onTapGesture(count: 2, perform: open.action)
+                    .onTapGesture(perform: onSelect)
+                    .accessibilityAction(named: open.label, open.action)
+            } else {
+                view.onTapGesture(perform: onSelect)
+            }
         }
     }
 
@@ -196,6 +237,7 @@
                 }
                 .foregroundStyle(Color.macChromeText)
                 .macListRow(isSelected: name == "projects")
+                .macSelectable(isSelected: name == "projects", onSelect: {}, open: (name, {}))
             }
         }
         .background(Color.macField)

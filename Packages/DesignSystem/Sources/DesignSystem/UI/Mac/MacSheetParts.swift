@@ -86,7 +86,7 @@
             }
             .padding(.leading, isProminent ? .space16 : .space12)
             .padding(.trailing, .space8)
-            .frame(height: isProminent ? Metrics.prominentBoxHeight : Metrics.boxHeight)
+            .macMinHeight(points: isProminent ? Metrics.prominentBoxHeight : Metrics.boxHeight)
             .background(RoundedRectangle(cornerRadius: .radiusControl, style: .continuous).fill(fill))
         }
     }
@@ -155,7 +155,7 @@
                         .labelsHidden()
                         .toggleStyle(.macSwitch)
                 }
-                .frame(minHeight: Metrics.optionMinHeight)
+                .macMinHeight(points: Metrics.optionMinHeight)
                 if isOn.wrappedValue {
                     detail()
                         .padding(.bottom, .space12)

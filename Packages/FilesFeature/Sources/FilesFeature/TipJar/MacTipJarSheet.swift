@@ -54,7 +54,8 @@
             switch store.productsPhase {
             case .idle, .loading:
                 MacSpinner()
-                    .frame(maxWidth: .infinity, minHeight: MacFormMetrics.height(ofRows: TipProductID.all.count))
+                    .frame(maxWidth: .infinity)
+                    .macMinHeight(points: MacControlHeight.formRow.points(ofRows: TipProductID.all.count))
             case .failed:
                 Button(L10n.Common.retry) { store.send(.task) }
                     .buttonStyle(.macDS(.secondary))

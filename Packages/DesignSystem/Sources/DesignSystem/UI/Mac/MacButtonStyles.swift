@@ -3,20 +3,16 @@
     import SwiftUI
 
     private enum Constants {
-        static let largeHeight: CGFloat = .size44
-        static let regularHeight: CGFloat = .size36
-        static let smallHeight: CGFloat = 28
-        static let toolbarDiameter: CGFloat = .size40
         static let hoverOpacity: Double = 0.06
         static let pressedOpacity: Double = .opacityFaint
     }
 
     extension DSButtonSize {
-        var macHeight: CGFloat {
+        var macHeight: MacControlHeight {
             switch self {
-            case .large: Constants.largeHeight
-            case .medium: Constants.regularHeight
-            case .small: Constants.smallHeight
+            case .large: .xLarge
+            case .medium: .medium
+            case .small: .small
             }
         }
 
@@ -87,7 +83,7 @@
                 .lineLimit(1)
                 .foregroundStyle(style.macForeground(isDestructive: isDestructive))
                 .padding(.horizontal, size.macPadding)
-                .frame(minHeight: size.macHeight)
+                .macMinHeight(size.macHeight)
                 .background(MacButtonShape.pill.fill(style.macFill))
                 .overlay(MacButtonShape.pill.strokeBorder(style.macBorder, lineWidth: .borderWidthHairline))
                 .modifier(MacButtonInteraction(shape: MacButtonShape.pill, isPressed: isPressed))
@@ -124,9 +120,9 @@
         var body: some View {
             label
                 .labelStyle(.iconOnly)
-                .frame(width: .iconSmall, height: .iconSmall)
+                .macSquare(.iconSmall)
                 .foregroundStyle(isAccent ? Color.onAccent : Color.macChromeText)
-                .frame(width: Constants.toolbarDiameter, height: Constants.toolbarDiameter)
+                .macSquare(MacControlHeight.large.points)
                 .background(Circle().fill(isAccent ? Color.accent : Color.macChromeButton))
                 .modifier(MacButtonInteraction(shape: Circle(), isPressed: isPressed))
         }

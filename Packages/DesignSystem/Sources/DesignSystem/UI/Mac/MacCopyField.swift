@@ -34,9 +34,9 @@
                     IconKit.macCopy
                         .resizable()
                         .scaledToFit()
-                        .frame(width: .iconSmall, height: .iconSmall)
+                        .macSquare(.iconSmall)
                         .foregroundStyle(Color.primaryDS)
-                        .frame(width: Metrics.copySize, height: Metrics.copySize)
+                        .macSquare(Metrics.copySize)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)

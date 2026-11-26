@@ -8,6 +8,7 @@
 
     struct MacElsewhereResults<FileActions: View>: View {
         let store: StoreOf<BrowseFeature>
+        @Environment(\.macTextScale) var macTextScale
         @ViewBuilder let fileActions: (SearchResultItem) -> FileActions
 
         var body: some View {
@@ -37,7 +38,7 @@
             var note = AttributedString(L10n.Search.nothingInThisFolder(term))
             if let range = note.range(of: term) {
                 note[range].foregroundColor = Color.primaryDS
-                note[range].font = Typography.TextType.body3(.bold).font().weight(.bold)
+                note[range].font = Typography.TextType.body3(.bold).font(scale: macTextScale).weight(.bold)
             }
             return note
         }
