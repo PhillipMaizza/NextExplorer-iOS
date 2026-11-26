@@ -24,6 +24,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         public let fraction: Double?
         public let fileName: String?
         public let timeLeft: String?
+        public let hasFailures: Bool
         public let cancelTitle: String
         public let cancel: () -> Void
     }
@@ -91,6 +92,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         fraction: Double?,
         fileName: String?,
         timeLeft: String?,
+        hasFailures: Bool = false,
         actionTitle: String,
         action: @escaping () -> Void,
         cancelTitle: String,
@@ -106,6 +108,7 @@ public struct DSToastMessage: Equatable, Identifiable {
                 fraction: fraction,
                 fileName: fileName,
                 timeLeft: timeLeft,
+                hasFailures: hasFailures,
                 cancelTitle: cancelTitle,
                 cancel: cancel
             )
@@ -181,5 +184,6 @@ public struct DSToastMessage: Equatable, Identifiable {
             && lhs.transfer?.fraction == rhs.transfer?.fraction
             && lhs.transfer?.fileName == rhs.transfer?.fileName
             && lhs.transfer?.timeLeft == rhs.transfer?.timeLeft
+            && lhs.transfer?.hasFailures == rhs.transfer?.hasFailures
     }
 }

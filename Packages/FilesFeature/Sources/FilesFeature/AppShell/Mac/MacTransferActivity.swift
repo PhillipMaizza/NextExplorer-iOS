@@ -121,7 +121,8 @@
                             queue.currentJob?.estimatedSecondsRemaining,
                             locale: locale
                         ),
-                        fraction: queue.currentJob?.progress
+                        fraction: queue.currentJob?.progress,
+                        tint: queue.failedCount > 0 ? .accent : .positive
                     )
                 }
                 HStack(spacing: .space8) {

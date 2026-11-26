@@ -5,36 +5,57 @@
         let fileName: String?
         let timeLeft: String?
         let fraction: Double?
+        let tint: Color
 
-        public init(fileName: String?, timeLeft: String?, fraction: Double?) {
+        public init(fileName: String?, timeLeft: String?, fraction: Double?, tint: Color = .positive) {
             self.fileName = fileName
             self.timeLeft = timeLeft
             self.fraction = fraction
+            self.tint = tint
         }
 
         public var body: some View {
             VStack(alignment: .leading, spacing: .space8) {
-                HStack(alignment: .firstTextBaseline, spacing: .space8) {
+                HStack(alignment: .firstTextBaseline, spacing: .space16) {
                     if let fileName {
                         Text(fileName)
                             .lineLimit(1)
                             .truncationMode(.middle)
                     }
                     Spacer(minLength: .zero)
-                    if let timeLeft {
-                        Text(timeLeft)
-                            .lineLimit(1)
-                    }
-                    if let fraction {
-                        Text(fraction.formatted(.percent.precision(.fractionLength(0))))
-                            .monospacedDigit()
-                            .foregroundStyle(Color.primaryDS)
-                    }
+                    MacTransferProgressLabel(timeLeft: timeLeft, fraction: fraction)
                 }
                 .type(.body3(.regular))
                 .foregroundStyle(Color.secondaryDS)
-                MacProgressBar(value: fraction)
+                MacProgressBar(value: fraction, tint: tint)
             }
+        }
+    }
+
+    public struct MacTransferProgressLabel: View {
+        let timeLeft: String?
+        let fraction: Double?
+
+        public init(timeLeft: String?, fraction: Double?) {
+            self.timeLeft = timeLeft
+            self.fraction = fraction
+        }
+
+        public var body: some View {
+            HStack(alignment: .firstTextBaseline, spacing: .space8) {
+                if let timeLeft {
+                    Text(timeLeft)
+                        .lineLimit(1)
+                }
+                if let fraction {
+                    Text(fraction.formatted(.percent.precision(.fractionLength(0))))
+                        .monospacedDigit()
+                        .foregroundStyle(Color.primaryDS)
+                }
+            }
+            .type(.body3(.regular))
+            .foregroundStyle(Color.secondaryDS)
+            .fixedSize()
         }
     }
 

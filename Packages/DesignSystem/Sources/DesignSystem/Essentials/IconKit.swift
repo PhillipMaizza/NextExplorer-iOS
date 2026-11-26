@@ -145,6 +145,8 @@ public enum IconKit {
     public static let uploadFill = Image(systemName: "arrow.up.circle.fill")
     public static let downloadFill = Image(systemName: "arrow.down.circle.fill")
     public static let retry = Image(systemName: "arrow.clockwise")
+    public static let retryCircleFill = Image(systemName: "arrow.clockwise.circle.fill")
+    public static let minimize = Image(systemName: "arrow.down.right.and.arrow.up.left")
     public static let checkmarkCircleFill = Image(systemName: "checkmark.circle.fill")
     public static let moreOptions = Image(systemName: "ellipsis.circle")
     public static let ellipsis = Image(systemName: "ellipsis")

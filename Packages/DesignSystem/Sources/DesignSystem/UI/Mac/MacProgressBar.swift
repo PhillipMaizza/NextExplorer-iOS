@@ -9,11 +9,13 @@
         }
 
         let value: Double?
+        let tint: Color
         @Environment(\.accessibilityReduceMotion) private var reduceMotion
         @State private var isSliding = false
 
-        public init(value: Double?) {
+        public init(value: Double?, tint: Color = .accent) {
             self.value = value
+            self.tint = tint
         }
 
         public var body: some View {
@@ -40,12 +42,12 @@
         private func fill(width: CGFloat) -> some View {
             if let value {
                 Capsule()
-                    .fill(Color.accent)
+                    .fill(tint)
                     .frame(width: width * min(max(value, 0), 1))
             } else {
                 let segment = width * Metrics.segmentFraction
                 Capsule()
-                    .fill(Color.accent)
+                    .fill(tint)
                     .frame(width: segment)
                     .offset(x: isSliding ? width : (reduceMotion ? 0 : -segment))
                     .animation(reduceMotion ? nil : DSMotion.loop(duration: Metrics.loopDuration), value: isSliding)
@@ -58,6 +60,7 @@
             MacProgressBar(value: 0)
             MacProgressBar(value: 0.42)
             MacProgressBar(value: 1)
+            MacProgressBar(value: 0.8, tint: .positive)
             MacProgressBar(value: nil)
         }
         .padding(.space24)
