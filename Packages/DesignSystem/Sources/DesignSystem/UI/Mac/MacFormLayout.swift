@@ -24,7 +24,7 @@
                 .padding(.bottom, .space32)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .font(Typography.TextType.body2(.regular).font())
+            .type(.body2(.regular))
             .toggleStyle(.macSwitch)
         }
     }
@@ -54,14 +54,6 @@
                     .background(Constants.groupShape.fill(Color.macRow))
                     .clipShape(Constants.groupShape)
             }
-        }
-    }
-
-    public enum MacFormMetrics {
-        public static let rowMinHeight: CGFloat = 52
-
-        public static func height(ofRows count: Int) -> CGFloat {
-            CGFloat(count) * rowMinHeight + CGFloat(max(count - 1, 0)) * .borderWidthHairline
         }
     }
 
@@ -139,13 +131,64 @@
             }
             .padding(.horizontal, .space16)
             .padding(.vertical, .space8)
-            .frame(minHeight: MacFormMetrics.rowMinHeight)
+            .macMinHeight(.formRow)
         }
     }
 
     public extension MacFormRow where Label == Text {
         init(_ title: String, @ViewBuilder control: @escaping () -> Control) {
             self.init(label: { Text(title) }, control: control)
+        }
+    }
+
+    public struct MacFormRowTitle: View {
+        private let title: String
+        private let subtitle: String
+
+        public init(title: String, subtitle: String) {
+            self.title = title
+            self.subtitle = subtitle
+        }
+
+        public var body: some View {
+            VStack(alignment: .leading, spacing: .space2) {
+                Text(title)
+                Text(subtitle).type(.body3(.regular), style: .secondary)
+            }
+        }
+    }
+
+    public struct MacFormSheetRow<Content: View>: View {
+        private let title: String
+        private let content: () -> Content
+
+        public init(_ title: String, @ViewBuilder content: @escaping () -> Content) {
+            self.title = title
+            self.content = content
+        }
+
+        public var body: some View {
+            LabeledContent(title) {
+                VStack(alignment: .leading, spacing: .space8) {
+                    content()
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .padding(.bottom, .space8)
+        }
+    }
+
+    public struct MacControlNote: View {
+        private let lines: [String]
+
+        public init(_ lines: String...) {
+            self.lines = lines
+        }
+
+        public var body: some View {
+            VStack(alignment: .leading, spacing: .space2) {
+                ForEach(lines, id: \.self) { Text($0).type(.body3(.regular), style: .secondary) }
+            }
         }
     }
 
@@ -163,5 +206,21 @@
         }
         .background(Color.macCard)
         .previewCanvas(.settingsPane)
+    }
+
+    #Preview("Sheet rows") {
+        Form {
+            MacFormSheetRow("Name") {
+                MacTextField("Name", text: .constant(""), prompt: "A name")
+                MacControlNote("Shown to everyone with the link.")
+            }
+            MacFormSheetRow("Expiry") {
+                MacFormRowTitle(title: "90 days", subtitle: "Renew any time.")
+            }
+        }
+        .formStyle(.columns)
+        .padding()
+        .previewCanvasWidth(.dialog)
+        .background(Color.macCard)
     }
 #endif

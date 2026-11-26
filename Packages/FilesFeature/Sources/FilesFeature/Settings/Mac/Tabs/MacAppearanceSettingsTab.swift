@@ -59,7 +59,7 @@
                         }
                     }
                 }
-                .frame(height: MacFormMetrics.height(ofRows: Metrics.visibleLanguageRows))
+                .macHeight(points: MacControlHeight.formRow.points(ofRows: Metrics.visibleLanguageRows))
                 .onAppear { proxy.scrollTo(appLanguage, anchor: .center) }
             }
             .accessibilityIdentifier(AccessibilityIdentifiers.Settings.languagePicker)

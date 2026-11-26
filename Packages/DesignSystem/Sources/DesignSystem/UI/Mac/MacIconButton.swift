@@ -4,7 +4,6 @@
 
     public struct MacIconButton: View {
         private enum Metrics {
-            static let miniSide: CGFloat = 22
             static let miniGlyph: CGFloat = 9
         }
 
@@ -15,9 +14,9 @@
 
             var side: CGFloat {
                 switch self {
-                case .regular: .size40
-                case .compact: .size32
-                case .mini: Metrics.miniSide
+                case .regular: MacControlHeight.large.points
+                case .compact: MacControlHeight.regular.points
+                case .mini: MacControlHeight.mini.points
                 }
             }
 
@@ -63,9 +62,9 @@
                     .resizable()
                     .scaledToFit()
                     .fontWeight(size.weight)
-                    .frame(width: size.glyph, height: size.glyph)
+                    .macSquare(size.glyph)
                     .foregroundStyle(tint)
-                    .frame(width: size.side, height: size.side)
+                    .macSquare(size.side)
                     .background(Circle().fill(isFilled ? Color.macSegment : Color.clear))
                     .contentShape(Circle())
             }

@@ -35,7 +35,7 @@
                 } label: {
                     (isRevealed ? IconKit.macEyeSlash : IconKit.macEye)
                         .foregroundStyle(Color.macChromeSecondary)
-                        .frame(width: .iconSmall, height: .iconSmall)
+                        .macSquare(.iconSmall)
                 }
                 .buttonStyle(.borderless)
                 .help(revealLabel)
@@ -93,7 +93,6 @@
     }
 
     private enum LargeFieldConstants {
-        static let height: CGFloat = .size48
         static let shape = RoundedRectangle(cornerRadius: .radiusControl, style: .continuous)
         static let haloOpacity: Double = 0.3
         static let haloWidth: CGFloat = .size6
@@ -108,7 +107,7 @@
             textFieldStyle(.plain)
                 .type(.body1(.regular))
                 .padding(.horizontal, .space16)
-                .frame(height: LargeFieldConstants.height)
+                .macMinHeight(.xxLarge)
                 .background(LargeFieldConstants.shape.fill(Color.macField))
                 .background(
                     LargeFieldConstants.shape
@@ -134,7 +133,7 @@
         if isInvalid {
             return .negative
         }
-        return isFocused ? .accent : .macLine
+        return isFocused ? .accentText : .macLine
     }
 
     #Preview("Secure field") {

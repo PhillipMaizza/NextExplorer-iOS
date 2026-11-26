@@ -3,9 +3,6 @@
     import SwiftUI
 
     private enum Constants {
-        static let fieldHeight: CGFloat = .size36
-        static let compactFieldHeight: CGFloat = 28
-        static let popupHeight: CGFloat = .size32
         static let calendarWidth: CGFloat = 280
         static let focusHaloWidth: CGFloat = 3
         static let focusHaloOpacity: Double = 0.32
@@ -42,10 +39,10 @@
         case compact
         case flexible
 
-        var height: CGFloat? {
+        var height: MacControlHeight? {
             switch self {
-            case .regular: Constants.fieldHeight
-            case .compact: Constants.compactFieldHeight
+            case .regular: .medium
+            case .compact: .small
             case .flexible: nil
             }
         }
@@ -53,15 +50,15 @@
 
     public extension View {
         func macFieldChrome(isFocused: Bool, isInvalid: Bool = false, size: MacFieldSize = .regular) -> some View {
-            let ring = isInvalid ? Color.negative : Color.accent
+            let ring = isInvalid ? Color.negative : Color.accentText
             return tint(Color.accent)
                 .padding(.vertical, size == .flexible ? .space4 : .zero)
-                .frame(height: size.height)
+                .macMinHeight(points: size.height?.points ?? .zero)
                 .background(Constants.shape.fill(Color.macField))
                 .background(
                     Constants.shape
                         .stroke(
-                            ring.opacity(Constants.focusHaloOpacity),
+                            (isInvalid ? Color.negative : Color.accent).opacity(Constants.focusHaloOpacity),
                             lineWidth: Constants.focusHaloWidth
                         )
                         .opacity(isFocused ? 1 : 0)
@@ -206,7 +203,7 @@
             }
             .padding(.leading, .space12)
             .padding(.trailing, .space8)
-            .frame(height: Constants.popupHeight)
+            .macMinHeight(.regular)
             .background(Constants.shape.fill(Color.macField))
             .overlay(Constants.shape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline))
             .contentShape(Constants.shape)

@@ -20,7 +20,7 @@
                 icon
                     .resizable()
                     .scaledToFit()
-                    .frame(width: Constants.iconSize, height: Constants.iconSize)
+                    .macSquare(Constants.iconSize)
                     .foregroundStyle(Color.accent)
                     .accessibilityHidden(true)
                 Text(title)
@@ -66,7 +66,7 @@
                     destination.accessory
                         .resizable()
                         .scaledToFit()
-                        .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                        .macSquare(Constants.chevronSize)
                         .foregroundStyle(Color.macChromeSecondary)
                         .accessibilityHidden(true)
                 }

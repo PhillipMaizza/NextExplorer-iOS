@@ -27,7 +27,7 @@
                     Text(L10n.VersionedFiles.none)
                         .type(.body2(.regular), style: .secondary)
                         .padding(.horizontal, .space12)
-                        .frame(height: MacTableMetrics.rowHeight)
+                        .macMinHeight(.large)
                 }
                 ForEach(Array(store.files.enumerated()), id: \.element.id) { index, file in
                     MacVersionedFileRow(

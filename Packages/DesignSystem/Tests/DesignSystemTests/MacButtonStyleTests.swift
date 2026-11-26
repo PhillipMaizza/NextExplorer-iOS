@@ -15,7 +15,7 @@
 
         @Test("Mac buttons are shorter than the phone's and shrink with their size")
         func macHeightsFollowTheSize() {
-            let heights = DSButtonSize.allCases.map(\.macHeight)
+            let heights = DSButtonSize.allCases.map(\.macHeight.points)
             #expect(heights == heights.sorted(by: >))
             #expect(zip(DSButtonSize.allCases, heights).allSatisfy { $1 < $0.height })
         }

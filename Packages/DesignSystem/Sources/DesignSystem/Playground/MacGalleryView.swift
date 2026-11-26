@@ -231,4 +231,9 @@
         MacGalleryView()
             .environment(\.colorScheme, .dark)
     }
+
+    #Preview("Mac gallery, largest text") {
+        MacGalleryView()
+            .macTextScale(MacTextScale.range.upperBound)
+    }
 #endif

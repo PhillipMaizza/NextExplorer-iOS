@@ -2,7 +2,6 @@
     import SwiftUI
 
     private enum Constants {
-        static let height: CGFloat = .size32
         static let inset: CGFloat = 3
         static let gap: CGFloat = .space2
         static let pillID = "pill"
@@ -54,7 +53,7 @@
                     .foregroundStyle(isSelected ? Color.onAccent : Color.macChromeText)
                     .padding(.horizontal, .space12)
                     .frame(maxWidth: isFullWidth ? .infinity : nil)
-                    .frame(height: Constants.height)
+                    .macMinHeight(.regular)
                     .background {
                         if isSelected {
                             Capsule()

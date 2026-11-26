@@ -153,10 +153,20 @@ public enum Typography {
             }
         #endif
 
+        #if os(macOS)
+            func macPointSize(scale: CGFloat) -> CGFloat {
+                MacTextScale.pointSize(macSize, scale: scale)
+            }
+
+            public func font(scale: CGFloat) -> Font {
+                _ = Self.fontsRegistered
+                return .custom(DesignSystemFonts.familyName, fixedSize: macPointSize(scale: scale))
+            }
+        #endif
+
         public func font() -> Font {
             #if os(macOS)
-                _ = Self.fontsRegistered
-                return .custom(DesignSystemFonts.familyName, size: macSize, relativeTo: macTextStyle)
+                font(scale: 1)
             #else
                 _ = Self.fontsRegistered
                 return .custom(DesignSystemFonts.familyName, size: size, relativeTo: relativeTextStyle)
@@ -187,7 +197,7 @@ public enum Typography {
             case .primaryOnAccent: .primaryInverted
             case .secondary: .secondaryText
             case .tertiary: .tertiaryText
-            case .disabled: .tertiaryText
+            case .disabled: .disabledText
             case .inverted: .primaryInverted
             case .invertedSecondary: .secondaryInverted
             case .success: .positiveText
@@ -219,10 +229,19 @@ public extension View {
 private struct DSTextTypeModifier: ViewModifier {
     let type: Typography.TextType
     @Environment(\.legibilityWeight) private var legibilityWeight
+    #if os(macOS)
+        @Environment(\.macTextScale) private var macTextScale
+    #endif
 
     func body(content: Content) -> some View {
-        content
-            .font(type.font())
-            .fontWeight(type.weight(boldText: legibilityWeight == .bold))
+        #if os(macOS)
+            content
+                .font(type.font(scale: macTextScale))
+                .fontWeight(type.weight(boldText: legibilityWeight == .bold))
+        #else
+            content
+                .font(type.font())
+                .fontWeight(type.weight(boldText: legibilityWeight == .bold))
+        #endif
     }
 }

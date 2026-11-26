@@ -21,7 +21,7 @@
             IconKit.info
                 .resizable()
                 .scaledToFit()
-                .frame(width: Constants.iconSize, height: Constants.iconSize)
+                .macSquare(Constants.iconSize)
                 .foregroundStyle(Color.macChromeSecondary)
                 .padding(.space2)
                 .contentShape(Rectangle())

@@ -8,7 +8,6 @@
         static let knobSize: CGFloat = .size18
         static let knobShadowRadius: CGFloat = .size2
         static let knobShadowOpacity: Double = 0.3
-        static let stepperHeight: CGFloat = .size32
         static let stepperButtonWidth: CGFloat = 30
         static let stepperGlyph: CGFloat = 13
         static let stepperValueWidth: CGFloat = .size44
@@ -137,7 +136,7 @@
                     onChange(min(value + step, range.upperBound))
                 }
             }
-            .frame(height: Constants.stepperHeight)
+            .macMinHeight(.regular)
             .background(Constants.stepperShape.fill(Color.macField))
             .overlay(
                 Constants.stepperShape.strokeBorder(
@@ -161,9 +160,10 @@
                 icon
                     .resizable()
                     .scaledToFit()
-                    .frame(width: Constants.stepperGlyph, height: Constants.stepperGlyph)
+                    .macSquare(Constants.stepperGlyph)
                     .foregroundStyle(Color.macChromeText)
-                    .frame(width: Constants.stepperButtonWidth, height: Constants.stepperHeight)
+                    .frame(width: Constants.stepperButtonWidth)
+                    .macMinHeight(.regular)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
