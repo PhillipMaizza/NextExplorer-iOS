@@ -19,18 +19,29 @@ public struct DSErrorCard: View {
     }
 
     public var body: some View {
+        DSNoticeCard(icon: IconKit.warning, tint: .negative, style: .error, message: message)
+    }
+}
+
+struct DSNoticeCard: View {
+    let icon: Image
+    let tint: Color
+    let style: Typography.TextStyle
+    let message: String
+
+    var body: some View {
         HStack(alignment: .center, spacing: Constants.spacing) {
-            IconKit.warning
+            icon
                 .resizable().scaledToFit()
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
-                .foregroundStyle(Color.negative)
+                .foregroundStyle(tint)
             Text(message)
-                .type(.body3(.semibold), style: .error)
+                .type(.body3(.semibold), style: style)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(Constants.padding)
         .background(RoundedRectangle(cornerRadius: Constants.cornerRadius)
-            .fill(Color.negative.opacity(Constants.fillAlpha)))
+            .fill(tint.opacity(Constants.fillAlpha)))
     }
 }
 
