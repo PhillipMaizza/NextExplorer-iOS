@@ -23,9 +23,11 @@ public extension Color {
     #if os(macOS)
         static let secondaryText = Color.macChromeSecondary
         static let tertiaryText = Color.macChromeTertiary
+        static let disabledText = Color.macChromeDisabled
     #else
         static let secondaryText = Color.secondaryDS
         static let tertiaryText = Color.tertiaryDS
+        static let disabledText = Color.tertiaryDS
     #endif
     static let positive = Color("Success", bundle: .module)
     static let attention = Color("Warning", bundle: .module)
