@@ -27,6 +27,12 @@ extension AppFeature {
             return lockSignedIn(&state, user: user, serverURL: serverURL)
         case .destination(.locked(.delegate(.signOutRequested))):
             return signOutLocked(state)
+        case let .destination(.locked(.delegate(.switchAccount(accountID)))):
+            let authClient = authClient
+            return .run { send in
+                guard let credentials = try? await authClient.switchAccount(accountID) else { return }
+                await send(.activateAccount(credentials))
+            }
         case let .lockedAccountSignedOut(next):
             guard let next else {
                 return teardownToLogin(&state, removesClientCertificates: true)

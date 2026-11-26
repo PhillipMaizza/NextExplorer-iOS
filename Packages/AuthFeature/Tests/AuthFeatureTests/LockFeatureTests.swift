@@ -169,4 +169,29 @@ struct LockFeatureTests {
 
         await store.send(.otherAccountRefused) { $0.problem = .otherAccount }
     }
+
+    @Test("Picking another saved account on the lock asks to switch, picking the locked one does nothing")
+    func accountPickedSwitches() async {
+        let state = lockState(.local)
+        @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
+        var other = state.account
+        other.id = "other"
+        other.isLocked = false
+        $accounts.withLock { $0 = [state.account, other] }
+        let store = makeStore(state)
+
+        #expect(store.state.switchableAccounts.map(\.id) == [state.account.id, "other"])
+        await store.send(.accountTapped(state.account.id))
+        await store.send(.accountTapped("other"))
+        await store.receive(\.delegate, .switchAccount("other"))
+    }
+
+    @Test("A single saved account shows no account list on the lock")
+    func singleAccountHidesList() {
+        let state = lockState(.local)
+        @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
+        $accounts.withLock { $0 = [state.account] }
+
+        #expect(state.switchableAccounts.isEmpty)
+    }
 }

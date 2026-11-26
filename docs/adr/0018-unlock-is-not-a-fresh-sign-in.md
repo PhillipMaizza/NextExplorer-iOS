@@ -17,6 +17,9 @@ in wipes every cache store, so nothing of a previous account leaks into the next
 - An account set to not keep offline files has its caches and offline files wiped when it locks,
   so there is nothing to keep at unlock.
 - Every logout, session expiry and sign in from the login form still clears every store.
+- With more than one saved account, the Mac lock lists them all in its sidebar. Picking another
+  one switches to it without touching the locked one: a signed in account opens, a locked one
+  shows its own lock. The lock shows only names and servers, never files or settings.
 
 Code: `AppFeature+Lock` (`lockSignedIn`, `unlock`, `refuseOtherAccount`, `endLockedSessions`),
 `LockFeature`, `AccountCacheWipe.wipeLocked`.

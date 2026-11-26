@@ -12,6 +12,7 @@ public struct LockFeature {
         public var problem: Problem?
         public var signOut: ConfirmPhase = .idle
         @Presents public var signIn: LoginFormFeature.State?
+        @SharedReader(.inMemory(AccountSummary.sharedKey)) public var accounts: [AccountSummary] = []
         var pendingSignIn: SignedIn?
 
         public init(account: AccountSummary) {
@@ -20,6 +21,10 @@ public struct LockFeature {
 
         public var shouldUnlockWithSSO: Bool {
             account.authMode == .oidc
+        }
+
+        public var switchableAccounts: [AccountSummary] {
+            accounts.count > 1 ? accounts : []
         }
 
         public var isBusy: Bool {
@@ -54,6 +59,7 @@ public struct LockFeature {
         case signOutConfirmed
         case otherAccountRefused
         case signOutFailed
+        case accountTapped(String)
         case delegate(Delegate)
     }
 
@@ -61,6 +67,7 @@ public struct LockFeature {
     public enum Delegate: Equatable, Sendable {
         case signedIn(User, URL)
         case signOutRequested
+        case switchAccount(String)
     }
 
     private enum CancelID {
@@ -149,6 +156,10 @@ public struct LockFeature {
                 state.signOut = .idle
                 state.problem = .signOutFailed
                 return .none
+
+            case let .accountTapped(accountID):
+                guard accountID != state.account.id, !state.isBusy else { return .none }
+                return .send(.delegate(.switchAccount(accountID)))
 
             case .signIn, .delegate:
                 return .none

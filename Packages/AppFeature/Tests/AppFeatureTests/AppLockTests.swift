@@ -346,5 +346,37 @@ extension AppSuites {
 
             #expect(recorder.events.value.isEmpty)
         }
+
+        @Test("Picking another locked account on the lock switches to it and shows its own lock")
+        func lockPicksLockedAccount() async {
+            let lockedB = {
+                var credentials = AppFixtures.credentials(AppFixtures.serverB, TestUser.bob)
+                credentials.requireSignIn = RequireSignIn()
+                return credentials.locked
+            }()
+            let summaryB = AccountSummary(lockedB, isActive: true)
+            let switched = LockIsolated<[String]>([])
+            let store = makeStore(lockedState(), sessions: [policyA.locked, lockedB]) {
+                $0.authClient.activeAccountID = { AppFixtures.accountB }
+                $0.authClient.switchAccount = { accountID in
+                    switched.withValue { $0.append(accountID) }
+                    return lockedB
+                }
+            }
+
+            await store.send(.destination(.locked(.delegate(.switchAccount(AppFixtures.accountB)))))
+            await store.receive(\.activateAccount, lockedB)
+            await store.receive(\.lockShown) {
+                $0.destination = .locked(LockFeature.State(account: summaryB))
+            }
+            accountList.open()
+            await store.receive(\.accountsRefreshed) { [policyA] in
+                $0.$accounts.withLock { $0 = [AccountSummary(policyA.locked, isActive: false), summaryB] }
+            }
+            await store.finish()
+
+            #expect(switched.value == [AppFixtures.accountB])
+            #expect(ended.value.isEmpty, "switching never ends a session")
+        }
     }
 }
