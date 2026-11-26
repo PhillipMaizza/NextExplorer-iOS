@@ -1415,3 +1415,4 @@ emptyGuide.goToShared	前往共享
 emptyGuide.browseRootNoVolumesTitle	服务器上没有卷
 emptyGuide.browseRootVolumeFolders	服务器卷目录中的每个文件夹都会在这里显示为一个卷。
 emptyGuide.browseRootAddFolder	在服务器的该目录中添加一个文件夹，然后选择刷新。
+common.minimize	最小化

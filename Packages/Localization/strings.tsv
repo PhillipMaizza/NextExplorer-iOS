@@ -1358,6 +1358,7 @@ settings.uploadDefaultsClear	Ask Each Time
 common.change	Change
 common.moreInfo	More Info
 common.retryFailed	Retry Failed
+common.minimize	Minimize
 common.clearFinished	Clear Finished
 shareUpload.sessionUnreadable	NextExplorer couldn't read your sign in on this device. Open NextExplorer once, then share again.
 shareUpload.keepOpen	Keep this open until preparing finishes.

@@ -1453,3 +1453,4 @@ emptyGuide.goToShared	Vai a Condivisi
 emptyGuide.browseRootNoVolumesTitle	Il server non ha volumi
 emptyGuide.browseRootVolumeFolders	Ogni cartella nella directory dei volumi del server appare qui come volume.
 emptyGuide.browseRootAddFolder	Aggiungi una cartella lì sul server, poi scegli Aggiorna.
+common.minimize	Riduci

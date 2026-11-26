@@ -1346,3 +1346,4 @@ emptyGuide.goToShared	Buka Dibagikan
 emptyGuide.browseRootNoVolumesTitle	Server tidak memiliki volume
 emptyGuide.browseRootVolumeFolders	Setiap folder di direktori volume server muncul di sini sebagai volume.
 emptyGuide.browseRootAddFolder	Tambahkan folder di sana pada server, lalu pilih Segarkan.
+common.minimize	Minimalkan

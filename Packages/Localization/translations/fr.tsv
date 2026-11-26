@@ -1453,3 +1453,4 @@ emptyGuide.goToShared	Aller à Partagés
 emptyGuide.browseRootNoVolumesTitle	Le serveur n’a aucun volume
 emptyGuide.browseRootVolumeFolders	Chaque dossier du répertoire des volumes du serveur apparaît ici comme un volume.
 emptyGuide.browseRootAddFolder	Ajoutez-y un dossier sur le serveur, puis choisissez Actualiser.
+common.minimize	Réduire

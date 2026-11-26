@@ -1453,3 +1453,4 @@ emptyGuide.goToShared	Zu Geteilt
 emptyGuide.browseRootNoVolumesTitle	Der Server hat keine Volumes
 emptyGuide.browseRootVolumeFolders	Jeder Ordner im Volume-Verzeichnis des Servers erscheint hier als Volume.
 emptyGuide.browseRootAddFolder	Lege dort auf dem Server einen Ordner an und wähle dann Aktualisieren.
+common.minimize	Minimieren

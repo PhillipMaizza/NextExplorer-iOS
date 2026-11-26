@@ -1461,3 +1461,4 @@ emptyGuide.goToShared	Přejít do sekce Sdílené
 emptyGuide.browseRootNoVolumesTitle	Server nemá žádné svazky
 emptyGuide.browseRootVolumeFolders	Každá složka v adresáři svazků na serveru se tu zobrazí jako svazek.
 emptyGuide.browseRootAddFolder	Přidejte tam na serveru složku a pak zvolte Obnovit.
+common.minimize	Minimalizovat

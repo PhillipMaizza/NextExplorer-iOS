@@ -1415,3 +1415,4 @@ emptyGuide.goToShared	共有へ移動
 emptyGuide.browseRootNoVolumesTitle	サーバにボリュームがありません
 emptyGuide.browseRootVolumeFolders	サーバのボリュームディレクトリ内の各フォルダが、ここにボリュームとして表示されます。
 emptyGuide.browseRootAddFolder	サーバのそのディレクトリにフォルダを追加してから、更新を選択してください。
+common.minimize	最小化

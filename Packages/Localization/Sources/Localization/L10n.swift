@@ -298,6 +298,7 @@ public enum L10n {
         public static var edit: String { tr("common.edit") }  // "Edit"
         public static var increase: String { tr("common.increase") }  // "Increase"
         public static var loading: String { tr("common.loading") }  // "Loading…"
+        public static var minimize: String { tr("common.minimize") }  // "Minimize"
         public static var more: String { tr("common.more") }  // "More"
         public static var moreInfo: String { tr("common.moreInfo") }  // "More Info"
         public static var never: String { tr("common.never") }  // "Never"

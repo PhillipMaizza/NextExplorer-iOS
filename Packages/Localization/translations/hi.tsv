@@ -1453,3 +1453,4 @@ emptyGuide.goToShared	साझा किए गए पर जाएँ
 emptyGuide.browseRootNoVolumesTitle	सर्वर पर कोई वॉल्यूम नहीं है
 emptyGuide.browseRootVolumeFolders	सर्वर की वॉल्यूम डायरेक्टरी का हर फ़ोल्डर यहाँ एक वॉल्यूम के रूप में दिखता है।
 emptyGuide.browseRootAddFolder	वहाँ सर्वर पर एक फ़ोल्डर जोड़ें, फिर रीफ़्रेश करें चुनें।
+common.minimize	छोटा करें

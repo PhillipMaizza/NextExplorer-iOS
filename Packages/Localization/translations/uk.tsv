@@ -1462,3 +1462,4 @@ emptyGuide.goToShared	Перейти до Спільних
 emptyGuide.browseRootNoVolumesTitle	На сервері немає томів
 emptyGuide.browseRootVolumeFolders	Кожна папка в каталозі томів сервера відображається тут як том.
 emptyGuide.browseRootAddFolder	Додайте туди папку на сервері, а потім виберіть «Оновити».
+common.minimize	Згорнути

@@ -40,7 +40,7 @@ public struct MainTabView: View {
     @State private var offlinePhase = OfflineDownloadProgress.Phase.idle
     #if os(macOS)
         @FocusedValue(\.uploadToVisibleFolder) private var uploadHere
-        @State private var pendingUpload: UploadToVisibleFolderAction?
+        @State private var closedTransfers: Set<TransferQueue> = []
     #endif
     /// Mirrors `store.uploads.isActive` so list screens can reserve bottom inset for the bar.
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
@@ -102,14 +102,21 @@ public struct MainTabView: View {
             .onChange(of: shouldShowTransferBars) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }
             }
-            .sheet(
-                isPresented: Binding(
-                    get: { store.uploads.isSheetPresented },
-                    set: { store.send(.uploads(.sheetPresented($0))) }
-                ),
-                onDismiss: uploadMoreAfterDismiss
-            ) {
-                UploadsView(store: store.scope(state: \.uploads, action: \.uploads), onUploadMore: uploadMore)
+        #if os(macOS)
+            .overlayPreferenceValue(MacTransferButtonAnchorKey.self) { anchors in
+                MacTransferPanelLayer(
+                    store: store,
+                    onUploadMore: uploadMore,
+                    closedNotifications: closedTransfers,
+                    buttonAnchors: anchors
+                )
+            }
+        #else
+            .sheet(isPresented: Binding(
+                get: { store.uploads.isSheetPresented },
+                set: { store.send(.uploads(.sheetPresented($0))) }
+            )) {
+                UploadsView(store: store.scope(state: \.uploads, action: \.uploads))
             }
             .sheet(isPresented: Binding(
                 get: { store.downloadQueue.isSheetPresented },
@@ -117,54 +124,63 @@ public struct MainTabView: View {
             )) {
                 DownloadQueueView(store: store.scope(state: \.downloadQueue, action: \.downloadQueue))
             }
+        #endif
         #if os(iOS)
             .fileMover(
-                isPresented: Binding(
-                    get: { !store.pendingExportURLs.isEmpty },
-                    set: { _ in }
-                ),
-                files: store.pendingExportURLs,
-                onCompletion: { result in
-                    if case .success = result {
-                        store.send(.deviceExportFinished(didSave: true))
-                    } else {
-                        store.send(.deviceExportFinished(didSave: false))
-                    }
-                },
-                onCancellation: { store.send(.deviceExportFinished(didSave: false)) }
-            )
-        #endif
-            .modifier(MainTabToasts(store: store, extraBottomInset: Constants.toastTabBarClearance))
-            .featureToast(
-                error: store.settings.hasAccountChangeFailed ? L10n.Settings.accountChangeFailed : nil,
-                extraBottomInset: Constants.toastTabBarClearance
-            )
-            .environment(\.routesToastsToPane, true)
-            .onChange(of: store.selectedTab, initial: true) { _, tab in
-                visitedTabs.insert(tab)
-            }
-            .onChange(of: scenePhase) { _, newPhase in
-                guard newPhase == .active else { return }
-                guard hasBecomeActiveBefore else {
-                    hasBecomeActiveBefore = true
-                    lastActiveSync = Date()
-                    return
+            isPresented: Binding(
+                get: { !store.pendingExportURLs.isEmpty },
+                set: { _ in }
+            ),
+            files: store.pendingExportURLs,
+            onCompletion: { result in
+                if case .success = result {
+                    store.send(.deviceExportFinished(didSave: true))
+                } else {
+                    store.send(.deviceExportFinished(didSave: false))
                 }
-                #if os(macOS)
-                    guard Date().timeIntervalSince(lastActiveSync) >= Constants.macActiveSyncInterval else { return }
-                #endif
+            },
+            onCancellation: { store.send(.deviceExportFinished(didSave: false)) }
+        )
+        #endif
+        #if os(macOS)
+            .modifier(MainTabToasts(
+            store: store,
+            extraBottomInset: Constants.toastTabBarClearance,
+            closedTransfers: $closedTransfers
+        ))
+        #else
+        .modifier(MainTabToasts(store: store, extraBottomInset: Constants.toastTabBarClearance))
+        #endif
+        .featureToast(
+            error: store.settings.hasAccountChangeFailed ? L10n.Settings.accountChangeFailed : nil,
+            extraBottomInset: Constants.toastTabBarClearance
+        )
+        .environment(\.routesToastsToPane, true)
+        .onChange(of: store.selectedTab, initial: true) { _, tab in
+            visitedTabs.insert(tab)
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+            guard hasBecomeActiveBefore else {
+                hasBecomeActiveBefore = true
                 lastActiveSync = Date()
-                store.send(.appBecameActive)
+                return
             }
-            .task {
-                // Switching accounts remounts this view via its `.id`, so this `.task` can fire
-                // while the switch action is still reducing. Yield first so the send lands on the
-                // next tick, never reentrantly during that action (TCA forbids reentrant sends).
-                await Task.yield()
-                // Files shared in before this shell mounted (cold launch, or while signed out).
-                store.send(.sharedFilesArrived)
-                await store.send(.observeConnectivity).finish()
-            }
+            #if os(macOS)
+                guard Date().timeIntervalSince(lastActiveSync) >= Constants.macActiveSyncInterval else { return }
+            #endif
+            lastActiveSync = Date()
+            store.send(.appBecameActive)
+        }
+        .task {
+            // Switching accounts remounts this view via its `.id`, so this `.task` can fire
+            // while the switch action is still reducing. Yield first so the send lands on the
+            // next tick, never reentrantly during that action (TCA forbids reentrant sends).
+            await Task.yield()
+            // Files shared in before this shell mounted (cold launch, or while signed out).
+            store.send(.sharedFilesArrived)
+            await store.send(.observeConnectivity).finish()
+        }
     }
 
     private func setUploadBarHeight(_ height: CGFloat) {
@@ -172,24 +188,12 @@ public struct MainTabView: View {
         $uploadBarHeight.withLock { $0 = height }
     }
 
-    private var uploadMore: (() -> Void)? {
-        #if os(macOS)
+    #if os(macOS)
+        private var uploadMore: (() -> Void)? {
             guard let uploadHere else { return nil }
-            return {
-                pendingUpload = uploadHere
-                store.send(.uploads(.sheetPresented(false)))
-            }
-        #else
-            return nil
-        #endif
-    }
-
-    private func uploadMoreAfterDismiss() {
-        #if os(macOS)
-            pendingUpload?()
-            pendingUpload = nil
-        #endif
-    }
+            return { uploadHere() }
+        }
+    #endif
 
     /// The floating transfer bars; the Mac shows a toolbar activity button instead.
     private var shouldShowTransferBars: Bool {

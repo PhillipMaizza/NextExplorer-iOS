@@ -1453,3 +1453,4 @@ emptyGuide.goToShared	Ir a Compartidos
 emptyGuide.browseRootNoVolumesTitle	El servidor no tiene volúmenes
 emptyGuide.browseRootVolumeFolders	Cada carpeta del directorio de volúmenes del servidor aparece aquí como un volumen.
 emptyGuide.browseRootAddFolder	Añade una carpeta allí en el servidor y luego elige Actualizar.
+common.minimize	Minimizar

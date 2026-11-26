@@ -1529,3 +1529,4 @@ emptyGuide.goToShared	Przejdź do sekcji Udostępnione
 emptyGuide.browseRootNoVolumesTitle	Serwer nie ma woluminów
 emptyGuide.browseRootVolumeFolders	Każdy folder w katalogu woluminów na serwerze pojawia się tutaj jako wolumin.
 emptyGuide.browseRootAddFolder	Dodaj tam folder na serwerze, a potem wybierz Odśwież.
+common.minimize	Minimalizuj

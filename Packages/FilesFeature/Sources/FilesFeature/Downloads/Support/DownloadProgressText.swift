@@ -4,7 +4,7 @@ import Localization
 /// The "412 MB of 1.6 GB · 2 min left" line under a running download. Without a total (a folder
 /// zip streamed on the fly) it is just the byte count; the estimate appears once a rate settles.
 enum DownloadProgressText {
-    private static let separator = " · "
+    static let separator = " · "
 
     static func detail(for job: DownloadQueueFeature.DownloadJob, locale: Locale) -> String? {
         guard job.status == .downloading, job.receivedBytes > 0 || job.expectedBytes != nil else { return nil }
@@ -17,14 +17,13 @@ enum DownloadProgressText {
         return parts.joined(separator: separator)
     }
 
-    static func queueSummary(_ done: String, failed: String?, secondsRemaining: Double?, locale: Locale) -> String {
-        [done, failed, timeLeft(secondsRemaining, locale: locale)]
-            .compactMap(\.self)
-            .joined(separator: separator)
-    }
-
     static func timeLeft(_ seconds: Double?, locale: Locale) -> String? {
         seconds.map { L10n.DownloadQueue.timeLeft(duration($0, locale: locale)) }
+    }
+
+    static func size(of job: DownloadQueueFeature.DownloadJob, locale: Locale) -> String? {
+        guard !job.item.isDirectory, job.item.size > 0 else { return nil }
+        return bytes(job.item.size, locale: locale)
     }
 
     static func bytes(_ count: Int64, locale: Locale) -> String {
