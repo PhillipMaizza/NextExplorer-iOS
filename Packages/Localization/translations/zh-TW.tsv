@@ -1415,3 +1415,4 @@ emptyGuide.goToShared	前往共享
 emptyGuide.browseRootNoVolumesTitle	伺服器上沒有卷宗
 emptyGuide.browseRootVolumeFolders	伺服器卷宗目錄中的每個資料夾都會在這裡顯示為一個卷宗。
 emptyGuide.browseRootAddFolder	在伺服器的該目錄中加入一個資料夾，然後選擇重新整理。
+common.minimize	縮到最小

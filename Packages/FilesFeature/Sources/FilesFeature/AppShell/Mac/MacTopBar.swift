@@ -61,8 +61,10 @@
                     .disabled(!store.canGoUp)
                     if let refresh {
                         MacRefreshToolbarButton(isRefreshing: refresh.isRefreshing) { refresh() }
+                            .transition(MacWindowActions.buttonTransition)
                     }
                 }
+                .animation(DSMotion.controlMorph, value: refresh != nil)
                 .padding(.leading, max(.zero, sidebarWidth - edgeInset))
                 .animation(DSMotion.controlMorph, value: isSidebarCompact)
                 MacTopBarSearch(
@@ -73,9 +75,12 @@
                     if store.downloadQueue.isBarVisible {
                         MacTransferActivityButton(store: store)
                             .buttonStyle(.macToolbarCircle)
+                            .macTransferButtonAnchor(.downloads)
+                            .transition(MacWindowActions.buttonTransition)
                     }
                     actions
                 }
+                .animation(DSMotion.controlMorph, value: store.downloadQueue.isBarVisible)
             }
             .padding(.leading, edgeInset)
             .padding(.trailing, Metrics.trailingInset)

@@ -1491,3 +1491,4 @@ emptyGuide.goToShared	Mergi la Partajate
 emptyGuide.browseRootNoVolumesTitle	Serverul nu are volume
 emptyGuide.browseRootVolumeFolders	Fiecare dosar din directorul de volume al serverului apare aici ca volum.
 emptyGuide.browseRootAddFolder	Adaugă un dosar acolo pe server, apoi alege Reîmprospătează.
+common.minimize	Minimizează

@@ -1453,3 +1453,4 @@ emptyGuide.goToShared	Ir para Partilhados
 emptyGuide.browseRootNoVolumesTitle	O servidor não tem volumes
 emptyGuide.browseRootVolumeFolders	Cada pasta no diretório de volumes do servidor aparece aqui como um volume.
 emptyGuide.browseRootAddFolder	Adicione uma pasta lá no servidor e depois escolha Atualizar.
+common.minimize	Minimizar

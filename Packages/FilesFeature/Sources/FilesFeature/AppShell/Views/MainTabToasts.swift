@@ -16,12 +16,7 @@ struct MainTabToasts: ViewModifier {
         @Environment(\.locale) private var locale
         @State private var uploadTransfer: DSToastMessage?
         @State private var downloadTransfer: DSToastMessage?
-        @State private var closedTransfers: Set<TransferQueue> = []
-
-        private enum TransferQueue: String {
-            case uploads
-            case downloads
-        }
+        @Binding var closedTransfers: Set<TransferQueue>
     #endif
 
     func body(content: Content) -> some View {
@@ -104,7 +99,7 @@ struct MainTabToasts: ViewModifier {
             let titles = TransferStatusBars(store: store)
             switch queue {
             case .uploads:
-                guard store.uploads.isActive else { return nil }
+                guard store.uploads.isActive, !store.uploads.isSheetPresented else { return nil }
                 return .transfer(
                     titles.uploadBarTitle,
                     id: queue.rawValue,
@@ -112,13 +107,17 @@ struct MainTabToasts: ViewModifier {
                     fraction: store.uploads.overallProgress,
                     fileName: store.uploads.currentJob?.fileName,
                     timeLeft: DownloadProgressText.timeLeft(store.uploads.estimatedSecondsRemaining, locale: locale),
+                    hasFailures: store.uploads.failedCount > 0,
                     actionTitle: L10n.Menu.showAll,
-                    action: { store.send(.uploads(.barTapped)) },
+                    action: {
+                        closedTransfers.remove(.uploads)
+                        store.send(.uploads(.barTapped))
+                    },
                     cancelTitle: L10n.Uploads.cancelAll,
                     cancel: { store.send(.uploads(.cancelAllTapped)) }
                 )
             case .downloads:
-                guard store.downloadQueue.isActive else { return nil }
+                guard store.downloadQueue.isActive, !store.downloadQueue.isSheetPresented else { return nil }
                 return .transfer(
                     titles.downloadBarTitle,
                     id: queue.rawValue,
@@ -129,8 +128,12 @@ struct MainTabToasts: ViewModifier {
                         store.downloadQueue.currentJob?.estimatedSecondsRemaining,
                         locale: locale
                     ),
+                    hasFailures: store.downloadQueue.failedCount > 0,
                     actionTitle: L10n.Menu.showAll,
-                    action: { store.send(.downloadQueue(.barTapped)) },
+                    action: {
+                        closedTransfers.remove(.downloads)
+                        store.send(.downloadQueue(.barTapped))
+                    },
                     cancelTitle: L10n.DownloadQueue.cancelAll,
                     cancel: { store.send(.downloadQueue(.cancelAllTapped)) }
                 )

@@ -45,14 +45,19 @@
             HStack(spacing: MacToolbarMetrics.gap) {
                 if let refresh, !isShared {
                     MacRefreshToolbarButton(isRefreshing: refresh.isRefreshing) { refresh() }
+                        .transition(Self.buttonTransition)
                 }
                 if let uploads {
                     MacUploadsActivityButton(activity: uploads)
+                        .macTransferButtonAnchor(.uploads)
+                        .transition(Self.buttonTransition)
                 } else if let upload {
                     Button { upload() } label: { IconKit.upload.macToolbarGlyph() }
                         .buttonStyle(.macToolbarCircle)
                         .accessibilityLabelWithTooltip(L10n.Uploads.actionUploadFromFiles)
                         .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
+                        .macTransferButtonAnchor(.uploads)
+                        .transition(Self.buttonTransition)
                 }
                 if openInspector != nil || closeInspector != nil {
                     Button {
@@ -66,8 +71,23 @@
                         .accessibilityLabelWithTooltip(
                             closeInspector == nil ? L10n.Browse.actionGetInfo : L10n.Menu.hideInspector
                         )
+                        .transition(Self.buttonTransition)
                 }
             }
+            .animation(DSMotion.controlMorph, value: visibleButtons)
+        }
+
+        static var buttonTransition: AnyTransition {
+            .scale(scale: MacToolbarMetrics.appearScale).combined(with: .opacity)
+        }
+
+        private var visibleButtons: [Bool] {
+            [
+                refresh != nil && !isShared,
+                uploads != nil,
+                upload != nil,
+                openInspector != nil || closeInspector != nil,
+            ]
         }
     }
 

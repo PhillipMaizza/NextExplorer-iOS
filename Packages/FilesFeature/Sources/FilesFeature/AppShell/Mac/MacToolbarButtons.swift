@@ -11,6 +11,7 @@
 
     enum MacToolbarMetrics {
         static let gap: CGFloat = .space8
+        static let appearScale: CGFloat = 0.6
     }
 
     struct MacToolbarCircleButtonStyle: ButtonStyle {

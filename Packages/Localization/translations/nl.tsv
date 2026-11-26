@@ -1453,3 +1453,4 @@ emptyGuide.goToShared	Naar Gedeeld
 emptyGuide.browseRootNoVolumesTitle	De server heeft geen volumes
 emptyGuide.browseRootVolumeFolders	Elke map in de volumemap van de server verschijnt hier als volume.
 emptyGuide.browseRootAddFolder	Voeg daar op de server een map toe en kies dan Vernieuwen.
+common.minimize	Minimaliseer

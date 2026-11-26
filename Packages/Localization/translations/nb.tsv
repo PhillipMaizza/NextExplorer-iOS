@@ -1382,3 +1382,4 @@ emptyGuide.goToShared	Gå til Delt
 emptyGuide.browseRootNoVolumesTitle	Serveren har ingen volumer
 emptyGuide.browseRootVolumeFolders	Hver mappe i serverens volummappe vises her som et volum.
 emptyGuide.browseRootAddFolder	Legg til en mappe der på serveren, og velg deretter Oppdater.
+common.minimize	Minimer

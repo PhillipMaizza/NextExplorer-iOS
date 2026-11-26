@@ -1415,3 +1415,4 @@ emptyGuide.goToShared	공유됨으로 이동
 emptyGuide.browseRootNoVolumesTitle	서버에 볼륨이 없습니다
 emptyGuide.browseRootVolumeFolders	서버 볼륨 디렉터리의 각 폴더가 여기에 볼륨으로 표시됩니다.
 emptyGuide.browseRootAddFolder	서버의 해당 위치에 폴더를 추가한 다음 새로 고침을 선택하세요.
+common.minimize	최소화

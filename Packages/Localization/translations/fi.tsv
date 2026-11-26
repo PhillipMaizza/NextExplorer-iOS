@@ -1382,3 +1382,4 @@ emptyGuide.goToShared	Siirry Jaetut-näkymään
 emptyGuide.browseRootNoVolumesTitle	Palvelimella ei ole taltioita
 emptyGuide.browseRootVolumeFolders	Jokainen palvelimen taltiohakemiston kansio näkyy täällä taltiona.
 emptyGuide.browseRootAddFolder	Lisää kansio sinne palvelimelle ja valitse sitten Päivitä.
+common.minimize	Pienennä

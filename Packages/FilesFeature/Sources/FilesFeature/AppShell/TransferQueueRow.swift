@@ -11,4 +11,11 @@ struct TransferQueueRow: Identifiable {
     let id: UUID
     let name: String
     let status: Status
+    var subtitle: String?
+}
+
+struct TransferQueueSummary {
+    let done: String
+    let failure: String?
+    let timeLeft: String?
 }

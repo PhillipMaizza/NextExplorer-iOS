@@ -1453,3 +1453,4 @@ emptyGuide.goToShared	Gå till Delade
 emptyGuide.browseRootNoVolumesTitle	Servern har inga volymer
 emptyGuide.browseRootVolumeFolders	Varje mapp i serverns volymkatalog visas här som en volym.
 emptyGuide.browseRootAddFolder	Lägg till en mapp där på servern och välj sedan Uppdatera.
+common.minimize	Minimera
