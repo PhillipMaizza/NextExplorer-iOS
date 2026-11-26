@@ -571,7 +571,7 @@ settings.removeAllDownloadsConfirm	Xóa tất cả
 settings.removeAllDownloadsMessage	Thao tác này xóa mọi tệp đã tải xuống khỏi thiết bị này. Chúng vẫn còn trên máy chủ.
 settings.clearCacheTitle	Xóa bộ nhớ đệm?
 settings.clearCacheConfirm	Xóa sạch
-settings.clearCacheMessage	Thao tác này xóa bản xem trước, ảnh thu nhỏ và danh sách thư mục đã lưu dùng khi ngoại tuyến. Không ảnh hưởng đến máy chủ.
+settings.clearCacheMessage	Thao tác này xóa bản xem trước, ảnh thu nhỏ và danh sách thư mục đã lưu của tài khoản này dùng khi ngoại tuyến. Không ảnh hưởng đến tài khoản khác và máy chủ.
 settings.signOutAlertTitle	Đăng xuất?
 settings.signOutMessage	Bạn sẽ cần đăng nhập lại để truy cập tệp. Bản xem trước, ảnh thu nhỏ và danh sách thư mục đã lưu trên thiết bị này sẽ bị xóa.
 settings.signOutButton	Đăng xuất

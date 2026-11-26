@@ -148461,181 +148461,181 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This clears cached previews, thumbnails, and saved folder listings used offline. Nothing on the server is affected."
+            "value": "This clears this account's cached previews, thumbnails, and saved folder listings used offline. Other accounts and the server are not affected."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "يؤدي هذا إلى مسح المعاينات والصور المصغّرة وقوائم المجلدات المحفوظة للاستخدام دون اتصال. لا يتأثر أي شيء على الخادم."
+            "value": "يؤدي هذا إلى مسح المعاينات والصور المصغّرة وقوائم المجلدات المحفوظة لهذا الحساب للاستخدام دون اتصال. لا تتأثر الحسابات الأخرى ولا الخادم."
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tím se vymažou uložené náhledy, miniatury a uložené výpisy složek používané offline. Na serveru se nic nemění."
+            "value": "Tím se vymažou uložené náhledy, miniatury a uložené výpisy složek tohoto účtu používané offline. Ostatní účty ani server se nemění."
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dette rydder cachede eksempelvisninger, miniaturer og gemte mappelister, der bruges offline. Intet på serveren påvirkes."
+            "value": "Dette rydder denne kontos cachede eksempelvisninger, miniaturer og gemte mappelister, der bruges offline. Andre konti og serveren påvirkes ikke."
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dies leert zwischengespeicherte Vorschauen, Miniaturen und offline gesicherte Ordnerlisten. Auf dem Server wird nichts berührt."
+            "value": "Dies leert die zwischengespeicherten Vorschauen, Miniaturen und offline gesicherten Ordnerlisten dieses Kontos. Andere Konten und der Server bleiben unberührt."
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Αυτό εκκαθαρίζει τις προεπισκοπήσεις, τις μικρογραφίες και τις αποθηκευμένες λίστες φακέλων που χρησιμοποιούνται εκτός σύνδεσης. Τίποτα στον διακομιστή δεν επηρεάζεται."
+            "value": "Αυτό εκκαθαρίζει τις προεπισκοπήσεις, τις μικρογραφίες και τις αποθηκευμένες λίστες φακέλων αυτού του λογαριασμού που χρησιμοποιούνται εκτός σύνδεσης. Οι άλλοι λογαριασμοί και ο διακομιστής δεν επηρεάζονται."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esto borra las vistas previas, miniaturas y listados de carpetas guardados para el uso sin conexión. Nada en el servidor se ve afectado."
+            "value": "Esto borra las vistas previas, miniaturas y listados de carpetas guardados de esta cuenta para el uso sin conexión. Las demás cuentas y el servidor no se ven afectados."
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tämä tyhjentää offline-käytössä olevat välimuistissa olevat esikatselut, pikkukuvat ja tallennetut kansioluettelot. Palvelimeen ei vaikuteta."
+            "value": "Tämä tyhjentää tämän tilin offline-käytössä olevat välimuistissa olevat esikatselut, pikkukuvat ja tallennetut kansioluettelot. Muihin tileihin ja palvelimeen ei vaikuteta."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cela efface les aperçus, miniatures et listes de dossiers enregistrés pour une utilisation hors ligne. Rien n'est affecté sur le serveur."
+            "value": "Cela efface les aperçus, miniatures et listes de dossiers enregistrés de ce compte pour une utilisation hors ligne. Les autres comptes et le serveur ne sont pas affectés."
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "פעולה זו מנקה תצוגות מקדימות, תמונות ממוזערות ורשימות תיקיות שמורות המשמשות במצב לא מקוון. דבר בשרת לא מושפע."
+            "value": "פעולה זו מנקה תצוגות מקדימות, תמונות ממוזערות ורשימות תיקיות שמורות של חשבון זה המשמשות במצב לא מקוון. חשבונות אחרים והשרת אינם מושפעים."
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "यह ऑफ़लाइन उपयोग किए गए कैश किए गए पूर्वावलोकन, थंबनेल और सहेजी गई फ़ोल्डर सूचियां साफ़ करता है। सर्वर पर कुछ भी प्रभावित नहीं होता।"
+            "value": "यह इस खाते के ऑफ़लाइन उपयोग किए गए कैश किए गए पूर्वावलोकन, थंबनेल और सहेजी गई फ़ोल्डर सूचियां साफ़ करता है। अन्य खाते और सर्वर प्रभावित नहीं होते।"
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ez törli a gyorsítótárazott előnézeteket, miniatűröket és az offline használt mentett mappalistákat. A kiszolgálón semmi sem változik."
+            "value": "Ez törli ennek a fióknak a gyorsítótárazott előnézeteit, miniatűrjeit és az offline használt mentett mappalistáit. A többi fiók és a kiszolgáló nem változik."
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ini membersihkan pratinjau, gambar mini, dan daftar folder tersimpan yang dipakai secara offline. Tidak ada yang terpengaruh di server."
+            "value": "Ini membersihkan pratinjau, gambar mini, dan daftar folder tersimpan milik akun ini yang dipakai secara offline. Akun lain dan server tidak terpengaruh."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Questo cancella anteprime, miniature ed elenchi di cartelle salvati per l'uso offline. Nulla sul server viene toccato."
+            "value": "Questo cancella anteprime, miniature ed elenchi di cartelle salvati di questo account per l'uso offline. Gli altri account e il server non vengono toccati."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "オフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。サーバー上のものには影響しません。"
+            "value": "このアカウントのオフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。ほかのアカウントとサーバーには影響しません。"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "오프라인에서 사용하는 캐시된 미리보기, 썸네일, 저장된 폴더 목록을 지웁니다. 서버의 데이터는 영향을 받지 않습니다."
+            "value": "이 계정이 오프라인에서 사용하는 캐시된 미리보기, 썸네일, 저장된 폴더 목록을 지웁니다. 다른 계정과 서버는 영향을 받지 않습니다."
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Dette tømmer bufrede forhåndsvisninger, miniatyrbilder og lagrede mappelister som brukes frakoblet. Ingenting på serveren påvirkes."
+            "value": "Dette tømmer denne kontoens bufrede forhåndsvisninger, miniatyrbilder og lagrede mappelister som brukes frakoblet. Andre kontoer og serveren påvirkes ikke."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hiermee worden gecachte voorbeelden, miniaturen en offline bewaarde mapoverzichten gewist. Niets op de server wordt beïnvloed."
+            "value": "Hiermee worden de gecachte voorbeelden, miniaturen en offline bewaarde mapoverzichten van dit account gewist. Andere accounts en de server worden niet beïnvloed."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Spowoduje to wyczyszczenie podglądów, miniatur i zapisanych list folderów używanych offline. Nic na serwerze nie zostaje naruszone."
+            "value": "Spowoduje to wyczyszczenie podglądów, miniatur i zapisanych list folderów tego konta używanych offline. Inne konta i serwer pozostają nienaruszone."
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Isto limpa pré-visualizações, miniaturas e listas de pastas guardadas para uso offline. Nada no servidor é afetado."
+            "value": "Isto limpa pré-visualizações, miniaturas e listas de pastas guardadas desta conta para uso offline. Outras contas e o servidor não são afetados."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Isto limpa pré-visualizações, miniaturas e listas de pastas salvas para uso offline. Nada no servidor é afetado."
+            "value": "Isto limpa pré-visualizações, miniaturas e listas de pastas salvas desta conta para uso offline. Outras contas e o servidor não são afetados."
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aceasta golește previzualizările, miniaturile și listele de dosare salvate pentru utilizare offline. Nimic de pe server nu este afectat."
+            "value": "Aceasta golește previzualizările, miniaturile și listele de dosare salvate ale acestui cont pentru utilizare offline. Celelalte conturi și serverul nu sunt afectate."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Это очистит кешированные превью, миниатюры и сохранённые списки папок для офлайн-режима. На сервере ничего не затрагивается."
+            "value": "Это очистит кешированные превью, миниатюры и сохранённые списки папок этой учётной записи для офлайн-режима. Другие учётные записи и сервер не затрагиваются."
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Detta rensar cachade förhandsvisningar, miniatyrer och sparade mapplistor som används offline. Inget på servern påverkas."
+            "value": "Detta rensar det här kontots cachade förhandsvisningar, miniatyrer och sparade mapplistor som används offline. Andra konton och servern påverkas inte."
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "การดำเนินการนี้จะล้างตัวอย่าง ภาพขนาดย่อ และรายการโฟลเดอร์ที่บันทึกไว้ซึ่งใช้ในโหมดออฟไลน์ ไม่มีสิ่งใดบนเซิร์ฟเวอร์ได้รับผลกระทบ"
+            "value": "การดำเนินการนี้จะล้างตัวอย่าง ภาพขนาดย่อ และรายการโฟลเดอร์ที่บันทึกไว้ของบัญชีนี้ซึ่งใช้ในโหมดออฟไลน์ บัญชีอื่นและเซิร์ฟเวอร์ไม่ได้รับผลกระทบ"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bu işlem, çevrimdışı kullanılan önbelleğe alınmış önizlemeleri, küçük resimleri ve kayıtlı klasör listelerini temizler. Sunucudaki hiçbir şey etkilenmez."
+            "value": "Bu işlem, bu hesabın çevrimdışı kullanılan önbelleğe alınmış önizlemelerini, küçük resimlerini ve kayıtlı klasör listelerini temizler. Diğer hesaplar ve sunucu etkilenmez."
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Це очистить кешовані попередні перегляди, мініатюри та збережені списки папок для офлайн-використання. Нічого на сервері не зміниться."
+            "value": "Це очистить кешовані попередні перегляди, мініатюри та збережені списки папок цього облікового запису для офлайн-використання. Інші облікові записи та сервер не зміняться."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Thao tác này xóa bản xem trước, ảnh thu nhỏ và danh sách thư mục đã lưu dùng khi ngoại tuyến. Không ảnh hưởng đến máy chủ."
+            "value": "Thao tác này xóa bản xem trước, ảnh thu nhỏ và danh sách thư mục đã lưu của tài khoản này dùng khi ngoại tuyến. Không ảnh hưởng đến tài khoản khác và máy chủ."
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "这会清除用于离线的缓存预览、缩略图和已保存的文件夹列表。服务器上的内容不受影响。"
+            "value": "这会清除此账户用于离线的缓存预览、缩略图和已保存的文件夹列表。其他账户和服务器不受影响。"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "這會清除用於離線的快取預覽、縮覽圖和已儲存的檔案夾列表。伺服器上的內容不受影響。"
+            "value": "這會清除此帳號用於離線的快取預覽、縮覽圖和已儲存的檔案夾列表。其他帳號和伺服器不受影響。"
           }
         }
       }

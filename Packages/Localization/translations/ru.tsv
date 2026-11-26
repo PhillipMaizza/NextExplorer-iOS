@@ -415,7 +415,7 @@ settings.removeAllDownloadsConfirm	Удалить все
 settings.removeAllDownloadsMessage	Это удалит все загруженные файлы с этого устройства. Они останутся на сервере.
 settings.clearCacheTitle	Очистить кеш?
 settings.clearCacheConfirm	Очистить
-settings.clearCacheMessage	Это очистит кешированные превью, миниатюры и сохранённые списки папок для офлайн-режима. На сервере ничего не затрагивается.
+settings.clearCacheMessage	Это очистит кешированные превью, миниатюры и сохранённые списки папок этой учётной записи для офлайн-режима. Другие учётные записи и сервер не затрагиваются.
 settings.signOutAlertTitle	Выйти?
 settings.signOutMessage	Чтобы получить доступ к файлам, нужно снова войти.
 settings.signOutButton	Выйти

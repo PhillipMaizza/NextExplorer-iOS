@@ -667,7 +667,7 @@ settings.removeAllDownloadsConfirm	Remove All
 settings.removeAllDownloadsMessage	This deletes every downloaded file from this device. They stay on the server.
 settings.clearCacheTitle	Clear Cache?
 settings.clearCacheConfirm	Clear
-settings.clearCacheMessage	This clears cached previews, thumbnails, and saved folder listings used offline. Nothing on the server is affected.
+settings.clearCacheMessage	This clears this account's cached previews, thumbnails, and saved folder listings used offline. Other accounts and the server are not affected.
 settings.signOutAlertTitle	Sign Out?
 settings.signOutMessage	You'll need to sign in again to access your files. Cached previews, thumbnails, and saved folder listings on this device will be cleared.
 settings.signOutButton	Sign Out

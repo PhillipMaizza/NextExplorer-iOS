@@ -404,7 +404,7 @@ settings.removeAllDownloadsConfirm	Elimină toate
 settings.removeAllDownloadsMessage	Aceasta șterge toate fișierele descărcate de pe acest dispozitiv. Rămân pe server.
 settings.clearCacheTitle	Golești cache-ul?
 settings.clearCacheConfirm	Golește
-settings.clearCacheMessage	Aceasta golește previzualizările, miniaturile și listele de dosare salvate pentru utilizare offline. Nimic de pe server nu este afectat.
+settings.clearCacheMessage	Aceasta golește previzualizările, miniaturile și listele de dosare salvate ale acestui cont pentru utilizare offline. Celelalte conturi și serverul nu sunt afectate.
 settings.signOutAlertTitle	Te deconectezi?
 settings.signOutMessage	Va trebui să te conectezi din nou pentru a-ți accesa fișierele.
 settings.signOutButton	Deconectează-te

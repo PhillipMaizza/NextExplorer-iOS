@@ -393,7 +393,7 @@ settings.removeAllDownloadsConfirm	Ta bort alla
 settings.removeAllDownloadsMessage	Detta raderar alla nedladdade filer från den här enheten. De finns kvar på servern.
 settings.clearCacheTitle	Rensa cache?
 settings.clearCacheConfirm	Rensa
-settings.clearCacheMessage	Detta rensar cachade förhandsvisningar, miniatyrer och sparade mapplistor som används offline. Inget på servern påverkas.
+settings.clearCacheMessage	Detta rensar det här kontots cachade förhandsvisningar, miniatyrer och sparade mapplistor som används offline. Andra konton och servern påverkas inte.
 settings.signOutAlertTitle	Logga ut?
 settings.signOutMessage	Du måste logga in igen för att komma åt dina filer.
 settings.signOutButton	Logga ut

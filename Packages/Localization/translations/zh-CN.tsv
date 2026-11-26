@@ -382,7 +382,7 @@ settings.removeAllDownloadsConfirm	全部移除
 settings.removeAllDownloadsMessage	这会从此设备删除所有已下载的文件。它们仍保留在服务器上。
 settings.clearCacheTitle	清除缓存？
 settings.clearCacheConfirm	清除
-settings.clearCacheMessage	这会清除用于离线的缓存预览、缩略图和已保存的文件夹列表。服务器上的内容不受影响。
+settings.clearCacheMessage	这会清除此账户用于离线的缓存预览、缩略图和已保存的文件夹列表。其他账户和服务器不受影响。
 settings.signOutAlertTitle	退出登录？
 settings.signOutMessage	您需要重新登录才能访问您的文件。
 settings.signOutButton	退出登录

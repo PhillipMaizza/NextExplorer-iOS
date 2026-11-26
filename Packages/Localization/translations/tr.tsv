@@ -582,7 +582,7 @@ settings.removeAllDownloadsConfirm	Tümünü Kaldır
 settings.removeAllDownloadsMessage	Bu işlem indirilen her dosyayı bu cihazdan siler. Dosyalar sunucuda kalır.
 settings.clearCacheTitle	Önbellek Temizlensin mi?
 settings.clearCacheConfirm	Temizle
-settings.clearCacheMessage	Bu işlem, çevrimdışı kullanılan önbelleğe alınmış önizlemeleri, küçük resimleri ve kayıtlı klasör listelerini temizler. Sunucudaki hiçbir şey etkilenmez.
+settings.clearCacheMessage	Bu işlem, bu hesabın çevrimdışı kullanılan önbelleğe alınmış önizlemelerini, küçük resimlerini ve kayıtlı klasör listelerini temizler. Diğer hesaplar ve sunucu etkilenmez.
 settings.signOutAlertTitle	Oturum Kapatılsın mı?
 settings.signOutMessage	Dosyalarınıza erişmek için yeniden oturum açmanız gerekir. Bu cihazdaki önbelleğe alınmış önizlemeler, küçük resimler ve kayıtlı klasör listeleri temizlenir.
 settings.signOutButton	Oturumu Kapat

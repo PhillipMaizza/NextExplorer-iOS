@@ -582,7 +582,7 @@ settings.removeAllDownloadsConfirm	Összes eltávolítása
 settings.removeAllDownloadsMessage	Ez minden letöltött fájlt töröl erről az eszközről. A kiszolgálón megmaradnak.
 settings.clearCacheTitle	Üríti a gyorsítótárat?
 settings.clearCacheConfirm	Ürítés
-settings.clearCacheMessage	Ez törli a gyorsítótárazott előnézeteket, miniatűröket és az offline használt mentett mappalistákat. A kiszolgálón semmi sem változik.
+settings.clearCacheMessage	Ez törli ennek a fióknak a gyorsítótárazott előnézeteit, miniatűrjeit és az offline használt mentett mappalistáit. A többi fiók és a kiszolgáló nem változik.
 settings.signOutAlertTitle	Kijelentkezik?
 settings.signOutMessage	A fájlok eléréséhez újra be kell jelentkeznie. A gyorsítótárazott előnézetek, miniatűrök és mentett mappalisták ezen az eszközön törlődnek.
 settings.signOutButton	Kijelentkezés

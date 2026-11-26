@@ -393,7 +393,7 @@ settings.removeAllDownloadsConfirm	Tout supprimer
 settings.removeAllDownloadsMessage	Cela supprime tous les fichiers téléchargés de cet appareil. Ils restent sur le serveur.
 settings.clearCacheTitle	Vider le cache ?
 settings.clearCacheConfirm	Vider
-settings.clearCacheMessage	Cela efface les aperçus, miniatures et listes de dossiers enregistrés pour une utilisation hors ligne. Rien n'est affecté sur le serveur.
+settings.clearCacheMessage	Cela efface les aperçus, miniatures et listes de dossiers enregistrés de ce compte pour une utilisation hors ligne. Les autres comptes et le serveur ne sont pas affectés.
 settings.signOutAlertTitle	Se déconnecter ?
 settings.signOutMessage	Vous devrez vous reconnecter pour accéder à vos fichiers.
 settings.signOutButton	Se déconnecter

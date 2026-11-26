@@ -604,7 +604,7 @@ settings.removeAllDownloadsConfirm	Odebrat vše
 settings.removeAllDownloadsMessage	Tím se z tohoto zařízení smažou všechny stažené soubory. Na serveru zůstanou.
 settings.clearCacheTitle	Vymazat mezipaměť?
 settings.clearCacheConfirm	Vymazat
-settings.clearCacheMessage	Tím se vymažou uložené náhledy, miniatury a uložené výpisy složek používané offline. Na serveru se nic nemění.
+settings.clearCacheMessage	Tím se vymažou uložené náhledy, miniatury a uložené výpisy složek tohoto účtu používané offline. Ostatní účty ani server se nemění.
 settings.signOutAlertTitle	Odhlásit se?
 settings.signOutMessage	Pro přístup k souborům se budete muset znovu přihlásit. Uložené náhledy, miniatury a výpisy složek na tomto zařízení budou vymazány.
 settings.signOutButton	Odhlásit se

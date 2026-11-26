@@ -571,7 +571,7 @@ settings.removeAllDownloadsConfirm	Hapus Semua
 settings.removeAllDownloadsMessage	Ini menghapus semua file yang diunduh dari perangkat ini. File tetap ada di server.
 settings.clearCacheTitle	Hapus Cache?
 settings.clearCacheConfirm	Bersihkan
-settings.clearCacheMessage	Ini membersihkan pratinjau, gambar mini, dan daftar folder tersimpan yang dipakai secara offline. Tidak ada yang terpengaruh di server.
+settings.clearCacheMessage	Ini membersihkan pratinjau, gambar mini, dan daftar folder tersimpan milik akun ini yang dipakai secara offline. Akun lain dan server tidak terpengaruh.
 settings.signOutAlertTitle	Keluar?
 settings.signOutMessage	Anda perlu masuk lagi untuk mengakses file. Pratinjau, gambar mini, dan daftar folder tersimpan di perangkat ini akan dibersihkan.
 settings.signOutButton	Keluar

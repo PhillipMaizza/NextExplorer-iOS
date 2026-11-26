@@ -382,7 +382,7 @@ settings.removeAllDownloadsConfirm	全部移除
 settings.removeAllDownloadsMessage	這會從此裝置刪除所有已下載的檔案。它們仍保留在伺服器上。
 settings.clearCacheTitle	清除快取？
 settings.clearCacheConfirm	清除
-settings.clearCacheMessage	這會清除用於離線的快取預覽、縮覽圖和已儲存的檔案夾列表。伺服器上的內容不受影響。
+settings.clearCacheMessage	這會清除此帳號用於離線的快取預覽、縮覽圖和已儲存的檔案夾列表。其他帳號和伺服器不受影響。
 settings.signOutAlertTitle	登出？
 settings.signOutMessage	您需要重新登入才能取用您的檔案。
 settings.signOutButton	登出

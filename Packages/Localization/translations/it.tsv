@@ -392,7 +392,7 @@ settings.removeAllDownloadsConfirm	Rimuovi tutto
 settings.removeAllDownloadsMessage	Questo elimina ogni file scaricato da questo dispositivo. Restano sul server.
 settings.clearCacheTitle	Svuotare la cache?
 settings.clearCacheConfirm	Svuota
-settings.clearCacheMessage	Questo cancella anteprime, miniature ed elenchi di cartelle salvati per l'uso offline. Nulla sul server viene toccato.
+settings.clearCacheMessage	Questo cancella anteprime, miniature ed elenchi di cartelle salvati di questo account per l'uso offline. Gli altri account e il server non vengono toccati.
 settings.signOutAlertTitle	Uscire?
 settings.signOutMessage	Dovrai accedere di nuovo per usare i tuoi file.
 settings.signOutButton	Esci
