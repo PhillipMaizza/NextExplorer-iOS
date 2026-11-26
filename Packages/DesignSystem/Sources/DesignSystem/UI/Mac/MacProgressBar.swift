@@ -27,8 +27,13 @@
             .onChange(of: value == nil, initial: true) { _, isIndeterminate in
                 isSliding = isIndeterminate && !reduceMotion
             }
-            .accessibilityElement()
-            .accessibilityValue(value.map { Text($0, format: .percent.precision(.fractionLength(0))) } ?? Text(""))
+            .accessibilityRepresentation {
+                if let value {
+                    ProgressView(value: min(max(value, 0), 1))
+                } else {
+                    ProgressView()
+                }
+            }
         }
 
         @ViewBuilder
