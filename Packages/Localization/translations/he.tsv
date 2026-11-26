@@ -1381,7 +1381,7 @@ browse.fileCount#other	%lld קבצים
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	מיון ברירת מחדל
 settings.rowSortOrder	סדר
-settings.defaultSortFooter	תיקיות שלא מיינת נפתחות בסדר הזה. תיקייה שאתה ממיין שומרת על הסדר שלה בכל מכשיר המחובר לשרת הזה.
+settings.defaultSortFooter	תיקיות שלא מיינת נפתחות בסדר הזה.\nתיקייה שאתה ממיין שומרת על הסדר שלה בכל מכשיר המחובר לשרת הזה.
 settings.sectionSecurity	אבטחה
 settings.rowRequireSignIn	דרישת התחברות
 lock.title	NextExplorer נעול
@@ -1414,6 +1414,10 @@ emptyGuide.sharedBody	לחצו לחיצה ימנית על קובץ או תיקי
 emptyGuide.sharedWithMeTitle	עדיין לא שיתפו איתך דבר
 emptyGuide.offlineTitle	שמירת קבצים ב־Mac הזה
 emptyGuide.offlineBody	לחצו לחיצה ימנית על כל קובץ או תיקייה בעיון ובחרו ״%@״.\nתיקיות מקבלות קבצים חדשים בכל סנכרון של האפליקציה.\n\nקבצים שהורדו נפתחים גם ללא חיבור.
+settings.groupTheme	ערכת נושא
+settings.sectionFiles	קבצים
+settings.groupFileLists	רשימות קבצים
+settings.groupPreviews	תצוגות מקדימות
 emptyGuide.trashTitle	הפח ריק
 emptyGuide.trashRestore	שחזור מחזיר פריט למקומו, או לכל תיקייה שתבחרו.
 emptyGuide.trashShareLinks	קישורי שיתוף מפסיקים לעבוד כל עוד הקובץ כאן.\nשחזור יכול להחזיר אותם.

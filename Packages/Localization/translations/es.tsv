@@ -1410,7 +1410,7 @@ browse.fileCount#other	%lld archivos
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Orden predeterminado
 settings.rowSortOrder	Orden
-settings.defaultSortFooter	Las carpetas que no has ordenado se abren en este orden. Una carpeta que ordenas conserva su propio orden en todos los dispositivos conectados a este servidor.
+settings.defaultSortFooter	Las carpetas que no has ordenado se abren en este orden.\nUna carpeta que ordenas conserva su propio orden en todos los dispositivos conectados a este servidor.
 settings.sectionSecurity	Seguridad
 settings.rowRequireSignIn	Exigir inicio de sesión
 lock.title	NextExplorer está bloqueado
@@ -1443,6 +1443,10 @@ emptyGuide.sharedBody	Haz clic derecho en un archivo o carpeta en Explorar y eli
 emptyGuide.sharedWithMeTitle	Aún no han compartido nada contigo
 emptyGuide.offlineTitle	Guardar archivos en este Mac
 emptyGuide.offlineBody	Haz clic derecho en cualquier archivo o carpeta en Explorar y elige «%@».\nLas carpetas reciben los archivos nuevos cada vez que la app se sincroniza.\n\nLos archivos descargados se abren incluso sin conexión.
+settings.groupTheme	Tema
+settings.sectionFiles	Archivos
+settings.groupFileLists	Listas de archivos
+settings.groupPreviews	Vistas previas
 emptyGuide.trashTitle	La papelera está vacía
 emptyGuide.trashRestore	Restaurar devuelve un elemento a su sitio, o a la carpeta que elijas.
 emptyGuide.trashShareLinks	Los enlaces compartidos dejan de funcionar mientras su archivo está aquí.\nUna restauración puede recuperarlos.

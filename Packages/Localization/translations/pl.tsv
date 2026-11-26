@@ -1486,7 +1486,7 @@ browse.fileCount#other	%lld pliku
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Domyślne sortowanie
 settings.rowSortOrder	Kolejność
-settings.defaultSortFooter	Foldery, których nie posortowano, otwierają się w tej kolejności. Posortowany folder zachowuje własną kolejność na każdym urządzeniu zalogowanym do tego serwera.
+settings.defaultSortFooter	Foldery, których nie posortowano, otwierają się w tej kolejności.\nPosortowany folder zachowuje własną kolejność na każdym urządzeniu zalogowanym do tego serwera.
 settings.sectionSecurity	Bezpieczeństwo
 settings.rowRequireSignIn	Wymagaj logowania
 lock.title	NextExplorer jest zablokowany
@@ -1519,6 +1519,10 @@ emptyGuide.sharedBody	Kliknij prawym przyciskiem plik lub folder w sekcji Przegl
 emptyGuide.sharedWithMeTitle	Nikt jeszcze niczego Ci nie udostępnił
 emptyGuide.offlineTitle	Zachowaj pliki na tym Macu
 emptyGuide.offlineBody	Kliknij prawym przyciskiem dowolny plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nFoldery pobierają nowe pliki przy każdej synchronizacji aplikacji.\n\nPobrane pliki otwierają się nawet bez połączenia.
+settings.groupTheme	Motyw
+settings.sectionFiles	Pliki
+settings.groupFileLists	Listy plików
+settings.groupPreviews	Podglądy
 emptyGuide.trashTitle	Kosz jest pusty
 emptyGuide.trashRestore	Przywróć odkłada element tam, gdzie był, albo do wybranego folderu.
 emptyGuide.trashShareLinks	Linki udostępniania przestają działać, gdy plik jest tutaj.\nPrzywrócenie może je odzyskać.

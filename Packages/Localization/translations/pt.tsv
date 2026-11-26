@@ -1410,7 +1410,7 @@ browse.fileCount#other	%lld ficheiros
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Ordenação predefinida
 settings.rowSortOrder	Ordem
-settings.defaultSortFooter	As pastas que não ordenou abrem por esta ordem. Uma pasta que ordena mantém a sua própria ordem em todos os dispositivos com sessão iniciada neste servidor.
+settings.defaultSortFooter	As pastas que não ordenou abrem por esta ordem.\nUma pasta que ordena mantém a sua própria ordem em todos os dispositivos com sessão iniciada neste servidor.
 settings.sectionSecurity	Segurança
 settings.rowRequireSignIn	Exigir início de sessão
 lock.title	O NextExplorer está bloqueado
@@ -1443,6 +1443,10 @@ emptyGuide.sharedBody	Clique com o botão direito num ficheiro ou pasta em Explo
 emptyGuide.sharedWithMeTitle	Ainda nada foi partilhado consigo
 emptyGuide.offlineTitle	Manter ficheiros neste Mac
 emptyGuide.offlineBody	Clique com o botão direito em qualquer ficheiro ou pasta em Explorar e escolha «%@».\nAs pastas recebem ficheiros novos sempre que a app sincroniza.\n\nOs ficheiros transferidos abrem mesmo sem ligação.
+settings.groupTheme	Tema
+settings.sectionFiles	Ficheiros
+settings.groupFileLists	Listas de ficheiros
+settings.groupPreviews	Pré-visualizações
 emptyGuide.trashTitle	O lixo está vazio
 emptyGuide.trashRestore	Restaurar volta a colocar um item onde estava, ou na pasta que escolher.
 emptyGuide.trashShareLinks	As ligações de partilha deixam de funcionar enquanto o ficheiro está aqui.\nUm restauro pode recuperá-las.

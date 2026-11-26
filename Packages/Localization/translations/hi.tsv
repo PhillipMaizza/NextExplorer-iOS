@@ -1410,7 +1410,7 @@ browse.fileCount#other	%lld फ़ाइलें
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	डिफ़ॉल्ट क्रम
 settings.rowSortOrder	क्रम
-settings.defaultSortFooter	जिन फ़ोल्डरों को आपने क्रमबद्ध नहीं किया है, वे इसी क्रम में खुलते हैं। आपके द्वारा क्रमबद्ध किया गया फ़ोल्डर इस सर्वर में साइन इन हर डिवाइस पर अपना क्रम रखता है।
+settings.defaultSortFooter	जिन फ़ोल्डरों को आपने क्रमबद्ध नहीं किया है, वे इसी क्रम में खुलते हैं।\nआपके द्वारा क्रमबद्ध किया गया फ़ोल्डर इस सर्वर में साइन इन हर डिवाइस पर अपना क्रम रखता है।
 settings.sectionSecurity	सुरक्षा
 settings.rowRequireSignIn	साइन इन ज़रूरी करें
 lock.title	NextExplorer लॉक है
@@ -1443,6 +1443,10 @@ emptyGuide.sharedBody	ब्राउज़ करें में किसी 
 emptyGuide.sharedWithMeTitle	अभी तक आपके साथ कुछ शेयर नहीं किया गया
 emptyGuide.offlineTitle	फ़ाइलें इस Mac पर रखें
 emptyGuide.offlineBody	ब्राउज़ करें में किसी भी फ़ाइल या फ़ोल्डर पर राइट क्लिक करें और “%@” चुनें।\nहर बार ऐप सिंक होने पर फ़ोल्डरों में नई फ़ाइलें आ जाती हैं।\n\nडाउनलोड की गई फ़ाइलें बिना कनेक्शन के भी खुलती हैं।
+settings.groupTheme	थीम
+settings.sectionFiles	फ़ाइलें
+settings.groupFileLists	फ़ाइल सूचियाँ
+settings.groupPreviews	पूर्वावलोकन
 emptyGuide.trashTitle	ट्रैश खाली है
 emptyGuide.trashRestore	रीस्टोर किसी आइटम को उसकी जगह पर, या आपके चुने किसी भी फ़ोल्डर में वापस रखता है।
 emptyGuide.trashShareLinks	फ़ाइल यहाँ रहने तक शेयर लिंक काम नहीं करते।\nरीस्टोर उन्हें वापस ला सकता है।

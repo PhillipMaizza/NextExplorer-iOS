@@ -9,10 +9,13 @@
         /// it, not only the main window.
         func testSettingsWindowToggleFlipsAndLanguageReachesIt() {
             LocalizationOverride.apply(Constants.otherLanguage)
-            let germanGeneral = L10n.Settings.sectionGeneral
+            let germanAppearance = L10n.Settings.rowAppearance
             LocalizationOverride.apply(nil)
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
+            let filesPane = app.windows.descendants(matching: .any).titled(L10n.Settings.sectionFiles)
+            openSettingsWindow(in: app, until: filesPane)
+            filesPane.click()
             let toggle = app.descendants(matching: .any)
                 .matching(NSPredicate(
                     format: "(elementType == %d OR elementType == %d) AND label == %@",
@@ -21,27 +24,23 @@
                     L10n.Settings.toggleShowHiddenFiles
                 ))
                 .firstMatch
-            openSettingsWindow(in: app, until: toggle)
+            XCTAssertTrue(toggle.waitToAppear())
             let before = toggle.value as? Int
             toggle.click()
             let flipped = NSPredicate(format: "value != %@", NSNumber(value: before ?? 0))
             XCTAssertTrue(waitUntil(flipped, on: toggle), "Clicking should flip the toggle")
 
-            let languages = app.descendants(matching: .any)
-                .matching(identifier: AccessibilityIdentifiers.Settings.languagePicker)
-                .firstMatch
+            app.windows.descendants(matching: .any).titled(L10n.Settings.rowAppearance).click()
+            let languages = app.scrollViews[AccessibilityIdentifiers.Settings.languagePicker]
             XCTAssertTrue(languages.waitToAppear())
-            languages.click()
-            let german = app.menuItems
-                .matching(NSPredicate(
-                    format: "title ENDSWITH %@",
-                    LocalizationOverride.displayName(for: Constants.otherLanguage)
-                ))
-                .firstMatch
+            let german = languages.buttons[LocalizationOverride.displayName(for: Constants.otherLanguage)]
             XCTAssertTrue(german.waitToAppear())
+            if !german.isHittable {
+                languages.scroll(byDeltaX: 0, deltaY: -Constants.languageScroll)
+            }
             german.click()
             XCTAssertTrue(
-                text(germanGeneral, in: app).waitToAppear(),
+                text(germanAppearance, in: app).waitToAppear(),
                 "The Settings window should switch to the new language"
             )
         }

@@ -1303,7 +1303,7 @@ browse.fileCount#other	%lld tệp
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Sắp xếp mặc định
 settings.rowSortOrder	Thứ tự
-settings.defaultSortFooter	Các thư mục bạn chưa sắp xếp sẽ mở theo thứ tự này. Thư mục bạn sắp xếp giữ thứ tự riêng trên mọi thiết bị đăng nhập vào máy chủ này.
+settings.defaultSortFooter	Các thư mục bạn chưa sắp xếp sẽ mở theo thứ tự này.\nThư mục bạn sắp xếp giữ thứ tự riêng trên mọi thiết bị đăng nhập vào máy chủ này.
 settings.sectionSecurity	Bảo mật
 settings.rowRequireSignIn	Yêu cầu đăng nhập
 lock.title	NextExplorer đã khóa
@@ -1336,6 +1336,10 @@ emptyGuide.sharedBody	Nhấp chuột phải vào tệp hoặc thư mục trong D
 emptyGuide.sharedWithMeTitle	Chưa có gì được chia sẻ với bạn
 emptyGuide.offlineTitle	Giữ tệp trên máy Mac này
 emptyGuide.offlineBody	Nhấp chuột phải vào bất kỳ tệp hoặc thư mục nào trong Duyệt và chọn “%@”.\nThư mục nhận tệp mới mỗi lần ứng dụng đồng bộ.\n\nCác tệp đã tải xuống vẫn mở được khi không có kết nối.
+settings.groupTheme	Chủ đề
+settings.sectionFiles	Tệp
+settings.groupFileLists	Danh sách tệp
+settings.groupPreviews	Bản xem trước
 emptyGuide.trashTitle	Thùng rác trống
 emptyGuide.trashRestore	Khôi phục đưa mục về chỗ cũ, hoặc vào bất kỳ thư mục nào bạn chọn.
 emptyGuide.trashShareLinks	Liên kết chia sẻ ngừng hoạt động khi tệp nằm ở đây.\nKhôi phục có thể đưa chúng trở lại.

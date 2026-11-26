@@ -1339,7 +1339,7 @@ browse.fileCount#other	%lld fájl
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Alapértelmezett rendezés
 settings.rowSortOrder	Sorrend
-settings.defaultSortFooter	A nem rendezett mappák ebben a sorrendben nyílnak meg. Az általad rendezett mappa megtartja saját sorrendjét minden, ehhez a szerverhez bejelentkezett eszközön.
+settings.defaultSortFooter	A nem rendezett mappák ebben a sorrendben nyílnak meg.\nAz általad rendezett mappa megtartja saját sorrendjét minden, ehhez a szerverhez bejelentkezett eszközön.
 settings.sectionSecurity	Biztonság
 settings.rowRequireSignIn	Bejelentkezés kérése
 lock.title	A NextExplorer zárolva van
@@ -1372,6 +1372,10 @@ emptyGuide.sharedBody	Kattints jobb gombbal egy fájlra vagy mappára a Böngés
 emptyGuide.sharedWithMeTitle	Még semmit sem osztottak meg veled
 emptyGuide.offlineTitle	Fájlok megtartása ezen a Macen
 emptyGuide.offlineBody	Kattints jobb gombbal bármely fájlra vagy mappára a Böngészésben, és válaszd a „%@” lehetőséget.\nA mappák minden szinkronizáláskor megkapják az új fájlokat.\n\nA letöltött fájlok kapcsolat nélkül is megnyílnak.
+settings.groupTheme	Téma
+settings.sectionFiles	Fájlok
+settings.groupFileLists	Fájllisták
+settings.groupPreviews	Előnézetek
 emptyGuide.trashTitle	A kuka üres
 emptyGuide.trashRestore	A visszaállítás az elemet az eredeti helyére vagy egy választott mappába teszi vissza.
 emptyGuide.trashShareLinks	A megosztási linkek nem működnek, amíg a fájl itt van.\nEgy visszaállítás visszahozhatja őket.

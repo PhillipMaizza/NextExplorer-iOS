@@ -1410,7 +1410,7 @@ browse.fileCount#other	%lld Dateien
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Standardsortierung
 settings.rowSortOrder	Reihenfolge
-settings.defaultSortFooter	Ordner, die du nicht sortiert hast, öffnen sich in dieser Reihenfolge. Ein Ordner, den du sortierst, behält seine eigene Reihenfolge auf jedem Gerät, das bei diesem Server angemeldet ist.
+settings.defaultSortFooter	Ordner, die du nicht sortiert hast, öffnen sich in dieser Reihenfolge.\nEin Ordner, den du sortierst, behält seine eigene Reihenfolge auf jedem Gerät, das bei diesem Server angemeldet ist.
 settings.sectionSecurity	Sicherheit
 settings.rowRequireSignIn	Anmeldung erforderlich
 lock.title	NextExplorer ist gesperrt
@@ -1443,6 +1443,10 @@ emptyGuide.sharedBody	Klicke in Durchsuchen mit der rechten Maustaste auf eine D
 emptyGuide.sharedWithMeTitle	Noch nichts mit dir geteilt
 emptyGuide.offlineTitle	Dateien auf diesem Mac behalten
 emptyGuide.offlineBody	Klicke in Durchsuchen mit der rechten Maustaste auf eine Datei oder einen Ordner und wähle „%@“.\nOrdner übernehmen neue Dateien bei jedem Abgleich der App.\n\nHeruntergeladene Dateien lassen sich auch ohne Verbindung öffnen.
+settings.groupTheme	Design
+settings.sectionFiles	Dateien
+settings.groupFileLists	Dateilisten
+settings.groupPreviews	Vorschauen
 emptyGuide.trashTitle	Der Papierkorb ist leer
 emptyGuide.trashRestore	Wiederherstellen legt ein Objekt zurück an seinen Ort oder in einen Ordner deiner Wahl.
 emptyGuide.trashShareLinks	Freigabelinks funktionieren nicht, solange ihre Datei hier liegt.\nEine Wiederherstellung kann sie zurückbringen.

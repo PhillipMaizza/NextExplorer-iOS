@@ -1339,7 +1339,7 @@ browse.fileCount#other	%lld filer
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Standard sortering
 settings.rowSortOrder	Rekkefølge
-settings.defaultSortFooter	Mapper du ikke har sortert, åpnes i denne rekkefølgen. En mappe du sorterer, beholder sin egen rekkefølge på alle enheter som er logget på denne serveren.
+settings.defaultSortFooter	Mapper du ikke har sortert, åpnes i denne rekkefølgen.\nEn mappe du sorterer, beholder sin egen rekkefølge på alle enheter som er logget på denne serveren.
 settings.sectionSecurity	Sikkerhet
 settings.rowRequireSignIn	Krev pålogging
 lock.title	NextExplorer er låst
@@ -1372,6 +1372,10 @@ emptyGuide.sharedBody	Høyreklikk på en fil eller mappe i Utforsk og velg «%@�
 emptyGuide.sharedWithMeTitle	Ingenting er delt med deg ennå
 emptyGuide.offlineTitle	Behold filer på denne Macen
 emptyGuide.offlineBody	Høyreklikk på en fil eller mappe i Utforsk og velg «%@».\nMapper henter nye filer hver gang appen synkroniserer.\n\nNedlastede filer kan åpnes selv uten tilkobling.
+settings.groupTheme	Tema
+settings.sectionFiles	Filer
+settings.groupFileLists	Fillister
+settings.groupPreviews	Forhåndsvisninger
 emptyGuide.trashTitle	Papirkurven er tom
 emptyGuide.trashRestore	Gjenopprett legger et objekt tilbake der det var, eller i en mappe du velger.
 emptyGuide.trashShareLinks	Delingslenker slutter å virke mens filen ligger her.\nEn gjenoppretting kan hente dem tilbake.

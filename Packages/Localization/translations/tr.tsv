@@ -1339,7 +1339,7 @@ browse.fileCount#other	%lld dosya
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Varsayılan Sıralama
 settings.rowSortOrder	Sıra
-settings.defaultSortFooter	Sıralamadığınız klasörler bu sırayla açılır. Sıraladığınız bir klasör, bu sunucuda oturum açmış her cihazda kendi sırasını korur.
+settings.defaultSortFooter	Sıralamadığınız klasörler bu sırayla açılır.\nSıraladığınız bir klasör, bu sunucuda oturum açmış her cihazda kendi sırasını korur.
 settings.sectionSecurity	Güvenlik
 settings.rowRequireSignIn	Oturum Açmayı İste
 lock.title	NextExplorer kilitli
@@ -1372,6 +1372,10 @@ emptyGuide.sharedBody	Gözat’ta bir dosyaya veya klasöre sağ tıklayıp “%
 emptyGuide.sharedWithMeTitle	Henüz sizinle bir şey paylaşılmadı
 emptyGuide.offlineTitle	Dosyaları bu Mac’te tut
 emptyGuide.offlineBody	Gözat’ta herhangi bir dosyaya veya klasöre sağ tıklayıp “%@” seçeneğini seçin.\nKlasörler, uygulama her eşitlendiğinde yeni dosyaları alır.\n\nİndirilen dosyalar bağlantı olmasa bile açılır.
+settings.groupTheme	Tema
+settings.sectionFiles	Dosyalar
+settings.groupFileLists	Dosya Listeleri
+settings.groupPreviews	Önizlemeler
 emptyGuide.trashTitle	Çöp kutusu boş
 emptyGuide.trashRestore	Geri yükleme, ögeyi eski yerine veya seçtiğiniz bir klasöre geri koyar.
 emptyGuide.trashShareLinks	Paylaşım bağlantıları, dosyaları burada olduğu sürece çalışmaz.\nGeri yükleme onları geri getirebilir.

@@ -1339,7 +1339,7 @@ browse.fileCount#other	%lld αρχεία
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Προεπιλεγμένη ταξινόμηση
 settings.rowSortOrder	Σειρά
-settings.defaultSortFooter	Οι φάκελοι που δεν έχετε ταξινομήσει ανοίγουν με αυτή τη σειρά. Ένας φάκελος που ταξινομείτε κρατά τη δική του σειρά σε κάθε συσκευή συνδεδεμένη σε αυτόν τον διακομιστή.
+settings.defaultSortFooter	Οι φάκελοι που δεν έχετε ταξινομήσει ανοίγουν με αυτή τη σειρά.\nΈνας φάκελος που ταξινομείτε κρατά τη δική του σειρά σε κάθε συσκευή συνδεδεμένη σε αυτόν τον διακομιστή.
 settings.sectionSecurity	Ασφάλεια
 settings.rowRequireSignIn	Απαίτηση σύνδεσης
 lock.title	Το NextExplorer είναι κλειδωμένο
@@ -1372,6 +1372,10 @@ emptyGuide.sharedBody	Κάντε δεξί κλικ σε ένα αρχείο ή �
 emptyGuide.sharedWithMeTitle	Δεν έχει κοινοποιηθεί τίποτα σε εσάς ακόμη
 emptyGuide.offlineTitle	Κρατήστε αρχεία σε αυτό το Mac
 emptyGuide.offlineBody	Κάντε δεξί κλικ σε οποιοδήποτε αρχείο ή φάκελο στην Περιήγηση και επιλέξτε «%@».\nΟι φάκελοι παίρνουν τα νέα αρχεία σε κάθε συγχρονισμό της εφαρμογής.\n\nΤα αρχεία που έχουν ληφθεί ανοίγουν ακόμη και χωρίς σύνδεση.
+settings.groupTheme	Θέμα
+settings.sectionFiles	Αρχεία
+settings.groupFileLists	Λίστες αρχείων
+settings.groupPreviews	Προεπισκοπήσεις
 emptyGuide.trashTitle	Ο κάδος είναι άδειος
 emptyGuide.trashRestore	Η επαναφορά επιστρέφει ένα στοιχείο εκεί που ήταν ή σε όποιον φάκελο επιλέξετε.
 emptyGuide.trashShareLinks	Οι σύνδεσμοι κοινής χρήσης σταματούν να λειτουργούν όσο το αρχείο είναι εδώ.\nΜια επαναφορά μπορεί να τους επαναφέρει.

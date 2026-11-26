@@ -29,7 +29,7 @@
         let store: StoreOf<SettingsFeature>
         let close: () -> Void
         @Environment(\.openSettings) private var openSettings
-        @AppStorage(AppStorageKeys.macSettingsPane) private var settingsPane = MacSettingsCategory.general
+        @AppStorage(AppStorageKeys.macSettingsPane) private var settingsPane = MacSettingsCategory.appearance
 
         var body: some View {
             VStack(alignment: .leading, spacing: .zero) {

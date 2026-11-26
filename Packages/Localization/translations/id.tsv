@@ -1303,7 +1303,7 @@ browse.fileCount#other	%lld file
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Urutan Default
 settings.rowSortOrder	Urutan
-settings.defaultSortFooter	Folder yang belum Anda urutkan terbuka dengan urutan ini. Folder yang Anda urutkan mempertahankan urutannya sendiri di setiap perangkat yang masuk ke server ini.
+settings.defaultSortFooter	Folder yang belum Anda urutkan terbuka dengan urutan ini.\nFolder yang Anda urutkan mempertahankan urutannya sendiri di setiap perangkat yang masuk ke server ini.
 settings.sectionSecurity	Keamanan
 settings.rowRequireSignIn	Wajibkan Masuk
 lock.title	NextExplorer terkunci
@@ -1336,6 +1336,10 @@ emptyGuide.sharedBody	Klik kanan file atau folder di Jelajahi lalu pilih “%@�
 emptyGuide.sharedWithMeTitle	Belum ada yang dibagikan dengan Anda
 emptyGuide.offlineTitle	Simpan file di Mac ini
 emptyGuide.offlineBody	Klik kanan file atau folder apa pun di Jelajahi lalu pilih “%@”.\nFolder mendapat file baru setiap kali aplikasi menyinkronkan.\n\nFile yang diunduh terbuka walau tanpa koneksi.
+settings.groupTheme	Tema
+settings.sectionFiles	File
+settings.groupFileLists	Daftar File
+settings.groupPreviews	Pratinjau
 emptyGuide.trashTitle	Sampah kosong
 emptyGuide.trashRestore	Pulihkan mengembalikan item ke tempat asalnya, atau ke folder mana pun yang Anda pilih.
 emptyGuide.trashShareLinks	Tautan berbagi berhenti berfungsi selama filenya ada di sini.\nPemulihan dapat mengembalikannya.

@@ -649,7 +649,7 @@ settings.toggleKeepClipboardSubtitle	Copied items stay ready to paste into anoth
 settings.rowDateFormat	Date Format
 settings.rowDefaultSort	Default Sort
 settings.rowSortOrder	Order
-settings.defaultSortFooter	Folders you have not sorted open in this order. A folder you sort keeps its own order on every device signed in to this server.
+settings.defaultSortFooter	Folders you have not sorted open in this order.\nA folder you sort keeps its own order on every device signed in to this server.
 settings.rowLanguage	Language
 settings.rowThumbnailSize	Thumbnail Size
 settings.rowRemoveAllDownloads	Remove All Downloads
@@ -1543,6 +1543,10 @@ emptyGuide.sharedBody	Right click a file or folder in Browse and choose %@.\nIts
 emptyGuide.sharedWithMeTitle	Nothing shared with you yet
 emptyGuide.offlineTitle	Keep files on this Mac
 emptyGuide.offlineBody	Right click any file or folder in Browse and choose %@.\nFolders pick up new files each time the app syncs.\n\nDownloaded files open even without a connection.
+settings.groupTheme	Theme
+settings.sectionFiles	Files
+settings.groupFileLists	File Lists
+settings.groupPreviews	Previews
 emptyGuide.trashTitle	The trash is empty
 emptyGuide.trashRestore	Restore puts an item back where it was, or into any folder you choose.
 emptyGuide.trashShareLinks	Share links stop working while their file is here.\nA restore can bring them back.

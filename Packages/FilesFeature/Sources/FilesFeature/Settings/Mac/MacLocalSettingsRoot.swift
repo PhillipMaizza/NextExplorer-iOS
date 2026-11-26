@@ -16,7 +16,8 @@
     public struct MacLocalSettingsRoot: View {
         enum Pane {
             case account
-            case general
+            case appearance
+            case files
             case about
         }
 
@@ -35,7 +36,7 @@
         ) {
             self.init(
                 lockedAccount: lockedAccount,
-                selection: .general,
+                selection: .appearance,
                 onShowLockScreen: onShowLockScreen,
                 onSignOut: onSignOut,
                 onTip: onTip
@@ -57,13 +58,14 @@
         }
 
         private var visibleSelection: Pane {
-            selection == .account && lockedAccount == nil ? .general : selection
+            selection == .account && lockedAccount == nil ? .appearance : selection
         }
 
         private var title: String? {
             switch visibleSelection {
             case .account: lockedAccount?.displayName
-            case .general: MacSettingsCategory.general.headerTitle
+            case .appearance: MacSettingsCategory.appearance.headerTitle
+            case .files: MacSettingsCategory.files.headerTitle
             case .about: MacSettingsCategory.about.headerTitle
             }
         }
@@ -77,7 +79,8 @@
                         }
                         .macSettingsSidebarRow()
                     }
-                    categoryRow(.general, pane: .general)
+                    categoryRow(.appearance, pane: .appearance)
+                    categoryRow(.files, pane: .files)
                 }
                 Section {
                     categoryRow(.about, pane: .about)
@@ -108,8 +111,8 @@
                         onSignOut: onSignOut
                     )
                 }
-            case .general:
-                MacGeneralSettingsTab(showHiddenFiles: nil) {
+            case .appearance:
+                MacAppearanceSettingsTab {
                     if let lockedAccount {
                         HStack(spacing: .space12) {
                             MacNote(L10n.LockedSettings.note(lockedAccount.displayName), kind: .warning)
@@ -119,6 +122,8 @@
                         }
                     }
                 }
+            case .files:
+                MacFilesSettingsTab(showHiddenFiles: nil)
             case .about:
                 MacSettingsInfoPane(onTip: onTip) { isShowingLicenses = true }
             }

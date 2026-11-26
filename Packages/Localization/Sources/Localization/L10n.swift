@@ -893,6 +893,9 @@ public enum L10n {
         public static var dateFormatNavigationTitle: String { tr("settings.dateFormatNavigationTitle") }  // "Date Format"
         public static var dateFormatShowTime: String { tr("settings.dateFormatShowTime") }  // "Show Time"
         public static var defaultSortFooter: String { tr("settings.defaultSortFooter") }
+        public static var groupFileLists: String { tr("settings.groupFileLists") }  // "File Lists"
+        public static var groupPreviews: String { tr("settings.groupPreviews") }  // "Previews"
+        public static var groupTheme: String { tr("settings.groupTheme") }  // "Theme"
         public static var navigationTitle: String { tr("settings.navigationTitle") }  // "Settings"
         public static var removeAllDownloadsConfirm: String { tr("settings.removeAllDownloadsConfirm") }  // "Remove All"
         public static var removeAllDownloadsMessage: String { tr("settings.removeAllDownloadsMessage") }
@@ -920,6 +923,7 @@ public enum L10n {
         public static var sectionAccounts: String { tr("settings.sectionAccounts") }  // "Accounts"
         public static var sectionAdmin: String { tr("settings.sectionAdmin") }  // "Admin"
         public static var sectionDisplay: String { tr("settings.sectionDisplay") }  // "Display"
+        public static var sectionFiles: String { tr("settings.sectionFiles") }  // "Files"
         public static var sectionGeneral: String { tr("settings.sectionGeneral") }  // "General"
         public static var sectionInfo: String { tr("settings.sectionInfo") }  // "Info"
         public static var sectionLegal: String { tr("settings.sectionLegal") }  // "Legal"

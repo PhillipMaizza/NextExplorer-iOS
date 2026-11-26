@@ -1448,7 +1448,7 @@ browse.fileCount#other	%lld de fișiere
 browse.contentSummary	%1$@, %2$@
 settings.rowDefaultSort	Sortare implicită
 settings.rowSortOrder	Ordine
-settings.defaultSortFooter	Dosarele pe care nu le-ai sortat se deschid în această ordine. Un dosar pe care îl sortezi își păstrează propria ordine pe fiecare dispozitiv conectat la acest server.
+settings.defaultSortFooter	Dosarele pe care nu le-ai sortat se deschid în această ordine.\nUn dosar pe care îl sortezi își păstrează propria ordine pe fiecare dispozitiv conectat la acest server.
 settings.sectionSecurity	Securitate
 settings.rowRequireSignIn	Solicită autentificarea
 lock.title	NextExplorer este blocat
@@ -1481,6 +1481,10 @@ emptyGuide.sharedBody	Fă clic dreapta pe un fișier sau dosar în Explorează �
 emptyGuide.sharedWithMeTitle	Nimic nu a fost partajat cu tine încă
 emptyGuide.offlineTitle	Păstrează fișiere pe acest Mac
 emptyGuide.offlineBody	Fă clic dreapta pe orice fișier sau dosar în Explorează și alege „%@”.\nDosarele primesc fișierele noi la fiecare sincronizare a aplicației.\n\nFișierele descărcate se deschid chiar și fără conexiune.
+settings.groupTheme	Temă
+settings.sectionFiles	Fișiere
+settings.groupFileLists	Liste de fișiere
+settings.groupPreviews	Previzualizări
 emptyGuide.trashTitle	Coșul de gunoi este gol
 emptyGuide.trashRestore	Restaurarea pune un element înapoi unde era sau în orice dosar alegi.
 emptyGuide.trashShareLinks	Linkurile de partajare nu mai funcționează cât fișierul lor e aici.\nO restaurare le poate aduce înapoi.
