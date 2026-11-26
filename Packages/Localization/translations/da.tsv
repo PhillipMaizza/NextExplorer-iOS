@@ -1022,6 +1022,8 @@ menu.showAll	Vis alle
 uploads.notifyDone	Uploads færdige
 uploads.notifyBody#one	%lld fil uploadet
 uploads.notifyBody#other	%lld filer uploadet
+uploads.summary	%1$lld af %2$lld uploadet
+uploads.uploadMore	Upload flere filer
 downloadQueue.notifyDone	Downloads færdige
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versioner
@@ -1191,6 +1193,7 @@ downloadQueue.savedToPhotos	Gemt i Fotos
 downloadQueue.savedToDevice	Gemt på din enhed
 downloadQueue.photosAccessDenied	Tillad adgang til Fotos i Indstillinger for at gemme billeder og videoer.
 downloadQueue.photosSaveFailed	Kunne ikke føje dette til Fotos.
+downloadQueue.summary	%1$lld af %2$lld gemt
 tab.offline	Offline
 offline.sectionSavedEarlier	Gemt tidligere
 offline.newFilesBadge	Nye filer tilgængelige offline
@@ -1321,6 +1324,8 @@ apiTokens.badgeExpired	Udløbet
 common.decrease	Formindsk
 common.increase	Forøg
 common.moreInfo	Flere oplysninger
+common.retryFailed	Prøv mislykkede igen
+common.clearFinished	Ryd færdige
 versionedFiles.pathHeader	Sti
 versionedFiles.versionsHeader	Versioner
 fileInfo.sectionSelected	Valgte

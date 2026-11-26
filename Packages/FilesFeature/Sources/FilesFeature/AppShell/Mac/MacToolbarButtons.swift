@@ -14,11 +14,9 @@
     }
 
     struct MacToolbarCircleButtonStyle: ButtonStyle {
-        var tint: Color = .macChromeText
-
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
-                .foregroundStyle(tint)
+                .foregroundStyle(Color.macChromeText)
                 .frame(width: Constants.buttonSize, height: Constants.buttonSize)
                 .background(Circle().fill(configuration.isPressed ? Color.macChromeHover : Color.macChromeButton))
                 .contentShape(Circle())
@@ -29,10 +27,6 @@
     extension ButtonStyle where Self == MacToolbarCircleButtonStyle {
         static var macToolbarCircle: MacToolbarCircleButtonStyle {
             MacToolbarCircleButtonStyle()
-        }
-
-        static var macToolbarCircleAccent: MacToolbarCircleButtonStyle {
-            MacToolbarCircleButtonStyle(tint: .accentText)
         }
     }
 

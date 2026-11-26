@@ -8,61 +8,83 @@
     import UserNotifications
 
     private enum Metrics {
-        static let popoverWidth: CGFloat = 340
+        static let popoverWidth: CGFloat = 360
         static let ringSize: CGFloat = 16
         static let ringLineWidth: CGFloat = .borderWidthStrong
         /// The progress ring sits just outside the glyph.
         static let ringFrameSize: CGFloat = ringSize + .size6
     }
 
-    /// Uploads and downloads on the Mac: a toolbar button with a progress ring, like Safari's
-    /// downloads, opening a popover with each queue's progress and actions. It replaces the
-    /// floating bars iOS shows over the content.
+    struct MacToolbarRingGlyph: View {
+        let glyph: Image
+        let progress: Double?
+        let hasFailures: Bool
+
+        var body: some View {
+            ZStack {
+                (hasFailures && progress == nil ? IconKit.error : glyph)
+                    .macToolbarGlyph()
+                    .foregroundStyle(
+                        hasFailures && progress == nil
+                            ? AnyShapeStyle(Color.negativeText)
+                            : AnyShapeStyle(ForegroundStyle())
+                    )
+                if let progress {
+                    MacProgressRing(progress: progress, lineWidth: Metrics.ringLineWidth)
+                        .frame(width: Metrics.ringFrameSize, height: Metrics.ringFrameSize)
+                }
+            }
+        }
+    }
+
+    struct MacUploadsActivity {
+        let progress: Double?
+        let failedCount: Int
+        let open: () -> Void
+    }
+
+    struct MacUploadsActivityButton: View {
+        let activity: MacUploadsActivity
+
+        var body: some View {
+            Button(action: activity.open) {
+                MacToolbarRingGlyph(
+                    glyph: IconKit.upload,
+                    progress: activity.progress,
+                    hasFailures: activity.failedCount > 0
+                )
+            }
+            .buttonStyle(.macToolbarCircle)
+            .accessibilityLabelWithTooltip(L10n.Uploads.navigationTitle)
+            .accessibilityValue(
+                activity.progress?.formatted(.percent.precision(.fractionLength(0)))
+                    ?? (activity.failedCount > 0 ? TransferFailureText.uploads(activity.failedCount) : "")
+            )
+            .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
+        }
+    }
+
     struct MacTransferActivityButton: View {
         let store: StoreOf<MainTabFeature>
         @State private var isShowingPopover = false
 
+        private var queue: DownloadQueueFeature.State {
+            store.downloadQueue
+        }
+
         private var progress: Double? {
-            if store.uploads.isActive {
-                return store.uploads.overallProgress
-            }
-            if store.downloadQueue.isActive {
-                return store.downloadQueue.currentJob?.progress
-            }
-            return nil
-        }
-
-        private var hasFailures: Bool {
-            store.uploads.failedCount + store.downloadQueue.failedCount > 0
-        }
-
-        private var accessibilityStatus: String {
-            if let progress {
-                return progress.formatted(.percent.precision(.fractionLength(0)))
-            }
-            if store.uploads.failedCount > 0 {
-                return TransferFailureText.uploads(store.uploads.failedCount)
-            }
-            if store.downloadQueue.failedCount > 0 {
-                return TransferFailureText.downloads(store.downloadQueue.failedCount)
-            }
-            return ""
+            queue.isActive ? queue.currentJob?.progress ?? .zero : nil
         }
 
         var body: some View {
             Button { isShowingPopover.toggle() } label: {
-                ZStack {
-                    (hasFailures && progress == nil ? IconKit.error : IconKit.transfers)
-                        .foregroundStyle(hasFailures && progress == nil ? Color.negativeText : Color.primary)
-                    if let progress {
-                        MacProgressRing(progress: progress, lineWidth: Metrics.ringLineWidth)
-                            .frame(width: Metrics.ringFrameSize, height: Metrics.ringFrameSize)
-                    }
-                }
+                MacToolbarRingGlyph(glyph: IconKit.transfers, progress: progress, hasFailures: queue.failedCount > 0)
             }
             .accessibilityLabelWithTooltip(L10n.Menu.activity)
-            // The ring and the error glyph only show it, so VoiceOver hears the same state.
-            .accessibilityValue(accessibilityStatus)
+            .accessibilityValue(
+                progress?.formatted(.percent.precision(.fractionLength(0)))
+                    ?? (queue.failedCount > 0 ? TransferFailureText.downloads(queue.failedCount) : "")
+            )
             .popover(isPresented: $isShowingPopover, arrowEdge: .bottom) {
                 MacTransferActivityPopover(store: store)
             }
@@ -72,102 +94,55 @@
     private struct MacTransferActivityPopover: View {
         let store: StoreOf<MainTabFeature>
         @Environment(\.dismiss) private var dismiss
+        @Environment(\.locale) private var locale
 
-        private var titles: TransferStatusBars {
-            TransferStatusBars(store: store)
+        private var queue: DownloadQueueFeature.State {
+            store.downloadQueue
         }
 
         var body: some View {
             VStack(alignment: .leading, spacing: .space12) {
-                if store.uploads.isBarVisible {
-                    queueRow(
-                        icon: IconKit.upload,
-                        isActive: store.uploads.isActive,
-                        title: titles.uploadBarTitle,
-                        progress: store.uploads.overallProgress,
-                        failedLabel: TransferFailureText.uploads(store.uploads.failedCount),
-                        cancelTitle: L10n.Uploads.cancelAll,
-                        onCancel: { store.send(.uploads(.cancelAllTapped)) },
-                        onRetry: { store.send(.uploads(.retryAllFailedTapped)) },
-                        onClear: { store.send(.uploads(.clearFinishedTapped)) },
-                        onShowAll: { showAll(.uploads(.barTapped)) }
+                HStack(alignment: .firstTextBaseline, spacing: .space8) {
+                    Text(queue.isActive ? IconKit.downloadFill : IconKit.errorFill)
+                        .foregroundStyle(queue.isActive ? Color.accentText : Color.negativeText)
+                    Text(queue.isActive
+                        ? TransferStatusBars(store: store).downloadBarTitle
+                        : TransferFailureText
+                            .downloads(queue.failedCount))
+                        .foregroundStyle(Color.primaryDS)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+                .type(.body2(.semibold))
+                if queue.isActive {
+                    MacTransferStatus(
+                        fileName: queue.currentJob?.fileName,
+                        timeLeft: DownloadProgressText.timeLeft(
+                            queue.currentJob?.estimatedSecondsRemaining,
+                            locale: locale
+                        ),
+                        fraction: queue.currentJob?.progress
                     )
                 }
-                if store.uploads.isBarVisible, store.downloadQueue.isBarVisible {
-                    Divider()
-                }
-                if store.downloadQueue.isBarVisible {
-                    let queue = store.downloadQueue
-                    queueRow(
-                        icon: IconKit.download,
-                        isActive: queue.isActive,
-                        title: titles.downloadBarTitle,
-                        progress: queue.currentJob?.progress,
-                        failedLabel: TransferFailureText.downloads(queue.failedCount),
-                        cancelTitle: L10n.DownloadQueue.cancelAll,
-                        onCancel: { store.send(.downloadQueue(.cancelAllTapped)) },
-                        onRetry: { store.send(.downloadQueue(.retryAllFailedTapped)) },
-                        onClear: { store.send(.downloadQueue(.clearFinishedTapped)) },
-                        onShowAll: { showAll(.downloadQueue(.barTapped)) }
-                    )
-                }
-            }
-            .padding(.space16)
-            .frame(width: Metrics.popoverWidth)
-        }
-
-        /// The queue opens as a window sheet, so the popover closes first rather than hang over it.
-        private func showAll(_ action: MainTabFeature.Action) {
-            dismiss()
-            store.send(action)
-        }
-
-        // swiftlint:disable:next function_parameter_count
-        private func queueRow(
-            icon: Image,
-            isActive: Bool,
-            title: String,
-            progress: Double?,
-            failedLabel: String,
-            cancelTitle: String,
-            onCancel: @escaping () -> Void,
-            onRetry: @escaping () -> Void,
-            onClear: @escaping () -> Void,
-            onShowAll: @escaping () -> Void
-        ) -> some View {
-            VStack(alignment: .leading, spacing: .space8) {
-                Label {
-                    Text(isActive ? title : failedLabel).lineLimit(1).truncationMode(.middle)
-                } icon: {
-                    (isActive ? icon : IconKit.error)
-                        .foregroundStyle(isActive ? Color.accentColor : Color.negativeText)
-                }
-                if isActive {
-                    MacProgressBar(value: progress)
-                }
-                HStack {
-                    Button(L10n.Menu.showAll, action: onShowAll)
-                    Spacer()
-                    if isActive {
-                        Button(cancelTitle, action: onCancel)
+                HStack(spacing: .space8) {
+                    Button(L10n.Menu.showAll) {
+                        dismiss()
+                        store.send(.downloadQueue(.barTapped))
+                    }
+                    .buttonStyle(.macDS(.primary, size: .small))
+                    Spacer(minLength: .zero)
+                    if queue.isActive {
+                        Button(L10n.DownloadQueue.cancelAll) { store.send(.downloadQueue(.cancelAllTapped)) }
                     } else {
-                        Button(L10n.Common.clear, action: onClear)
-                        Button(L10n.Common.retry, action: onRetry)
+                        Button(L10n.Common.clear) { store.send(.downloadQueue(.clearFinishedTapped)) }
+                        Button(L10n.Common.retry) { store.send(.downloadQueue(.retryAllFailedTapped)) }
                     }
                 }
-                .controlSize(.small)
+                .buttonStyle(.macDS(.secondary, size: .small))
+                .padding(.top, .space4)
             }
-        }
-    }
-
-    /// "1 upload failed" or "N uploads failed", and the same for downloads.
-    private enum TransferFailureText {
-        static func uploads(_ count: Int) -> String {
-            count == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(count)
-        }
-
-        static func downloads(_ count: Int) -> String {
-            count == 1 ? L10n.DownloadQueue.barFailedOne : L10n.DownloadQueue.barFailedMany(count)
+            .padding(.space24)
+            .frame(width: Metrics.popoverWidth)
         }
     }
 
@@ -250,6 +225,23 @@
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
             user: User.preview
         )) { MainTabFeature() } withDependencies: { $0.filesClient = .previewValue }
+    }
+
+    #Preview("Uploads button") {
+        HStack(spacing: .space8) {
+            MacUploadsActivityButton(activity: MacUploadsActivity(progress: 0.4, failedCount: 0) {})
+            MacUploadsActivityButton(activity: MacUploadsActivity(progress: nil, failedCount: 2) {})
+        }
+        .padding(.space24)
+    }
+
+    #Preview("Ring glyph") {
+        HStack(spacing: .space16) {
+            MacToolbarRingGlyph(glyph: IconKit.transfers, progress: 0.65, hasFailures: false)
+            MacToolbarRingGlyph(glyph: IconKit.transfers, progress: nil, hasFailures: true)
+            MacToolbarRingGlyph(glyph: IconKit.upload, progress: nil, hasFailures: false)
+        }
+        .padding(.space24)
     }
 
     #Preview("Activity button") {

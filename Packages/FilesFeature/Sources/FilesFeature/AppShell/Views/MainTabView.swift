@@ -38,6 +38,10 @@ public struct MainTabView: View {
     /// actually on screen.
     @State private var visitedTabs: Set<MainTabFeature.Tab> = [.browse]
     @State private var offlinePhase = OfflineDownloadProgress.Phase.idle
+    #if os(macOS)
+        @FocusedValue(\.uploadToVisibleFolder) private var uploadHere
+        @State private var pendingUpload: UploadToVisibleFolderAction?
+    #endif
     /// Mirrors `store.uploads.isActive` so list screens can reserve bottom inset for the bar.
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     /// The bar's real rendered height, measured below and read by list screens instead of a
@@ -98,11 +102,14 @@ public struct MainTabView: View {
             .onChange(of: shouldShowTransferBars) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }
             }
-            .sheet(isPresented: Binding(
-                get: { store.uploads.isSheetPresented },
-                set: { store.send(.uploads(.sheetPresented($0))) }
-            )) {
-                UploadsView(store: store.scope(state: \.uploads, action: \.uploads))
+            .sheet(
+                isPresented: Binding(
+                    get: { store.uploads.isSheetPresented },
+                    set: { store.send(.uploads(.sheetPresented($0))) }
+                ),
+                onDismiss: uploadMoreAfterDismiss
+            ) {
+                UploadsView(store: store.scope(state: \.uploads, action: \.uploads), onUploadMore: uploadMore)
             }
             .sheet(isPresented: Binding(
                 get: { store.downloadQueue.isSheetPresented },
@@ -163,6 +170,25 @@ public struct MainTabView: View {
     private func setUploadBarHeight(_ height: CGFloat) {
         guard height > 0, abs(height - uploadBarHeight) >= 1 else { return }
         $uploadBarHeight.withLock { $0 = height }
+    }
+
+    private var uploadMore: (() -> Void)? {
+        #if os(macOS)
+            guard let uploadHere else { return nil }
+            return {
+                pendingUpload = uploadHere
+                store.send(.uploads(.sheetPresented(false)))
+            }
+        #else
+            return nil
+        #endif
+    }
+
+    private func uploadMoreAfterDismiss() {
+        #if os(macOS)
+            pendingUpload?()
+            pendingUpload = nil
+        #endif
     }
 
     /// The floating transfer bars; the Mac shows a toolbar activity button instead.

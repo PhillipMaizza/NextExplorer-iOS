@@ -7,16 +7,26 @@ import SwiftUI
 /// live progress, a cancel button while it runs, and retry on failure.
 struct UploadsView: View {
     @Bindable var store: StoreOf<UploadsFeature>
+    var onUploadMore: (() -> Void)?
+    #if os(macOS)
+        @Environment(\.locale) private var locale
+    #endif
 
     var body: some View {
         #if os(macOS)
             MacTransferQueueSheet(
+                icon: IconKit.uploadFill,
                 title: L10n.Uploads.navigationTitle,
+                summary: summary,
+                progress: store.overallProgress,
                 rows: rows,
                 emptyMessage: L10n.Uploads.emptyList,
                 canClear: store.hasClearableJobs,
+                canRetryFailed: store.failedCount > 0,
                 onCancel: cancel,
                 onRetry: retry,
+                onUploadMore: onUploadMore,
+                onRetryFailed: { store.send(.retryAllFailedTapped, animation: DSMotion.listDiff) },
                 onClear: clear,
                 onClose: close
             )
@@ -47,6 +57,17 @@ struct UploadsView: View {
             }())
         }
     }
+
+    #if os(macOS)
+        private var summary: String {
+            DownloadProgressText.queueSummary(
+                L10n.Uploads.summary(store.completedCount, store.jobs.count),
+                failed: store.failedCount > 0 ? TransferFailureText.uploads(store.failedCount) : nil,
+                secondsRemaining: store.estimatedSecondsRemaining,
+                locale: locale
+            )
+        }
+    #endif
 
     private func cancel(_ id: UUID) {
         store.send(.cancelJobTapped(id: id), animation: DSMotion.listDiff)

@@ -4,10 +4,8 @@
     import SwiftUI
 
     private enum Metrics {
-        static let width: CGFloat = 340
+        static let width: CGFloat = 360
         static let glyphBaselineDrop: CGFloat = 5
-        static let closeSize: CGFloat = 22
-        static let closeGlyph: CGFloat = 9
     }
 
     struct MacToastCard: View {
@@ -52,22 +50,38 @@
                             .type(.body3(.regular))
                             .foregroundStyle(Color.secondaryDS)
                     }
-                    if let actionTitle = message.actionTitle, message.action != nil {
-                        Button(actionTitle, action: onAction)
-                            .buttonStyle(.macDS(.primary, size: .small))
-                            .padding(.top, .space8)
+                    if let transfer = message.transfer {
+                        MacTransferStatus(
+                            fileName: transfer.fileName,
+                            timeLeft: transfer.timeLeft,
+                            fraction: transfer.fraction
+                        )
+                        .padding(.top, .space8)
                     }
+                    actions
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 closeButton
                     .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + Metrics.glyphBaselineDrop }
             }
-            .padding(.horizontal, .space12)
-            .padding(.vertical, isSingleLine ? .space16 : .space12)
+            .padding(.horizontal, .space16)
+            .padding(.vertical, .space16)
         }
 
-        private var isSingleLine: Bool {
-            message.detail == nil && message.actionTitle == nil
+        @ViewBuilder
+        private var actions: some View {
+            if let actionTitle = message.actionTitle, message.action != nil {
+                HStack(spacing: .space8) {
+                    Button(actionTitle, action: onAction)
+                        .buttonStyle(.macDS(.primary, size: .small))
+                    if let transfer = message.transfer {
+                        Spacer(minLength: .zero)
+                        Button(transfer.cancelTitle, action: transfer.cancel)
+                            .buttonStyle(.macDS(.secondary, size: .small))
+                    }
+                }
+                .padding(.top, .space16)
+            }
         }
 
         @ViewBuilder
@@ -76,6 +90,7 @@
                 Text(icon)
                     .type(.body2(.semibold))
                     .foregroundStyle(message.tint)
+                    .accessibilityHidden(true)
             } else {
                 DSSpinner(size: .small)
                     .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + Metrics.glyphBaselineDrop }
@@ -83,20 +98,8 @@
         }
 
         private var closeButton: some View {
-            Button(action: onClose) {
-                IconKit.close
-                    .resizable()
-                    .scaledToFit()
-                    .fontWeight(.bold)
-                    .frame(width: Metrics.closeGlyph, height: Metrics.closeGlyph)
-                    .frame(width: Metrics.closeSize, height: Metrics.closeSize)
-                    .background(Circle().fill(Color.macSegment))
-                    .contentShape(Circle())
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(Color.secondaryDS)
-            .accessibilityLabel(L10n.Common.close)
-            .accessibilityIdentifier(AccessibilityIdentifiers.Toast.close)
+            MacIconButton(IconKit.close, label: L10n.Common.close, size: .mini, tint: .secondaryDS, action: onClose)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Toast.close)
         }
     }
 
@@ -136,6 +139,21 @@
 
     #Preview("Progress") {
         MacToastCardPreview(message: .progress("Compressing…"))
+    }
+
+    #Preview("Transfer") {
+        MacToastCardPreview(message: .transfer(
+            "Uploading 4 files",
+            id: "uploads",
+            icon: IconKit.uploadFill,
+            fraction: 0.45,
+            fileName: "brief-v2.pdf",
+            timeLeft: "12s left",
+            actionTitle: "Show All",
+            action: {},
+            cancelTitle: "Cancel all uploads",
+            cancel: {}
+        ))
     }
 
     #Preview("Light") {

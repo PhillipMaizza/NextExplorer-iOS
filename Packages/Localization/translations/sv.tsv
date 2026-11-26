@@ -777,6 +777,8 @@ menu.showAll	Visa alla
 uploads.notifyDone	Uppladdningar klara
 uploads.notifyBody#one	%lld fil uppladdad
 uploads.notifyBody#other	%lld filer uppladdade
+uploads.summary	%1$lld av %2$lld uppladdade
+uploads.uploadMore	Ladda upp fler filer
 downloadQueue.notifyDone	Hämtningar klara
 fileInfo.rowSoftware	Programvara
 fileInfo.sectionVersions	Versioner
@@ -1243,6 +1245,7 @@ downloadQueue.savedToPhotos	Sparad i Bilder
 downloadQueue.savedToDevice	Sparad på din enhet
 downloadQueue.photosAccessDenied	Tillåt åtkomst till Bilder i Inställningar för att spara bilder och videor.
 downloadQueue.photosSaveFailed	Det gick inte att lägga till i Bilder.
+downloadQueue.summary	%1$lld av %2$lld sparade
 tab.offline	Offline
 offline.sectionSavedEarlier	Sparat tidigare
 offline.newFilesBadge	Nya filer tillgängliga offline
@@ -1392,6 +1395,8 @@ apiTokens.badgeExpired	Har upphört
 common.decrease	Minska
 common.increase	Öka
 common.moreInfo	Mer information
+common.retryFailed	Försök igen med misslyckade
+common.clearFinished	Rensa färdiga
 versionedFiles.pathHeader	Sökväg
 versionedFiles.versionsHeader	Versioner
 fileInfo.sectionSelected	Markerade

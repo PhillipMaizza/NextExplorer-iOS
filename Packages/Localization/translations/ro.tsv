@@ -789,6 +789,8 @@ uploads.notifyDone	Încărcări finalizate
 uploads.notifyBody#one	%lld fișier încărcat
 uploads.notifyBody#few	%lld fișiere încărcate
 uploads.notifyBody#other	%lld de fișiere încărcate
+uploads.summary	%1$lld din %2$lld încărcate
+uploads.uploadMore	Încarcă mai multe fișiere
 downloadQueue.notifyDone	Descărcări finalizate
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versiuni
@@ -1261,6 +1263,7 @@ downloadQueue.savedToPhotos	Salvat în Fotografii
 downloadQueue.savedToDevice	Salvat pe dispozitivul tău
 downloadQueue.photosAccessDenied	Permite accesul la Fotografii în Setări pentru a salva imagini și videoclipuri.
 downloadQueue.photosSaveFailed	Nu s-a putut adăuga în Fotografii.
+downloadQueue.summary	%1$lld din %2$lld salvate
 tab.offline	Offline
 offline.sectionSavedEarlier	Salvate anterior
 offline.newFilesBadge	Fișiere noi disponibile offline
@@ -1428,6 +1431,8 @@ apiTokens.badgeExpired	Expirat
 common.decrease	Micșorează
 common.increase	Mărește
 common.moreInfo	Mai multe informații
+common.retryFailed	Reîncearcă eșuatele
+common.clearFinished	Șterge finalizatele
 versionedFiles.pathHeader	Cale
 versionedFiles.versionsHeader	Versiuni
 fileInfo.sectionSelected	Selectate

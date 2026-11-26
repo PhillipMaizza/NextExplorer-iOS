@@ -127,7 +127,14 @@
                     refresh: nil,
                     isShared: sharedSegment != nil,
                     openInspector: openInspector,
-                    closeInspector: closeInspector
+                    closeInspector: closeInspector,
+                    uploads: store.uploads.isBarVisible
+                        ? MacUploadsActivity(
+                            progress: store.uploads.isActive ? store.uploads.overallProgress ?? .zero : nil,
+                            failedCount: store.uploads.failedCount,
+                            open: { store.send(.uploads(.barTapped)) }
+                        )
+                        : nil
                 )
             )
         }

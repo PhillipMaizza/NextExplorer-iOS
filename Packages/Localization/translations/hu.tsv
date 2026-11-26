@@ -1022,6 +1022,8 @@ menu.showAll	Összes megjelenítése
 uploads.notifyDone	A feltöltések befejeződtek
 uploads.notifyBody#one	%lld fájl feltöltve
 uploads.notifyBody#other	%lld fájl feltöltve
+uploads.summary	%1$lld / %2$lld feltöltve
+uploads.uploadMore	További fájlok feltöltése
 downloadQueue.notifyDone	A letöltések befejeződtek
 fileInfo.rowSoftware	Szoftver
 fileInfo.sectionVersions	Verziók
@@ -1191,6 +1193,7 @@ downloadQueue.savedToPhotos	Mentve a Fotókba
 downloadQueue.savedToDevice	Mentve az eszközre
 downloadQueue.photosAccessDenied	Engedélyezze a Fotók elérését a Beállításokban a képek és videók mentéséhez.
 downloadQueue.photosSaveFailed	Nem sikerült hozzáadni a Fotókhoz.
+downloadQueue.summary	%1$lld / %2$lld mentve
 tab.offline	Offline
 offline.sectionSavedEarlier	Korábban mentett
 offline.newFilesBadge	Új fájlok érhetők el offline
@@ -1321,6 +1324,8 @@ apiTokens.badgeExpired	Lejárt
 common.decrease	Csökkentés
 common.increase	Növelés
 common.moreInfo	További információ
+common.retryFailed	Sikertelenek újrapróbálása
+common.clearFinished	Befejezettek törlése
 versionedFiles.pathHeader	Útvonal
 versionedFiles.versionsHeader	Verziók
 fileInfo.sectionSelected	Kijelölve

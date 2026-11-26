@@ -1034,6 +1034,8 @@ uploads.notifyDone	ההעלאות הסתיימו
 uploads.notifyBody#one	%lld קובץ הועלה
 uploads.notifyBody#two	%lld קבצים הועלו
 uploads.notifyBody#other	%lld קבצים הועלו
+uploads.summary	הועלו %1$lld מתוך %2$lld
+uploads.uploadMore	העלה קבצים נוספים
 downloadQueue.notifyDone	ההורדות הסתיימו
 fileInfo.rowSoftware	תוכנה
 fileInfo.sectionVersions	גרסאות
@@ -1209,6 +1211,7 @@ downloadQueue.savedToPhotos	נשמר בתמונות
 downloadQueue.savedToDevice	נשמר במכשיר שלך
 downloadQueue.photosAccessDenied	אפשרו גישה לתמונות בהגדרות כדי לשמור תמונות וסרטונים.
 downloadQueue.photosSaveFailed	לא ניתן היה להוסיף לתמונות.
+downloadQueue.summary	נשמרו %1$lld מתוך %2$lld
 tab.offline	לא מקוון
 offline.sectionSavedEarlier	נשמרו קודם
 offline.newFilesBadge	קבצים חדשים זמינים במצב לא מקוון
@@ -1361,6 +1364,8 @@ apiTokens.badgeExpired	פג תוקף
 common.decrease	הקטנה
 common.increase	הגדלה
 common.moreInfo	מידע נוסף
+common.retryFailed	נסה שוב את שנכשלו
+common.clearFinished	נקה שהסתיימו
 versionedFiles.pathHeader	נתיב
 versionedFiles.versionsHeader	גרסאות
 fileInfo.sectionSelected	נבחרו

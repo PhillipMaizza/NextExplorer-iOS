@@ -1022,6 +1022,8 @@ menu.showAll	Tümünü Göster
 uploads.notifyDone	Yüklemeler tamamlandı
 uploads.notifyBody#one	%lld dosya yüklendi
 uploads.notifyBody#other	%lld dosya yüklendi
+uploads.summary	%2$lld dosyadan %1$lld yüklendi
+uploads.uploadMore	Daha Fazla Dosya Yükle
 downloadQueue.notifyDone	İndirmeler tamamlandı
 fileInfo.rowSoftware	Yazılım
 fileInfo.sectionVersions	Sürümler
@@ -1191,6 +1193,7 @@ downloadQueue.savedToPhotos	Fotoğraflar’a kaydedildi
 downloadQueue.savedToDevice	Aygıtınıza kaydedildi
 downloadQueue.photosAccessDenied	Resim ve videoları kaydetmek için Ayarlar’da Fotoğraflar erişimine izin verin.
 downloadQueue.photosSaveFailed	Bu, Fotoğraflar’a eklenemedi.
+downloadQueue.summary	%2$lld dosyadan %1$lld kaydedildi
 tab.offline	Çevrimdışı
 offline.sectionSavedEarlier	Daha önce kaydedilenler
 offline.newFilesBadge	Yeni dosyalar çevrimdışı kullanılabilir
@@ -1321,6 +1324,8 @@ apiTokens.badgeExpired	Süresi doldu
 common.decrease	Azalt
 common.increase	Artır
 common.moreInfo	Daha Fazla Bilgi
+common.retryFailed	Başarısızları Yeniden Dene
+common.clearFinished	Bitenleri Temizle
 versionedFiles.pathHeader	Yol
 versionedFiles.versionsHeader	Sürümler
 fileInfo.sectionSelected	Seçilenler

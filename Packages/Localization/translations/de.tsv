@@ -777,6 +777,8 @@ menu.showAll	Alle anzeigen
 uploads.notifyDone	Uploads abgeschlossen
 uploads.notifyBody#one	%lld Datei hochgeladen
 uploads.notifyBody#other	%lld Dateien hochgeladen
+uploads.summary	%1$lld von %2$lld hochgeladen
+uploads.uploadMore	Weitere Dateien hochladen
 downloadQueue.notifyDone	Downloads abgeschlossen
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versionen
@@ -1243,6 +1245,7 @@ downloadQueue.savedToPhotos	In Fotos gesichert
 downloadQueue.savedToDevice	Auf deinem Gerät gesichert
 downloadQueue.photosAccessDenied	Erlaube in den Einstellungen den Zugriff auf Fotos, um Bilder und Videos zu sichern.
 downloadQueue.photosSaveFailed	Das konnte nicht zu Fotos hinzugefügt werden.
+downloadQueue.summary	%1$lld von %2$lld gespeichert
 tab.offline	Offline
 offline.sectionSavedEarlier	Früher gesichert
 offline.newFilesBadge	Neue Dateien offline verfügbar
@@ -1392,6 +1395,8 @@ apiTokens.badgeExpired	Abgelaufen
 common.decrease	Verringern
 common.increase	Erhöhen
 common.moreInfo	Weitere Infos
+common.retryFailed	Fehlgeschlagene wiederholen
+common.clearFinished	Abgeschlossene entfernen
 versionedFiles.pathHeader	Pfad
 versionedFiles.versionsHeader	Versionen
 fileInfo.sectionSelected	Ausgewählt

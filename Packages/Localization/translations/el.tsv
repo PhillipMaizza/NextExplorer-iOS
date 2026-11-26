@@ -1022,6 +1022,8 @@ menu.showAll	Εμφάνιση όλων
 uploads.notifyDone	Οι μεταφορτώσεις ολοκληρώθηκαν
 uploads.notifyBody#one	Μεταφορτώθηκε %lld αρχείο
 uploads.notifyBody#other	Μεταφορτώθηκαν %lld αρχεία
+uploads.summary	Μεταφορτώθηκαν %1$lld από %2$lld
+uploads.uploadMore	Μεταφόρτωση περισσότερων αρχείων
 downloadQueue.notifyDone	Οι λήψεις ολοκληρώθηκαν
 fileInfo.rowSoftware	Λογισμικό
 fileInfo.sectionVersions	Εκδόσεις
@@ -1191,6 +1193,7 @@ downloadQueue.savedToPhotos	Αποθηκεύτηκε στις Φωτογραφί
 downloadQueue.savedToDevice	Αποθηκεύτηκε στη συσκευή σας
 downloadQueue.photosAccessDenied	Επιτρέψτε την πρόσβαση στις Φωτογραφίες από τις Ρυθμίσεις για να αποθηκεύετε εικόνες και βίντεο.
 downloadQueue.photosSaveFailed	Δεν ήταν δυνατή η προσθήκη στις Φωτογραφίες.
+downloadQueue.summary	Αποθηκεύτηκαν %1$lld από %2$lld
 tab.offline	Εκτός σύνδεσης
 offline.sectionSavedEarlier	Αποθηκεύτηκαν παλαιότερα
 offline.newFilesBadge	Νέα αρχεία διαθέσιμα εκτός σύνδεσης
@@ -1321,6 +1324,8 @@ apiTokens.badgeExpired	Έληξε
 common.decrease	Μείωση
 common.increase	Αύξηση
 common.moreInfo	Περισσότερες πληροφορίες
+common.retryFailed	Επανάληψη αποτυχημένων
+common.clearFinished	Εκκαθάριση ολοκληρωμένων
 versionedFiles.pathHeader	Διαδρομή
 versionedFiles.versionsHeader	Εκδόσεις
 fileInfo.sectionSelected	Επιλεγμένα

@@ -40,12 +40,18 @@ public struct UploadsFeature {
         /// When the job last entered `.uploading`. Used only to spot a job that has been
         /// "uploading" implausibly long across a background/resume so it can be restarted.
         public var startedAt: Date?
+        public var fractionPerSecond: Double?
         /// Whether the last failure was a transport one (offline, network) that a foreground retry can
         /// fix. Server rejections, local errors and a timeout (the server may have stored the file, so
         /// a retry could duplicate it) never are: those wait for a manual retry.
         public var isTransportFailure = false
         /// Automatic foreground requeues so far, capped so a job that keeps failing stops retrying.
         public var autoRetryCount = 0
+
+        var estimatedSecondsRemaining: Double? {
+            guard status == .uploading, let fractionPerSecond, fractionPerSecond > 0 else { return nil }
+            return max(1 - progress, 0) / fractionPerSecond
+        }
     }
 
     /// Reported to the parent when the queue drains: what to toast, and which folders to
@@ -107,6 +113,13 @@ public struct UploadsFeature {
             let inFlight = jobs.filter { $0.status == .uploading }.map(\.progress).reduce(0, +)
             return (Double(completedCount) + inFlight) / Double(jobs.count)
         }
+
+        var estimatedSecondsRemaining: Double? {
+            guard let current = currentJob, let fileSeconds = current.estimatedSecondsRemaining,
+                  let rate = current.fractionPerSecond else { return nil }
+            let queued = jobs.filter { $0.status == .queued }.count
+            return fileSeconds + Double(queued) / rate
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -147,6 +160,7 @@ public struct UploadsFeature {
         /// past any realistic single file transfer that a foreground `URLSession` would keep.
         static let wedgedUploadAge: TimeInterval = 300
         static let maxAutoRetries = 3
+        static let minimumElapsedForRate: TimeInterval = 1
     }
 
     public init() {}
@@ -216,10 +230,19 @@ public struct UploadsFeature {
                 state.jobs[id: next.id]?.status = .uploading
                 state.jobs[id: next.id]?.progress = 0
                 state.jobs[id: next.id]?.startedAt = date.now
+                state.jobs[id: next.id]?.fractionPerSecond = nil
                 return upload(next, serverURL: state.serverURL)
 
             case let .progress(id, value):
-                state.jobs[id: id]?.progress = value
+                guard var job = state.jobs[id: id] else { return .none }
+                job.progress = value
+                if let startedAt = job.startedAt {
+                    let elapsed = date.now.timeIntervalSince(startedAt)
+                    if elapsed >= Constants.minimumElapsedForRate {
+                        job.fractionPerSecond = value / elapsed
+                    }
+                }
+                state.jobs[id: id] = job
                 return .none
 
             case let .uploadResponse(id, result):

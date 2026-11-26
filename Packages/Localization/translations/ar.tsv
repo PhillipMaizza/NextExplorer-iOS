@@ -825,6 +825,8 @@ uploads.notifyBody#two	تم رفع %lld ملفين
 uploads.notifyBody#few	تم رفع %lld ملفات
 uploads.notifyBody#many	تم رفع %lld ملفًا
 uploads.notifyBody#other	تم رفع %lld ملف
+uploads.summary	تم رفع %1$lld من %2$lld
+uploads.uploadMore	رفع ملفات أخرى
 downloadQueue.notifyDone	اكتمل التنزيل
 fileInfo.rowSoftware	البرنامج
 fileInfo.sectionVersions	الإصدارات
@@ -1315,6 +1317,7 @@ downloadQueue.savedToPhotos	تم الحفظ في الصور
 downloadQueue.savedToDevice	تم الحفظ على جهازك
 downloadQueue.photosAccessDenied	اسمح بالوصول إلى الصور في الإعدادات لحفظ الصور ومقاطع الفيديو.
 downloadQueue.photosSaveFailed	تعذّرت إضافة هذا العنصر إلى الصور.
+downloadQueue.summary	تم حفظ %1$lld من %2$lld
 tab.offline	دون اتصال
 offline.sectionSavedEarlier	محفوظ سابقًا
 offline.newFilesBadge	ملفات جديدة متاحة دون اتصال
@@ -1536,6 +1539,8 @@ apiTokens.badgeExpired	انتهت صلاحيته
 common.decrease	تقليل
 common.increase	زيادة
 common.moreInfo	مزيد من المعلومات
+common.retryFailed	إعادة محاولة الفاشلة
+common.clearFinished	مسح المكتملة
 versionedFiles.pathHeader	المسار
 versionedFiles.versionsHeader	الإصدارات
 fileInfo.sectionSelected	المحدد

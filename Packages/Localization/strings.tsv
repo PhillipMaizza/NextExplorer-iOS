@@ -1212,7 +1212,10 @@ menu.showAll	Show All
 uploads.notifyDone	Uploads finished
 uploads.notifyBody#one	%lld file uploaded
 uploads.notifyBody#other	%lld files uploaded
+uploads.summary	%1$lld of %2$lld uploaded
+uploads.uploadMore	Upload More Files
 downloadQueue.notifyDone	Downloads finished
+downloadQueue.summary	%1$lld of %2$lld saved
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versions
 fileInfo.versionsNone	No earlier versions
@@ -1354,6 +1357,8 @@ settings.uploadDefaultsFooter	Photos and files you share to NextExplorer from ot
 settings.uploadDefaultsClear	Ask Each Time
 common.change	Change
 common.moreInfo	More Info
+common.retryFailed	Retry Failed
+common.clearFinished	Clear Finished
 shareUpload.sessionUnreadable	NextExplorer couldn't read your sign in on this device. Open NextExplorer once, then share again.
 shareUpload.keepOpen	Keep this open until preparing finishes.
 shareUpload.checking	Checking connection to %@…

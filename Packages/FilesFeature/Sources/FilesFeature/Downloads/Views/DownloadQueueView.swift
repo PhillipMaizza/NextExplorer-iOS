@@ -13,12 +13,18 @@ struct DownloadQueueView: View {
     var body: some View {
         #if os(macOS)
             MacTransferQueueSheet(
+                icon: IconKit.downloadFill,
                 title: L10n.DownloadQueue.navigationTitle,
+                summary: summary,
+                progress: store.overallProgress,
                 rows: rows,
                 emptyMessage: L10n.DownloadQueue.emptyList,
                 canClear: store.hasClearableJobs,
+                canRetryFailed: store.failedCount > 0,
                 onCancel: cancel,
                 onRetry: retry,
+                onUploadMore: nil,
+                onRetryFailed: { store.send(.retryAllFailedTapped, animation: DSMotion.listDiff) },
                 onClear: clear,
                 onClose: close
             )
@@ -52,6 +58,17 @@ struct DownloadQueueView: View {
             }())
         }
     }
+
+    #if os(macOS)
+        private var summary: String {
+            DownloadProgressText.queueSummary(
+                L10n.DownloadQueue.summary(store.savedCount, store.jobs.count),
+                failed: store.failedCount > 0 ? TransferFailureText.downloads(store.failedCount) : nil,
+                secondsRemaining: store.currentJob?.estimatedSecondsRemaining,
+                locale: locale
+            )
+        }
+    #endif
 
     private func cancel(_ id: UUID) {
         store.send(.cancelJobTapped(id: id), animation: DSMotion.listDiff)
