@@ -1447,3 +1447,9 @@ emptyGuide.trashTitle	ट्रैश खाली है
 emptyGuide.trashRestore	रीस्टोर किसी आइटम को उसकी जगह पर, या आपके चुने किसी भी फ़ोल्डर में वापस रखता है।
 emptyGuide.trashShareLinks	फ़ाइल यहाँ रहने तक शेयर लिंक काम नहीं करते।\nरीस्टोर उन्हें वापस ला सकता है।
 emptyGuide.browseDropTitle	अपलोड करने के लिए फ़ाइलें यहाँ छोड़ें
+emptyGuide.browseRootUnassignedTitle	कोई वॉल्यूम निर्दिष्ट नहीं।
+emptyGuide.browseRootUnassignedBody	व्यवस्थापक आपको वॉल्यूम निर्दिष्ट करता है।\nदूसरे लोग आपके साथ जो लिंक साझा करते हैं, वे साझा किए गए में हैं।
+emptyGuide.goToShared	साझा किए गए पर जाएँ
+emptyGuide.browseRootNoVolumesTitle	सर्वर पर कोई वॉल्यूम नहीं है
+emptyGuide.browseRootVolumeFolders	सर्वर की वॉल्यूम डायरेक्टरी का हर फ़ोल्डर यहाँ एक वॉल्यूम के रूप में दिखता है।
+emptyGuide.browseRootAddFolder	वहाँ सर्वर पर एक फ़ोल्डर जोड़ें, फिर रीफ़्रेश करें चुनें।

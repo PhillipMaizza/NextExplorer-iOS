@@ -1455,3 +1455,9 @@ emptyGuide.trashTitle	Koš je prázdný
 emptyGuide.trashRestore	Obnovit vrátí položku tam, kde byla, nebo do vybrané složky.
 emptyGuide.trashShareLinks	Odkazy na sdílení nefungují, dokud je soubor tady.\nObnovení je může vrátit.
 emptyGuide.browseDropTitle	Přetáhněte sem soubory k nahrání
+emptyGuide.browseRootUnassignedTitle	Nejsou přiřazeny žádné svazky.
+emptyGuide.browseRootUnassignedBody	Svazky vám přiřazuje správce.\nOdkazy, které s vámi sdílejí ostatní, najdete v sekci Sdílené.
+emptyGuide.goToShared	Přejít do sekce Sdílené
+emptyGuide.browseRootNoVolumesTitle	Server nemá žádné svazky
+emptyGuide.browseRootVolumeFolders	Každá složka v adresáři svazků na serveru se tu zobrazí jako svazek.
+emptyGuide.browseRootAddFolder	Přidejte tam na serveru složku a pak zvolte Obnovit.

@@ -1599,3 +1599,9 @@ emptyGuide.trashTitle	سلة المهملات فارغة
 emptyGuide.trashRestore	الاستعادة تعيد العنصر إلى مكانه، أو إلى أي مجلد تختاره.
 emptyGuide.trashShareLinks	تتوقف روابط المشاركة عن العمل ما دام ملفها هنا.\nيمكن للاستعادة إرجاعها.
 emptyGuide.browseDropTitle	أفلت الملفات هنا لرفعها
+emptyGuide.browseRootUnassignedTitle	لا وحدات تخزين معيّنة.
+emptyGuide.browseRootUnassignedBody	يعيّن المسؤول وحدات التخزين لك.\nالروابط التي يشاركها الآخرون معك موجودة في المشتركة.
+emptyGuide.goToShared	الانتقال إلى المشتركة
+emptyGuide.browseRootNoVolumesTitle	لا توجد وحدات تخزين على الخادم
+emptyGuide.browseRootVolumeFolders	يظهر هنا كل مجلد في دليل وحدات التخزين على الخادم كوحدة تخزين.
+emptyGuide.browseRootAddFolder	أضف مجلدًا هناك على الخادم، ثم اختر تحديث.

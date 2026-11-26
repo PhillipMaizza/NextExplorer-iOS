@@ -1456,3 +1456,9 @@ emptyGuide.trashTitle	Кошик порожній
 emptyGuide.trashRestore	Відновлення повертає об’єкт на попереднє місце або в будь-яку вибрану папку.
 emptyGuide.trashShareLinks	Посилання для спільного доступу не працюють, поки файл тут.\nВідновлення може їх повернути.
 emptyGuide.browseDropTitle	Перетягніть файли сюди для завантаження
+emptyGuide.browseRootUnassignedTitle	Томи не призначено.
+emptyGuide.browseRootUnassignedBody	Томи вам призначає адміністратор.\nПосилання, якими з вами поділилися інші, є в розділі «Спільні».
+emptyGuide.goToShared	Перейти до Спільних
+emptyGuide.browseRootNoVolumesTitle	На сервері немає томів
+emptyGuide.browseRootVolumeFolders	Кожна папка в каталозі томів сервера відображається тут як том.
+emptyGuide.browseRootAddFolder	Додайте туди папку на сервері, а потім виберіть «Оновити».

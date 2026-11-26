@@ -1447,3 +1447,9 @@ emptyGuide.trashTitle	Papperskorgen är tom
 emptyGuide.trashRestore	Återställ lägger tillbaka ett objekt där det var, eller i valfri mapp.
 emptyGuide.trashShareLinks	Delningslänkar slutar fungera medan filen ligger här.\nEn återställning kan ta tillbaka dem.
 emptyGuide.browseDropTitle	Släpp filer här för att ladda upp
+emptyGuide.browseRootUnassignedTitle	Inga volymer tilldelade.
+emptyGuide.browseRootUnassignedBody	En administratör tilldelar dig volymer.\nLänkar som andra delar med dig finns under Delade.
+emptyGuide.goToShared	Gå till Delade
+emptyGuide.browseRootNoVolumesTitle	Servern har inga volymer
+emptyGuide.browseRootVolumeFolders	Varje mapp i serverns volymkatalog visas här som en volym.
+emptyGuide.browseRootAddFolder	Lägg till en mapp där på servern och välj sedan Uppdatera.

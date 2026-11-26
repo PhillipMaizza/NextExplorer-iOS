@@ -1340,3 +1340,9 @@ emptyGuide.trashTitle	Thùng rác trống
 emptyGuide.trashRestore	Khôi phục đưa mục về chỗ cũ, hoặc vào bất kỳ thư mục nào bạn chọn.
 emptyGuide.trashShareLinks	Liên kết chia sẻ ngừng hoạt động khi tệp nằm ở đây.\nKhôi phục có thể đưa chúng trở lại.
 emptyGuide.browseDropTitle	Thả tệp vào đây để tải lên
+emptyGuide.browseRootUnassignedTitle	Chưa gán volume nào.
+emptyGuide.browseRootUnassignedBody	Quản trị viên sẽ gán volume cho bạn.\nLiên kết người khác chia sẻ với bạn nằm trong Đã chia sẻ.
+emptyGuide.goToShared	Đi tới Đã chia sẻ
+emptyGuide.browseRootNoVolumesTitle	Máy chủ không có volume nào
+emptyGuide.browseRootVolumeFolders	Mỗi thư mục trong thư mục volume của máy chủ hiển thị ở đây dưới dạng một volume.
+emptyGuide.browseRootAddFolder	Thêm một thư mục ở đó trên máy chủ, rồi chọn Làm mới.

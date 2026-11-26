@@ -1409,3 +1409,9 @@ emptyGuide.trashTitle	ゴミ箱は空です
 emptyGuide.trashRestore	復元すると、項目は元の場所か、選んだフォルダに戻ります。
 emptyGuide.trashShareLinks	ファイルがここにある間、共有リンクは使えません。\n復元するとリンクも戻せます。
 emptyGuide.browseDropTitle	ここにファイルをドロップしてアップロード
+emptyGuide.browseRootUnassignedTitle	割り当て済みのボリュームはありません。
+emptyGuide.browseRootUnassignedBody	ボリュームは管理者が割り当てます。\n他の人があなたと共有したリンクは「共有」にあります。
+emptyGuide.goToShared	共有へ移動
+emptyGuide.browseRootNoVolumesTitle	サーバにボリュームがありません
+emptyGuide.browseRootVolumeFolders	サーバのボリュームディレクトリ内の各フォルダが、ここにボリュームとして表示されます。
+emptyGuide.browseRootAddFolder	サーバのそのディレクトリにフォルダを追加してから、更新を選択してください。

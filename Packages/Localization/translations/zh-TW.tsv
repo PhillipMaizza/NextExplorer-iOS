@@ -1409,3 +1409,9 @@ emptyGuide.trashTitle	垃圾桶是空的
 emptyGuide.trashRestore	還原會將項目放回原處，或放入你選擇的任何資料夾。
 emptyGuide.trashShareLinks	檔案在這裡期間，分享連結會失效。\n還原後可重新啟用。
 emptyGuide.browseDropTitle	將檔案拖到此處上傳
+emptyGuide.browseRootUnassignedTitle	未指派卷宗。
+emptyGuide.browseRootUnassignedBody	卷宗由管理員為你指派。\n其他人與你共享的連結在「共享」中。
+emptyGuide.goToShared	前往共享
+emptyGuide.browseRootNoVolumesTitle	伺服器上沒有卷宗
+emptyGuide.browseRootVolumeFolders	伺服器卷宗目錄中的每個資料夾都會在這裡顯示為一個卷宗。
+emptyGuide.browseRootAddFolder	在伺服器的該目錄中加入一個資料夾，然後選擇重新整理。

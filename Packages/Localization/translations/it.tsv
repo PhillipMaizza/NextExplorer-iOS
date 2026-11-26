@@ -1447,3 +1447,9 @@ emptyGuide.trashTitle	Il cestino è vuoto
 emptyGuide.trashRestore	Ripristina rimette un elemento dov’era, o in una cartella a tua scelta.
 emptyGuide.trashShareLinks	I link di condivisione smettono di funzionare finché il file è qui.\nUn ripristino può riattivarli.
 emptyGuide.browseDropTitle	Trascina qui i file da caricare
+emptyGuide.browseRootUnassignedTitle	Nessun volume assegnato.
+emptyGuide.browseRootUnassignedBody	I volumi te li assegna un amministratore.\nI link che altri condividono con te sono in Condivisi.
+emptyGuide.goToShared	Vai a Condivisi
+emptyGuide.browseRootNoVolumesTitle	Il server non ha volumi
+emptyGuide.browseRootVolumeFolders	Ogni cartella nella directory dei volumi del server appare qui come volume.
+emptyGuide.browseRootAddFolder	Aggiungi una cartella lì sul server, poi scegli Aggiorna.

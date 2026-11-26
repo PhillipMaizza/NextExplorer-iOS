@@ -1340,3 +1340,9 @@ emptyGuide.trashTitle	ถังขยะว่างเปล่า
 emptyGuide.trashRestore	การกู้คืนจะนำรายการกลับไปที่เดิม หรือไปยังโฟลเดอร์ใดก็ได้ที่คุณเลือก
 emptyGuide.trashShareLinks	ลิงก์แชร์จะหยุดทำงานขณะที่ไฟล์อยู่ที่นี่\nการกู้คืนสามารถนำกลับมาได้
 emptyGuide.browseDropTitle	วางไฟล์ที่นี่เพื่ออัปโหลด
+emptyGuide.browseRootUnassignedTitle	ยังไม่ได้กำหนดวอลุ่ม
+emptyGuide.browseRootUnassignedBody	ผู้ดูแลระบบเป็นผู้กำหนดวอลุ่มให้คุณ\nลิงก์ที่ผู้อื่นแชร์กับคุณอยู่ในที่แชร์
+emptyGuide.goToShared	ไปที่ที่แชร์
+emptyGuide.browseRootNoVolumesTitle	เซิร์ฟเวอร์ไม่มีวอลุ่ม
+emptyGuide.browseRootVolumeFolders	แต่ละโฟลเดอร์ในไดเรกทอรีวอลุ่มของเซิร์ฟเวอร์จะแสดงที่นี่เป็นวอลุ่ม
+emptyGuide.browseRootAddFolder	เพิ่มโฟลเดอร์ที่ตำแหน่งนั้นบนเซิร์ฟเวอร์ แล้วเลือกรีเฟรช

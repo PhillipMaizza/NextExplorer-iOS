@@ -1546,3 +1546,9 @@ emptyGuide.trashTitle	The trash is empty
 emptyGuide.trashRestore	Restore puts an item back where it was, or into any folder you choose.
 emptyGuide.trashShareLinks	Share links stop working while their file is here.\nA restore can bring them back.
 emptyGuide.browseDropTitle	Drop files here to upload
+emptyGuide.browseRootUnassignedTitle	No volumes assigned.
+emptyGuide.browseRootUnassignedBody	An admin assigns volumes to you.\nLinks other people share with you are in Shared.
+emptyGuide.goToShared	Go to Shared
+emptyGuide.browseRootNoVolumesTitle	The server has no volumes
+emptyGuide.browseRootVolumeFolders	Each folder in the server's volume directory shows up here as a volume.
+emptyGuide.browseRootAddFolder	Add a folder there on the server, then Refresh.

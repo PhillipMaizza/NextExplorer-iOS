@@ -1523,3 +1523,9 @@ emptyGuide.trashTitle	Корзина пуста
 emptyGuide.trashRestore	Восстановление вернёт объект на прежнее место или в выбранную папку.
 emptyGuide.trashShareLinks	Ссылки для общего доступа не работают, пока файл здесь.\nВосстановление может вернуть их.
 emptyGuide.browseDropTitle	Перетащите файлы сюда для загрузки
+emptyGuide.browseRootUnassignedTitle	Тома не назначены.
+emptyGuide.browseRootUnassignedBody	Тома вам назначает администратор.\nСсылки, которыми с вами поделились другие, находятся в разделе «Общие».
+emptyGuide.goToShared	Перейти в Общие
+emptyGuide.browseRootNoVolumesTitle	На сервере нет томов
+emptyGuide.browseRootVolumeFolders	Каждая папка в каталоге томов сервера отображается здесь как том.
+emptyGuide.browseRootAddFolder	Добавьте туда папку на сервере, затем выберите «Обновить».

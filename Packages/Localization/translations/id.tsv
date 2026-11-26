@@ -1340,3 +1340,9 @@ emptyGuide.trashTitle	Sampah kosong
 emptyGuide.trashRestore	Pulihkan mengembalikan item ke tempat asalnya, atau ke folder mana pun yang Anda pilih.
 emptyGuide.trashShareLinks	Tautan berbagi berhenti berfungsi selama filenya ada di sini.\nPemulihan dapat mengembalikannya.
 emptyGuide.browseDropTitle	Letakkan file di sini untuk mengunggah
+emptyGuide.browseRootUnassignedTitle	Tidak ada volume yang ditetapkan.
+emptyGuide.browseRootUnassignedBody	Admin menetapkan volume untuk Anda.\nTautan yang dibagikan orang lain kepada Anda ada di Dibagikan.
+emptyGuide.goToShared	Buka Dibagikan
+emptyGuide.browseRootNoVolumesTitle	Server tidak memiliki volume
+emptyGuide.browseRootVolumeFolders	Setiap folder di direktori volume server muncul di sini sebagai volume.
+emptyGuide.browseRootAddFolder	Tambahkan folder di sana pada server, lalu pilih Segarkan.
