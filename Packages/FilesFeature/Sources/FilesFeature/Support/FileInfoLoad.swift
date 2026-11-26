@@ -21,7 +21,7 @@ enum FileInfoLoad {
             }
             try await send(metadata(apiResult { try await filesClient.fetchMetadata(serverURL, path) }))
         }
-        guard item.isDirectory else { return loadMetadata }
+        guard item.isDirectory, ReceivedShareSpace.shareRoot(of: path) == nil else { return loadMetadata }
         return .merge(loadMetadata, .run { send in
             if let settle {
                 try await clock.sleep(for: settle)

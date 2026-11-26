@@ -65,6 +65,7 @@
                 result: result,
                 isInOpenFolder: store.state.access(for: result.actionItem) != nil,
                 onOpen: { store.send(.searchResultTapped(result)) },
+                onInfo: { store.send(.infoTapped(result.actionItem)) },
                 onShowInFolder: { store.send(.searchResultEnclosingFolderTapped(result)) },
                 fileActions: { fileActions(result.actionItem) }
             )

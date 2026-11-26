@@ -306,7 +306,9 @@
                 isFavorite: item.isDirectory ? screen.favoritePaths.contains(item.id) : nil,
                 onToggleFavorite: { screen.send(.favoriteToggleButtonTapped(item)) },
                 isFavoriteToggleEnabled: screen.hasLoadedFavorites,
-                shares: MacInspectorSharedLinks.links(sharedLinks, for: item),
+                shares: ReceivedShareSpace.shareRoot(of: item.id) == nil
+                    ? MacInspectorSharedLinks.links(sharedLinks, for: item)
+                    : nil,
                 onShare: screen.state.actions(for: item).canShare ? { onShare(item) } : nil,
                 onRestored: { screen.send(.refreshButtonTapped) },
                 onOpen: item.id == screen.directoryPath ? nil : { onOpen(item) },

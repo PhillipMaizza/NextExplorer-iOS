@@ -37,6 +37,7 @@ struct MacSearchHitMenu<FileActions: View>: View {
     let result: SearchResultItem
     let isInOpenFolder: Bool
     let onOpen: () -> Void
+    let onInfo: () -> Void
     let onShowInFolder: () -> Void
     @ViewBuilder let fileActions: () -> FileActions
 
@@ -46,6 +47,9 @@ struct MacSearchHitMenu<FileActions: View>: View {
         } else {
             Button(action: onOpen) {
                 Label { Text(L10n.Browse.open) } icon: { result.isDirectory ? IconKit.folder : IconKit.document }
+            }
+            Button(action: onInfo) {
+                Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
             }
         }
         Section {
