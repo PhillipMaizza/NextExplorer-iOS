@@ -173,7 +173,7 @@
         static let heldProgress = 0.4
         static let heldSeconds = 600
         static let uploadSteps = 8
-        static let uploadStepDelay: Duration = .milliseconds(150)
+        static let uploadStepDelay: Duration = .milliseconds(400)
         /// Signing in as this name answers "the password is right, now send a code", so a UI test
         /// can drive the second factor page.
         static let secondFactorIdentifier = UITestFixture.Credential.secondFactorUser.rawValue
@@ -313,6 +313,9 @@
                 }
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
                 client.uploadFile = { _, fileURL, fileName, destination, onProgress in
+                    if fileName.hasPrefix(UITestFixture.failingFolderName) {
+                        throw FilesClientError.network(injectedFailure)
+                    }
                     for step in 1 ... uploadSteps {
                         try await Task.sleep(for: uploadStepDelay)
                         onProgress(Double(step) / Double(uploadSteps))
