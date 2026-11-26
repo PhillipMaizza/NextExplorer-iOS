@@ -114,6 +114,7 @@ public struct SettingsFeature {
         /// Set when the user taps to sign an account out of the switcher, driving the confirm
         /// dialog; cleared on cancel or confirm.
         public var accountPendingRemoval: AccountSummary?
+        public var accountPendingSwitch: String?
         public var preferencesPhase: DataPhase = .idle
         public var removeAllDownloadsPhase: ConfirmPhase = .idle
         /// Checked independently of the Downloads tab's own state (which may never have
@@ -157,6 +158,10 @@ public struct SettingsFeature {
             )
         }
 
+        var hasUnsavedAdminChanges: Bool {
+            AdminPane.allCases.contains(where: hasUnsavedChanges(in:))
+        }
+
         func hasUnsavedChanges(in pane: AdminPane) -> Bool {
             switch pane {
             case .server: serverDetails?.isDirty == true
@@ -191,7 +196,7 @@ public struct SettingsFeature {
     }
 
     /// The admin pages the Mac Settings window shows as panes of their own.
-    public enum AdminPane: Equatable, Sendable {
+    public enum AdminPane: Equatable, Sendable, CaseIterable {
         case server, users, thumbnails, accessRules
         case uploads, searchIndex, folderSize, ffmpeg, activity, trash, versions, serverTools
     }
@@ -272,6 +277,8 @@ public struct SettingsFeature {
         case addAccountTapped
         case removeAccountTapped(AccountSummary)
         case removeAccountCancelled
+        case switchDiscardingChangesConfirmed
+        case switchDiscardingChangesCancelled
         case removeAccountConfirmed
         case removeAllDownloadsTapped
         case removeAllDownloadsCancelled
@@ -784,7 +791,20 @@ public struct SettingsFeature {
         case let .switchAccountTapped(id):
             // Tapping the already active account is a no op.
             guard state.accounts.first(where: { $0.id == id })?.isActive != true else { return .none }
+            guard !state.hasUnsavedAdminChanges else {
+                state.accountPendingSwitch = id
+                return .none
+            }
             return .send(.delegate(.switchAccount(id)))
+
+        case .switchDiscardingChangesConfirmed:
+            guard let id = state.accountPendingSwitch else { return .none }
+            state.accountPendingSwitch = nil
+            return .send(.delegate(.switchAccount(id)))
+
+        case .switchDiscardingChangesCancelled:
+            state.accountPendingSwitch = nil
+            return .none
 
         case .addAccountTapped:
             return .send(.delegate(.addAccountRequested))

@@ -26,8 +26,8 @@ struct AccountConfirmations: ViewModifier {
     #endif
 
     private var isPromptPending: Bool {
-        store.isConfirmingSignOut || store.accountPendingRemoval != nil || store.changePassword != nil || store
-            .twoFactor != nil
+        store.isConfirmingSignOut || store.accountPendingRemoval != nil || store.accountPendingSwitch != nil
+            || store.changePassword != nil || store.twoFactor != nil
     }
 
     private var shouldShowPrompts: Bool {
@@ -130,6 +130,22 @@ struct AccountConfirmations: ViewModifier {
                     closeAccessibilityLabel: L10n.Common.close,
                     onConfirm: { store.send(.removeAccountConfirmed) },
                     onDismiss: { store.send(.removeAccountCancelled) }
+                )
+            }
+            .dsAlert(isPresented: Binding(
+                get: { shouldShowPrompts && store.accountPendingSwitch != nil },
+                set: { _ in }
+            )) {
+                DSAlertSheet(
+                    icon: IconKit.warning,
+                    title: L10n.EditShare.discardTitle,
+                    message: L10n.TextPreview.unsavedMessage,
+                    confirmTitle: L10n.EditShare.discard,
+                    dismissTitle: L10n.EditShare.keepEditing,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.switchDiscardingChangesConfirmed) },
+                    onDismiss: { store.send(.switchDiscardingChangesCancelled) }
                 )
             }
         #if os(macOS)
