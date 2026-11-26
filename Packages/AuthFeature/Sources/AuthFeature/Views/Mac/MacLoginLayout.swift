@@ -91,7 +91,7 @@
                 }
                 .padding(.leading, .space4)
                 .padding(.trailing, .space12)
-                .frame(height: .size32)
+                .macMinHeight(.regular)
                 .background(Capsule().fill(Color.macRow))
                 if let title {
                     Text(title)

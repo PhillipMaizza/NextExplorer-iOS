@@ -89,7 +89,7 @@
                 }
                 .foregroundStyle(Color.macChromeSecondary)
                 .padding(.horizontal, .space8)
-                .frame(height: Metrics.chipHeight)
+                .macMinHeight(points: Metrics.chipHeight)
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -117,7 +117,7 @@
             }
             .padding(.leading, .space4)
             .padding(.trailing, .space4)
-            .frame(height: Metrics.chipHeight)
+            .macMinHeight(points: Metrics.chipHeight)
             .background(Capsule().fill(Color.macSegment))
             .accessibilityElement(children: .contain)
             .accessibilityLabel(name)
