@@ -36,18 +36,6 @@ extension AppSuites {
             AppFeature.State(destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user)))
         }
 
-        /// The session shown straight after a launch or a switch, before `me` confirms the user.
-        private func optimistic(_ serverURL: URL, username: String) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(
-                serverURL: serverURL,
-                user: User(id: "", username: username, email: nil)
-            ))
-        }
-
-        private func confirmed(_ serverURL: URL, _ user: User) -> AppFeature.Destination.State {
-            .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-        }
-
         private func updateReview(
             _ state: inout AppFeature.State,
             _ update: (inout UploadReviewFeature.State?) -> Void
@@ -76,7 +64,7 @@ extension AppSuites {
 
             await store.send(.onAppear)
             await store.receive(\.sessionRestoreResponse) {
-                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             accountList.open()
             await store.receive(\.accountsRefreshed) {
@@ -85,7 +73,7 @@ extension AppSuites {
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
-                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverA, AppFixtures.userA)
             }
             await store.receive(\.accountsRefreshed)
 
@@ -109,7 +97,7 @@ extension AppSuites {
 
             await store.send(.onAppear)
             await store.receive(\.sessionRestoreResponse) {
-                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             await store.receive(\.accountsRefreshed)
             confirmation.open()
@@ -144,7 +132,7 @@ extension AppSuites {
 
             await store.send(.onAppear)
             await store.receive(\.sessionRestoreResponse) {
-                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverA, username: TestUser.alice)
             }
             await store.receive(\.accountsRefreshed)
             confirmation.open()
@@ -171,7 +159,7 @@ extension AppSuites {
 
             await store.send(.onAppear)
             await store.receive(\.sessionRestoreResponse) {
-                $0.destination = optimistic(AppFixtures.serverA, username: TestUser.alice)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverA, username: TestUser.alice)
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
             }
             await store.receive(\.accountsRefreshed)
@@ -220,7 +208,7 @@ extension AppSuites {
             ))))) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
                 $0.didAuthenticateFromLogin = true
-                $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverA, AppFixtures.userA)
             }
             await store.receive(\.accountsRefreshed)
             await store.finish()
@@ -268,7 +256,7 @@ extension AppSuites {
 
             await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsB)))))
             await store.receive(\.activateAccount) {
-                $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
@@ -277,7 +265,7 @@ extension AppSuites {
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
             await store.receive(\.accountsRefreshed)
 
@@ -408,7 +396,7 @@ extension AppSuites {
             await store.send(.addAccountSheetDismissed) {
                 $0.pendingAddedAccount = nil
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
@@ -461,7 +449,7 @@ extension AppSuites {
             await store.receive(\.sessionExpiryConfirmed)
             await store.receive(\.activeAccountTornDown)
             await store.receive(\.activateAccount) {
-                $0.destination = optimistic(AppFixtures.serverB, username: TestUser.bob)
+                $0.destination = AppFixtures.optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
@@ -469,7 +457,7 @@ extension AppSuites {
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
-                $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
             await store.receive(\.accountsRefreshed)
 

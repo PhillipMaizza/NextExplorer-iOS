@@ -144,4 +144,30 @@ enum AppFixtures {
             username: username
         )
     }
+
+    static func optimistic(_ serverURL: URL, username: String) -> AppFeature.Destination.State {
+        .authenticated(AuthenticatedFeature.State(
+            serverURL: serverURL,
+            user: User(id: "", username: username, email: nil)
+        ))
+    }
+
+    static func confirmed(_ serverURL: URL, _ user: User) -> AppFeature.Destination.State {
+        .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
+    }
+
+    static func readOnlyListing() -> BrowseResult {
+        BrowseResult(
+            items: [],
+            access: FileAccess(
+                canRead: true,
+                canWrite: false,
+                canUpload: false,
+                canDelete: false,
+                canShare: false,
+                canDownload: true
+            ),
+            path: TestFolder.docs
+        )
+    }
 }

@@ -10,24 +10,8 @@ import TestUtils
 /// `FilesClientLiveTests` so it inherits `.serialized`: both share `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     @Suite("System settings patch")
-    struct SystemSettingsPatchRoutes {
+    struct SystemSettingsPatchRoutes: FilesClientLiveHarness {
         private let serverURL = URL(string: TestHost.exampleURLString)!
-
-        private func makeClient() -> FilesClient {
-            .live(
-                networkClient: .live(protocolClasses: [StubURLProtocol.self]),
-                directoryCacheStore: .testValue
-            )
-        }
-
-        private func stub(statusCode: Int, body: String = "") {
-            StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(
-                statusCode: statusCode,
-                headers: [HTTPHeaderField.contentType: MIMEType.json],
-                body: Data(body.utf8)
-            )
-        }
 
         @Test
         func patchSendsOnlyTheSectionsSetAndDecodesTheEcho() async throws {
@@ -78,24 +62,8 @@ extension FilesClientLiveTests {
 
 extension FilesClientLiveTests {
     @Suite("Activity log routes")
-    struct ActivityRoutes {
+    struct ActivityRoutes: FilesClientLiveHarness {
         private let serverURL = URL(string: TestHost.exampleURLString)!
-
-        private func makeClient() -> FilesClient {
-            .live(
-                networkClient: .live(protocolClasses: [StubURLProtocol.self]),
-                directoryCacheStore: .testValue
-            )
-        }
-
-        private func stub(statusCode: Int, body: String = "") {
-            StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(
-                statusCode: statusCode,
-                headers: [HTTPHeaderField.contentType: MIMEType.json],
-                body: Data(body.utf8)
-            )
-        }
 
         @Test
         func fetchSendsOnlyTheFiltersThatAreSetAndEncodesTheSearch() async throws {
@@ -165,24 +133,8 @@ extension FilesClientLiveTests {
 
 extension FilesClientLiveTests {
     @Suite("Trash admin routes")
-    struct TrashAdminRoutes {
+    struct TrashAdminRoutes: FilesClientLiveHarness {
         private let serverURL = URL(string: TestHost.exampleURLString)!
-
-        private func makeClient() -> FilesClient {
-            .live(
-                networkClient: .live(protocolClasses: [StubURLProtocol.self]),
-                directoryCacheStore: .testValue
-            )
-        }
-
-        private func stub(statusCode: Int, body: String = "") {
-            StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(
-                statusCode: statusCode,
-                headers: [HTTPHeaderField.contentType: MIMEType.json],
-                body: Data(body.utf8)
-            )
-        }
 
         @Test
         func zonesAreReadFromTheZonesRoute() async throws {
@@ -262,24 +214,8 @@ extension FilesClientLiveTests {
 
 extension FilesClientLiveTests {
     @Suite("Versions admin routes")
-    struct VersionsAdminRoutes {
+    struct VersionsAdminRoutes: FilesClientLiveHarness {
         private let serverURL = URL(string: TestHost.exampleURLString)!
-
-        private func makeClient() -> FilesClient {
-            .live(
-                networkClient: .live(protocolClasses: [StubURLProtocol.self]),
-                directoryCacheStore: .testValue
-            )
-        }
-
-        private func stub(statusCode: Int, body: String = "") {
-            StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(
-                statusCode: statusCode,
-                headers: [HTTPHeaderField.contentType: MIMEType.json],
-                body: Data(body.utf8)
-            )
-        }
 
         private func queryItems() throws -> [String: String] {
             let url = try #require(StubURLProtocol.capturedRequest?.url)

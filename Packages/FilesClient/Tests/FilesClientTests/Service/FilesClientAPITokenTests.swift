@@ -10,24 +10,8 @@ import TestUtils
 /// `FilesClientLiveTests` so it inherits `.serialized`: both share `StubURLProtocol`'s statics.
 extension FilesClientLiveTests {
     @Suite("API token routes")
-    struct APITokenRoutes {
+    struct APITokenRoutes: FilesClientLiveHarness {
         private let serverURL = URL(string: TestHost.exampleURLString)!
-
-        private func makeClient() -> FilesClient {
-            .live(
-                networkClient: .live(protocolClasses: [StubURLProtocol.self]),
-                directoryCacheStore: .testValue
-            )
-        }
-
-        private func stub(statusCode: Int, body: String = "") {
-            StubURLProtocol.failure = nil
-            StubURLProtocol.stub = .init(
-                statusCode: statusCode,
-                headers: [HTTPHeaderField.contentType: MIMEType.json],
-                body: Data(body.utf8)
-            )
-        }
 
         private func sentJSON() throws -> [String: Any] {
             let body = try #require(StubURLProtocol.capturedRequestBody)

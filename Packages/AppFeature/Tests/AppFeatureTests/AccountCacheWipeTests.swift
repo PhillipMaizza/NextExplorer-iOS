@@ -29,21 +29,6 @@ struct AccountCacheWipeTests {
         let stagedDiscards = LockIsolated(0)
     }
 
-    private func listing() -> BrowseResult {
-        BrowseResult(
-            items: [],
-            access: FileAccess(
-                canRead: true,
-                canWrite: false,
-                canUpload: false,
-                canDelete: false,
-                canShare: false,
-                canDownload: true
-            ),
-            path: Fixture.path
-        )
-    }
-
     private func makeWipe(
         directory: DirectoryCacheStore = .inMemory(),
         pending: PendingAccountWipes = .inMemory(),
@@ -90,14 +75,14 @@ struct AccountCacheWipeTests {
         directory.bound(to: Fixture.account).write(
             serverURL: Fixture.server,
             path: Fixture.path,
-            result: listing(),
+            result: AppFixtures.readOnlyListing(),
             etag: nil,
             fetchedAt: Fixture.fetchedAt
         )
         directory.bound(to: Fixture.otherAccount).write(
             serverURL: Fixture.server,
             path: Fixture.path,
-            result: listing(),
+            result: AppFixtures.readOnlyListing(),
             etag: nil,
             fetchedAt: Fixture.fetchedAt
         )
@@ -127,7 +112,7 @@ struct AccountCacheWipeTests {
         directory.bound(to: Fixture.account).write(
             serverURL: Fixture.server,
             path: Fixture.path,
-            result: listing(),
+            result: AppFixtures.readOnlyListing(),
             etag: nil,
             fetchedAt: Fixture.fetchedAt
         )
@@ -159,14 +144,14 @@ struct AccountCacheWipeTests {
         directory.bound(to: Fixture.account).write(
             serverURL: Fixture.server,
             path: Fixture.path,
-            result: listing(),
+            result: AppFixtures.readOnlyListing(),
             etag: nil,
             fetchedAt: Fixture.fetchedAt
         )
         directory.bound(to: Fixture.otherAccount).write(
             serverURL: Fixture.server,
             path: Fixture.path,
-            result: listing(),
+            result: AppFixtures.readOnlyListing(),
             etag: nil,
             fetchedAt: Fixture.fetchedAt
         )
@@ -192,7 +177,7 @@ struct AccountCacheWipeTests {
         directory.bound(to: Fixture.account).write(
             serverURL: Fixture.server,
             path: Fixture.path,
-            result: listing(),
+            result: AppFixtures.readOnlyListing(),
             etag: nil,
             fetchedAt: Fixture.fetchedAt
         )
@@ -214,7 +199,7 @@ struct AccountCacheWipeTests {
             directory.bound(to: account).write(
                 serverURL: Fixture.server,
                 path: Fixture.path,
-                result: listing(),
+                result: AppFixtures.readOnlyListing(),
                 etag: nil,
                 fetchedAt: Fixture.fetchedAt
             )
