@@ -6,7 +6,6 @@ import SwiftUI
 
 private enum Metrics {
     static let contentSpacing: CGFloat = .space24
-    static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
     static let iconCell: CGFloat = .size56
@@ -49,16 +48,16 @@ struct FavoriteEditSheet: View {
                     DSErrorCard(error)
                 }
 
-                section(L10n.Favorites.editNameLabel, error: store.nameErrorText) {
+                DSFieldSection(L10n.Favorites.editNameLabel, error: store.nameErrorText) {
                     DSTextField(store.favorite.folderName, text: $store.nameDraft.sending(\.nameChanged))
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                         .submitLabel(.done)
                 }
 
-                section(L10n.Favorites.editColorLabel) { colorRow }
+                DSFieldSection(L10n.Favorites.editColorLabel) { colorRow }
 
-                section(L10n.Favorites.editIconLabel) {
+                DSFieldSection(L10n.Favorites.editIconLabel) {
                     VStack(alignment: .leading, spacing: .space12) {
                         DSSegmentedControl(
                             options: FavoriteEditFeature.IconStyle.allCases,
@@ -79,21 +78,6 @@ struct FavoriteEditSheet: View {
                 .disabled(!store.isSaveEnabled)
             }
         }
-    }
-
-    private func section(
-        _ title: String,
-        error: String? = nil,
-        @ViewBuilder content: () -> some View
-    ) -> some View {
-        VStack(alignment: .leading, spacing: Metrics.sectionSpacing) {
-            DSFieldLabel(title)
-            content()
-            if let error {
-                Text(error).type(.body3(.semibold), style: .error)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var colorRow: some View {

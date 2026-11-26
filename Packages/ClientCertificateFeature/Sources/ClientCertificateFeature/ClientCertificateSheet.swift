@@ -7,7 +7,6 @@ import UniformTypeIdentifiers
 
 private enum Metrics {
     static let contentSpacing: CGFloat = .space24
-    static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
     static let footerSpacing: CGFloat = .space12
@@ -76,13 +75,13 @@ public struct ClientCertificateSheet: View {
                     DSErrorCard(failure.message)
                 }
 
-                section(L10n.ClientCertificate.serverLabel) {
+                DSFieldSection(L10n.ClientCertificate.serverLabel) {
                     Text(store.serverName)
                         .type(.body2(.regular))
                         .dsCard()
                 }
 
-                section(L10n.ClientCertificate.certificateLabel) {
+                DSFieldSection(L10n.ClientCertificate.certificateLabel) {
                     VStack(alignment: .leading, spacing: .space8) {
                         ClientCertificateSummaryLines(summary: store.installedSummary)
                         ClientCertificateExpiryWarning(summary: store.installedSummary)
@@ -91,7 +90,7 @@ public struct ClientCertificateSheet: View {
                 }
 
                 if let file = store.pendingFile {
-                    section(L10n.ClientCertificate.fileLabel) {
+                    DSFieldSection(L10n.ClientCertificate.fileLabel) {
                         Label {
                             Text(file.name).type(.body2(.regular)).lineLimit(1).truncationMode(.middle)
                         } icon: {
@@ -100,7 +99,7 @@ public struct ClientCertificateSheet: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .dsCard()
                     }
-                    section(
+                    DSFieldSection(
                         L10n.ClientCertificate.passwordLabel,
                         error: store.failure == .wrongPassword ? store.failure?.message : nil
                     ) {
@@ -150,21 +149,6 @@ public struct ClientCertificateSheet: View {
                 }
             }
         }
-    }
-
-    private func section(
-        _ title: String,
-        error: String? = nil,
-        @ViewBuilder content: () -> some View
-    ) -> some View {
-        VStack(alignment: .leading, spacing: Metrics.sectionSpacing) {
-            DSFieldLabel(title)
-            content()
-            if let error {
-                Text(error).type(.body3(.semibold), style: .error)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

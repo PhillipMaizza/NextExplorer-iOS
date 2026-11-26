@@ -101,6 +101,29 @@ public struct DSFieldLabel: View {
     }
 }
 
+public struct DSFieldSection<Content: View>: View {
+    private let title: String
+    private let error: String?
+    private let content: Content
+
+    public init(_ title: String, error: String? = nil, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.error = error
+        self.content = content()
+    }
+
+    public var body: some View {
+        VStack(alignment: .leading, spacing: .space8) {
+            DSFieldLabel(title)
+            content
+            if let error {
+                Text(error).type(.body3(.semibold), style: .error)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
 /// The standard single line text field: `.body2` text in `primaryDS` inside the shared
 /// `roundedFieldStyle()` box (border, `.radiusControl`, 48pt). Keyboard type,
 /// autocapitalization, submit label, content type and the rest still propagate from the call
