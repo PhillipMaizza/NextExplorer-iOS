@@ -1,3 +1,4 @@
+import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
@@ -5,8 +6,8 @@ import TestUtils
 
 /// Exercises `PreviewCacheStore.liveValue` against the real filesystem, same spirit as
 /// `LegacyDownloadStoreTests`: the whole point is verifying actual on disk behavior.
-/// `.serialized`: every test here shares one real directory (`size`/`clear` operate on the
-/// whole cache root, not a per test unique file), so running them concurrently races.
+/// `.serialized`: every test here shares one real directory (`clear` removes the whole cache
+/// root), so running them concurrently races.
 /// `SerializedPreviewCacheAccess`: also keeps it from overlapping other suites that touch
 /// the same directory (`ThumbnailCacheTests`).
 @Suite(.serialized, SerializedPreviewCacheAccess())
@@ -29,14 +30,31 @@ struct PreviewCacheStoreTests {
     // MARK: Happy path
 
     @Test
-    func sizeReflectsTheTotalBytesOfEveryFileInTheCache() throws {
+    func sizeCountsOnlyTheAccountsOwnSlots() throws {
         try? FileManager.default.removeItem(at: cacheDirectory)
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
+        func slot(_ namespace: String, _ scope: String) -> String {
+            "\(namespace)/\(CacheAccountScope.scopedFileName("slot", scope: scope))"
+        }
 
-        _ = try writeFile(named: TestFile.aText, contents: "12345", in: "preview/one")
-        _ = try writeFile(named: TestFile.bText, contents: "1234567890", in: "download/two")
+        _ = try writeFile(
+            named: TestFile.aText,
+            contents: "12345",
+            in: slot(CacheLayout.previewNamespaceName, TestAccountID.alice)
+        )
+        _ = try writeFile(
+            named: TestFile.bText,
+            contents: "1234567890",
+            in: slot(CacheLayout.rawDownloadNamespaceName, TestAccountID.alice)
+        )
+        _ = try writeFile(
+            named: TestFile.aText,
+            contents: "123",
+            in: slot(CacheLayout.previewNamespaceName, TestAccountID.bob)
+        )
 
-        #expect(try store.size() == 15)
+        #expect(store.size(TestAccountID.alice) == 15)
+        #expect(store.size(TestAccountID.bob) == 3)
     }
 
     @Test
@@ -46,16 +64,16 @@ struct PreviewCacheStoreTests {
         try store.clear()
 
         #expect(!FileManager.default.fileExists(atPath: cacheDirectory.path))
-        #expect(try store.size() == 0)
+        #expect(store.size(TestAccountID.alice) == 0)
     }
 
     // MARK: Edge cases
 
     @Test
-    func sizeIsZeroWhenTheCacheDirectoryDoesNotExist() throws {
+    func sizeIsZeroWhenTheCacheDirectoryDoesNotExist() {
         try? FileManager.default.removeItem(at: cacheDirectory)
 
-        #expect(try store.size() == 0)
+        #expect(store.size(TestAccountID.alice) == 0)
     }
 
     @Test

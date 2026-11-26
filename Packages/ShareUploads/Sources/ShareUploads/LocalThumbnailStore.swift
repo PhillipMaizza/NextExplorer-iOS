@@ -172,7 +172,8 @@ extension LocalThumbnailStore {
         func totalSizeBytes() -> Int64 {
             lock.lock()
             defer { lock.unlock() }
-            return cacheDirectory?.totalSizeBytes() ?? 0
+            return cacheDirectory?
+                .totalSizeBytes(withPrefix: CacheAccountScope.namePrefix(for: CacheAccountScope.current)) ?? 0
         }
 
         func asStore() -> LocalThumbnailStore {

@@ -221,6 +221,35 @@ struct AccountScopedCacheTests {
         #expect(slotsByScope[accountA]?.count == 2)
     }
 
+    @Test("Preview cache: previewCacheSizeBytes(scope:) counts only that account's slots and thumbnails")
+    func previewSizeScope() throws {
+        let caches = makeRoot()
+        defer { try? FileManager.default.removeItem(at: caches) }
+        let item = FileItem(
+            name: TestFile.aText,
+            path: TestPath.docsLowercase,
+            dateModified: fetchedAt,
+            size: 1,
+            kind: TestKind.text
+        )
+        let thumbnails = caches.appendingPathComponent(FilesService.previewCacheRootDirectory, isDirectory: true)
+            .appendingPathComponent(CacheLayout.thumbnailsDirectoryName, isDirectory: true)
+        try FileManager.default.createDirectory(at: thumbnails, withIntermediateDirectories: true)
+        for (scope, bytes) in [(accountA, "ab"), (accountB, "abcdefgh")] {
+            for namespace in [FilesService.previewCacheNamespace, FilesService.rawDownloadCacheNamespace] {
+                let slot = FilesService.previewCacheDirectory(for: item, namespace: namespace, scope: scope, in: caches)
+                try FileManager.default.createDirectory(at: slot, withIntermediateDirectories: true)
+                try Data(bytes.utf8).write(to: slot.appendingPathComponent("file.bin"))
+            }
+            try Data(bytes.utf8).write(to: thumbnails.appendingPathComponent(
+                CacheAccountScope.scopedFileName("digest", scope: scope)
+            ))
+        }
+
+        #expect(FilesService.previewCacheSizeBytes(scope: accountA, in: caches) == 6)
+        #expect(FilesService.previewCacheSizeBytes(scope: accountB, in: caches) == 24)
+    }
+
     @Test("Preview cache: an explicit scope decides the slot, not the process wide scope")
     func previewSlotFollowsTheCapturedScope() {
         let item = FileItem(

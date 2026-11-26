@@ -154,7 +154,10 @@ extension JSONCacheStore: DependencyKey {
         }
 
         func totalSizeBytes() -> Int64 {
-            queue.sync { cacheDirectory?.totalSizeBytes() ?? 0 }
+            queue.sync {
+                cacheDirectory?
+                    .totalSizeBytes(withPrefix: CacheAccountScope.namePrefix(for: CacheAccountScope.current)) ?? 0
+            }
         }
 
         func asStore(scope pinnedScope: String? = nil) -> JSONCacheStore {

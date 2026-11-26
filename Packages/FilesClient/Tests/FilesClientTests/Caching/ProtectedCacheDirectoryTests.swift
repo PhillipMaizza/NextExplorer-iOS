@@ -72,7 +72,7 @@ struct ProtectedCacheDirectoryTests {
         try write("other", in: directory, age: 0, extension: Constants.otherExtension)
 
         #expect(names(in: directory) == ["old", "new"])
-        #expect(directory.totalSizeBytes() == 200)
+        #expect(directory.totalSizeBytes(withPrefix: "") == 200)
     }
 
     @Test("Past the entry cap the oldest entries go first")

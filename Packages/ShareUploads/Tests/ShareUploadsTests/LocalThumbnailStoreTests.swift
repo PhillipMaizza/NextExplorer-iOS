@@ -52,7 +52,7 @@ struct LocalThumbnailStoreTests {
 
         let jpeg = try #require(read(store, scope: account, size: size, modified: MockDate.date))
         #expect(ThumbnailRendering.image(from: jpeg, maxPixel: ThumbnailFixture.imageSize.width) != nil)
-        #expect(store.totalSizeBytes() > 0)
+        #expect(CacheAccountScope.withPinned(account) { store.totalSizeBytes() } > 0)
     }
 
     @Test("A file of another size at the same path is not the uploaded one")
