@@ -315,15 +315,19 @@ public struct AppFeature {
                     serverURL: credentials.serverBaseURL,
                     userID: user.id
                 )
+                let accounts = Effect<Action>.concatenate(
+                    renameStoredAccount(credentials, to: user.displayName),
+                    refreshAccounts
+                )
                 if case let .authenticated(current) = state.destination, current.user == user {
-                    return .merge(refreshAccounts, recordOwner)
+                    return .merge(accounts, recordOwner)
                 }
                 withAnimation(DSMotion.contentReveal) {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, user: user)
                     )
                 }
-                return .merge(refreshAccounts, recordOwner)
+                return .merge(accounts, recordOwner)
 
             case let .sessionValidationResponse(.failure(error), credentials):
                 // Only a real auth rejection tears down the optimistic session; a network
@@ -614,6 +618,12 @@ public struct AppFeature {
             let active = await authClient.activeAccountID()
             await send(.accountsRefreshed(Self.summaries(sessions, activeID: active)))
         }
+    }
+
+    func renameStoredAccount(_ credentials: SessionCredentials, to displayName: String?) -> Effect<Action> {
+        guard credentials.displayName != displayName else { return .none }
+        let authClient = authClient
+        return .run { _ in try? await authClient.setDisplayName(credentials.accountID, displayName) }
     }
 
     private static func summaries(_ sessions: [SessionCredentials], activeID: String?) -> [AccountSummary] {

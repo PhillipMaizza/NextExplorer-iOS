@@ -200,6 +200,34 @@ extension AppSuites {
             )
         }
 
+        @Test("A session check keeps the account's stored name in step with the server's display name")
+        func validationRenamesTheStoredAccount() async {
+            let renamed = User(
+                id: AppFixtures.userA.id,
+                username: TestUser.alice,
+                email: nil,
+                displayName: "Alice Example",
+                roles: []
+            )
+            let calls = LockIsolated<[String]>([])
+            let store = makeStore(activeState(AppFixtures.serverA, AppFixtures.userA)) {
+                $0.authClient.setDisplayName = { id, name in calls.withValue { $0.append("\(id) \(name ?? "")") } }
+                $0.authClient.listSessions = {
+                    calls.withValue { $0.append("list") }
+                    return []
+                }
+            }
+
+            await store.send(.sessionValidationResponse(.success(renamed), credentialsA)) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverA, renamed)
+            }
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
+
+            #expect(calls.value == ["\(AppFixtures.accountA) Alice Example", "list"])
+        }
+
         @Test("A session check answered by another user ends the session instead of showing that user")
         func validationAnsweredByAnotherUserEndsTheSession() async {
             let store = makeStore(activeState(AppFixtures.serverA, AppFixtures.userA)) {

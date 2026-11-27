@@ -171,6 +171,12 @@ struct SessionCookieStore: Sendable {
         try saveStored(stored)
     }
 
+    func setDisplayName(_ displayName: String?, id: String) throws {
+        var stored = try loadForChange()
+        stored.setDisplayName(displayName, id: id)
+        try saveStored(stored)
+    }
+
     /// Session expiry / 401 teardown of the active account only: drops it and switches to the next
     /// remaining account if there is one. Returns the new active account, or `nil` when none left.
     /// Throws when the set can't be read, so an unreadable keychain never reads as "none left".

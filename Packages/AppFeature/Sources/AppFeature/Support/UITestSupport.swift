@@ -271,6 +271,7 @@
             client.clearAllSessions = { sessions.clearAll() }
             client.lockSessions = { shouldLock in sessions.lock(where: shouldLock) }
             client.setRequireSignIn = { id, requireSignIn in sessions.setRequireSignIn(requireSignIn, id: id) }
+            client.setDisplayName = { id, displayName in sessions.setDisplayName(displayName, id: id) }
             switch auth {
             case .loggedOut:
                 client.restoreSession = { nil }
@@ -510,6 +511,10 @@
 
         func setRequireSignIn(_ requireSignIn: RequireSignIn?, id: String) {
             locked { stored.setRequireSignIn(requireSignIn, id: id) }
+        }
+
+        func setDisplayName(_ displayName: String?, id: String) {
+            locked { stored.setDisplayName(displayName, id: id) }
         }
     }
 

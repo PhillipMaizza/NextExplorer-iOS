@@ -215,6 +215,11 @@ public extension AuthClient {
                 try await onCookieQueue {
                     try keychainErrors { try cookieStore.setRequireSignIn(requireSignIn, id: accountID) }
                 }
+            },
+            setDisplayName: { accountID, displayName in
+                try await onCookieQueue {
+                    try keychainErrors { try cookieStore.setDisplayName(displayName, id: accountID) }
+                }
             }
         )
     }
