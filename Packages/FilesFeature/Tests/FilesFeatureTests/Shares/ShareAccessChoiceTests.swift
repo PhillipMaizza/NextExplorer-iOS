@@ -32,7 +32,7 @@ struct ShareAccessChoiceTests {
         )
     }
 
-    @Test("A new link opens on Can download, and View only and Can edit set the flags they stand for")
+    @Test("A new link opens on Can download, presets set their flags, and Custom starts from what View only allowed")
     func presetsSetTheFlags() async {
         let store = TestStore(initialState: folderState()) { CreateShareLinkFeature() }
 
@@ -41,9 +41,16 @@ struct ShareAccessChoiceTests {
             $0.accessChoice = .viewOnly
             $0.permissions.canDownload = false
         }
-        await store.send(.accessChoiceChanged(.custom)) { $0.accessChoice = .custom }
-        await store.send(.permissionsChanged(SharePermissions(canDownload: false, canDelete: false))) {
-            $0.permissions.canDelete = false
+        await store.send(.accessChoiceChanged(.custom)) {
+            $0.accessChoice = .custom
+            $0.permissions = SharePermissions(
+                canDownload: false, canDelete: false, canCreateFolders: false, canCreateFiles: false, canUpload: false
+            )
+        }
+        await store.send(.permissionsChanged(SharePermissions(
+            canDownload: false, canDelete: false, canCreateFolders: false, canCreateFiles: false
+        ))) {
+            $0.permissions.canUpload = true
         }
         await store.send(.accessChoiceChanged(.canEdit)) {
             $0.accessChoice = .canEdit

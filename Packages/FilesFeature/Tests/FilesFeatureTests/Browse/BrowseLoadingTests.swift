@@ -244,4 +244,31 @@ struct BrowseLoadingTests {
         await store.send(.personalSpaceTapped)
         await store.receive(.delegate(.openPath(path: "personal", title: L10n.Browse.myFiles)))
     }
+
+    @Test(
+        "A share opened by its path is titled by its name at the root only",
+        arguments: [("share/tok", "04 Documents"), ("share/tok/sub", "sub")]
+    )
+    func shareRootTakesTheShareName(path: String, title: String) async {
+        let shareInfo = BrowseResult.ShareInfo(label: nil, sourceFolderName: "04 Documents")
+        let store = BrowseFixtures.store(BrowseFixtures.state(path, title: (path as NSString).lastPathComponent)) {
+            $0.serveEmptyFolders()
+            $0.filesClient.browse = { _, path in
+                BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path, shareInfo: shareInfo)
+            }
+        }
+
+        await store.send(.onAppear) {
+            $0.phase = .loading
+        }
+        await store.receive(\.itemsResponse.success) {
+            $0.phase = .loaded
+            $0.access = readOnlyAccess
+            $0.shareName = shareInfo.name
+            $0.title = title
+        }
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
+    }
 }

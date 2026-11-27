@@ -3,8 +3,10 @@
 
     private enum Metrics {
         static let minHeight: CGFloat = 46
-        static let iconColumn: CGFloat = .size20
+        static let tile: CGFloat = .size32
+        static let glyph: CGFloat = MacActionMenuMetrics.iconSize
         static let spacing: CGFloat = .space12
+        static let tileShape = RoundedRectangle(cornerRadius: .radiusSmall, style: .continuous)
     }
 
     public struct MacChoiceRow: View {
@@ -14,7 +16,7 @@
         private let isSelected: Bool
         private let action: () -> Void
 
-        public static let textIndent: CGFloat = .space16 + Metrics.iconColumn + Metrics.spacing
+        public static let nestedIndent: CGFloat = .space16
 
         public init(
             _ title: String,
@@ -34,8 +36,12 @@
             Button(action: action) {
                 HStack(spacing: Metrics.spacing) {
                     icon
-                        .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
-                        .frame(width: Metrics.iconColumn)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Metrics.glyph, height: Metrics.glyph)
+                        .foregroundStyle(Color.primaryDS)
+                        .frame(width: Metrics.tile, height: Metrics.tile)
+                        .background(Metrics.tileShape.fill(Color.macSegment))
                     VStack(alignment: .leading, spacing: .zero) {
                         Text(title).type(.body2(.semibold))
                         if let subtitle {
@@ -45,18 +51,19 @@
                     .frame(maxWidth: .infinity, alignment: .leading)
                     IconKit.checkmark
                         .fontWeight(.semibold)
-                        .foregroundStyle(Color.accent)
+                        .foregroundStyle(Color.accentText)
                         .opacity(isSelected ? 1 : 0)
                         .accessibilityHidden(true)
                 }
+                .padding(.vertical, .space8)
                 .macMinHeight(points: Metrics.minHeight)
                 .padding(.horizontal, .space16)
+                .background(Color.accent.opacity(isSelected ? .opacityFaint : .zero))
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .combine)
             .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
-            .animation(DSMotion.stateFade, value: isSelected)
         }
     }
 

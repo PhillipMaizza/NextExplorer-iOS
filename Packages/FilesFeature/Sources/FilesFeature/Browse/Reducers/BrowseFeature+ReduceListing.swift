@@ -118,6 +118,10 @@ extension BrowseFeature {
             )
             state.access = Self.shownAccess(result.access, isNarrowed: state.isKeptOffline)
             state.shareName = result.shareInfo?.name
+            let isShareRoot = ReceivedShareSpace.shareRoot(of: state.directoryPath) == state.directoryPath
+            if isShareRoot, let shareName = state.shareName {
+                state.title = shareName
+            }
             listingChanged(&state)
             return .merge(
                 recheckArrivals(&state),

@@ -154,24 +154,23 @@
     struct MacShareSettingsChips: View {
         let share: Share
 
-        private var expiryText: String? {
-            share.expiresAt.map { expiresAt in
-                let time: Date.FormatStyle.TimeStyle = Calendar.current.isDateInToday(expiresAt) ? .shortened : .omitted
-                return L10n.ApiTokens.expires(expiresAt.formatted(date: .abbreviated, time: time))
-            }
-        }
-
         var body: some View {
-            DSFlowLayout(horizontalSpacing: .space8, verticalSpacing: .space8) {
-                MacChip(text: share.accessChoice.title, tone: .gray, icon: share.accessChoice.icon)
+            HStack(spacing: .space8) {
+                MacIconChip(icon: share.accessChoice.icon, tone: .gray, help: share.accessChoice.title)
                 if share.hasPassword {
-                    MacChip(text: L10n.Common.password, tone: .amber, icon: IconKit.lock)
+                    MacIconChip(icon: IconKit.macLock, tone: .amber, help: L10n.Common.password)
                 }
-                if let expiryText {
-                    MacChip(text: expiryText, tone: .amber, icon: IconKit.calendar)
+                if let expiresAt = share.expiresAt {
+                    let date = expiresAt.formatted(date: .abbreviated, time: time(for: expiresAt))
+                    MacChip(text: date, tone: .amber, icon: IconKit.macCalendar)
+                        .help(L10n.ApiTokens.expires(date))
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
+        private func time(for date: Date) -> Date.FormatStyle.TimeStyle {
+            Calendar.current.isDateInToday(date) ? .shortened : .omitted
         }
     }
 

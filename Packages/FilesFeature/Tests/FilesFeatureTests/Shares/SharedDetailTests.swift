@@ -397,4 +397,43 @@ struct SharedDetailTests {
             $0.editSheet = nil
         }
     }
+
+    @Test
+    func choosingCustomShowsTheSwitchesWithoutSavingAndASwitchSavesFromWhatTheShareAllowed() async {
+        let share = roadmap("a")
+        let sent = LockIsolated<UpdateShareRequest?>(nil)
+        let store = TestStore(initialState: state([share])) { SharedFeature() } withDependencies: {
+            $0.date = .constant(MockDate.date)
+            $0.filesClient.updateShareLink = { _, _, request in
+                sent.setValue(request)
+                throw FilesClientError.offline
+            }
+        }
+        var permissions = share.permissions.effective(for: share.accessMode)
+        permissions.canUpload = true
+        var edit = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
+        edit.accessChoice = .custom
+        edit.permissions = permissions
+
+        await store.send(.accessChoiceChosen(share, .custom)) { $0.customShareID = share.id }
+        await store.send(.permissionsChosen(share, permissions)) {
+            $0.editPopover = .inline
+            $0.editSheet = edit
+        }
+        await store.receive(\.editSheet.saveTapped) { $0.editSheet?.isSaving = true }
+        await store.receive(\.editSheet.saveResponse.failure) {
+            $0.editSheet?.isSaving = false
+            $0.editSheet?.errorMessage = FilesClientError.offline.userMessage
+            $0.actionErrorMessage = FilesClientError.offline.userMessage
+        }
+        await store.receive(\.editPopoverDismissed) {
+            $0.editPopover = nil
+            $0.editSheet = nil
+        }
+
+        #expect(sent.value?.accessMode == .readwrite)
+        #expect(sent.value?.permissions == SharePermissions(
+            canDelete: false, canCreateFolders: false, canCreateFiles: false
+        ))
+    }
 }

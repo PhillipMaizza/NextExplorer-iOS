@@ -10,6 +10,7 @@
         static let compactBoxIconSize: CGFloat = 14
         static let copiedHold: Duration = .milliseconds(1500)
         static let optionMinHeight: CGFloat = 46
+        static let optionIcon: CGFloat = MacActionMenuMetrics.iconSize
     }
 
     public struct MacLabeledField<Content: View>: View {
@@ -126,17 +127,26 @@
     public struct MacToggleOption<Detail: View>: View {
         let title: String
         var subtitle: String?
+        var icon: Image?
+        var info: String?
+        var isDetailTrailing = false
         let isOn: Binding<Bool>
         @ViewBuilder let detail: () -> Detail
 
         public init(
             _ title: String,
             subtitle: String? = nil,
+            icon: Image? = nil,
+            info: String? = nil,
+            isDetailTrailing: Bool = false,
             isOn: Binding<Bool>,
             @ViewBuilder detail: @escaping () -> Detail
         ) {
             self.title = title
             self.subtitle = subtitle
+            self.icon = icon
+            self.info = info
+            self.isDetailTrailing = isDetailTrailing
             self.isOn = isOn
             self.detail = detail
         }
@@ -144,33 +154,66 @@
         public var body: some View {
             VStack(alignment: .leading, spacing: .zero) {
                 HStack(spacing: .space12) {
-                    VStack(alignment: .leading, spacing: .zero) {
-                        Text(title).type(.body2(.semibold))
-                        if let subtitle {
-                            Text(subtitle).type(.caption(.regular), style: .secondary)
+                    if let icon {
+                        HStack(spacing: .space8) {
+                            iconView(icon)
+                            titleBlock
                         }
+                    } else {
+                        titleBlock
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    if isDetailTrailing, isOn.wrappedValue {
+                        detail()
+                            .fixedSize()
+                    }
                     Toggle(title, isOn: isOn)
                         .labelsHidden()
                         .toggleStyle(.macSwitch)
                 }
                 .macMinHeight(points: Metrics.optionMinHeight)
-                if isOn.wrappedValue {
+                if !isDetailTrailing, isOn.wrappedValue {
                     detail()
                         .padding(.bottom, .space12)
-                        .transition(.opacity)
                 }
             }
             .padding(.horizontal, .space16)
             .clipped()
-            .animation(DSMotion.stateFade, value: isOn.wrappedValue)
+        }
+
+        private func iconView(_ icon: Image) -> some View {
+            icon
+                .resizable()
+                .scaledToFit()
+                .frame(width: Metrics.optionIcon, height: Metrics.optionIcon)
+                .foregroundStyle(Color.macChromeSecondary)
+                .accessibilityHidden(true)
+        }
+
+        private var titleBlock: some View {
+            VStack(alignment: .leading, spacing: .zero) {
+                HStack(spacing: .space4) {
+                    Text(title).type(.body2(icon == nil ? .semibold : .regular))
+                    if let info {
+                        MacInfoButton(info)
+                    }
+                }
+                if let subtitle {
+                    Text(subtitle).type(.caption(.regular), style: .secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
     public extension MacToggleOption where Detail == EmptyView {
-        init(_ title: String, subtitle: String? = nil, isOn: Binding<Bool>) {
-            self.init(title, subtitle: subtitle, isOn: isOn) { EmptyView() }
+        init(
+            _ title: String,
+            subtitle: String? = nil,
+            icon: Image? = nil,
+            info: String? = nil,
+            isOn: Binding<Bool>
+        ) {
+            self.init(title, subtitle: subtitle, icon: icon, info: info, isOn: isOn) { EmptyView() }
         }
     }
 

@@ -13,11 +13,13 @@ struct ShareLinkDisplayTests {
         sourcePath: String? = nil,
         isDirectory: Bool = false,
         sharingType: ShareTarget = .anyone,
-        hasPassword: Bool = false
+        hasPassword: Bool = false,
+        canDownload: Bool = true
     ) -> Share {
         Share(
             id: "s1", shareToken: Constants.token, ownerId: "u1", sourcePath: sourcePath, isDirectory: isDirectory,
             accessMode: .readonly, sharingType: sharingType, hasPassword: hasPassword,
+            permissions: SharePermissions(canDownload: canDownload),
             createdAt: MockDate.date, updatedAt: MockDate.date
         )
     }
@@ -78,6 +80,12 @@ struct ShareLinkDisplayTests {
     func aPasswordOrSpecificPeopleKeepTheDirectLink() {
         #expect(share(hasPassword: true).directLinkChoices == [.openInBrowser, .download, .raw])
         #expect(share(sharingType: .users).directLinkChoices == [.openInBrowser, .download, .raw])
+    }
+
+    @Test
+    func aShareWithoutDownloadOffersNoDirectLink() {
+        #expect(share(canDownload: false).directLinkChoices.isEmpty)
+        #expect(share(isDirectory: true, canDownload: false).directLinkChoices.isEmpty)
     }
 
     @Test

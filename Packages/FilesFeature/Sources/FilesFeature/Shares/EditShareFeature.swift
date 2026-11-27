@@ -228,8 +228,8 @@ public struct EditShareFeature {
                 return .none
 
             case let .accessChoiceChanged(choice):
+                state.permissions = choice.applied(to: state.permissions, from: state.accessChoice)
                 state.accessChoice = choice
-                state.permissions = choice.applied(to: state.permissions)
                 state.errorMessage = nil
                 return .none
 

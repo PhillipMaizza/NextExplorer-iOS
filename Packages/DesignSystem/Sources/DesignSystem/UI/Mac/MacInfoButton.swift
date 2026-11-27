@@ -4,10 +4,12 @@
 
     private enum Constants {
         static let iconSize: CGFloat = 13
+        static let popoverWidth: CGFloat = 260
     }
 
     public struct MacInfoButton: View {
         private let lines: [String]
+        @State private var isPresented = false
 
         public init(_ lines: String...) {
             self.lines = lines
@@ -18,15 +20,29 @@
         }
 
         public var body: some View {
-            IconKit.info
-                .resizable()
-                .scaledToFit()
-                .macSquare(Constants.iconSize)
-                .foregroundStyle(Color.macChromeSecondary)
-                .padding(.space2)
-                .contentShape(Rectangle())
-                .accessibilityLabel(L10n.Common.moreInfo)
-                .help(lines.joined(separator: "\n\n"))
+            Button { isPresented.toggle() } label: {
+                IconKit.info
+                    .resizable()
+                    .scaledToFit()
+                    .macSquare(Constants.iconSize)
+                    .foregroundStyle(Color.macChromeSecondary)
+                    .padding(.space2)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.Common.moreInfo)
+            .help(text)
+            .popover(isPresented: $isPresented, arrowEdge: .bottom) {
+                Text(text)
+                    .type(.body3(.regular))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(width: Constants.popoverWidth, alignment: .leading)
+                    .padding(.space12)
+            }
+        }
+
+        private var text: String {
+            lines.joined(separator: "\n\n")
         }
     }
 

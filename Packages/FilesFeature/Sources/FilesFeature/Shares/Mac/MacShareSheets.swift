@@ -30,6 +30,7 @@
                 isConfirmEnabled: store.isCreateEnabled,
                 isWorking: store.isCreating,
                 errorMessage: store.errorMessage ?? store.usersPhase.errorMessage,
+                width: MacShareFormMetrics.sheetWidth,
                 layout: .stacked,
                 onCancel: { dismiss() },
                 onConfirm: { store.send(.createTapped) }
@@ -82,15 +83,17 @@
                 MacLabeledField(L10n.CreateShare.summarySharedWith) {
                     MacShareAudienceRow(target: created.share.sharingType, recipients: recipients)
                 }
-                MacLabeledField(created.share.isDirectory
-                    ? L10n.CreateShare.directFolderLink
-                    : L10n.CreateShare.directFileLink)
-                {
-                    MacShareDirectLinkRow(
-                        share: created.share,
-                        link: directLink,
-                        mode: $store.directLinkMode.sending(\.directLinkModeChanged)
-                    )
+                if !created.share.directLinkChoices.isEmpty {
+                    MacLabeledField(created.share.isDirectory
+                        ? L10n.CreateShare.directFolderLink
+                        : L10n.CreateShare.directFileLink)
+                    {
+                        MacShareDirectLinkRow(
+                            share: created.share,
+                            link: directLink,
+                            mode: $store.directLinkMode.sending(\.directLinkModeChanged)
+                        )
+                    }
                 }
             }
         }
@@ -113,6 +116,7 @@
                 isConfirmEnabled: store.isSaveEnabled,
                 isWorking: store.isSaving,
                 errorMessage: store.fieldError?.message ?? store.errorMessage ?? store.usersPhase.errorMessage,
+                width: MacShareFormMetrics.sheetWidth,
                 layout: .stacked,
                 onCancel: { dismiss() },
                 onConfirm: { store.send(.saveTapped) }

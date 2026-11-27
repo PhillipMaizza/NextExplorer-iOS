@@ -25,21 +25,55 @@
                         ) { choice.wrappedValue = option }
                     }
                     if choice.wrappedValue == .custom {
-                        indented(L10n.Common.download, isOn: permissions.canDownload)
-                        if isDirectory {
-                            indented(L10n.CreateShare.permissionDelete, isOn: permissions.canDelete)
-                            indented(L10n.CreateShare.permissionCreateFolders, isOn: permissions.canCreateFolders)
-                            indented(L10n.CreateShare.permissionCreateFiles, isOn: permissions.canCreateFiles)
-                            indented(L10n.CreateShare.permissionUpload, isOn: permissions.canUpload)
+                        ForEach(SharePermissionSwitch.options(isDirectory: isDirectory), id: \.self) { item in
+                            MacToggleOption(item.title, icon: item.icon, isOn: permissions[dynamicMember: item.keyPath])
+                                .padding(.leading, MacChoiceRow.nestedIndent)
                         }
                     }
                 }
             }
         }
+    }
 
-        private func indented(_ title: String, isOn: Binding<Bool>) -> some View {
-            MacToggleOption(title, isOn: isOn)
-                .padding(.leading, MacChoiceRow.textIndent - .space16)
+    enum SharePermissionSwitch: CaseIterable, Hashable {
+        case download
+        case delete
+        case createFolders
+        case createFiles
+        case upload
+
+        static func options(isDirectory: Bool) -> [Self] {
+            isDirectory ? allCases : [.download]
+        }
+
+        var keyPath: WritableKeyPath<SharePermissions, Bool> {
+            switch self {
+            case .download: \.canDownload
+            case .delete: \.canDelete
+            case .createFolders: \.canCreateFolders
+            case .createFiles: \.canCreateFiles
+            case .upload: \.canUpload
+            }
+        }
+
+        var title: String {
+            switch self {
+            case .download: L10n.Common.download
+            case .delete: L10n.CreateShare.permissionDelete
+            case .createFolders: L10n.CreateShare.permissionCreateFolders
+            case .createFiles: L10n.CreateShare.permissionCreateFiles
+            case .upload: L10n.CreateShare.permissionUpload
+            }
+        }
+
+        var icon: Image {
+            switch self {
+            case .download: IconKit.macDownload
+            case .delete: IconKit.macTrash
+            case .createFolders: IconKit.macNewFolder
+            case .createFiles: IconKit.macNewFile
+            case .upload: IconKit.macUpload
+            }
         }
     }
 
@@ -49,13 +83,16 @@
         var body: some View {
             MacToggleOption(
                 L10n.CreateShare.versionsVisible,
-                subtitle: L10n.CreateShare.versionsVisibleHint,
+                info: L10n.CreateShare.versionsVisibleHint,
                 isOn: permissions.showsVersions
             )
-            MacToggleOption(L10n.CreateShare.versionsDownload, isOn: permissions.canDownloadVersions)
-                .padding(.leading, MacChoiceRow.textIndent - .space16)
-                .disabled(!permissions.wrappedValue.showsVersions)
-                .opacity(permissions.wrappedValue.showsVersions ? 1 : .opacityHalf)
+            MacToggleOption(
+                L10n.CreateShare.versionsDownload,
+                icon: IconKit.macClock,
+                isOn: permissions.canDownloadVersions
+            )
+            .disabled(!permissions.wrappedValue.showsVersions)
+            .opacity(permissions.wrappedValue.showsVersions ? 1 : .opacityHalf)
         }
     }
 
@@ -66,10 +103,6 @@
     }
 
     extension ShareAccessChoice {
-        var popupOptions: [ShareAccessChoice] {
-            self == .custom ? Self.allCases : [.viewOnly, .canDownload, .canEdit]
-        }
-
         var title: String {
             switch self {
             case .viewOnly: L10n.CreateShare.accessViewOnly
@@ -90,10 +123,10 @@
 
         var icon: Image {
             switch self {
-            case .viewOnly: IconKit.eye
-            case .canDownload: IconKit.menuDownload
-            case .canEdit: IconKit.pencil
-            case .custom: IconKit.sliders
+            case .viewOnly: IconKit.macEye
+            case .canDownload: IconKit.macDownload
+            case .canEdit: IconKit.macPencil
+            case .custom: IconKit.macSliders
             }
         }
     }

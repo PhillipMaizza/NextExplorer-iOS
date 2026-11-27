@@ -27,6 +27,21 @@
             isByMe && store.state.expiryNotice(for: share) != .expired
         }
 
+        private var pendingEdit: EditShareFeature.State? {
+            store.editPopover == .inline && store.editSheet?.share.id == share.id ? store.editSheet : nil
+        }
+
+        private var shownChoice: ShareAccessChoice {
+            if let pendingEdit {
+                return pendingEdit.accessChoice
+            }
+            return store.customShareID == share.id ? .custom : share.accessChoice
+        }
+
+        private var shownPermissions: SharePermissions {
+            pendingEdit?.permissions ?? share.permissions.effective(for: share.accessMode)
+        }
+
         private var unnamedCount: Int {
             badge?.unnamedCount ?? 0
         }
@@ -130,15 +145,27 @@
                         MacInspectorControlRow(label: L10n.MacSettings.permission) {
                             MacPopup(
                                 L10n.MacSettings.permission,
-                                valueLabel: share.accessChoice.title,
+                                valueLabel: shownChoice.title,
                                 selection: Binding(
-                                    get: { share.accessChoice },
+                                    get: { shownChoice },
                                     set: { store.send(.accessChoiceChosen(share, $0)) }
                                 )
                             ) {
-                                ForEach(share.accessChoice.popupOptions, id: \.self) { Text($0.title).tag($0) }
+                                ForEach(
+                                    ShareAccessChoice.options(isDirectory: share.isDirectory, current: shownChoice),
+                                    id: \.self
+                                ) { Text($0.title).tag($0) }
                             }
                             .fixedSize()
+                        }
+                        if shownChoice == .custom {
+                            ForEach(SharePermissionSwitch.options(isDirectory: share.isDirectory), id: \.self) { item in
+                                MacInspectorPermissionRow(item: item, isOn: shownPermissions[keyPath: item.keyPath]) {
+                                    var permissions = shownPermissions
+                                    permissions[keyPath: item.keyPath] = $0
+                                    store.send(.permissionsChosen(share, permissions))
+                                }
+                            }
                         }
                         editableRow(L10n.Common.password, value: facts.password, popover: .password) {
                             passwordPopover
@@ -153,6 +180,11 @@
                         }
                     } else {
                         MacInspectorRow(L10n.MacSettings.permission, share.accessChoice.title)
+                        if share.accessChoice == .custom {
+                            ForEach(SharePermissionSwitch.options(isDirectory: share.isDirectory), id: \.self) { item in
+                                MacInspectorPermissionRow(item: item, isOn: share.permissions[keyPath: item.keyPath])
+                            }
+                        }
                         MacInspectorRow(L10n.Common.password, facts.password)
                         MacInspectorRow(facts.expiresTitle, facts.expires, valueColor: expiresColor(facts))
                     }
