@@ -211,10 +211,9 @@ private struct PreviewChrome: ViewModifier {
         }
         if includesDelete, let onDelete {
             Section {
-                Button(role: .destructive) { onDelete() } label: {
-                    Label { Text(L10n.PreviewToolbar.delete) } icon: { IconKit.delete }
+                RemovableMenuButton(title: L10n.PreviewToolbar.delete, icon: IconKit.delete, isRemoval: true) {
+                    onDelete()
                 }
-                .tint(.red)
             }
         }
     }

@@ -49,12 +49,13 @@ struct FavoriteRowContextMenu: View {
                 }
             }
             if !isOffline {
-                Button(role: .destructive) {
+                RemovableMenuButton(
+                    title: L10n.Favorites.actionRemoveFromFavorites,
+                    icon: IconKit.unfavorite,
+                    isRemoval: true
+                ) {
                     store.send(.removeTapped(favorite))
-                } label: {
-                    Label { Text(L10n.Favorites.actionRemoveFromFavorites) } icon: { IconKit.unfavorite }
                 }
-                .tint(.negative)
             }
         }
     }

@@ -203,8 +203,8 @@
                     Label { Text(L10n.Trash.restoreTo) } icon: { IconKit.restoreTo }
                 }
                 Divider()
-                Button(role: .destructive) { store.send(.deletePermanentlyTapped(picked)) } label: {
-                    Label { Text(L10n.Trash.deletePermanently) } icon: { IconKit.delete }
+                RemovableMenuButton(title: L10n.Trash.deletePermanently, icon: IconKit.delete, isRemoval: true) {
+                    store.send(.deletePermanentlyTapped(picked))
                 }
             }
         }
