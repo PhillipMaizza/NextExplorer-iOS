@@ -62,15 +62,7 @@ extension BrowseFeature {
                 state.fileActionErrorMessage = L10n.Uploads.stagingFailed
                 return .none
             }
-            return .send(.delegate(.uploadRequested(files.map {
-                PendingUpload(
-                    id: $0.id,
-                    fileURL: $0.fileURL,
-                    fileName: $0.fileName,
-                    destination: destination,
-                    size: $0.size
-                )
-            })))
+            return requestUploads(files, destination: destination, serverURL: state.serverURL)
 
         case let .receiveSharedFiles(urls):
             guard !urls.isEmpty else { return .none }
@@ -96,15 +88,7 @@ extension BrowseFeature {
         case let .uploadReview(.presented(.delegate(.confirmed(files, destination)))):
             state.uploadReview = nil
             guard !files.isEmpty, !destination.isEmpty else { return .none }
-            return .send(.delegate(.uploadRequested(files.map {
-                PendingUpload(
-                    id: $0.id,
-                    fileURL: $0.fileURL,
-                    fileName: $0.fileName,
-                    destination: destination,
-                    size: $0.size
-                )
-            })))
+            return requestUploads(Array(files), destination: destination, serverURL: state.serverURL)
 
         case .uploadReview(.presented(.delegate(.cancelled))):
             // Discard whatever staging already copied: those files are never uploaded now.

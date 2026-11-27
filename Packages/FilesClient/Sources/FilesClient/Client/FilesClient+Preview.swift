@@ -235,6 +235,7 @@ public extension FilesClient {
         },
         flushDownloadConnections: {},
         uploadFile: { _, _, _, _, onProgress in onProgress(1) },
+        reserveFolderUpload: { _, _, folderName in folderName },
         compressItems: { _, items in
             FileItem(name: "\(items[0].name).zip", path: items[0].path, dateModified: Date(), size: 0, kind: "zip")
         },

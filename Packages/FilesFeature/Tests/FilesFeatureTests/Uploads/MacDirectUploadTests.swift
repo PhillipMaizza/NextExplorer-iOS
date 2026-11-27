@@ -56,6 +56,51 @@ import TestUtils
             #expect(store.state.uploadReview == nil)
         }
 
+        @Test("A dropped folder gets a folder of its own, as on the web: never merged into one of the same name")
+        func droppedFolderUploadsIntoAReservedFolder() async {
+            let trip = TestFolder.documents
+            let files = [
+                picked("\(trip)/a.jpg", id: UUID(0)),
+                picked("\(trip)/Day 1/b.jpg", id: UUID(1)),
+                picked(TestFile.bText, id: UUID(2)),
+            ]
+            let reserved = LockIsolated<[[String]]>([])
+            let store = TestStore(initialState: state(directoryPath: TestFolder.inbox)) {
+                BrowseFeature()
+            } withDependencies: {
+                $0.uploadStaging = staging(files)
+                $0.filesClient.reserveFolderUpload = { _, destination, folder in
+                    reserved.withValue { $0.append([destination, folder]) }
+                    return "\(folder) (1)"
+                }
+            }
+
+            await store.send(.beginUpload(.documents([URL(fileURLWithPath: "/tmp/\(trip)")])))
+            await store.receive(\.directUploadStaged)
+            let names = ["\(trip) (1)/a.jpg", "\(trip) (1)/Day 1/b.jpg", TestFile.bText]
+            await store.receive(.delegate(.uploadRequested(zip(files, names).map { file, name in
+                PendingUpload(
+                    id: file.id,
+                    fileURL: file.fileURL,
+                    fileName: name,
+                    destination: TestFolder.inbox,
+                    size: 10
+                )
+            })))
+            #expect(reserved.value == [[TestFolder.inbox, trip]])
+        }
+
+        @Test("The upload keeps every file, renamed under the reserved folder, and loose files as they are")
+        func reservedFolderRenamesOnlyThatFolder() {
+            let file = picked("\(TestFolder.documents)/Day 1/b.jpg", id: UUID(0))
+            let loose = picked(TestFile.bText, id: UUID(1))
+            let reserved = [TestFolder.documents: "\(TestFolder.documents) (1)"]
+            #expect(UploadedFolder.renamed(file, reserved: reserved)
+                .fileName == "\(TestFolder.documents) (1)/Day 1/b.jpg")
+            #expect(UploadedFolder.renamed(loose, reserved: reserved) == loose)
+            #expect(UploadedFolder.root(of: TestFile.bText) == nil)
+        }
+
         @Test
         func nothingStagedShowsTheStagingError() async {
             let store = TestStore(initialState: state(directoryPath: TestFolder.documents)) {

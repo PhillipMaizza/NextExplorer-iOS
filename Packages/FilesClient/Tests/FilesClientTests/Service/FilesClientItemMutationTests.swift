@@ -420,6 +420,22 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func reserveFolderUploadSendsTheFolderAndAnswersTheReservedName() async throws {
+            try stub(statusCode: 201, body: FilesClientFixture.itemMutationFolderUploadReserved.data())
+            StubURLProtocol.capturedRequest = nil
+
+            let name = try await makeClient().reserveFolderUpload(serverURL, TestFolder.inbox, TestFolder.documents)
+
+            #expect(name == "\(TestFolder.documents) (1)")
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == HTTPMethod.post.rawValue)
+            #expect(request.url?.path == "/api/upload/folder-session")
+            let body = try #require(StubURLProtocol.capturedRequestBody)
+            let bodyJSON = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
+            #expect(bodyJSON == ["uploadTo": TestFolder.inbox, "sourceRoot": TestFolder.documents])
+        }
+
+        @Test
         func compressItemSendsItemsAndDestinationAndDecodesTheNewArchive() async throws {
             let json = try FilesClientFixture.itemMutationCompressedDocumentsZip.string()
             stub(statusCode: 201, body: Data(json.utf8))
