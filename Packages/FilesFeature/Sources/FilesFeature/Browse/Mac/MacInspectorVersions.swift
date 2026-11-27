@@ -10,14 +10,44 @@
         static let lineWidth: CGFloat = .size2
         static let rowSpacing: CGFloat = .space12
         static let headerSpacing: CGFloat = .space8
+        static let ringInset: CGFloat = -.space8
+        static let ringRadius: CGFloat = .radiusMedium
+        static let ringHold: Duration = .seconds(1)
     }
 
     struct MacInspectorVersionsSection: View {
+        static let anchor = "versions"
+
         let model: MacVersionsModel
         let history: FileVersionHistory
         let current: FileItem
+        var onReveal: () -> Void = {}
+        @State private var isRinged = false
 
         var body: some View {
+            section
+                .overlay {
+                    RoundedRectangle(cornerRadius: Metrics.ringRadius, style: .continuous)
+                        .strokeBorder(Color.accent, lineWidth: .borderWidthFocused)
+                        .padding(Metrics.ringInset)
+                        .opacity(isRinged ? 1 : 0)
+                        .allowsHitTesting(false)
+                }
+                .onChange(of: model.revealRequest, initial: true) {
+                    guard model.revealRequest == current.id else { return }
+                    model.revealRequest = nil
+                    onReveal()
+                    withAnimation(DSMotion.quickFade) { isRinged = true }
+                }
+                .task(id: isRinged) {
+                    guard isRinged else { return }
+                    try? await Task.sleep(for: Metrics.ringHold)
+                    guard !Task.isCancelled else { return }
+                    withAnimation(DSMotion.fadeOut) { isRinged = false }
+                }
+        }
+
+        private var section: some View {
             VStack(alignment: .leading, spacing: Metrics.headerSpacing) {
                 MacInspectorSectionHeader(
                     title: L10n.FileInfo.sectionVersions,

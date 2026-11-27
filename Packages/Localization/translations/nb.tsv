@@ -71,6 +71,8 @@ browse.actionPermissions	Tillatelser
 browse.actionRename	Gi nytt navn
 browse.actionExtract	Pakk ut
 browse.actionExtractHere	Pakk ut her
+browse.actionVersions	Versjoner
+browse.actionShowAllVersions	Vis alle versjoner…
 browse.actionCompress	Komprimer
 browse.actionDownload	Last ned
 browse.actionAddToFavorites	Legg til i favoritter

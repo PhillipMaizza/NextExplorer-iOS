@@ -125,6 +125,7 @@ enum CoreModelsFixture: String, FixtureFile {
     case serverFeaturesVolumeUsageEnabledUserVolumesDisabled = "server-features/volume-usage-enabled-user-volumes-disabled"
     case serverFeaturesTrashEnabled = "server-features/trash-enabled"
     case serverFeaturesTrashErrorShape = "server-features/trash-error-shape"
+    case serverFeaturesVersionsEnabled = "server-features/versions-enabled"
 
     // MARK: trash
 

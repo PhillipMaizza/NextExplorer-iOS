@@ -68,6 +68,8 @@ browse.actionRename	Umbenennen
 browse.actionRefreshSize	Größe aktualisieren
 browse.actionExtract	Entpacken
 browse.actionExtractHere	Hier entpacken
+browse.actionVersions	Versionen
+browse.actionShowAllVersions	Alle Versionen anzeigen…
 browse.actionCompress	Komprimieren
 browse.actionDownload	Laden
 browse.actionAddToFavorites	Zu Favoriten hinzufügen

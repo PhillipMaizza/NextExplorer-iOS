@@ -12,5 +12,12 @@ struct ServerFeaturesArchivesTests {
     func olderServerHasNone() throws {
         let features = try CoreModelsFixture.emptyObject.decode(ServerFeatures.self)
         #expect(features.archiveExtensions == nil)
+        #expect(!features.isVersionsEnabled)
+    }
+
+    @Test("ServerFeatures reads whether the server keeps versions")
+    func decodesVersionsFlag() throws {
+        let features = try CoreModelsFixture.serverFeaturesVersionsEnabled.decode(ServerFeatures.self)
+        #expect(features.isVersionsEnabled)
     }
 }

@@ -68,6 +68,8 @@ browse.actionRename	Byt namn
 browse.actionRefreshSize	Uppdatera storlek
 browse.actionExtract	Extrahera
 browse.actionExtractHere	Extrahera här
+browse.actionVersions	Versioner
+browse.actionShowAllVersions	Visa alla versioner…
 browse.actionCompress	Komprimera
 browse.actionDownload	Ladda ner
 browse.actionAddToFavorites	Lägg till i favoriter

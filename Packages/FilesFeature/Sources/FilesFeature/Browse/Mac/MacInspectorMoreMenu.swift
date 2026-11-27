@@ -54,6 +54,12 @@
             if rows.showsKeptCopy {
                 MacLocalFilePanelRows(resolve: offlineFileStore.pinned(to: store.cacheScope).keptCopy(of: item))
             }
+            MacVersionsMenu(store: store, item: item) {
+                MacActionMenuRow(L10n.Browse.actionVersions, icon: IconKit.time, accessory: .submenu)
+            }
+            .menuStyle(.button)
+            .buttonStyle(.plain)
+            .menuIndicator(.hidden)
             downloadAction(rows)
             if rows.showsKeepOffline {
                 MacActionMenuButton(L10n.Browse.actionKeepOffline, icon: IconKit.menuKeepOffline) {

@@ -32,21 +32,19 @@
         var shares: [Share]?
         /// Opens Create Share Link; `nil` without the right to share.
         var onShare: (() -> Void)?
-        /// After a version is restored, so the listing picks up the restored file.
-        var onRestored: () -> Void = {}
         var onOpen: (() -> Void)?
         var onRetry: () -> Void = {}
         var shouldShowThumbnails = true
         var showsMore = false
         var title: String?
         var folderTitle: String?
+        var versions: MacVersionsModel?
         let onClose: () -> Void
         @ViewBuilder let more: () -> More
 
         @Dependency(\.filesClient) private var filesClient
         /// Owner, group and mode come from the permissions endpoint, which metadata leaves out.
         @State private var permissions: FilePermissions?
-        @State private var versions = MacVersionsModel()
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         @AppStorage(AppStorageKeys.includeTimeInDates) private var shouldIncludeTime = false
 
@@ -55,6 +53,12 @@
         }
 
         var body: some View {
+            ScrollViewReader { proxy in
+                content(proxy)
+            }
+        }
+
+        private func content(_ proxy: ScrollViewProxy) -> some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: MacInspectorMetrics.sectionSpacing) {
                     MacInspectorHeader(
@@ -78,8 +82,15 @@
                         if let shares {
                             MacInspectorSharingSection(shares: shares, serverURL: serverURL, onShare: onShare)
                         }
-                        if let history = versions.history, history.isEnabled || !history.versions.isEmpty {
-                            MacInspectorVersionsSection(model: versions, history: history, current: item)
+                        if let versions, let history = versions.history(for: item),
+                           history.isEnabled || !history.versions.isEmpty
+                        {
+                            MacInspectorVersionsSection(model: versions, history: history, current: item) {
+                                withAnimation(DSMotion.contentReveal) {
+                                    proxy.scrollTo(MacInspectorVersionsSection.anchor, anchor: .top)
+                                }
+                            }
+                            .id(MacInspectorVersionsSection.anchor)
                         }
                         if let permissions {
                             MacInspectorPermissionsSection(
@@ -105,11 +116,6 @@
                 guard !Task.isCancelled else { return }
                 permissions = loaded
             }
-            .task(id: item.id) {
-                versions.onFilesChanged = onRestored
-                await versions.load(item: item, serverURL: serverURL, settle: MacInspectorMetrics.followDelay)
-            }
-            .modifier(MacVersionsDialogs(model: versions))
         }
 
         private var kindTitle: String {
@@ -266,6 +272,7 @@
     /// showing pushes past the third folder deep.
     struct MacBrowseInspector<More: View>: ViewModifier {
         let screen: StoreOf<BrowseFeature>
+        let versions: MacVersionsModel
         let onOpen: (FileItem) -> Void
         let onShare: (FileItem) -> Void
         @ViewBuilder let more: (FileItem) -> More
@@ -310,7 +317,6 @@
                     ? MacInspectorSharedLinks.links(sharedLinks, for: item)
                     : nil,
                 onShare: screen.state.actions(for: item).canShare ? { onShare(item) } : nil,
-                onRestored: { screen.send(.refreshButtonTapped) },
                 onOpen: item.id == screen.directoryPath ? nil : { onOpen(item) },
                 onRetry: { screen.send(.infoTapped(item)) },
                 shouldShowThumbnails: screen.preferences.shouldShowThumbnails,
@@ -318,6 +324,7 @@
                     && !screen.state.inspectorMoreRows(for: item).isEmpty,
                 title: item.id == screen.directoryPath ? screen.title : nil,
                 folderTitle: MacInspectorLocation.folderTitle(of: item, on: screen.state),
+                versions: versions,
                 onClose: { screen.send(.infoDismissed) },
                 more: { more(item) }
             )

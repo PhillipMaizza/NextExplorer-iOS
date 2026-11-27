@@ -91,6 +91,10 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
             .macMenuShortcut("i")
+            #if os(macOS)
+                MacVersionsMenu(store: store, item: item)
+                    .tint(.primaryDS)
+            #endif
         }
         #if os(macOS)
             renameAction

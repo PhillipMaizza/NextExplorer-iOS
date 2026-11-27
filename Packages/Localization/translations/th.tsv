@@ -71,6 +71,8 @@ browse.actionPermissions	สิทธิ์
 browse.actionRename	เปลี่ยนชื่อ
 browse.actionExtract	แตกไฟล์
 browse.actionExtractHere	แตกไฟล์ที่นี่
+browse.actionVersions	เวอร์ชัน
+browse.actionShowAllVersions	แสดงทุกเวอร์ชัน…
 browse.actionCompress	บีบอัด
 browse.actionDownload	ดาวน์โหลด
 browse.actionAddToFavorites	เพิ่มในรายการโปรด
