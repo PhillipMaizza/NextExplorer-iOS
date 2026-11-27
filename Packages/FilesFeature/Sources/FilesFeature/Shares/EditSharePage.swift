@@ -38,7 +38,9 @@
                     labelSection
                     audienceSection
                     accessSection
-                    passwordSection
+                    if store.target == .anyone {
+                        passwordSection
+                    }
                     EditShareExpirySection(store: store, isCalendarShown: $isCalendarShown)
                         .id(Constants.expiryAnchor)
                 }

@@ -581,6 +581,7 @@ public struct MainTabFeature {
                      .favorites(.delegate(.goToSharedTab)),
                      .downloads(.delegate(.goToSharedTab)):
                     state.selectedTab = .shared
+                    state.shared.segment = .byMe
                     return .send(.shared(.refreshRequested))
 
                 case .settings(.delegate(.signOutButtonTapped)):

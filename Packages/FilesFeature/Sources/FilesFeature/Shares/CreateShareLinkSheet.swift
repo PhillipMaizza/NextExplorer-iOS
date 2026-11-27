@@ -138,12 +138,14 @@ struct CreateShareLinkSheet: View {
                 }
             }
 
-            DSToggleRow(
-                title: L10n.CreateShare.togglePasswordProtect,
-                icon: IconKit.lock,
-                isOn: $store.isPasswordEnabled.sending(\.passwordEnabledChanged)
-            )
-            if store.isPasswordEnabled {
+            if store.target == .anyone {
+                DSToggleRow(
+                    title: L10n.CreateShare.togglePasswordProtect,
+                    icon: IconKit.lock,
+                    isOn: $store.isPasswordEnabled.sending(\.passwordEnabledChanged)
+                )
+            }
+            if store.target == .anyone, store.isPasswordEnabled {
                 DSSecureField(
                     L10n.Common.password,
                     text: $store.password.sending(\.passwordChanged),
@@ -177,7 +179,8 @@ struct CreateShareLinkSheet: View {
         VStack(alignment: .leading, spacing: .space2) {
             Text(L10n.CreateShare.sharingPrefix).type(.body3(.regular), style: .secondary)
             Text(store.itemName).type(.body2(.bold), style: .primaryOnSurface).lineLimit(1)
-            Text(store.sourcePath).type(.caption(.regular), style: .tertiary).lineLimit(1).truncationMode(.middle)
+            Text(PersonalSpace.trail(store.sourcePath)).type(.caption(.regular), style: .tertiary).lineLimit(1)
+                .truncationMode(.middle)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(Constants.cardPadding)

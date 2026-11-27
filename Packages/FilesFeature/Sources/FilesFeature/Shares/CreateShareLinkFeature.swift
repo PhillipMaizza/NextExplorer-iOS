@@ -228,7 +228,9 @@ public struct CreateShareLinkFeature {
                         : state.label.trimmingCharacters(in: .whitespacesAndNewlines),
                     accessMode: state.accessMode,
                     target: state.target,
-                    password: state.isPasswordEnabled && !state.password.isEmpty ? state.password : nil,
+                    password: state.target == .anyone && state.isPasswordEnabled && !state.password.isEmpty
+                        ? state.password
+                        : nil,
                     userIds: state.target == .users ? Array(state.selectedUserIDs) : [],
                     expiresAt: state.isExpiryEnabled ? state.expiresAt : nil
                 )

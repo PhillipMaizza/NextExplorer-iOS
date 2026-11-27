@@ -59,8 +59,10 @@
                 )
             }
             MacFormGroup {
-                MacToggleOption(L10n.CreateShare.togglePasswordProtect, isOn: isPasswordOn) {
-                    MacSecureField(L10n.Common.password, text: password, prompt: Text(passwordPrompt))
+                if target.wrappedValue == .anyone {
+                    MacToggleOption(L10n.CreateShare.togglePasswordProtect, isOn: isPasswordOn) {
+                        MacSecureField(L10n.Common.password, text: password, prompt: Text(passwordPrompt))
+                    }
                 }
                 MacToggleOption(L10n.CreateShare.fieldExpires, isOn: isExpiryOn) {
                     MacDatePopup(L10n.CreateShare.fieldExpires, date: expiresAt, in: Date()...)

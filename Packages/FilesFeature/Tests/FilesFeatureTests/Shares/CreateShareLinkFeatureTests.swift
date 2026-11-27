@@ -145,7 +145,7 @@ struct CreateShareLinkFeatureTests {
         #expect(store.state.isCreateEnabled == true)
     }
 
-    @Test
+    @Test("Specific users are sent, and a password typed before switching to them is not: passwords guard links only")
     func specificUsersAreSentInTheCreateRequest() async {
         let jamie = User.jamieFixture
         let created = makeCreated(target: .users)
@@ -154,6 +154,8 @@ struct CreateShareLinkFeatureTests {
         state.usersPhase = .loaded
         state.shareableUsers = [jamie]
         state.selectedUserIDs = [jamie.id]
+        state.isPasswordEnabled = true
+        state.password = TestAccount.password
 
         let gate = AsyncGate()
         let store = TestStore(initialState: state) {
@@ -163,6 +165,7 @@ struct CreateShareLinkFeatureTests {
             $0.filesClient.createShareLink = { _, request in
                 #expect(request.target == .users)
                 #expect(request.userIds == ["u2"])
+                #expect(request.password == nil)
                 try await gate.wait()
                 return created
             }
