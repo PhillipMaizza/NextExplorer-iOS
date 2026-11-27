@@ -596,7 +596,7 @@ public struct BrowseFeature {
         case extractTapped(FileItem, entryPaths: [String]? = nil)
         case extractHereTapped(FileItem)
         case extractResponse(Result<[FileItem], FilesClientError>)
-        case archivePasswordRequired(ArchivePasswordPrompt, invalid: Bool)
+        case archivePasswordRequired(ArchivePasswordPrompt)
         case archivePasswordSubmitted(String)
         case archivePasswordCancelled
         case compressTapped(FileItem)
