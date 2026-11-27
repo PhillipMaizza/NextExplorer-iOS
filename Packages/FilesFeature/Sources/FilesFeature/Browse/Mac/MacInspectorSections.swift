@@ -85,7 +85,7 @@
         }
 
         private func subtitle(for share: Share) -> String {
-            var parts = [share.accessMode.title]
+            var parts = [share.accessChoice.title]
             if let expiresAt = share.expiresAt {
                 parts.append(expiresAt <= Date()
                     ? L10n.Shared.badgeExpired
