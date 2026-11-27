@@ -33,7 +33,6 @@
                             prompt: Text(L10n.Browse.archivePasswordPlaceholder),
                             isInvalid: prompt.isInvalid
                         )
-                        .disabled(isBusy)
                         .onSubmit(submit)
                         if prompt.isInvalid {
                             Text(L10n.Browse.archivePasswordInvalid)

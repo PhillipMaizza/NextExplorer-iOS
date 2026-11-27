@@ -57,7 +57,7 @@ public extension DependencyValues {
     private extension NSSavePanel {
         /// A sheet on the front window when there is one, otherwise a standalone panel.
         func present() async -> URL? {
-            let response = if let window = NSApp.keyWindow {
+            let response = if let window = NSApp.keyWindow.map({ $0.sheetParent ?? $0 }) {
                 await beginSheetModal(for: window)
             } else {
                 runModal()

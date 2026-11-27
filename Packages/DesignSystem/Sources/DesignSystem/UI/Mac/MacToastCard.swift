@@ -44,11 +44,13 @@
                     Text(message.text)
                         .type(.body2(.semibold))
                         .foregroundStyle(Color.primaryDS)
+                        .fixedSize(horizontal: false, vertical: true)
                         .accessibilityIdentifier(AccessibilityIdentifiers.Toast.message)
                     if let detail = message.detail {
                         Text(detail)
                             .type(.body3(.regular))
                             .foregroundStyle(Color.secondaryDS)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     if let transfer = message.transfer {
                         MacTransferStatus(
