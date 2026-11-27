@@ -126,7 +126,7 @@ struct BrowseSearchFooter: View {
         SearchStatusFooter.message(
             failure: store.searchFailureMessage,
             isTooShort: store.isSearchTermTooShort,
-            shortfall: store.isSearchingMyFilesAndVolumes && store.canShowMoreSearchResults
+            shortfall: store.isSearchingMyFilesAndVolumes && store.searchShortfall != .stoppedEarly
                 ? nil
                 : store.searchShortfall
         )
