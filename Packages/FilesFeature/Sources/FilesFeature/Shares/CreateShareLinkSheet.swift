@@ -119,13 +119,15 @@ struct CreateShareLinkSheet: View {
                 .autocorrectionDisabled()
             }
 
-            section(L10n.CreateShare.sectionAccessMode) {
-                DSSegmentedControl(
-                    options: ShareAccessMode.allCases,
-                    selection: $store.accessMode.sending(\.accessModeChanged),
-                    label: { $0.title }
-                )
-            }
+            #if os(iOS)
+                section(L10n.CreateShare.peopleCan) {
+                    ShareAccessOptions(
+                        isDirectory: store.isDirectory,
+                        choice: $store.accessChoice.sending(\.accessChoiceChanged),
+                        permissions: $store.permissions.sending(\.permissionsChanged)
+                    )
+                }
+            #endif
 
             section(L10n.CreateShare.sectionWhoCanAccess) {
                 DSSegmentedControl(
@@ -137,6 +139,9 @@ struct CreateShareLinkSheet: View {
                     ShareUserPicker(store: store)
                 }
             }
+            #if os(iOS)
+                ShareVersionsToggles(permissions: $store.permissions.sending(\.permissionsChanged))
+            #endif
 
             if store.target == .anyone {
                 DSToggleRow(
@@ -171,6 +176,7 @@ struct CreateShareLinkSheet: View {
                 .transition(Constants.fieldReveal)
             }
         }
+        .animation(Constants.fieldRevealAnimation, value: store.accessChoice)
         .animation(Constants.fieldRevealAnimation, value: store.isPasswordEnabled)
         .animation(Constants.fieldRevealAnimation, value: store.isExpiryEnabled)
     }
@@ -250,7 +256,7 @@ struct CreateShareLinkSheet: View {
 
     private func summaryRows(for created: CreatedShare) -> some View {
         VStack(alignment: .leading, spacing: .space12) {
-            summaryRow(IconKit.lock, L10n.CreateShare.summaryAccess, created.share.accessMode.title)
+            summaryRow(IconKit.lock, L10n.CreateShare.summaryAccess, created.share.accessChoice.title)
             summaryRow(
                 created.share.audienceIcon,
                 L10n.CreateShare.summarySharedWith,

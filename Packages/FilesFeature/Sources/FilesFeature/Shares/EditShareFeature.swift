@@ -179,7 +179,6 @@ public struct EditShareFeature {
     public enum Action: Equatable, Sendable {
         case task
         case labelChanged(String)
-        case accessModeChanged(ShareAccessMode)
         case accessChoiceChanged(ShareAccessChoice)
         case permissionsChanged(SharePermissions)
         case targetChanged(ShareTarget)
@@ -222,14 +221,10 @@ public struct EditShareFeature {
                 state.label = label
                 return .none
 
-            case let .accessModeChanged(mode):
-                state.accessChoice = ShareAccessChoice(accessMode: mode, permissions: state.permissions)
-                state.errorMessage = nil
-                return .none
-
             case let .accessChoiceChanged(choice):
                 state.permissions = choice.applied(to: state.permissions, from: state.accessChoice)
                 state.accessChoice = choice
+                state.errorMessage = nil
                 state.errorMessage = nil
                 return .none
 

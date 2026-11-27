@@ -305,7 +305,6 @@ shared.copiedDirectFile	직접 파일 링크가 복사됨
 createShare.title	공유 링크 만들기
 createShare.titleCreated	공유가 생성됨
 createShare.sectionLabel	레이블
-createShare.sectionAccessMode	접근 모드
 createShare.sectionWhoCanAccess	접근할 수 있는 사람
 createShare.addPeople	사용자 추가
 createShare.sectionShareLink	공유 링크
@@ -351,9 +350,6 @@ editShare.saved	변경 사항이 저장됨
 editShare.custom	사용자 지정
 editShare.neverFooter	삭제할 때까지 링크가 유지됩니다.
 editShare.usersHint	선택한 사람만, 로그인 후.
-editShare.readOnlyHint	열고 다운로드할 수 있습니다.
-editShare.readWriteHint	내부에서 업로드, 이름 변경, 삭제도 할 수 있습니다.
-editShare.readWriteFileHint	파일을 편집할 수도 있습니다.
 editShare.discardTitle	변경 사항을 버리시겠습니까?
 editShare.discardMessage	이 링크의 변경 사항이 저장되지 않았습니다.
 editShare.discard	버리기

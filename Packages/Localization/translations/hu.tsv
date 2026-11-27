@@ -321,7 +321,6 @@ shared.copiedDirectFile	A fájl közvetlen hivatkozása másolva
 createShare.title	Megosztási hivatkozás létrehozása
 createShare.titleCreated	A megosztás létrejött
 createShare.sectionLabel	Címke
-createShare.sectionAccessMode	Hozzáférési mód
 createShare.sectionWhoCanAccess	Ki férhet hozzá
 createShare.addPeople	Személyek hozzáadása
 createShare.sectionShareLink	Megosztási hivatkozás
@@ -367,9 +366,6 @@ editShare.saved	Változások mentve
 editShare.custom	Egyéni
 editShare.neverFooter	A link addig működik, amíg nem törlöd.
 editShare.usersHint	Csak a kiválasztott személyek, bejelentkezés után.
-editShare.readOnlyHint	A személyek megnyithatják és letölthetik.
-editShare.readWriteHint	A személyek feltölthetnek, átnevezhetnek és törölhetnek is benne.
-editShare.readWriteFileHint	A személyek a fájlt is szerkeszthetik.
 editShare.discardTitle	Elveted a módosításokat?
 editShare.discardMessage	A link módosításai nincsenek mentve.
 editShare.discard	Elvetés

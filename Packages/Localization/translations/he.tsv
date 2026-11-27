@@ -334,7 +334,6 @@ shared.copiedDirectFile	הקישור הישיר לקובץ הועתק
 createShare.title	יצירת קישור שיתוף
 createShare.titleCreated	השיתוף נוצר
 createShare.sectionLabel	תווית
-createShare.sectionAccessMode	מצב גישה
 createShare.sectionWhoCanAccess	מי יכול לגשת
 createShare.addPeople	הוספת אנשים
 createShare.sectionShareLink	קישור שיתוף
@@ -380,9 +379,6 @@ editShare.saved	השינויים נשמרו
 editShare.custom	מותאם אישית
 editShare.neverFooter	הקישור פועל עד שתמחק אותו.
 editShare.usersHint	רק האנשים שתבחר, לאחר שיתחברו.
-editShare.readOnlyHint	אנשים יכולים לפתוח ולהוריד.
-editShare.readWriteHint	אנשים יכולים גם להעלות, לשנות שם ולמחוק בתוכו.
-editShare.readWriteFileHint	אנשים יכולים גם לערוך את הקובץ.
 editShare.discardTitle	לבטל את השינויים?
 editShare.discardMessage	העריכות שלך בקישור זה לא נשמרו.
 editShare.discard	בטל שינויים

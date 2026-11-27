@@ -318,7 +318,6 @@ shared.copiedDirectFile	Direkt fillänk kopierad
 createShare.title	Skapa delningslänk
 createShare.titleCreated	Delning skapad
 createShare.sectionLabel	Etikett
-createShare.sectionAccessMode	Åtkomstläge
 createShare.sectionWhoCanAccess	Vem kan komma åt
 createShare.addPeople	Lägg till personer
 createShare.sectionShareLink	Delningslänk
@@ -364,9 +363,6 @@ editShare.saved	Ändringar sparade
 editShare.custom	Anpassad
 editShare.neverFooter	Länken fungerar tills du raderar den.
 editShare.usersHint	Endast personerna du väljer, efter inloggning.
-editShare.readOnlyHint	Personer kan öppna och ladda ner.
-editShare.readWriteHint	Personer kan även ladda upp, byta namn och radera inuti.
-editShare.readWriteFileHint	Personer kan även redigera filen.
 editShare.discardTitle	Ignorera ändringar?
 editShare.discardMessage	Dina ändringar av den här länken har inte sparats.
 editShare.discard	Ignorera

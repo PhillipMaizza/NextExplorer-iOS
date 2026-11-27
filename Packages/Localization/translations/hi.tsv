@@ -318,7 +318,6 @@ shared.copiedDirectFile	सीधा फ़ाइल लिंक कॉपी �
 createShare.title	साझा लिंक बनाएं
 createShare.titleCreated	साझा बनाया गया
 createShare.sectionLabel	लेबल
-createShare.sectionAccessMode	एक्सेस मोड
 createShare.sectionWhoCanAccess	कौन एक्सेस कर सकता है
 createShare.addPeople	लोग जोड़ें
 createShare.sectionShareLink	साझा लिंक
@@ -364,9 +363,6 @@ editShare.saved	बदलाव सहेजे गए
 editShare.custom	कस्टम
 editShare.neverFooter	लिंक तब तक काम करता है जब तक आप इसे हटा नहीं देते।
 editShare.usersHint	केवल वे लोग जिन्हें आप चुनें, साइन इन करने के बाद।
-editShare.readOnlyHint	लोग खोल और डाउनलोड कर सकते हैं।
-editShare.readWriteHint	लोग इसके अंदर अपलोड, नाम बदल और हटा भी सकते हैं।
-editShare.readWriteFileHint	लोग फ़ाइल को संपादित भी कर सकते हैं।
 editShare.discardTitle	बदलाव छोड़ें?
 editShare.discardMessage	इस लिंक में आपके बदलाव सहेजे नहीं गए हैं।
 editShare.discard	छोड़ें

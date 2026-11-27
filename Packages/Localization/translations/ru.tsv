@@ -344,7 +344,6 @@ shared.copiedDirectFile	Прямая ссылка на файл скопиров
 createShare.title	Создать ссылку доступа
 createShare.titleCreated	Доступ создан
 createShare.sectionLabel	Метка
-createShare.sectionAccessMode	Режим доступа
 createShare.sectionWhoCanAccess	Кто имеет доступ
 createShare.addPeople	Добавить людей
 createShare.sectionShareLink	Ссылка доступа
@@ -390,9 +389,6 @@ editShare.saved	Изменения сохранены
 editShare.custom	Своя дата
 editShare.neverFooter	Ссылка работает, пока вы её не удалите.
 editShare.usersHint	Только выбранные люди после входа.
-editShare.readOnlyHint	Можно открывать и скачивать.
-editShare.readWriteHint	Можно также загружать, переименовывать и удалять внутри.
-editShare.readWriteFileHint	Можно также редактировать файл.
 editShare.discardTitle	Отменить изменения?
 editShare.discardMessage	Изменения этой ссылки не сохранены.
 editShare.discard	Отменить

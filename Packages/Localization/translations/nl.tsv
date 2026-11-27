@@ -318,7 +318,6 @@ shared.copiedDirectFile	Directe bestandslink gekopieerd
 createShare.title	Deellink maken
 createShare.titleCreated	Deellink aangemaakt
 createShare.sectionLabel	Label
-createShare.sectionAccessMode	Toegangsmodus
 createShare.sectionWhoCanAccess	Wie heeft toegang
 createShare.addPeople	Personen toevoegen
 createShare.sectionShareLink	Deellink
@@ -364,9 +363,6 @@ editShare.saved	Wijzigingen bewaard
 editShare.custom	Aangepast
 editShare.neverFooter	De link werkt tot je hem verwijdert.
 editShare.usersHint	Alleen de mensen die je kiest, na inloggen.
-editShare.readOnlyHint	Mensen kunnen openen en downloaden.
-editShare.readWriteHint	Mensen kunnen er ook in uploaden, hernoemen en verwijderen.
-editShare.readWriteFileHint	Mensen kunnen het bestand ook bewerken.
 editShare.discardTitle	Wijzigingen weggooien?
 editShare.discardMessage	Je wijzigingen aan deze link zijn niet bewaard.
 editShare.discard	Weggooien

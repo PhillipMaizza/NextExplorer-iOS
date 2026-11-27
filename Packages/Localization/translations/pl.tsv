@@ -344,7 +344,6 @@ shared.copiedDirectFile	Skopiowano bezpośredni link do pliku
 createShare.title	Utwórz link do udostępniania
 createShare.titleCreated	Utworzono udostępnienie
 createShare.sectionLabel	Etykieta
-createShare.sectionAccessMode	Tryb dostępu
 createShare.sectionWhoCanAccess	Kto ma dostęp
 createShare.addPeople	Dodaj osoby
 createShare.sectionShareLink	Link do udostępniania
@@ -390,9 +389,6 @@ editShare.saved	Zapisano zmiany
 editShare.custom	Własna
 editShare.neverFooter	Link działa, dopóki go nie usuniesz.
 editShare.usersHint	Tylko wybrane osoby, po zalogowaniu.
-editShare.readOnlyHint	Osoby mogą otwierać i pobierać.
-editShare.readWriteHint	Osoby mogą też przesyłać, zmieniać nazwy i usuwać w środku.
-editShare.readWriteFileHint	Osoby mogą też edytować plik.
 editShare.discardTitle	Odrzucić zmiany?
 editShare.discardMessage	Zmiany w tym linku nie zostały zapisane.
 editShare.discard	Odrzuć

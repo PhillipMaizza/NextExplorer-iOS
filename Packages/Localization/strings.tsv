@@ -366,7 +366,6 @@ shared.showLess	Show Less
 createShare.title	Create Share Link
 createShare.titleCreated	Share Created
 createShare.sectionLabel	Label
-createShare.sectionAccessMode	Access Mode
 createShare.sectionWhoCanAccess	Who can access
 createShare.addPeople	Add people
 createShare.sectionShareLink	Share Link
@@ -414,9 +413,6 @@ editShare.saved	Changes saved
 editShare.custom	Custom
 editShare.neverFooter	The link keeps working until you delete it.
 editShare.usersHint	Only the people you pick, after they sign in.
-editShare.readOnlyHint	People can open and download.
-editShare.readWriteHint	People can also upload, rename and delete inside it.
-editShare.readWriteFileHint	People can also edit the file.
 editShare.discardTitle	Discard changes?
 editShare.discardMessage	Your edits to this link haven't been saved.
 editShare.discard	Discard

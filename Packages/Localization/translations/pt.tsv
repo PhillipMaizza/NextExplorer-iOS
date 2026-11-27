@@ -318,7 +318,6 @@ shared.copiedDirectFile	Ligação direta do ficheiro copiada
 createShare.title	Criar ligação de partilha
 createShare.titleCreated	Partilha criada
 createShare.sectionLabel	Etiqueta
-createShare.sectionAccessMode	Modo de acesso
 createShare.sectionWhoCanAccess	Quem pode aceder
 createShare.addPeople	Adicionar pessoas
 createShare.sectionShareLink	Ligação de partilha
@@ -364,9 +363,6 @@ editShare.saved	Alterações guardadas
 editShare.custom	Personalizado
 editShare.neverFooter	A ligação funciona até a eliminar.
 editShare.usersHint	Apenas as pessoas que escolher, depois de iniciarem sessão.
-editShare.readOnlyHint	As pessoas podem abrir e transferir.
-editShare.readWriteHint	As pessoas também podem carregar, mudar o nome e eliminar dentro.
-editShare.readWriteFileHint	As pessoas também podem editar o ficheiro.
 editShare.discardTitle	Descartar alterações?
 editShare.discardMessage	As suas alterações a esta ligação não foram guardadas.
 editShare.discard	Descartar

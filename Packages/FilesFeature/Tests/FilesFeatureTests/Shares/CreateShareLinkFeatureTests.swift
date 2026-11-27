@@ -55,7 +55,8 @@ struct CreateShareLinkFeatureTests {
             }
         }
 
-        await store.send(.accessModeChanged(.readonly))
+        await store
+            .send(.accessChoiceChanged(.viewOnly)) { $0.permissions.canDownload = false; $0.accessChoice = .viewOnly }
         await store.send(.createTapped) { $0.step = .creating }
         gate.open()
         await store.receive(\.createResponse.success) {
@@ -69,7 +70,7 @@ struct CreateShareLinkFeatureTests {
         let store = TestStore(initialState: makeState()) { CreateShareLinkFeature() }
 
         await store.send(.labelChanged("Bills")) { $0.label = "Bills" }
-        await store.send(.accessModeChanged(.readwrite)) { $0.accessChoice = .canEdit }
+        await store.send(.accessChoiceChanged(.canEdit)) { $0.accessChoice = .canEdit }
         await store.send(.passwordEnabledChanged(true)) { $0.isPasswordEnabled = true }
         await store.send(.passwordChanged(TestAccount.password)) { $0.password = TestAccount.password }
         await store.send(.expiryEnabledChanged(true)) {

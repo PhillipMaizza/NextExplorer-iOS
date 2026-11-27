@@ -171,13 +171,13 @@
     }
 
     private struct ChoicesPreview: View {
-        @State private var mode = ShareAccessMode.readwrite
+        @State private var mode = ShareAccessChoice.canEdit
 
         var body: some View {
             DSGroupedList {
                 Section {
                     EditShareChoices(
-                        options: ShareAccessMode.allCases,
+                        options: ShareAccessChoice.allCases,
                         selection: mode,
                         title: \.title,
                         hint: { $0.hint(isDirectory: true) },

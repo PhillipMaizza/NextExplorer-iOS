@@ -347,7 +347,6 @@ shared.copiedDirectFile	Пряме посилання на файл скопій
 createShare.title	Створити посилання для спільного доступу
 createShare.titleCreated	Спільний доступ створено
 createShare.sectionLabel	Мітка
-createShare.sectionAccessMode	Режим доступу
 createShare.sectionWhoCanAccess	Хто має доступ
 createShare.addPeople	Додати людей
 createShare.sectionShareLink	Посилання для спільного доступу
@@ -393,9 +392,6 @@ editShare.saved	Зміни збережено
 editShare.custom	Своя дата
 editShare.neverFooter	Посилання працює, доки ви його не видалите.
 editShare.usersHint	Лише вибрані люди після входу.
-editShare.readOnlyHint	Можна відкривати й завантажувати.
-editShare.readWriteHint	Можна також вивантажувати, перейменовувати й видаляти всередині.
-editShare.readWriteFileHint	Можна також редагувати файл.
 editShare.discardTitle	Скасувати зміни?
 editShare.discardMessage	Зміни цього посилання не збережено.
 editShare.discard	Скасувати

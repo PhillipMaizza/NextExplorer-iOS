@@ -321,7 +321,6 @@ shared.copiedDirectFile	Ο άμεσος σύνδεσμος αρχείου αντ
 createShare.title	Δημιουργία συνδέσμου κοινοποίησης
 createShare.titleCreated	Η κοινοποίηση δημιουργήθηκε
 createShare.sectionLabel	Ετικέτα
-createShare.sectionAccessMode	Λειτουργία πρόσβασης
 createShare.sectionWhoCanAccess	Ποιος έχει πρόσβαση
 createShare.addPeople	Προσθήκη ατόμων
 createShare.sectionShareLink	Σύνδεσμος κοινοποίησης
@@ -367,9 +366,6 @@ editShare.saved	Οι αλλαγές αποθηκεύτηκαν
 editShare.custom	Προσαρμογή
 editShare.neverFooter	Ο σύνδεσμος λειτουργεί μέχρι να τον διαγράψετε.
 editShare.usersHint	Μόνο τα άτομα που επιλέγετε, αφού συνδεθούν.
-editShare.readOnlyHint	Τα άτομα μπορούν να ανοίγουν και να κατεβάζουν.
-editShare.readWriteHint	Τα άτομα μπορούν επίσης να ανεβάζουν, να μετονομάζουν και να διαγράφουν μέσα.
-editShare.readWriteFileHint	Τα άτομα μπορούν επίσης να επεξεργάζονται το αρχείο.
 editShare.discardTitle	Απόρριψη αλλαγών;
 editShare.discardMessage	Οι αλλαγές σας σε αυτόν τον σύνδεσμο δεν έχουν αποθηκευτεί.
 editShare.discard	Απόρριψη

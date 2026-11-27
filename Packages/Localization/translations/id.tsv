@@ -308,7 +308,6 @@ shared.copiedDirectFile	Tautan langsung file disalin
 createShare.title	Buat Tautan Berbagi
 createShare.titleCreated	Berbagi Dibuat
 createShare.sectionLabel	Label
-createShare.sectionAccessMode	Mode Akses
 createShare.sectionWhoCanAccess	Siapa yang dapat mengakses
 createShare.addPeople	Tambahkan orang
 createShare.sectionShareLink	Tautan Berbagi
@@ -354,9 +353,6 @@ editShare.saved	Perubahan disimpan
 editShare.custom	Kustom
 editShare.neverFooter	Tautan tetap berfungsi sampai Anda menghapusnya.
 editShare.usersHint	Hanya orang yang Anda pilih, setelah mereka masuk.
-editShare.readOnlyHint	Orang dapat membuka dan mengunduh.
-editShare.readWriteHint	Orang juga dapat mengunggah, mengganti nama, dan menghapus di dalamnya.
-editShare.readWriteFileHint	Orang juga dapat mengedit file.
 editShare.discardTitle	Buang perubahan?
 editShare.discardMessage	Perubahan Anda pada tautan ini belum disimpan.
 editShare.discard	Buang

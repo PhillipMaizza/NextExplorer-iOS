@@ -321,7 +321,6 @@ shared.copiedDirectFile	Suora tiedostolinkki kopioitu
 createShare.title	Luo jakolinkki
 createShare.titleCreated	Jako luotu
 createShare.sectionLabel	Nimike
-createShare.sectionAccessMode	Käyttötila
 createShare.sectionWhoCanAccess	Kenellä on pääsy
 createShare.addPeople	Lisää henkilöitä
 createShare.sectionShareLink	Jakolinkki
@@ -367,9 +366,6 @@ editShare.saved	Muutokset tallennettu
 editShare.custom	Mukautettu
 editShare.neverFooter	Linkki toimii, kunnes poistat sen.
 editShare.usersHint	Vain valitsemasi henkilöt kirjautumisen jälkeen.
-editShare.readOnlyHint	Henkilöt voivat avata ja ladata.
-editShare.readWriteHint	Henkilöt voivat myös ladata palvelimelle, nimetä uudelleen ja poistaa sisällä.
-editShare.readWriteFileHint	Henkilöt voivat myös muokata tiedostoa.
 editShare.discardTitle	Hylätäänkö muutokset?
 editShare.discardMessage	Tämän linkin muutoksia ei ole tallennettu.
 editShare.discard	Hylkää

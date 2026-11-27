@@ -51,21 +51,3 @@ extension ShareTarget {
         }
     }
 }
-
-extension ShareAccessMode {
-    /// Write access means editing the file itself on a file share, and changing what is inside on
-    /// a folder one.
-    func hint(isDirectory: Bool) -> String {
-        switch self {
-        case .readonly: L10n.EditShare.readOnlyHint
-        case .readwrite: isDirectory ? L10n.EditShare.readWriteHint : L10n.EditShare.readWriteFileHint
-        }
-    }
-
-    var icon: Image {
-        switch self {
-        case .readonly: IconKit.eyeCircle
-        case .readwrite: IconKit.pencilCircle
-        }
-    }
-}

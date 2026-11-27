@@ -305,7 +305,6 @@ shared.copiedDirectFile	ファイルの直接リンクをコピーしました
 createShare.title	共有リンクを作成
 createShare.titleCreated	共有を作成しました
 createShare.sectionLabel	ラベル
-createShare.sectionAccessMode	アクセスモード
 createShare.sectionWhoCanAccess	アクセスできる人
 createShare.addPeople	ユーザを追加
 createShare.sectionShareLink	共有リンク
@@ -351,9 +350,6 @@ editShare.saved	変更を保存しました
 editShare.custom	カスタム
 editShare.neverFooter	削除するまでリンクは有効です。
 editShare.usersHint	選んだユーザーのみ（サインイン後）。
-editShare.readOnlyHint	開いてダウンロードできます。
-editShare.readWriteHint	中でアップロード、名前変更、削除もできます。
-editShare.readWriteFileHint	ファイルの編集もできます。
 editShare.discardTitle	変更を破棄しますか？
 editShare.discardMessage	このリンクへの変更は保存されていません。
 editShare.discard	破棄

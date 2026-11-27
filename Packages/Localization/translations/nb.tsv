@@ -321,7 +321,6 @@ shared.copiedDirectFile	Direkte fillenke er kopiert
 createShare.title	Opprett delingslenke
 createShare.titleCreated	Deling opprettet
 createShare.sectionLabel	Etikett
-createShare.sectionAccessMode	Tilgangsmodus
 createShare.sectionWhoCanAccess	Hvem har tilgang
 createShare.addPeople	Legg til personer
 createShare.sectionShareLink	Delingslenke
@@ -367,9 +366,6 @@ editShare.saved	Endringer lagret
 editShare.custom	Egendefinert
 editShare.neverFooter	Lenken virker til du sletter den.
 editShare.usersHint	Bare personene du velger, etter at de logger inn.
-editShare.readOnlyHint	Personer kan åpne og laste ned.
-editShare.readWriteHint	Personer kan også laste opp, gi nytt navn og slette inni.
-editShare.readWriteFileHint	Personer kan også redigere filen.
 editShare.discardTitle	Forkaste endringer?
 editShare.discardMessage	Endringene dine i denne lenken er ikke lagret.
 editShare.discard	Forkast

@@ -92,7 +92,7 @@ struct SharedSharePage: View {
             }
 
             Section {
-                fact(L10n.Shared.metaAccess, share.accessMode.title)
+                fact(L10n.Shared.metaAccess, share.accessChoice.title)
                 fact(L10n.Common.password, facts.password)
                 fact(facts.expiresTitle, facts.expires, style: facts.expiresStyle)
                 if isByMe {

@@ -318,7 +318,6 @@ shared.copiedDirectFile	Direkter Dateilink kopiert
 createShare.title	Freigabelink erstellen
 createShare.titleCreated	Freigabe erstellt
 createShare.sectionLabel	Bezeichnung
-createShare.sectionAccessMode	Zugriffsmodus
 createShare.sectionWhoCanAccess	Wer kann zugreifen
 createShare.addPeople	Personen hinzufügen
 createShare.sectionShareLink	Freigabelink
@@ -364,9 +363,6 @@ editShare.saved	Änderungen gesichert
 editShare.custom	Eigene
 editShare.neverFooter	Der Link funktioniert, bis du ihn löschst.
 editShare.usersHint	Nur die Personen, die du auswählst, nach der Anmeldung.
-editShare.readOnlyHint	Personen können öffnen und herunterladen.
-editShare.readWriteHint	Personen können darin auch hochladen, umbenennen und löschen.
-editShare.readWriteFileHint	Personen können die Datei auch bearbeiten.
 editShare.discardTitle	Änderungen verwerfen?
 editShare.discardMessage	Deine Änderungen an diesem Link wurden nicht gesichert.
 editShare.discard	Verwerfen

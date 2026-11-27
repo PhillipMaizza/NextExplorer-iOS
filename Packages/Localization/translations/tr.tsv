@@ -321,7 +321,6 @@ shared.copiedDirectFile	Doğrudan dosya bağlantısı kopyalandı
 createShare.title	Paylaşım Bağlantısı Oluştur
 createShare.titleCreated	Paylaşım Oluşturuldu
 createShare.sectionLabel	Etiket
-createShare.sectionAccessMode	Erişim Modu
 createShare.sectionWhoCanAccess	Kimler erişebilir
 createShare.addPeople	Kişi ekle
 createShare.sectionShareLink	Paylaşım Bağlantısı
@@ -367,9 +366,6 @@ editShare.saved	Değişiklikler kaydedildi
 editShare.custom	Özel
 editShare.neverFooter	Bağlantı siz silene kadar çalışır.
 editShare.usersHint	Yalnızca seçtiğiniz kişiler, oturum açtıktan sonra.
-editShare.readOnlyHint	Kişiler açabilir ve indirebilir.
-editShare.readWriteHint	Kişiler içine yükleyebilir, yeniden adlandırabilir ve silebilir.
-editShare.readWriteFileHint	Kişiler dosyayı düzenleyebilir de.
 editShare.discardTitle	Değişiklikler atılsın mı?
 editShare.discardMessage	Bu bağlantıdaki düzenlemeleriniz kaydedilmedi.
 editShare.discard	At

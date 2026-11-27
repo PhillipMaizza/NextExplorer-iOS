@@ -178,17 +178,19 @@
         }
 
         private var accessSection: some View {
-            Section {
-                EditShareChoices(
-                    options: ShareAccessMode.allCases,
-                    selection: store.accessMode,
-                    title: \.title,
-                    hint: { [isDirectory = store.share.isDirectory] in $0.hint(isDirectory: isDirectory) },
-                    icon: \.icon,
-                    onSelect: { store.send(.accessModeChanged($0)) }
-                )
-            } header: {
-                DSFieldLabel(L10n.Shared.metaAccess)
+            Group {
+                Section {
+                    ShareAccessOptions(
+                        isDirectory: store.share.isDirectory,
+                        choice: $store.accessChoice.sending(\.accessChoiceChanged).animation(DSMotion.stateFade),
+                        permissions: $store.permissions.sending(\.permissionsChanged)
+                    )
+                } header: {
+                    DSFieldLabel(L10n.CreateShare.peopleCan)
+                }
+                Section {
+                    ShareVersionsToggles(permissions: $store.permissions.sending(\.permissionsChanged))
+                }
             }
         }
 

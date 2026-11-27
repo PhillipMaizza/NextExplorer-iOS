@@ -331,7 +331,6 @@ shared.copiedDirectFile	Link direct al fișierului copiat
 createShare.title	Creează link de partajare
 createShare.titleCreated	Partajare creată
 createShare.sectionLabel	Etichetă
-createShare.sectionAccessMode	Mod de acces
 createShare.sectionWhoCanAccess	Cine poate accesa
 createShare.addPeople	Adaugă persoane
 createShare.sectionShareLink	Link de partajare
@@ -377,9 +376,6 @@ editShare.saved	Modificări salvate
 editShare.custom	Personalizat
 editShare.neverFooter	Linkul funcționează până îl ștergi.
 editShare.usersHint	Doar persoanele alese, după autentificare.
-editShare.readOnlyHint	Persoanele pot deschide și descărca.
-editShare.readWriteHint	Persoanele pot și încărca, redenumi și șterge în interior.
-editShare.readWriteFileHint	Persoanele pot și edita fișierul.
 editShare.discardTitle	Renunți la modificări?
 editShare.discardMessage	Modificările acestui link nu au fost salvate.
 editShare.discard	Renunță

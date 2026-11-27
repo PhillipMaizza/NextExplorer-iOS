@@ -305,7 +305,6 @@ shared.copiedDirectFile	已拷貝直接檔案連結
 createShare.title	建立共享連結
 createShare.titleCreated	已建立共享
 createShare.sectionLabel	標籤
-createShare.sectionAccessMode	取用模式
 createShare.sectionWhoCanAccess	誰可以取用
 createShare.addPeople	加入使用者
 createShare.sectionShareLink	共享連結
@@ -351,9 +350,6 @@ editShare.saved	已儲存變更
 editShare.custom	自訂
 editShare.neverFooter	連結在你刪除前都有效。
 editShare.usersHint	僅限你選擇的人，登入後可用。
-editShare.readOnlyHint	可以開啟和下載。
-editShare.readWriteHint	也可以在其中上傳、重新命名和刪除。
-editShare.readWriteFileHint	也可以編輯該檔案。
 editShare.discardTitle	放棄變更？
 editShare.discardMessage	你對此連結的修改尚未儲存。
 editShare.discard	放棄

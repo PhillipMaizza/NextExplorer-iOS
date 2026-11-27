@@ -321,7 +321,6 @@ shared.copiedDirectFile	Direkte fillink kopieret
 createShare.title	Opret delingslink
 createShare.titleCreated	Deling oprettet
 createShare.sectionLabel	Etiket
-createShare.sectionAccessMode	Adgangstilstand
 createShare.sectionWhoCanAccess	Hvem har adgang
 createShare.addPeople	Tilføj personer
 createShare.sectionShareLink	Delingslink
@@ -367,9 +366,6 @@ editShare.saved	Ændringer gemt
 editShare.custom	Tilpasset
 editShare.neverFooter	Linket virker, indtil du sletter det.
 editShare.usersHint	Kun de personer, du vælger, efter de logger ind.
-editShare.readOnlyHint	Personer kan åbne og downloade.
-editShare.readWriteHint	Personer kan også uploade, omdøbe og slette indeni.
-editShare.readWriteFileHint	Personer kan også redigere filen.
 editShare.discardTitle	Kassér ændringer?
 editShare.discardMessage	Dine ændringer af dette link er ikke gemt.
 editShare.discard	Kassér

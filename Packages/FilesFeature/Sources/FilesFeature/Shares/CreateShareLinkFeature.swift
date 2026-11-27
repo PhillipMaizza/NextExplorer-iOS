@@ -105,7 +105,6 @@ public struct CreateShareLinkFeature {
         case onAppear
         case preferencesResponse(UserPreferences)
         case labelChanged(String)
-        case accessModeChanged(ShareAccessMode)
         case accessChoiceChanged(ShareAccessChoice)
         case permissionsChanged(SharePermissions)
         case targetChanged(ShareTarget)
@@ -151,11 +150,6 @@ public struct CreateShareLinkFeature {
 
             case let .labelChanged(label):
                 state.label = label
-                return .none
-
-            case let .accessModeChanged(mode):
-                state.accessChoice = ShareAccessChoice(accessMode: mode, permissions: state.permissions)
-                state.errorMessage = nil
                 return .none
 
             case let .accessChoiceChanged(choice):
