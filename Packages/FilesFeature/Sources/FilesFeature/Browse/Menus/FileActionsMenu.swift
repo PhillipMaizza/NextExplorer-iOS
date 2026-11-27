@@ -167,7 +167,7 @@ struct FileActionsMenu: View {
                 Button {
                     store.send(.moveTapped(item), animation: DSMotion.listDiff)
                 } label: {
-                    Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
+                    Label { Text(MoveActionStyle.title) } icon: { IconKit.move }
                 }
                 .tint(.primaryDS)
             }

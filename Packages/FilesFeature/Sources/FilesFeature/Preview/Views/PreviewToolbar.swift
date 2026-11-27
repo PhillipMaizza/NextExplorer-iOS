@@ -184,7 +184,7 @@ private struct PreviewChrome: ViewModifier {
         Section {
             menuButton(L10n.Browse.actionGetInfo, icon: IconKit.info, action: onInfo)
             menuButton(L10n.PreviewToolbar.rename, icon: IconKit.rename, action: onRename)
-            menuButton(L10n.Browse.actionMove, icon: IconKit.move, action: onMove)
+            menuButton(MoveActionStyle.title, icon: IconKit.move, action: onMove)
             menuButton(L10n.Browse.actionCopy, icon: IconKit.copy, action: onCopy)
         }
         Section {

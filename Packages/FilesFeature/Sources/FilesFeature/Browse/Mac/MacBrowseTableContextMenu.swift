@@ -93,7 +93,7 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.bulkMoveTapped, animation: DSMotion.listDiff)
                         } label: {
-                            Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
+                            Label { Text(L10n.Browse.actionMoveTo) } icon: { IconKit.move }
                         }
                         .tint(.primaryDS)
                     }

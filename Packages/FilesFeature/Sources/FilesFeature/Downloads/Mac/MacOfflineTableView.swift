@@ -244,7 +244,7 @@
 
         private func location(of row: MacOfflineTableRow) -> String {
             switch row {
-            case let .pinned(usage): usage.parentPath
+            case let .pinned(usage): MacInspectorLocation.trail(parent: usage.parentPath)
             case .saved: L10n.Offline.sectionSavedEarlier
             }
         }
