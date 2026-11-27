@@ -108,6 +108,7 @@ browse.actionMove	Przenieś
 browse.actionPaste	Wklej
 browse.actionPasteCount	Wklej %lld elementów
 browse.actionPasteHere	Wklej tutaj
+browse.actionPasteIntoFolder	Wklej do folderu
 browse.actionClearClipboard	Wyczyść schowek
 browse.clipboardCopiedOne	Skopiowano %@
 browse.clipboardCopiedMany	Skopiowano %lld elementów

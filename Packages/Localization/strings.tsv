@@ -141,6 +141,7 @@ browse.actionMove	Move
 browse.actionPaste	Paste
 browse.actionPasteCount	Paste %lld items
 browse.actionPasteHere	Paste here
+browse.actionPasteIntoFolder	Paste into folder
 browse.actionClearClipboard	Clear clipboard
 browse.clipboardCopiedOne	%@ copied
 browse.clipboardCopiedMany	%lld items copied

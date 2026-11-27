@@ -112,6 +112,7 @@ browse.actionMove	ย้าย
 browse.actionPaste	วาง
 browse.actionPasteCount	วาง %lld รายการ
 browse.actionPasteHere	วางที่นี่
+browse.actionPasteIntoFolder	วางลงในโฟลเดอร์
 browse.actionClearClipboard	ล้างคลิปบอร์ด
 browse.clipboardCopiedOne	คัดลอก %@ แล้ว
 browse.clipboardCopiedMany	คัดลอก %lld รายการแล้ว

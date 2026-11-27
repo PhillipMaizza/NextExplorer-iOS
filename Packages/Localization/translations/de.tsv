@@ -108,6 +108,7 @@ browse.actionMove	Bewegen
 browse.actionPaste	Einsetzen
 browse.actionPasteCount	%lld Objekte einsetzen
 browse.actionPasteHere	Hier einsetzen
+browse.actionPasteIntoFolder	In Ordner einsetzen
 browse.actionClearClipboard	Zwischenablage leeren
 browse.clipboardCopiedOne	%@ kopiert
 browse.clipboardCopiedMany	%lld Objekte kopiert

@@ -108,6 +108,7 @@ browse.actionMove	移动
 browse.actionPaste	粘贴
 browse.actionPasteCount	粘贴 %lld 项
 browse.actionPasteHere	粘贴到此处
+browse.actionPasteIntoFolder	粘贴到文件夹
 browse.actionClearClipboard	清空剪贴板
 browse.clipboardCopiedOne	已拷贝 %@
 browse.clipboardCopiedMany	已拷贝 %lld 项

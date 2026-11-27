@@ -108,6 +108,7 @@ browse.actionMove	Flytta
 browse.actionPaste	Klistra in
 browse.actionPasteCount	Klistra in %lld objekt
 browse.actionPasteHere	Klistra in här
+browse.actionPasteIntoFolder	Klistra in i mapp
 browse.actionClearClipboard	Rensa urklipp
 browse.clipboardCopiedOne	%@ kopierad
 browse.clipboardCopiedMany	%lld objekt kopierade

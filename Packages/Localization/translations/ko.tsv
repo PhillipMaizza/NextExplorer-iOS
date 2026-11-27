@@ -108,6 +108,7 @@ browse.actionMove	이동
 browse.actionPaste	붙여넣기
 browse.actionPasteCount	항목 %lld개 붙여넣기
 browse.actionPasteHere	여기에 붙여넣기
+browse.actionPasteIntoFolder	폴더에 붙여넣기
 browse.actionClearClipboard	클립보드 비우기
 browse.clipboardCopiedOne	%@ 복사됨
 browse.clipboardCopiedMany	항목 %lld개 복사됨

@@ -112,6 +112,7 @@ browse.actionMove	העברה
 browse.actionPaste	הדבקה
 browse.actionPasteCount	הדבקת %lld פריטים
 browse.actionPasteHere	הדבקה כאן
+browse.actionPasteIntoFolder	הדבקה לתיקייה
 browse.actionClearClipboard	ניקוי הלוח
 browse.clipboardCopiedOne	%@ הועתק
 browse.clipboardCopiedMany	%lld פריטים הועתקו

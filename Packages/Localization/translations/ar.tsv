@@ -108,6 +108,7 @@ browse.actionMove	نقل
 browse.actionPaste	لصق
 browse.actionPasteCount	لصق %lld عنصر
 browse.actionPasteHere	اللصق هنا
+browse.actionPasteIntoFolder	لصق في المجلد
 browse.actionClearClipboard	مسح الحافظة
 browse.clipboardCopiedOne	تم نسخ %@
 browse.clipboardCopiedMany	تم نسخ %lld عنصر

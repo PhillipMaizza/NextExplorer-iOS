@@ -108,6 +108,7 @@ browse.actionMove	移動
 browse.actionPaste	貼上
 browse.actionPasteCount	貼上 %lld 個項目
 browse.actionPasteHere	貼上到此處
+browse.actionPasteIntoFolder	貼到資料夾
 browse.actionClearClipboard	清除剪貼板
 browse.clipboardCopiedOne	已拷貝 %@
 browse.clipboardCopiedMany	已拷貝 %lld 個項目

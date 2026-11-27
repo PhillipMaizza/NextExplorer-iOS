@@ -108,6 +108,7 @@ browse.actionMove	Переместить
 browse.actionPaste	Вставить
 browse.actionPasteCount	Вставить объектов: %lld
 browse.actionPasteHere	Вставить сюда
+browse.actionPasteIntoFolder	Вставить в папку
 browse.actionClearClipboard	Очистить буфер обмена
 browse.clipboardCopiedOne	%@ скопировано
 browse.clipboardCopiedMany	Скопировано объектов: %lld

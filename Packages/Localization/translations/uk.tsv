@@ -112,6 +112,7 @@ browse.actionMove	Перемістити
 browse.actionPaste	Вставити
 browse.actionPasteCount	Вставити елементи (%lld)
 browse.actionPasteHere	Вставити сюди
+browse.actionPasteIntoFolder	Вставити в папку
 browse.actionClearClipboard	Очистити буфер обміну
 browse.clipboardCopiedOne	Скопійовано: %@
 browse.clipboardCopiedMany	Скопійовано елементів: %lld

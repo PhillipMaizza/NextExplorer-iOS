@@ -108,6 +108,7 @@ browse.actionMove	Verplaatsen
 browse.actionPaste	Plakken
 browse.actionPasteCount	%lld items plakken
 browse.actionPasteHere	Hier plakken
+browse.actionPasteIntoFolder	Plak in map
 browse.actionClearClipboard	Klembord wissen
 browse.clipboardCopiedOne	%@ gekopieerd
 browse.clipboardCopiedMany	%lld items gekopieerd

@@ -112,6 +112,7 @@ browse.actionMove	Přesunout
 browse.actionPaste	Vložit
 browse.actionPasteCount	Vložit položky (%lld)
 browse.actionPasteHere	Vložit sem
+browse.actionPasteIntoFolder	Vložit do složky
 browse.actionClearClipboard	Vymazat schránku
 browse.clipboardCopiedOne	Zkopírováno: %@
 browse.clipboardCopiedMany	Zkopírováno položek: %lld

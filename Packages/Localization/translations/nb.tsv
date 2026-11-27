@@ -112,6 +112,7 @@ browse.actionMove	Flytt
 browse.actionPaste	Lim inn
 browse.actionPasteCount	Lim inn %lld elementer
 browse.actionPasteHere	Lim inn her
+browse.actionPasteIntoFolder	Lim inn i mappe
 browse.actionClearClipboard	Tøm utklippstavlen
 browse.clipboardCopiedOne	%@ kopiert
 browse.clipboardCopiedMany	%lld elementer kopiert

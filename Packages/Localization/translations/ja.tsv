@@ -108,6 +108,7 @@ browse.actionMove	移動
 browse.actionPaste	ペースト
 browse.actionPasteCount	%lld 項目をペースト
 browse.actionPasteHere	ここにペースト
+browse.actionPasteIntoFolder	フォルダにペースト
 browse.actionClearClipboard	クリップボードを消去
 browse.clipboardCopiedOne	%@ をコピーしました
 browse.clipboardCopiedMany	%lld 項目をコピーしました
