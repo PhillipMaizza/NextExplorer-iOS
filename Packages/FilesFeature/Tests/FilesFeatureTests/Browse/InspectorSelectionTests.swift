@@ -183,6 +183,7 @@
 
             await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(removedIDs: [notes.id])))) {
                 $0.items = [report]
+                $0.selectedItemIDs = [report.id]
                 $0.isInfoShowingSelection = false
                 $0.infoItem = report
                 $0.infoPhase = .loading
@@ -191,6 +192,52 @@
                 $0.infoPhase = .loaded
                 $0.infoMetadata = reportMetadata
             }
+        }
+
+        @Test("Rows that leave the folder leave the selection, so they come back unselected")
+        func rowsThatLeaveLeaveTheSelection() async throws {
+            let store = BrowseFixtures.store(showingSelection()) {
+                $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.offline }
+                $0.filesClient.fetchUsage = { _, _ in throw FilesClientError.offline }
+            }
+            let folder = try #require(store.state.folderItem(now: MockDate.date))
+
+            await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(removedIDs: [report.id, notes.id])))) {
+                $0.items = []
+                $0.selectedItemIDs = []
+                $0.isInfoShowingSelection = false
+                $0.infoItem = folder
+                $0.infoPhase = .loading
+            }
+            await store.receive(\.infoMetadataResponse.failure) {
+                $0.infoPhase = .failed(L10n.Error.offline)
+            }
+            await store.receive(\.infoUsageResponse.failure)
+        }
+
+        @Test("An inspector on the folder reloads its counts when the rows change")
+        func folderInspectorReloadsWhenRowsChange() async throws {
+            let clock = TestClock()
+            var state = BrowseFixtures.state(TestFolder.docs, title: TestFolder.docs, items: [report, notes])
+            let folder = try #require(state.folderItem(now: MockDate.date))
+            state.infoItem = folder
+            state.infoPhase = .loaded
+            let store = BrowseFixtures.store(state) {
+                $0.continuousClock = clock
+                $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.offline }
+                $0.filesClient.fetchUsage = { _, _ in throw FilesClientError.offline }
+            }
+
+            await store.send(.deleteResponse(.success(BrowseFeature.DeleteResult(removedIDs: [notes.id])))) {
+                $0.items = [report]
+                $0.infoPhase = .loading
+            }
+            await clock.advance(by: BrowseFeature.Constants.inspectorFollowDelay)
+            await store.receive(\.infoMetadataResponse.failure) {
+                $0.infoPhase = .failed(L10n.Error.offline)
+            }
+            await clock.advance(by: BrowseFeature.Constants.inspectorFollowDelay)
+            await store.receive(\.infoUsageResponse.failure)
         }
     }
 #endif
