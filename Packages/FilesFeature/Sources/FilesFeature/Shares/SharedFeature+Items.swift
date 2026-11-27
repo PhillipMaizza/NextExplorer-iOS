@@ -296,7 +296,7 @@ public extension SharedFeature.State {
         let parent = first.itemLocation
         return SharedFeature.Item(
             id: id,
-            name: first.itemName,
+            name: segment == .withMe ? first.displayName : first.itemName,
             location: segment == .byMe && !parent.isEmpty ? parent : nil,
             shares: ordered,
             badges: ordered.map { badge(for: $0, segment: segment) },

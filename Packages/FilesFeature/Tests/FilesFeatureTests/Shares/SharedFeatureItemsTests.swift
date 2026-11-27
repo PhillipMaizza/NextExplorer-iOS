@@ -46,7 +46,13 @@ struct SharedFeatureItemsTests {
         )
     }
 
-    private func withMe(_ id: String, owner: String, name: String, age: TimeInterval = 0) -> Share {
+    private func withMe(
+        _ id: String,
+        owner: String,
+        name: String,
+        label: String? = nil,
+        age: TimeInterval = 0
+    ) -> Share {
         Share(
             id: id,
             shareToken: "tok\(id)",
@@ -56,6 +62,7 @@ struct SharedFeatureItemsTests {
             accessMode: .readonly,
             sharingType: .users,
             hasPassword: false,
+            label: label,
             createdAt: MockDate.date.addingTimeInterval(age),
             updatedAt: MockDate.date
         )
@@ -111,6 +118,15 @@ struct SharedFeatureItemsTests {
         #expect(items[0].badges[0].people == [SharedFeature.Person(id: "u1", name: "Anna Moreau")])
         #expect(items[1].badges[0].people[0].name == state().sharedByLabel(for: second))
         #expect(items.allSatisfy { $0.location == nil })
+    }
+
+    @Test("A received share is named by the label its owner gave it, as the web names it")
+    func withMeNamesAShareByItsLabel() {
+        let labelled = withMe("w1", owner: "u1", name: "QA Night", label: "Night notes")
+        let plain = withMe("w2", owner: "u1", name: "Report.pdf")
+
+        let names = state(withMe: [labelled, plain]).items(for: .withMe).map(\.name)
+        #expect(Set(names) == ["Night notes", "Report.pdf"])
     }
 
     @Test
