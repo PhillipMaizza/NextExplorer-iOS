@@ -1280,6 +1280,7 @@ offline.newFilesBadge	Nya filer tillgängliga offline
 search.onDevice	På enheten
 search.remote	Fjärr
 search.inOtherFolders	I andra mappar
+search.volumes	Volymer
 search.noMatchesAnywhere	Inga träffar någonstans för ”%@”.
 search.nothingInThisFolder	Inget i den här mappen heter eller innehåller ”%@”.
 search.showAllEverywhere	Visa alla resultat överallt

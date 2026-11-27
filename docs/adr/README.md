@@ -37,3 +37,4 @@ refactor. Number it after the last one and keep it short. A record that stops ho
 | [0026](0026-versions-in-the-item-menu.md) | Versions in the item menu, Show All Versions in the inspector |
 | [0027](0027-download-several-items.md) | Downloading files and folders together asks One Archive or Separate Files |
 | [0028](0028-share-access-choices.md) | Share access as choice rows, with Custom for a folder's own switches |
+| [0029](0029-search-my-files-and-volumes.md) | Search Everywhere from My Files shows My Files and Volumes as two sections |

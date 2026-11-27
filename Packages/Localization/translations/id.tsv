@@ -1210,6 +1210,7 @@ offline.newFilesBadge	File baru tersedia offline
 search.onDevice	Di perangkat
 search.remote	Jarak jauh
 search.inOtherFolders	Di folder lain
+search.volumes	Volume
 search.noMatchesAnywhere	Tidak ada hasil di mana pun untuk “%@”.
 search.nothingInThisFolder	Tidak ada yang bernama atau berisi “%@” di folder ini.
 search.showAllEverywhere	Tampilkan semua hasil di mana saja

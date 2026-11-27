@@ -1264,6 +1264,7 @@ offline.newFilesBadge	Нові файли доступні офлайн
 search.onDevice	На пристрої
 search.remote	Віддалено
 search.inOtherFolders	В інших папках
+search.volumes	Томи
 search.noMatchesAnywhere	Ніде немає результатів для «%@».
 search.nothingInThisFolder	У цій папці немає нічого з назвою чи вмістом «%@».
 search.showAllEverywhere	Показати всі результати звідусіль

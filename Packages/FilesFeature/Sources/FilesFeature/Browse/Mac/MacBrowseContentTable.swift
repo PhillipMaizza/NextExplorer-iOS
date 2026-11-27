@@ -3,6 +3,7 @@
     import CoreModels
     import DesignSystem
     import Foundation
+    import Localization
     import SwiftUI
 
     /// Browse on the Mac: the sortable file table with the saved copy note under it (a table has
@@ -47,6 +48,7 @@
                 )
                 MacSearchResultsTable(
                     sections: store.searchResultSections,
+                    lanes: lanes,
                     favoritePaths: store.favoritePaths,
                     serverURL: store.preferences.shouldShowThumbnails ? store.serverURL : nil,
                     onOpen: { store.send(.searchResultTapped($0)) },
@@ -58,6 +60,27 @@
                 }
             }
             .backgroundGradient()
+        }
+
+        private var lanes: [MacSearchLane] {
+            guard store.isSearchingMyFilesAndVolumes else { return [] }
+            let volumes = store.volumeSearch
+            return [
+                MacSearchLane(
+                    title: L10n.Browse.myFiles,
+                    sections: store.searchResultSections,
+                    onShowMore: store.canShowMoreSearchResults && store.searchPhase != .loading
+                        ? { store.send(.searchShowMoreTapped) }
+                        : nil
+                ),
+                MacSearchLane(
+                    title: L10n.Search.volumes,
+                    sections: store.volumeResultSections,
+                    phase: volumes.phase == .idle ? .loaded : volumes.phase,
+                    onShowMore: volumes.canShowMore ? { store.send(.searchVolumesShowMoreTapped) } : nil,
+                    onRetry: { store.send(.searchRetryTapped) }
+                ),
+            ]
         }
 
         private func hitActions(_ result: SearchResultItem) -> some View {

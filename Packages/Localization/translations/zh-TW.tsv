@@ -1262,6 +1262,7 @@ offline.newFilesBadge	有新檔案可離線使用
 search.onDevice	在此裝置上
 search.remote	遠端
 search.inOtherFolders	在其他資料夾中
+search.volumes	卷宗
 search.noMatchesAnywhere	任何位置都沒有「%@」的結果。
 search.nothingInThisFolder	此資料夾中沒有名稱為或包含「%@」的項目。
 search.showAllEverywhere	顯示所有位置的結果

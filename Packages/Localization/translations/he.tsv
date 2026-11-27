@@ -1246,6 +1246,7 @@ offline.newFilesBadge	קבצים חדשים זמינים במצב לא מקוו�
 search.onDevice	במכשיר
 search.remote	מרוחק
 search.inOtherFolders	בתיקיות אחרות
+search.volumes	כרכים
 search.noMatchesAnywhere	אין תוצאות בשום מקום עבור „%@”.
 search.nothingInThisFolder	שום דבר בתיקייה זו אינו נקרא או מכיל „%@”.
 search.showAllEverywhere	הצגת כל התוצאות בכל מקום

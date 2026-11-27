@@ -25,7 +25,12 @@ extension BrowseFeature {
             state.searchShortfall = nil
             state.selectedSearchCategories = []
             state.searchScope = .thisFolder
-            return .merge(.cancel(id: state.cancelID(.search)), .cancel(id: state.cancelID(.searchSavedItems)))
+            state.volumeSearch = VolumeSearch()
+            return .merge(
+                .cancel(id: state.cancelID(.search)),
+                .cancel(id: state.cancelID(.searchVolumes)),
+                .cancel(id: state.cancelID(.searchSavedItems))
+            )
         }
 
         // A term too short to search is never sent; until then the instant matches stand.
@@ -33,8 +38,13 @@ extension BrowseFeature {
             showInstantMatches(&state, query: query)
             state.searchPhase = .idle
             state.searchShortfall = nil
+            state.volumeSearch = VolumeSearch()
             // The server never sees this term: the listings saved below the folder answer too.
-            return .merge(.cancel(id: state.cancelID(.search)), loadSavedSearchItemsIfNeeded(state))
+            return .merge(
+                .cancel(id: state.cancelID(.search)),
+                .cancel(id: state.cancelID(.searchVolumes)),
+                loadSavedSearchItemsIfNeeded(state)
+            )
         }
         // An earlier answer stays on screen until this term's arrives (the search field says a
         // newer one is coming), so the list never shrinks to the local matches and grows back on
@@ -44,7 +54,39 @@ extension BrowseFeature {
             showInstantMatches(&state, query: query)
         }
         state.searchPhase = .loading
-        return fetchSearchResults(state, isDebounced: isDebounced)
+        return fetchSearchLanes(&state, isDebounced: isDebounced)
+    }
+
+    func fetchSearchLanes(_ state: inout State, isDebounced: Bool) -> Effect<Action> {
+        let myFiles = fetchSearchResults(state, isDebounced: isDebounced)
+        #if os(macOS)
+            guard state.isSearchingMyFilesAndVolumes else {
+                state.volumeSearch = VolumeSearch()
+                return .merge(myFiles, .cancel(id: state.cancelID(.searchVolumes)))
+            }
+            state.volumeSearch.phase = .loading
+            return .merge(myFiles, fetchVolumeResults(state, isDebounced: isDebounced))
+        #elseif os(iOS)
+            return myFiles
+        #endif
+    }
+
+    func fetchVolumeResults(_ state: State, isDebounced: Bool) -> Effect<Action> {
+        let query = SearchTerm(state.searchQuery).text
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        let clock = clock
+        let limit = state.volumeSearch.limit
+        return .run { send in
+            if isDebounced {
+                try await clock.sleep(for: FilesClient.searchDebounce)
+            }
+            try await send(.searchVolumesResponse(
+                apiResult { try await filesClient.search(serverURL, "", query, limit) },
+                term: query
+            ))
+        }
+        .cancellable(id: state.cancelID(.searchVolumes), cancelInFlight: true)
     }
 
     func searchElsewhereIfEmpty(_ state: inout State, page: SearchPage, term: String) -> Effect<Action> {
@@ -109,7 +151,7 @@ extension BrowseFeature {
     func refreshSearch(_ state: inout State) -> Effect<Action> {
         guard SearchTerm(state.searchQuery).isSearchable else { return .none }
         state.searchPhase = .loading
-        return fetchSearchResults(state, isDebounced: false)
+        return fetchSearchLanes(&state, isDebounced: false)
     }
 
     /// The server search on its own, without the instant prefill: Show more widens the answer

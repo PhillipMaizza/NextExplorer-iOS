@@ -1280,6 +1280,7 @@ offline.newFilesBadge	नई फ़ाइलें ऑफ़लाइन उप�
 search.onDevice	डिवाइस पर
 search.remote	रिमोट
 search.inOtherFolders	अन्य फ़ोल्डरों में
+search.volumes	वॉल्यूम
 search.noMatchesAnywhere	“%@” के लिए कहीं कोई परिणाम नहीं।
 search.nothingInThisFolder	इस फ़ोल्डर में “%@” नाम वाला या उसे शामिल करने वाला कुछ नहीं है।
 search.showAllEverywhere	हर जगह के सभी परिणाम दिखाएँ

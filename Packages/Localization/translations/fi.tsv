@@ -1228,6 +1228,7 @@ offline.newFilesBadge	Uusia tiedostoja saatavilla offline-tilassa
 search.onDevice	Laitteella
 search.remote	Etänä
 search.inOtherFolders	Muissa kansioissa
+search.volumes	Taltiot
 search.noMatchesAnywhere	Ei tuloksia mistään haulle ”%@”.
 search.nothingInThisFolder	Tässä kansiossa mikään ei ole nimeltään tai sisällä ”%@”.
 search.showAllEverywhere	Näytä kaikki tulokset kaikkialta

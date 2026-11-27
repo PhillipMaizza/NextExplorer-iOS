@@ -1228,6 +1228,7 @@ offline.newFilesBadge	Yeni dosyalar çevrimdışı kullanılabilir
 search.onDevice	Cihazda
 search.remote	Uzak
 search.inOtherFolders	Diğer klasörlerde
+search.volumes	Birimler
 search.noMatchesAnywhere	“%@” için hiçbir yerde sonuç yok.
 search.nothingInThisFolder	Bu klasörde adı “%@” olan veya bunu içeren bir şey yok.
 search.showAllEverywhere	Her yerdeki tüm sonuçları göster

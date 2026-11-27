@@ -1298,6 +1298,7 @@ offline.newFilesBadge	Fișiere noi disponibile offline
 search.onDevice	Pe dispozitiv
 search.remote	La distanță
 search.inOtherFolders	În alte dosare
+search.volumes	Volume
 search.noMatchesAnywhere	Niciun rezultat nicăieri pentru „%@”.
 search.nothingInThisFolder	Nimic din acest dosar nu se numește și nu conține „%@”.
 search.showAllEverywhere	Afișează toate rezultatele de peste tot

@@ -1210,6 +1210,7 @@ offline.newFilesBadge	Có tệp mới dùng ngoại tuyến
 search.onDevice	Trên thiết bị
 search.remote	Từ xa
 search.inOtherFolders	Trong thư mục khác
+search.volumes	Volume
 search.noMatchesAnywhere	Không có kết quả nào ở bất kỳ đâu cho “%@”.
 search.nothingInThisFolder	Không có gì trong thư mục này có tên hoặc chứa “%@”.
 search.showAllEverywhere	Hiển thị tất cả kết quả ở mọi nơi

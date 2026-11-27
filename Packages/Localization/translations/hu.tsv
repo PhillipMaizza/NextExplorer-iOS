@@ -1228,6 +1228,7 @@ offline.newFilesBadge	Új fájlok érhetők el offline
 search.onDevice	Az eszközön
 search.remote	Távoli
 search.inOtherFolders	Más mappákban
+search.volumes	Kötetek
 search.noMatchesAnywhere	Sehol nincs találat erre: „%@”.
 search.nothingInThisFolder	Ebben a mappában semmi sem ezt a nevet viseli, és nem is tartalmazza: „%@”.
 search.showAllEverywhere	Összes találat mindenhonnan
