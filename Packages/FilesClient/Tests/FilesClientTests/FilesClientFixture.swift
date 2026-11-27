@@ -96,6 +96,7 @@ enum FilesClientFixture: String, FixtureFile {
     case itemMutationCompressedBundleDirectory = "item-mutation/compressed-bundle-directory"
     case itemMutationCompressedDocumentsZip = "item-mutation/compressed-documents-zip"
     case itemMutationCreatedNotesTxt = "item-mutation/created-notes-txt"
+    case itemMutationFolderUploadReserved = "item-mutation/folder-upload-reserved"
     case itemMutationErrorTransferToRoot = "item-mutation/error-transfer-to-root"
     case itemMutationNdjsonCompressDone = "item-mutation/ndjson-compress-done"
     case itemMutationNdjsonCompressError = "item-mutation/ndjson-compress-error"

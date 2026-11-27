@@ -37,6 +37,7 @@ enum APIPath {
     static let download = "api/download"
     static let upload = "api/upload"
     static let tusUpload = "api/upload/tus"
+    static let uploadFolderSession = "api/upload/folder-session"
     static let capabilities = "api/capabilities"
     static let editor = "api/editor"
     static let changeOwnPassword = "api/auth/password"

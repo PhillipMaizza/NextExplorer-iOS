@@ -257,6 +257,11 @@ public extension FilesClient {
                     destination: destination, onProgress: onProgress
                 )
             },
+            reserveFolderUpload: { serverURL, destination, folderName in
+                try await service.reserveFolderUpload(
+                    serverURL: serverURL, destination: destination, folderName: folderName
+                )
+            },
             compressItems: { serverURL, items in
                 try await service.compressItems(serverURL: serverURL, items: items)
             },

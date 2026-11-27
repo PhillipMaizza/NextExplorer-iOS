@@ -365,6 +365,18 @@ extension FilesService {
     /// `POST /api/files/zip/compress`, confirmed against `backend/src/routes/zip.js`: zips the
     /// items (files or directories, all from one folder) into a new archive in that folder,
     /// auto naming it from the source (`defaultZipNameForItems`) when `name` is omitted.
+    func reserveFolderUpload(serverURL: URL, destination: String, folderName: String) async throws -> String {
+        let url = serverURL.appendingPathComponent(APIPath.uploadFolderSession)
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(FolderUploadBody(uploadTo: destination, sourceRoot: folderName))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await send(request, decoding: FolderUploadEnvelope.self).targetRoot
+    }
+
     func compressItems(serverURL: URL, items: [FileItem]) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.zipCompress)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)

@@ -55,6 +55,15 @@ extension FilesService {
         let items: [FileItem]
     }
 
+    struct FolderUploadBody: Encodable {
+        let uploadTo: String
+        let sourceRoot: String
+    }
+
+    struct FolderUploadEnvelope: Decodable {
+        let targetRoot: String
+    }
+
     struct CompressItemBody: Encodable {
         struct Item: Encodable {
             let name: String
