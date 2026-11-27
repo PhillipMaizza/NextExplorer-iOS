@@ -134,13 +134,9 @@
                     offlineAction(items, removals: true)
                     favoriteAction(items, removals: true)
                     if actions(items).canDelete {
-                        Button(role: .destructive) {
+                        RemovableMenuButton(title: L10n.Browse.actionDelete, icon: IconKit.delete, isRemoval: true) {
                             store.send(.tableSelectionChanged(ids))
                             store.send(.deleteSelectionTapped)
-                        } label: {
-                            Label { Text(L10n.Browse.actionDelete).foregroundStyle(Color.negativeText) } icon: {
-                                IconKit.delete
-                            }
                         }
                         .keyboardShortcut(.delete)
                     }

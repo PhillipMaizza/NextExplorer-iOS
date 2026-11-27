@@ -73,13 +73,9 @@ struct FileActionsMenu: View {
         Section {
             keepActions(removals: true)
             if actions.canDelete {
-                Button(role: .destructive) {
+                RemovableMenuButton(title: L10n.Browse.actionDelete, icon: IconKit.delete, isRemoval: true) {
                     store.send(.deleteTapped(item))
-                } label: {
-                    Label { Text(L10n.Browse.actionDelete).foregroundStyle(Color.negativeText) } icon: { IconKit.delete
-                    }
                 }
-                .tint(.negative)
                 .macMenuShortcut(.delete)
             }
         }
