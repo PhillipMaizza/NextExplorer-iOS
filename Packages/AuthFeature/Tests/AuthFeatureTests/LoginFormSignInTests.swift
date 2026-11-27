@@ -49,7 +49,7 @@ struct LoginFormSignInTests {
     }
 
     @Test(
-        "A dismissed web sheet leaves no error banner, a failed web flow shows the SSO error and then clears it",
+        "A dismissed web sheet leaves no error banner, a failed web flow shows the SSO error",
         arguments: [
             SSOFailureCase(error: .oidcCancelled, message: nil),
             SSOFailureCase(error: .oidcFailed("boom"), message: L10n.Login.errorSso),
@@ -73,10 +73,6 @@ struct LoginFormSignInTests {
         await store.receive(\.oidcResponse) {
             $0.oidcPhase = .idle
             $0.errorMessage = testCase.message
-        }
-        if testCase.message != nil {
-            await clock.advance(by: .seconds(4))
-            await store.receive(\.clearErrorMessage) { $0.errorMessage = nil }
         }
         await store.finish()
     }
@@ -194,7 +190,7 @@ struct LoginFormSignInTests {
     }
 
     @Test(
-        "A refused sign in shows its message, red borders only when the credentials are wrong, then clears itself",
+        "A refused sign in keeps its message and red borders until the user edits a field",
         arguments: [
             LoginFailureCase(
                 error: .invalidCredentials,
@@ -223,6 +219,12 @@ struct LoginFormSignInTests {
             $0.invalidFieldsScope = testCase.scope
         }
         await Support.expireSubmitError(store, clock: clock)
+        await clock.advance(by: .seconds(60))
+        await store.send(.passwordChanged(TestAccount.password + "x")) {
+            $0.password = TestAccount.password + "x"
+            $0.errorMessage = nil
+            $0.invalidFieldsScope = nil
+        }
     }
 
     @Test(
@@ -247,7 +249,6 @@ struct LoginFormSignInTests {
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertSubmitToIdle) { $0.submitPhase = .idle }
 
-        // Well past the usual 4 second dismissal nothing fires: a clear would be an unhandled action.
         await clock.advance(by: .seconds(30))
         await store.finish()
     }

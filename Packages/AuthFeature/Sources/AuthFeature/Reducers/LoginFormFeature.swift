@@ -15,7 +15,6 @@ private enum Constants {
     /// How long the red X stays on screen before the button reexpands so the user can retry.
     static let failureDisplayDuration: Duration = .seconds(1)
     /// How long an error message stays on screen before it clears itself.
-    static let errorDismissDuration: Duration = .seconds(4)
     /// Upper bounds on what the fields accept, so a pathological paste (a whole document
     /// dropped into a field) can't reach a network call or a regex. The host cap is generous
     /// enough to survive a pasted `https://…:port/path` that `normalizedURL` then trims down;
@@ -37,7 +36,6 @@ public struct LoginFormFeature {
         case certificateLookup
         case successAdvance
         case failureRevert
-        case errorDismiss
         case submit
         case submitRevert
         case oidc
@@ -216,6 +214,12 @@ public struct LoginFormFeature {
             certificatePrompt = nil
             certificateInUse = nil
         }
+
+        mutating func clearSubmitError() {
+            guard currentPage == .credentials else { return }
+            errorMessage = nil
+            invalidFieldsScope = nil
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -231,7 +235,6 @@ public struct LoginFormFeature {
         case advanceToCredentials
         case revertToIdle
         case revertSubmitToIdle
-        case clearErrorMessage
         case backButtonTapped
         case continueButtonTapped
         case secondFactorRequested
@@ -306,11 +309,17 @@ public struct LoginFormFeature {
                 return Self.cancelInFlightWork()
 
             case let .identifierChanged(text):
-                state.identifier = String(text.prefix(Constants.maxIdentifierLength))
+                let identifier = String(text.prefix(Constants.maxIdentifierLength))
+                guard identifier != state.identifier else { return .none }
+                state.identifier = identifier
+                state.clearSubmitError()
                 return .none
 
             case let .passwordChanged(text):
-                state.password = String(text.prefix(Constants.maxPasswordLength))
+                let password = String(text.prefix(Constants.maxPasswordLength))
+                guard password != state.password else { return .none }
+                state.password = password
+                state.clearSubmitError()
                 return .none
 
             case let .codeChanged(text):
@@ -332,7 +341,7 @@ public struct LoginFormFeature {
                 state.codeMode = state.codeMode == .authenticator ? .recovery : .authenticator
                 state.code = ""
                 state.errorMessage = nil
-                return .cancel(id: CancelID.errorDismiss)
+                return .none
 
             case .togglePasswordVisibility:
                 state.isPasswordVisible.toggle()
@@ -347,8 +356,7 @@ public struct LoginFormFeature {
                 state.invalidFieldsScope = nil
                 return .merge(
                     .cancel(id: CancelID.submit),
-                    .cancel(id: CancelID.submitRevert),
-                    .cancel(id: CancelID.errorDismiss)
+                    .cancel(id: CancelID.submitRevert)
                 )
 
             case .backButtonTapped:
@@ -359,7 +367,7 @@ public struct LoginFormFeature {
                 guard let url = Self.normalizedURL(scheme: state.scheme, host: state.host) else {
                     state.connectionPhase = .failure
                     state.errorMessage = L10n.Login.errorInvalidServer
-                    return .merge(Self.scheduleRevertToIdle(self.clock), Self.scheduleErrorDismiss(self.clock))
+                    return Self.scheduleRevertToIdle(self.clock)
                 }
                 state.connectionPhase = .testing
                 state.errorMessage = nil
@@ -395,7 +403,7 @@ public struct LoginFormFeature {
                 guard status.isLocalEnabled || status.isOIDCEnabled else {
                     state.connectionPhase = .failure
                     state.errorMessage = Self.message(for: .noAuthMethodsEnabled)
-                    return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock))
+                    return Self.scheduleRevertToIdle(clock)
                 }
                 state.connectionPhase = .success
                 return .merge(
@@ -415,7 +423,6 @@ public struct LoginFormFeature {
                 state.certificatePrompt = Self.certificatePrompt(for: error, scheme: state.scheme, host: state.host)
                 return .merge(
                     Self.scheduleRevertToIdle(clock),
-                    Self.scheduleErrorDismiss(clock),
                     lookUpCertificateInUse(state)
                 )
 
@@ -425,11 +432,6 @@ public struct LoginFormFeature {
 
             case .revertSubmitToIdle:
                 state.submitPhase = .idle
-                return .none
-
-            case .clearErrorMessage:
-                state.errorMessage = nil
-                state.invalidFieldsScope = nil
                 return .none
 
             case .advanceToCredentials:
@@ -531,7 +533,7 @@ public struct LoginFormFeature {
                 guard error != .sessionCookieMissing else {
                     return Self.scheduleSubmitRevert(clock)
                 }
-                return .merge(Self.scheduleSubmitRevert(clock), Self.scheduleErrorDismiss(clock))
+                return Self.scheduleSubmitRevert(clock)
 
             case .ssoButtonTapped:
                 guard state.authStatus?.isOIDCEnabled == true,
@@ -572,7 +574,7 @@ public struct LoginFormFeature {
                 state.logError("single sign on", error, at: now)
                 guard error != .oidcCancelled else { return .none }
                 state.errorMessage = Self.message(for: error)
-                return Self.scheduleErrorDismiss(clock)
+                return .none
 
             case .clientCertificateButtonTapped:
                 guard let prompt = state.certificatePrompt else { return .none }
@@ -660,7 +662,6 @@ public struct LoginFormFeature {
             .cancel(id: CancelID.connectionTest),
             .cancel(id: CancelID.successAdvance),
             .cancel(id: CancelID.failureRevert),
-            .cancel(id: CancelID.errorDismiss),
             .cancel(id: CancelID.submit),
             .cancel(id: CancelID.submitRevert),
             .cancel(id: CancelID.oidc),
@@ -687,16 +688,6 @@ public struct LoginFormFeature {
             await send(.revertSubmitToIdle)
         }
         .cancellable(id: CancelID.submitRevert, cancelInFlight: true)
-    }
-
-    /// Auto dismisses whatever error message is currently showing after a few seconds, so the
-    /// user isn't left staring at a stale failure reason indefinitely.
-    static func scheduleErrorDismiss(_ clock: any Clock<Duration>) -> Effect<Action> {
-        .run { send in
-            try await clock.sleep(for: Constants.errorDismissDuration)
-            await send(.clearErrorMessage)
-        }
-        .cancellable(id: CancelID.errorDismiss, cancelInFlight: true)
     }
 
     /// Drops a typed `http://` or `https://` so the scheme picker alone decides the scheme.

@@ -30,12 +30,10 @@ struct LoginFormFeatureTests {
         )
     }
 
-    /// Waits out the failure beat and the error dismissal of a failed connection test.
+    /// Waits out the failure beat of a failed connection test.
     private func expireConnectionError(_ store: Store, clock: TestClock<Duration>) async {
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertToIdle) { $0.connectionPhase = .idle }
-        await clock.advance(by: .seconds(3))
-        await store.receive(\.clearErrorMessage) { $0.errorMessage = nil }
     }
 
     // MARK: - URL normalization
@@ -222,8 +220,8 @@ struct LoginFormFeatureTests {
         await expireConnectionError(store, clock: clock)
     }
 
-    @Test("A failed connection test shows the unreachable message and clears it exactly 4 seconds after it appeared")
-    func connectionErrorDismissesAfterFourSeconds() async {
+    @Test("A failed connection test keeps the unreachable message until the address changes")
+    func connectionErrorStaysUntilTheAddressChanges() async {
         let clock = TestClock()
         let store = Support.makeStore(LoginFormFeature.State(host: Support.host), clock: clock) {
             $0.authClient.fetchStatus = { _ in throw AuthClientError.network(TestFailure.offline) }
@@ -238,12 +236,11 @@ struct LoginFormFeatureTests {
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertToIdle) { $0.connectionPhase = .idle }
 
-        // 3.999 seconds after the message appeared nothing has fired: sending an action while a
-        // received action is still unhandled would fail the test.
-        await clock.advance(by: .milliseconds(2999))
-        await store.send(.togglePasswordVisibility) { $0.isPasswordVisible = true }
-        await clock.advance(by: .milliseconds(1))
-        await store.receive(\.clearErrorMessage) { $0.errorMessage = nil }
+        await clock.advance(by: .seconds(60))
+        await store.send(.hostChanged(Support.host + "x")) {
+            $0.host = Support.host + "x"
+            $0.errorMessage = nil
+        }
     }
 
     // MARK: - Typing the address

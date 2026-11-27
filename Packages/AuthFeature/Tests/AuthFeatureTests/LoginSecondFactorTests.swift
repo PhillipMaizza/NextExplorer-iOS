@@ -490,8 +490,6 @@ struct LoginSecondFactorTests {
         }
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertToIdle) { $0.connectionPhase = .idle }
-        await clock.advance(by: .seconds(3))
-        await store.receive(\.clearErrorMessage) { $0.errorMessage = nil }
 
         #expect(store.state.diagnostics.entries == [
             Support.entry("connecting: https, default port"),

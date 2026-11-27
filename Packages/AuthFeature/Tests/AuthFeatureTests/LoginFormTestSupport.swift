@@ -55,15 +55,10 @@ enum LoginFormTestSupport {
         try await store.receive(.delegate(.authenticated(user, url(serverURL))))
     }
 
-    /// Waits out the failure beat and the error dismissal of a failed sign in.
+    /// Waits out the failure beat of a failed sign in.
     static func expireSubmitError(_ store: Store, clock: TestClock<Duration>) async {
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertSubmitToIdle) { $0.submitPhase = .idle }
-        await clock.advance(by: .seconds(3))
-        await store.receive(\.clearErrorMessage) {
-            $0.errorMessage = nil
-            $0.invalidFieldsScope = nil
-        }
     }
 
     static func url(_ string: String) throws -> URL {

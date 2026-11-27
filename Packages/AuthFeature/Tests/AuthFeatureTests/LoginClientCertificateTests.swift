@@ -81,8 +81,6 @@ struct LoginClientCertificateTests {
         }
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertToIdle) { $0.connectionPhase = .idle }
-        await clock.advance(by: .seconds(3))
-        await store.receive(\.clearErrorMessage) { $0.errorMessage = nil }
 
         await store.send(.clientCertificateButtonTapped) {
             $0.clientCertificate = ClientCertificateFeature.State(origin: origin)
