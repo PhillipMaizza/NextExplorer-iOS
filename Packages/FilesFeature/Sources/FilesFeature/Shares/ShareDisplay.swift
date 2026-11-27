@@ -73,7 +73,8 @@ enum DirectLinkChoice: Hashable, Identifiable {
 
 extension Share {
     var directLinkChoices: [DirectLinkChoice] {
-        isDirectory ? [.zip] : [.openInBrowser, .download, .raw]
+        guard isDownloadAllowed else { return [] }
+        return isDirectory ? [.zip] : [.openInBrowser, .download, .raw]
     }
 }
 
@@ -191,8 +192,6 @@ enum ReceivedShareSpace {
     static let rootPath = PersonalSpace.receivedSharesRootPath
 
     static func shareRoot(of path: String) -> String? {
-        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
-        guard segments.count >= 2, segments[0] == rootPath else { return nil }
-        return "\(rootPath)/\(segments[1])"
+        PersonalSpace.receivedShareRoot(of: path)
     }
 }

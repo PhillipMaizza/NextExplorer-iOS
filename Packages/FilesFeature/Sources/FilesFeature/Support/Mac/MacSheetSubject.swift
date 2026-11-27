@@ -7,6 +7,7 @@
         let name: String
         let isDirectory: Bool
         let location: String
+        let label: Binding<String>
 
         var body: some View {
             HStack(spacing: .space12) {
@@ -15,11 +16,8 @@
                     isDirectory: isDirectory,
                     size: .size40
                 )
-                VStack(alignment: .leading, spacing: .zero) {
-                    Text(name)
-                        .type(.body2(.semibold))
-                        .lineLimit(1)
-                        .truncationMode(.middle)
+                VStack(alignment: .leading, spacing: .space4) {
+                    MacTextField(L10n.CreateShare.sectionLabel, text: label, prompt: name)
                     if !location.isEmpty {
                         Text(PersonalSpace.trail(location))
                             .type(.caption(.regular), style: .secondary)
@@ -28,15 +26,19 @@
                     }
                 }
             }
-            .accessibilityElement(children: .combine)
         }
     }
 
     #Preview("Subjects") {
         VStack(alignment: .leading, spacing: .space16) {
-            MacSheetSubject(name: "Website", isDirectory: true, location: "Files/Developer")
-            MacSheetSubject(name: "README.md", isDirectory: false, location: "Files/Developer/bcn-holidays-ics")
-            MacSheetSubject(name: "Files", isDirectory: true, location: "")
+            MacSheetSubject(name: "Website", isDirectory: true, location: "Files/Developer", label: .constant(""))
+            MacSheetSubject(
+                name: "README.md",
+                isDirectory: false,
+                location: "Files/Developer/bcn-holidays-ics",
+                label: .constant("Docs")
+            )
+            MacSheetSubject(name: "Files", isDirectory: true, location: "", label: .constant(""))
         }
         .padding(.space24)
         .previewCanvasWidth(.sheet)

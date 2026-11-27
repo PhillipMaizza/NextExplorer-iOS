@@ -36,8 +36,10 @@
                     isFocused = true
                 } label: {
                     (isRevealed ? IconKit.macEyeSlash : IconKit.macEye)
+                        .resizable()
+                        .scaledToFit()
                         .foregroundStyle(Color.macChromeSecondary)
-                        .macSquare(.iconSmall)
+                        .macSquare(MacActionMenuMetrics.iconSize)
                 }
                 .buttonStyle(.borderless)
                 .help(revealLabel)

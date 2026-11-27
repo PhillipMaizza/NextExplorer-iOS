@@ -31,10 +31,17 @@
                 }
             }
 
+            var minHeight: CGFloat {
+                switch self {
+                case .regular: .size24
+                case .small: .zero
+                }
+            }
+
             var horizontalPadding: CGFloat {
                 switch self {
                 case .regular: .space8
-                case .small: .space4
+                case .small: .space8
                 }
             }
         }
@@ -99,6 +106,7 @@
             }
             .padding(.horizontal, size.horizontalPadding)
             .padding(.vertical, size.verticalPadding)
+            .macMinHeight(points: size.minHeight)
         }
 
         public init(text: String, tone: Tone, size: Size = .regular, icon: Image? = nil) {
@@ -129,6 +137,34 @@
                         .background(Capsule().fill(tint.opacity(Constants.pillWashOpacity)))
                 }
             }
+        }
+    }
+
+    public struct MacIconChip: View {
+        private typealias Size = MacChip.Size
+        private let icon: Image
+        private let tone: MacChip.Tone
+        private let help: String
+
+        public init(icon: Image, tone: MacChip.Tone, help: String) {
+            self.icon = icon
+            self.tone = tone
+            self.help = help
+        }
+
+        public var body: some View {
+            icon
+                .resizable()
+                .scaledToFit()
+                .macSquare(MacActionMenuMetrics.iconSize)
+                .foregroundStyle(tone.text)
+                .macSquare(Size.regular.minHeight)
+                .background(Circle().fill(tone.fill))
+                .contentShape(Circle())
+                .help(help)
+                .accessibilityElement()
+                .accessibilityLabel(help)
+                .accessibilityAddTraits(.isImage)
         }
     }
 

@@ -31,14 +31,29 @@ struct SharePermissionsTests {
     func presetsSetTheirFlags() {
         let mixed = SharePermissions(canDelete: false, canUpload: false, showsVersions: true)
 
-        #expect(ShareAccessChoice.viewOnly.applied(to: mixed) == SharePermissions(
+        #expect(ShareAccessChoice.viewOnly.applied(to: mixed, from: .custom) == SharePermissions(
             canDownload: false, canDelete: false, canUpload: false, showsVersions: true
         ))
-        #expect(ShareAccessChoice.canDownload.applied(to: SharePermissions(canDownload: false)) == SharePermissions())
-        #expect(ShareAccessChoice.canEdit.applied(to: mixed) == SharePermissions(showsVersions: true))
-        #expect(ShareAccessChoice.custom.applied(to: mixed) == mixed)
+        #expect(ShareAccessChoice.canDownload.applied(to: SharePermissions(canDownload: false), from: .viewOnly)
+            == SharePermissions())
+        #expect(ShareAccessChoice.canEdit.applied(to: mixed, from: .custom) == SharePermissions(showsVersions: true))
+        #expect(ShareAccessChoice.custom.applied(to: mixed, from: .canEdit) == mixed)
         #expect(ShareAccessChoice.viewOnly.accessMode == .readonly)
         #expect(ShareAccessChoice.custom.accessMode == .readwrite)
+    }
+
+    @Test("Custom starts from what the previous preset allowed, so a read only share gains no changes")
+    func customStartsFromThePreviousPreset() {
+        let stored = SharePermissions(canDownload: false, showsVersions: true)
+
+        #expect(ShareAccessChoice.custom.applied(to: stored, from: .viewOnly) == SharePermissions(
+            canDownload: false, canDelete: false, canCreateFolders: false, canCreateFiles: false, canUpload: false,
+            showsVersions: true
+        ))
+        #expect(ShareAccessChoice.custom.applied(to: SharePermissions(), from: .canDownload) == SharePermissions(
+            canDelete: false, canCreateFolders: false, canCreateFiles: false, canUpload: false
+        ))
+        #expect(ShareAccessChoice.custom.applied(to: SharePermissions(), from: .canEdit) == SharePermissions())
     }
 
     @Test("Custom is offered for a folder, and for a file only when it already is Custom")

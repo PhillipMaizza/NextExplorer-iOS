@@ -63,6 +63,16 @@ public struct SharePermissions: Equatable, Sendable, Codable {
         SharePermissions(showsVersions: target == .users, canDownloadVersions: target == .users)
     }
 
+    public func effective(for accessMode: ShareAccessMode) -> SharePermissions {
+        guard accessMode == .readonly else { return self }
+        var permissions = self
+        permissions.canDelete = false
+        permissions.canCreateFolders = false
+        permissions.canCreateFiles = false
+        permissions.canUpload = false
+        return permissions
+    }
+
     var allowsEveryChange: Bool {
         canDownload && canDelete && canCreateFolders && canCreateFiles && canUpload
     }
@@ -94,7 +104,7 @@ public enum ShareAccessChoice: CaseIterable, Hashable, Sendable {
         }
     }
 
-    public func applied(to permissions: SharePermissions) -> SharePermissions {
+    public func applied(to permissions: SharePermissions, from previous: ShareAccessChoice) -> SharePermissions {
         var permissions = permissions
         switch self {
         case .viewOnly:
@@ -108,7 +118,7 @@ public enum ShareAccessChoice: CaseIterable, Hashable, Sendable {
             permissions.canCreateFiles = true
             permissions.canUpload = true
         case .custom:
-            break
+            permissions = permissions.effective(for: previous.accessMode)
         }
         return permissions
     }

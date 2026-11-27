@@ -127,6 +127,35 @@
         }
     }
 
+    struct MacInspectorPermissionRow: View {
+        let item: SharePermissionSwitch
+        let isOn: Bool
+        var onChange: (@MainActor @Sendable (Bool) -> Void)?
+
+        var body: some View {
+            HStack(spacing: .space8) {
+                item.icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: MacActionMenuMetrics.iconSize, height: MacActionMenuMetrics.iconSize)
+                    .foregroundStyle(Color.macChromeSecondary)
+                    .accessibilityHidden(true)
+                Text(item.title)
+                    .type(.body3(.regular), style: .secondary)
+                    .fixedSize()
+                Spacer(minLength: .space8)
+                if let onChange {
+                    Toggle(item.title, isOn: Binding(get: { isOn }, set: onChange))
+                        .labelsHidden()
+                        .toggleStyle(.macSwitch)
+                } else {
+                    Text(isOn ? L10n.Common.on : L10n.Common.off).type(.body3(.regular))
+                }
+            }
+            .frame(minHeight: MacInspectorMetrics.rowHeight)
+        }
+    }
+
     #Preview("Stat tiles and rows") {
         let facts = SharedShareFacts(share: Share.previewSharedByMe[0], notice: nil, dateFormat: .system)
         let user = Share.previewShareableUsers[0]

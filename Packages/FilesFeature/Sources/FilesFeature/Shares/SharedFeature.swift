@@ -86,6 +86,7 @@ public struct SharedFeature {
         /// The share being edited: a page pushed inside the detail sheet on iOS, a sheet on the Mac.
         @Presents public var editSheet: EditShareFeature.State?
         public var editPopover: EditPopover?
+        public var customShareID: Share.ID?
         /// The item sheet opened from a row; Edit and Delete stack on top of it.
         public var detail: Detail?
         public var searchQuery = ""
@@ -232,6 +233,7 @@ public struct SharedFeature {
         case editPopoverDismissed
         case labelEditEnded
         case accessChoiceChosen(Share, ShareAccessChoice)
+        case permissionsChosen(Share, SharePermissions)
         case editSheet(PresentationAction<EditShareFeature.Action>)
         case actionToastShown
         case detailOpened(Segment, Item.ID)
@@ -463,8 +465,23 @@ public struct SharedFeature {
             case let .accessChoiceChosen(share, choice):
                 var edit = EditShareFeature.State(serverURL: state.serverURL, share: share, now: date.now)
                 guard edit.accessChoice != choice, state.editPopover != .inline else { return .none }
+                if choice == .custom {
+                    state.customShareID = share.id
+                    return .none
+                }
+                state.customShareID = nil
+                edit.permissions = choice.applied(to: edit.permissions, from: edit.accessChoice)
                 edit.accessChoice = choice
-                edit.permissions = choice.applied(to: edit.permissions)
+                state.editPopover = .inline
+                state.editSheet = edit
+                return .send(.editSheet(.presented(.saveTapped)))
+
+            case let .permissionsChosen(share, permissions):
+                guard state.editPopover != .inline else { return .none }
+                var edit = EditShareFeature.State(serverURL: state.serverURL, share: share, now: date.now)
+                edit.accessChoice = .custom
+                edit.permissions = permissions
+                state.customShareID = share.id
                 state.editPopover = .inline
                 state.editSheet = edit
                 return .send(.editSheet(.presented(.saveTapped)))

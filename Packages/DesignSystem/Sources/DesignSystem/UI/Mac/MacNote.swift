@@ -7,7 +7,7 @@
 
     public extension View {
         func macSheetSurface() -> some View {
-            environment(\.macInsetFill, .backgroundPrimary)
+            presentationBackground(Color.macCard)
         }
     }
 

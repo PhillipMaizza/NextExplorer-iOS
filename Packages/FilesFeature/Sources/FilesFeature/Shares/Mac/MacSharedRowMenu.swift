@@ -17,36 +17,36 @@
                 Button {
                     onToast(.success(share.copyShareLink(serverURL: store.serverURL)))
                 } label: {
-                    Label { Text(L10n.Shared.actionShareLink) } icon: { IconKit.shareLink }
+                    Label { Text(L10n.Shared.actionShareLink) } icon: { MenuIcon.shareLink.image }
                 }
                 if share.directLinkChoices.count > 1 {
                     Menu {
                         directButtons
                     } label: {
-                        Label { Text(L10n.Shared.direct) } icon: { IconKit.link }
+                        Label { Text(L10n.Shared.direct) } icon: { MenuIcon.directLink.image }
                     }
                 } else {
                     directButtons
                 }
             } label: {
-                Label { Text(L10n.Common.copy) } icon: { IconKit.copy }
+                Label { Text(L10n.Common.copy) } icon: { MenuIcon.copy.image }
             }
             .tint(.primaryDS)
             // The system share menu: AirDrop, Messages, Mail and the rest.
             if let url = URL(string: share.shareLink(serverURL: store.serverURL)) {
                 ShareLink(item: url) {
-                    Label { Text(L10n.Common.share) } icon: { IconKit.share }
+                    Label { Text(L10n.Common.share) } icon: { MenuIcon.systemShare.image }
                 }
                 .tint(.primaryDS)
             }
             Section {
                 Button { store.send(.editTapped(share)) } label: {
-                    Label { Text(L10n.Common.edit) } icon: { IconKit.rename }
+                    Label { Text(L10n.Common.edit) } icon: { MenuIcon.rename.image }
                 }
                 .tint(.primaryDS)
             }
             Section {
-                RemovableMenuButton(title: L10n.Common.delete, icon: IconKit.delete, isRemoval: true) {
+                RemovableMenuButton(title: L10n.Common.delete, icon: MenuIcon.delete.image, isRemoval: true) {
                     store.send(.deleteTapped(share))
                 }
             }
@@ -72,12 +72,12 @@
 
         var body: some View {
             Button { onOpen(share) } label: {
-                Label { Text(L10n.Browse.open) } icon: { share.isDirectory ? IconKit.folder : IconKit.document }
+                Label { Text(L10n.Browse.open) } icon: { MenuIcon.open(isDirectory: share.isDirectory).image }
             }
             .tint(.primaryDS)
             if share.receivedFileItem != nil, share.isDownloadAllowed {
                 Button { store.send(.downloadTapped(share)) } label: {
-                    Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
+                    Label { Text(L10n.Browse.actionDownload) } icon: { MenuIcon.download.image }
                 }
                 .tint(.primaryDS)
             }
@@ -85,7 +85,7 @@
                 Button {
                     onToast(.success(share.copyShareLink(serverURL: store.serverURL)))
                 } label: {
-                    Label { Text(L10n.Shared.copyLink) } icon: { IconKit.link }
+                    Label { Text(L10n.Shared.copyLink) } icon: { MenuIcon.directLink.image }
                 }
                 .tint(.primaryDS)
             }
