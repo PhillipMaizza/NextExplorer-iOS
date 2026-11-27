@@ -51,6 +51,7 @@ struct SessionCredentialsTests {
         #expect(credentials.username == TestAccount.username)
         #expect(credentials.cookieValue == TestSession.cookieValue)
         #expect(credentials.email == nil)
+        #expect(credentials.displayName == nil)
         #expect(credentials.isCookieSecure)
     }
 

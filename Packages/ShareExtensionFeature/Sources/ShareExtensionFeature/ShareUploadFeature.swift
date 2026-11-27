@@ -171,7 +171,11 @@ public struct ShareUploadFeature {
         /// "phillip · files.example.com".
         public static func name(for credentials: SessionCredentials) -> String {
             let host = credentials.serverBaseURL.serverHost
-            guard let name = AccountSummary.name(username: credentials.username, email: credentials.email) else {
+            guard let name = AccountSummary.name(
+                fullName: credentials.displayName,
+                username: credentials.username,
+                email: credentials.email
+            ) else {
                 return host
             }
             return L10n.ShareUpload.accountSummary(name, host)

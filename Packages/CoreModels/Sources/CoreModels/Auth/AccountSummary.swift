@@ -11,6 +11,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
     public var serverURL: URL
     public var isActive: Bool
     public var email: String?
+    public var fullName: String?
     public var authMode: AuthMode
     public var requireSignIn: RequireSignIn?
     public var isLocked: Bool
@@ -21,6 +22,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
         serverURL: URL,
         isActive: Bool,
         email: String? = nil,
+        fullName: String? = nil,
         authMode: AuthMode = .local,
         requireSignIn: RequireSignIn? = nil,
         isLocked: Bool = false
@@ -30,6 +32,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
         self.serverURL = serverURL
         self.isActive = isActive
         self.email = email
+        self.fullName = fullName
         self.authMode = authMode
         self.requireSignIn = requireSignIn
         self.isLocked = isLocked
@@ -42,6 +45,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
             serverURL: credentials.serverBaseURL,
             isActive: isActive,
             email: credentials.email,
+            fullName: credentials.displayName,
             authMode: credentials.authMode,
             requireSignIn: credentials.requireSignIn,
             isLocked: credentials.isLocked
@@ -55,15 +59,15 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
         serverURL.serverHost
     }
 
-    /// The name the account is shown by: the username, else the email (a single sign on user can
-    /// have no username), else the server host as a last resort.
+    /// The name the account is shown by, as the web names it: the display name, else the username,
+    /// else the email (a single sign on user can have no username), else the server host.
     public var displayName: String {
-        Self.name(username: username, email: email) ?? serverHost
+        Self.name(fullName: fullName, username: username, email: email) ?? serverHost
     }
 
-    /// The username, else the email, for any place that names an account; `nil` when both are blank.
-    public static func name(username: String?, email: String?) -> String? {
-        [username, email].compactMap(\.self).first { !$0.isEmpty }
+    /// The first non blank of the display name, username and email, wherever an account is named.
+    public static func name(fullName: String? = nil, username: String?, email: String?) -> String? {
+        [fullName, username, email].compactMap(\.self).first { !$0.isEmpty }
     }
 
     /// The server line under the name, left out when the name already is the server.

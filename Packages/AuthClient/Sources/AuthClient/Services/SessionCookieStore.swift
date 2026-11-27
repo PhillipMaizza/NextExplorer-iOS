@@ -22,7 +22,8 @@ struct SessionCookieStore: Sendable {
         authMode: AuthMode,
         cookieName: String,
         username: String?,
-        email: String? = nil
+        email: String? = nil,
+        displayName: String? = nil
     ) -> SessionCredentials? {
         guard let host = serverURL.host else { return nil }
         let matching = cookieStorage.cookies(for: serverURL)?.first { $0.name == cookieName }
@@ -38,7 +39,8 @@ struct SessionCookieStore: Sendable {
             isCookieSecure: cookie.isSecure,
             expiresAt: cookie.expiresDate,
             username: username,
-            email: email
+            email: email,
+            displayName: displayName
         )
     }
 

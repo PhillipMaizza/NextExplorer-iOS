@@ -47,6 +47,15 @@ struct AccountSummaryTests {
         #expect(summary(url: TestHost.serverURL, username: "", email: "").displayName == TestHost.server)
     }
 
+    @Test("displayName is the server's display name first, as the web names the account")
+    func displayNamePrefersTheFullName() {
+        var named = summary(url: TestHost.serverURL, email: TestAccount.email)
+        named.fullName = TestAccount.fullName
+        #expect(named.displayName == TestAccount.fullName)
+        named.fullName = ""
+        #expect(named.displayName == TestAccount.username)
+    }
+
     @Test("the server line is left out when the name already is the server")
     func serverSubtitleSkipsADuplicate() {
         #expect(summary(url: TestHost.serverURL).serverSubtitle == TestHost.server)
