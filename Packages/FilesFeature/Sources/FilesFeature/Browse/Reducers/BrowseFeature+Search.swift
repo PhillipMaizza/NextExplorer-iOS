@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import FolderPickerFeature
 import Foundation
@@ -142,7 +143,8 @@ extension BrowseFeature {
     static func favoriteMatches(_ state: State, term: SearchTerm) -> [SearchResultItem] {
         let base = state.searchBasePath
         return state.favoritePaths.compactMap { favoritePath in
-            guard base.isEmpty || favoritePath.hasPrefix(base + "/") else { return nil }
+            let isInScope = base.isEmpty ? isSearchedFromRoot(favoritePath) : favoritePath.hasPrefix(base + "/")
+            guard isInScope else { return nil }
             let name = (favoritePath as NSString).lastPathComponent
             let isDirectory = state.items[id: favoritePath]?.isDirectory ?? true
             guard term.matches(

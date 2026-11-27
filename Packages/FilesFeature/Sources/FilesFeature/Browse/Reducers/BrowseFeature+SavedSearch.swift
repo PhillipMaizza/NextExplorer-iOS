@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import Foundation
 
@@ -61,6 +62,11 @@ extension BrowseFeature {
         return saved + pinnedFiles
     }
 
+    nonisolated static func isSearchedFromRoot(_ path: String) -> Bool {
+        let top = path.split(separator: "/").first.map(String.init)
+        return top != PersonalSpace.rootPath && top != PersonalSpace.receivedSharesRootPath
+    }
+
     /// `items` that `term` matches below `base`, as search results.
     nonisolated static func searchMatches(
         _ items: [FileItem],
@@ -68,6 +74,7 @@ extension BrowseFeature {
         below base: String
     ) -> [SearchResultItem] {
         items
+            .filter { !base.isEmpty || isSearchedFromRoot($0.id) }
             .filter { term.matches(
                 name: $0.name,
                 relativePath: relativePath($0.id, below: base),
