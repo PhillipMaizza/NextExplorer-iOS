@@ -318,6 +318,22 @@ createShare.summaryPasswordProtected	Dilindungi
 createShare.summaryExpires	Kedaluwarsa
 createShare.summarySpecificPeople	Orang tertentu
 createShare.errorPastExpiration	Pilih tanggal kedaluwarsa di masa depan.
+createShare.peopleCan	Orang dapat
+createShare.accessViewOnly	Hanya melihat
+createShare.accessViewOnlyHint	Membuka dan membaca. Tanpa salinan.
+createShare.accessCanDownload	Mengunduh
+createShare.accessCanDownloadHint	Membuka dan mengunduh.
+createShare.accessCanEdit	Mengedit
+createShare.accessCanEditHint	Membuka, mengubah, menambah, dan menghapus file.
+createShare.accessCanEditFileHint	Membuka, mengunduh, dan mengubah file.
+createShare.accessCustomHint	Pilih setiap izin.
+createShare.permissionDelete	Menghapus file
+createShare.permissionCreateFolders	Membuat folder
+createShare.permissionCreateFiles	Membuat file
+createShare.permissionUpload	Mengunggah file dan folder
+createShare.versionsVisible	Tampilkan versi file
+createShare.versionsVisibleHint	Orang yang memakai berbagi ini melihat versi lama filenya, dan dapat memulihkannya jika boleh mengedit.
+createShare.versionsDownload	Mengunduh versi
 editShare.title	Ubah Tautan Berbagi
 editShare.save	Simpan Perubahan
 editShare.passwordKeepHint	Biarkan kosong untuk mempertahankan kata sandi saat ini

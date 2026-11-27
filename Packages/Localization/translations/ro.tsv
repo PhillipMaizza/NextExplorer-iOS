@@ -337,6 +337,22 @@ createShare.summaryPasswordProtected	Protejat
 createShare.summaryExpires	Expiră
 createShare.summarySpecificPeople	Anumite persoane
 createShare.errorPastExpiration	Alege o dată de expirare în viitor.
+createShare.peopleCan	Persoanele pot
+createShare.accessViewOnly	Doar vizualizare
+createShare.accessViewOnlyHint	Deschid și citesc. Fără copii.
+createShare.accessCanDownload	Descărcare
+createShare.accessCanDownloadHint	Deschid și descarcă.
+createShare.accessCanEdit	Editare
+createShare.accessCanEditHint	Deschid, modifică, adaugă și șterg fișiere.
+createShare.accessCanEditFileHint	Deschid, descarcă și modifică fișierul.
+createShare.accessCustomHint	Alegeți fiecare permisiune.
+createShare.permissionDelete	Ștergere fișiere
+createShare.permissionCreateFolders	Creare dosare
+createShare.permissionCreateFiles	Creare fișiere
+createShare.permissionUpload	Încărcare fișiere și dosare
+createShare.versionsVisible	Afișați versiunile fișierelor
+createShare.versionsVisibleHint	Cei care folosesc această partajare văd versiunile anterioare ale fișierelor și le pot restaura dacă au dreptul de editare.
+createShare.versionsDownload	Descărcare versiuni
 editShare.title	Editează linkul de partajare
 editShare.save	Salvează modificările
 editShare.passwordKeepHint	Lasă gol pentru a păstra parola actuală

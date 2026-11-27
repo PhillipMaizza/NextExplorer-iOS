@@ -11,6 +11,23 @@ extension FilesService {
         let password: String?
         let userIds: [String]
         let expiresAt: String?
+        let permissions: SharePermissions?
+
+        enum CodingKeys: String, CodingKey {
+            case sourcePath, label, accessMode, sharingType, password, userIds, expiresAt
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(sourcePath, forKey: .sourcePath)
+            try container.encodeIfPresent(label, forKey: .label)
+            try container.encode(accessMode, forKey: .accessMode)
+            try container.encode(sharingType, forKey: .sharingType)
+            try container.encodeIfPresent(password, forKey: .password)
+            try container.encode(userIds, forKey: .userIds)
+            try container.encodeIfPresent(expiresAt, forKey: .expiresAt)
+            try permissions?.encode(to: encoder)
+        }
     }
 
     /// Body for `PUT /api/shares/:id`. `label` / `expiresAt` are always written (`null`
@@ -23,6 +40,7 @@ extension FilesService {
         let expiresAt: String?
         let userIds: [String]?
         let password: UpdateShareRequest.PasswordChange
+        let permissions: SharePermissions?
 
         enum CodingKeys: String, CodingKey {
             case label, accessMode, sharingType, expiresAt, userIds, password
@@ -43,6 +61,7 @@ extension FilesService {
             case let .set(value):
                 try container.encode(value, forKey: .password)
             }
+            try permissions?.encode(to: encoder)
         }
     }
 

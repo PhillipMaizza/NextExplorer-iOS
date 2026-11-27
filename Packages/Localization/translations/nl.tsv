@@ -326,6 +326,22 @@ createShare.summaryPasswordProtected	Beveiligd
 createShare.summaryExpires	Verloopt
 createShare.summarySpecificPeople	Specifieke personen
 createShare.errorPastExpiration	Kies een vervaldatum in de toekomst.
+createShare.peopleCan	Mensen kunnen
+createShare.accessViewOnly	Alleen bekijken
+createShare.accessViewOnlyHint	Openen en lezen. Geen kopieën.
+createShare.accessCanDownload	Downloaden
+createShare.accessCanDownloadHint	Openen en downloaden.
+createShare.accessCanEdit	Bewerken
+createShare.accessCanEditHint	Openen, wijzigen, toevoegen en bestanden verwijderen.
+createShare.accessCanEditFileHint	Openen, downloaden en het bestand wijzigen.
+createShare.accessCustomHint	Kies elke toestemming.
+createShare.permissionDelete	Bestanden verwijderen
+createShare.permissionCreateFolders	Mappen maken
+createShare.permissionCreateFiles	Bestanden maken
+createShare.permissionUpload	Bestanden en mappen uploaden
+createShare.versionsVisible	Bestandsversies tonen
+createShare.versionsVisibleHint	Wie deze deellink gebruikt, ziet de eerdere versies van de bestanden en kan ze terugzetten als bewerken is toegestaan.
+createShare.versionsDownload	Versies downloaden
 editShare.title	Deellink bewerken
 editShare.save	Wijzigingen bewaren
 editShare.passwordKeepHint	Laat leeg om het huidige wachtwoord te behouden

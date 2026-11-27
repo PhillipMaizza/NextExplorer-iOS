@@ -348,6 +348,22 @@ createShare.summaryPasswordProtected	Chronione
 createShare.summaryExpires	Wygasa
 createShare.summarySpecificPeople	Określone osoby
 createShare.errorPastExpiration	Wybierz przyszłą datę wygaśnięcia.
+createShare.peopleCan	Osoby mogą
+createShare.accessViewOnly	Tylko oglądać
+createShare.accessViewOnlyHint	Otwierać i czytać. Bez kopii.
+createShare.accessCanDownload	Pobierać
+createShare.accessCanDownloadHint	Otwierać i pobierać.
+createShare.accessCanEdit	Edytować
+createShare.accessCanEditHint	Otwierać, zmieniać, dodawać i usuwać pliki.
+createShare.accessCanEditFileHint	Otwierać, pobierać i zmieniać plik.
+createShare.accessCustomHint	Wybierz każde uprawnienie.
+createShare.permissionDelete	Usuwać pliki
+createShare.permissionCreateFolders	Tworzyć foldery
+createShare.permissionCreateFiles	Tworzyć pliki
+createShare.permissionUpload	Przesyłać pliki i foldery
+createShare.versionsVisible	Pokaż wersje plików
+createShare.versionsVisibleHint	Osoby korzystające z tego udostępnienia widzą wcześniejsze wersje jego plików i mogą je przywrócić, jeśli mają prawo edycji.
+createShare.versionsDownload	Pobierać wersje
 editShare.title	Edytuj link do udostępniania
 editShare.save	Zapisz zmiany
 editShare.passwordKeepHint	Pozostaw puste, aby zachować obecne hasło

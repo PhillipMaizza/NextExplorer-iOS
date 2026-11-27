@@ -318,6 +318,22 @@ createShare.summaryPasswordProtected	Được bảo vệ
 createShare.summaryExpires	Hết hạn
 createShare.summarySpecificPeople	Những người cụ thể
 createShare.errorPastExpiration	Hãy chọn một ngày hết hạn trong tương lai.
+createShare.peopleCan	Mọi người có thể
+createShare.accessViewOnly	Chỉ xem
+createShare.accessViewOnlyHint	Mở và đọc. Không sao chép.
+createShare.accessCanDownload	Tải xuống
+createShare.accessCanDownloadHint	Mở và tải xuống.
+createShare.accessCanEdit	Chỉnh sửa
+createShare.accessCanEditHint	Mở, thay đổi, thêm và xóa tệp.
+createShare.accessCanEditFileHint	Mở, tải xuống và thay đổi tệp.
+createShare.accessCustomHint	Chọn từng quyền.
+createShare.permissionDelete	Xóa tệp
+createShare.permissionCreateFolders	Tạo thư mục
+createShare.permissionCreateFiles	Tạo tệp
+createShare.permissionUpload	Tải lên tệp và thư mục
+createShare.versionsVisible	Hiện các phiên bản tệp
+createShare.versionsVisibleHint	Người dùng chia sẻ này thấy các phiên bản trước của tệp và có thể khôi phục nếu được phép chỉnh sửa.
+createShare.versionsDownload	Tải xuống phiên bản
 editShare.title	Sửa liên kết chia sẻ
 editShare.save	Lưu thay đổi
 editShare.passwordKeepHint	Để trống để giữ mật khẩu hiện tại

@@ -370,6 +370,22 @@ createShare.summaryPasswordProtected	محمي
 createShare.summaryExpires	ينتهي في
 createShare.summarySpecificPeople	أشخاص محددون
 createShare.errorPastExpiration	اختر تاريخ انتهاء صلاحية في المستقبل.
+createShare.peopleCan	يمكن للأشخاص
+createShare.accessViewOnly	العرض فقط
+createShare.accessViewOnlyHint	الفتح والقراءة. بلا نسخ.
+createShare.accessCanDownload	التنزيل
+createShare.accessCanDownloadHint	الفتح والتنزيل.
+createShare.accessCanEdit	التعديل
+createShare.accessCanEditHint	فتح الملفات وتغييرها وإضافتها وحذفها.
+createShare.accessCanEditFileHint	فتح الملف وتنزيله وتغييره.
+createShare.accessCustomHint	اختر كل إذن على حدة.
+createShare.permissionDelete	حذف الملفات
+createShare.permissionCreateFolders	إنشاء مجلدات
+createShare.permissionCreateFiles	إنشاء ملفات
+createShare.permissionUpload	رفع الملفات والمجلدات
+createShare.versionsVisible	إظهار إصدارات الملفات
+createShare.versionsVisibleHint	يرى مستخدمو هذه المشاركة الإصدارات السابقة لملفاتها، ويمكنهم استعادتها إذا كان مسموحًا لهم بالتعديل.
+createShare.versionsDownload	تنزيل الإصدارات
 editShare.title	تحرير رابط المشاركة
 editShare.save	حفظ التغييرات
 editShare.passwordKeepHint	اتركه فارغًا للاحتفاظ بكلمة السر الحالية

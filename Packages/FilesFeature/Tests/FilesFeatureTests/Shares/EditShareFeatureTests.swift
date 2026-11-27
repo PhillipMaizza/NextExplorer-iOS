@@ -116,7 +116,7 @@ struct EditShareFeatureTests {
         var initial = EditShareFeature.State(serverURL: serverURL, share: share(), now: fixedNow)
         initial.$shareLinksRevision.withLock { $0 = 0 }
         initial.label = "Renamed"
-        initial.accessMode = .readwrite
+        initial.accessChoice = .canEdit
         let updated = share(label: "Renamed", accessMode: .readwrite)
 
         let recorded = LockIsolated<UpdateShareRequest?>(nil)

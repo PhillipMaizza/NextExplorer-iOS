@@ -231,7 +231,7 @@ public struct SharedFeature {
         case editPopoverTapped(Share, EditPopover)
         case editPopoverDismissed
         case labelEditEnded
-        case accessModeChosen(Share, ShareAccessMode)
+        case accessChoiceChosen(Share, ShareAccessChoice)
         case editSheet(PresentationAction<EditShareFeature.Action>)
         case actionToastShown
         case detailOpened(Segment, Item.ID)
@@ -460,10 +460,11 @@ public struct SharedFeature {
                 state.editSheet = edit
                 return .none
 
-            case let .accessModeChosen(share, mode):
-                guard share.accessMode != mode, state.editPopover != .inline else { return .none }
+            case let .accessChoiceChosen(share, choice):
                 var edit = EditShareFeature.State(serverURL: state.serverURL, share: share, now: date.now)
-                edit.accessMode = mode
+                guard edit.accessChoice != choice, state.editPopover != .inline else { return .none }
+                edit.accessChoice = choice
+                edit.permissions = choice.applied(to: edit.permissions)
                 state.editPopover = .inline
                 state.editSheet = edit
                 return .send(.editSheet(.presented(.saveTapped)))

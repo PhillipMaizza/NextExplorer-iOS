@@ -28,7 +28,7 @@ private enum Fixture {
             accessMode: .readonly,
             sharingType: .users,
             hasPassword: false,
-            isDownloadAllowed: isDownloadAllowed,
+            permissions: SharePermissions(canDownload: isDownloadAllowed),
             expiresAt: expiresAt,
             label: "TO-ME",
             createdAt: MockDate.date,

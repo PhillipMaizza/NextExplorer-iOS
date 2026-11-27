@@ -329,6 +329,22 @@ createShare.summaryPasswordProtected	Προστατευμένο
 createShare.summaryExpires	Λήγει
 createShare.summarySpecificPeople	Συγκεκριμένα άτομα
 createShare.errorPastExpiration	Επιλέξτε ημερομηνία λήξης στο μέλλον.
+createShare.peopleCan	Οι χρήστες μπορούν
+createShare.accessViewOnly	Μόνο προβολή
+createShare.accessViewOnlyHint	Άνοιγμα και ανάγνωση. Χωρίς αντίγραφα.
+createShare.accessCanDownload	Λήψη
+createShare.accessCanDownloadHint	Άνοιγμα και λήψη.
+createShare.accessCanEdit	Επεξεργασία
+createShare.accessCanEditHint	Άνοιγμα, αλλαγή, προσθήκη και διαγραφή αρχείων.
+createShare.accessCanEditFileHint	Άνοιγμα, λήψη και αλλαγή του αρχείου.
+createShare.accessCustomHint	Επιλέξτε κάθε άδεια.
+createShare.permissionDelete	Διαγραφή αρχείων
+createShare.permissionCreateFolders	Δημιουργία φακέλων
+createShare.permissionCreateFiles	Δημιουργία αρχείων
+createShare.permissionUpload	Μεταφόρτωση αρχείων και φακέλων
+createShare.versionsVisible	Εμφάνιση εκδόσεων αρχείων
+createShare.versionsVisibleHint	Όσοι χρησιμοποιούν αυτή την κοινή χρήση βλέπουν τις προηγούμενες εκδόσεις των αρχείων της και μπορούν να τις επαναφέρουν αν έχουν δικαίωμα επεξεργασίας.
+createShare.versionsDownload	Λήψη εκδόσεων
 editShare.title	Επεξεργασία συνδέσμου κοινοποίησης
 editShare.save	Αποθήκευση αλλαγών
 editShare.passwordKeepHint	Αφήστε το κενό για να διατηρηθεί ο τρέχων κωδικός πρόσβασης

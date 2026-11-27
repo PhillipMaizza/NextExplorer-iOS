@@ -11,7 +11,8 @@
         let isDirectory: Bool
         let location: String
         let label: Binding<String>
-        let accessMode: Binding<ShareAccessMode>
+        let accessChoice: Binding<ShareAccessChoice>
+        let permissions: Binding<SharePermissions>
         let target: Binding<ShareTarget>
         let users: [User]
         let selectedUserIDs: Set<User.ID>
@@ -30,16 +31,7 @@
             MacLabeledField(L10n.CreateShare.sectionLabel) {
                 MacTextField(L10n.CreateShare.sectionLabel, text: label, prompt: itemName)
             }
-            MacLabeledField(
-                L10n.CreateShare.sectionAccessMode,
-                hint: accessMode.wrappedValue.hint(isDirectory: isDirectory)
-            ) {
-                MacSegmentedPicker(
-                    L10n.CreateShare.sectionAccessMode,
-                    options: ShareAccessMode.allCases,
-                    selection: accessMode
-                ) { $0.title }
-            }
+            MacShareAccessField(isDirectory: isDirectory, choice: accessChoice, permissions: permissions)
             MacLabeledField(
                 L10n.CreateShare.sectionWhoCanAccess,
                 hint: target.wrappedValue.hint
@@ -59,6 +51,7 @@
                 )
             }
             MacFormGroup {
+                MacShareVersionsOptions(permissions: permissions)
                 if target.wrappedValue == .anyone {
                     MacToggleOption(L10n.CreateShare.togglePasswordProtect, isOn: isPasswordOn) {
                         MacSecureField(L10n.Common.password, text: password, prompt: Text(passwordPrompt))
@@ -77,7 +70,8 @@
             isDirectory: Bool,
             location: String,
             label: Binding<String>,
-            accessMode: Binding<ShareAccessMode>,
+            accessChoice: Binding<ShareAccessChoice>,
+            permissions: Binding<SharePermissions>,
             target: Binding<ShareTarget>,
             users: [User],
             selectedUserIDs: Set<User.ID>,
@@ -94,7 +88,8 @@
                 isDirectory: isDirectory,
                 location: location,
                 label: label,
-                accessMode: accessMode,
+                accessChoice: accessChoice,
+                permissions: permissions,
                 target: target,
                 users: users,
                 selectedUserIDs: selectedUserIDs,
@@ -117,7 +112,8 @@
                 isDirectory: true,
                 location: "Documents/Bills",
                 label: .constant(""),
-                accessMode: .constant(.readonly),
+                accessChoice: .constant(.canDownload),
+                permissions: .constant(SharePermissions()),
                 target: .constant(target),
                 users: User.previewManagedUsers,
                 selectedUserIDs: [],

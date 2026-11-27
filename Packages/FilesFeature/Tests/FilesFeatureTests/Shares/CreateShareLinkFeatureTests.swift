@@ -69,7 +69,7 @@ struct CreateShareLinkFeatureTests {
         let store = TestStore(initialState: makeState()) { CreateShareLinkFeature() }
 
         await store.send(.labelChanged("Bills")) { $0.label = "Bills" }
-        await store.send(.accessModeChanged(.readwrite)) { $0.accessMode = .readwrite }
+        await store.send(.accessModeChanged(.readwrite)) { $0.accessChoice = .canEdit }
         await store.send(.passwordEnabledChanged(true)) { $0.isPasswordEnabled = true }
         await store.send(.passwordChanged(TestAccount.password)) { $0.password = TestAccount.password }
         await store.send(.expiryEnabledChanged(true)) {
@@ -131,6 +131,8 @@ struct CreateShareLinkFeatureTests {
 
         await store.send(.targetChanged(.users)) {
             $0.target = .users
+            $0.permissions.showsVersions = true
+            $0.permissions.canDownloadVersions = true
             $0.usersPhase = .loading
         }
         await store.receive(\.shareableUsersResponse.success) {

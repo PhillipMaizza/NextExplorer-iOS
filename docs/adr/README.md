@@ -36,3 +36,4 @@ refactor. Number it after the last one and keep it short. A record that stops ho
 | [0025](0025-encrypted-zip-password-prompt.md) | An encrypted zip asks for its password in the app's alert |
 | [0026](0026-versions-in-the-item-menu.md) | Versions in the item menu, Show All Versions in the inspector |
 | [0027](0027-download-several-items.md) | Downloading files and folders together asks One Archive or Separate Files |
+| [0028](0028-share-access-choices.md) | Share access as choice rows, with Custom for a folder's own switches |

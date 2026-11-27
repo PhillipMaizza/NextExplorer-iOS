@@ -326,6 +326,22 @@ createShare.summaryPasswordProtected	Skyddad
 createShare.summaryExpires	Upphör
 createShare.summarySpecificPeople	Specifika personer
 createShare.errorPastExpiration	Välj ett utgångsdatum i framtiden.
+createShare.peopleCan	Personer kan
+createShare.accessViewOnly	Bara visa
+createShare.accessViewOnlyHint	Öppna och läsa. Inga kopior.
+createShare.accessCanDownload	Ladda ner
+createShare.accessCanDownloadHint	Öppna och ladda ner.
+createShare.accessCanEdit	Redigera
+createShare.accessCanEditHint	Öppna, ändra, lägga till och radera filer.
+createShare.accessCanEditFileHint	Öppna, ladda ner och ändra filen.
+createShare.accessCustomHint	Välj varje behörighet.
+createShare.permissionDelete	Radera filer
+createShare.permissionCreateFolders	Skapa mappar
+createShare.permissionCreateFiles	Skapa filer
+createShare.permissionUpload	Ladda upp filer och mappar
+createShare.versionsVisible	Visa filversioner
+createShare.versionsVisibleHint	De som använder den här delningen ser tidigare versioner av dess filer och kan återställa dem om de får redigera.
+createShare.versionsDownload	Ladda ner versioner
 editShare.title	Redigera delningslänk
 editShare.save	Spara ändringar
 editShare.passwordKeepHint	Lämna tomt för att behålla det nuvarande lösenordet

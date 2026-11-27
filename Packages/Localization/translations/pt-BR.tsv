@@ -336,6 +336,22 @@ createShare.summaryPasswordProtected	Protegido
 createShare.summaryExpires	Expira
 createShare.summarySpecificPeople	Pessoas específicas
 createShare.errorPastExpiration	Escolha uma data de validade futura.
+createShare.peopleCan	As pessoas podem
+createShare.accessViewOnly	Só ver
+createShare.accessViewOnlyHint	Abrir e ler. Sem cópias.
+createShare.accessCanDownload	Baixar
+createShare.accessCanDownloadHint	Abrir e baixar.
+createShare.accessCanEdit	Editar
+createShare.accessCanEditHint	Abrir, alterar, adicionar e excluir arquivos.
+createShare.accessCanEditFileHint	Abrir, baixar e alterar o arquivo.
+createShare.accessCustomHint	Escolha cada permissão.
+createShare.permissionDelete	Excluir arquivos
+createShare.permissionCreateFolders	Criar pastas
+createShare.permissionCreateFiles	Criar arquivos
+createShare.permissionUpload	Enviar arquivos e pastas
+createShare.versionsVisible	Mostrar versões dos arquivos
+createShare.versionsVisibleHint	Quem usa este compartilhamento vê as versões anteriores dos arquivos e pode restaurá-las se tiver permissão para editar.
+createShare.versionsDownload	Baixar versões
 editShare.title	Editar o link de compartilhamento
 editShare.save	Salvar as alterações
 editShare.passwordKeepHint	Deixe em branco para manter a senha atual

@@ -315,6 +315,22 @@ createShare.summaryPasswordProtected	보호됨
 createShare.summaryExpires	만료
 createShare.summarySpecificPeople	특정 사용자
 createShare.errorPastExpiration	미래의 만료 날짜를 선택하세요.
+createShare.peopleCan	사용자가 할 수 있는 작업
+createShare.accessViewOnly	보기만
+createShare.accessViewOnlyHint	열고 읽기. 복사 불가.
+createShare.accessCanDownload	다운로드 가능
+createShare.accessCanDownloadHint	열고 다운로드.
+createShare.accessCanEdit	편집 가능
+createShare.accessCanEditHint	파일 열기, 변경, 추가, 삭제.
+createShare.accessCanEditFileHint	파일 열기, 다운로드, 변경.
+createShare.accessCustomHint	권한을 하나씩 선택하세요.
+createShare.permissionDelete	파일 삭제
+createShare.permissionCreateFolders	폴더 만들기
+createShare.permissionCreateFiles	파일 만들기
+createShare.permissionUpload	파일 및 폴더 업로드
+createShare.versionsVisible	파일 버전 표시
+createShare.versionsVisibleHint	이 공유를 사용하는 사람은 파일의 이전 버전을 볼 수 있고, 편집 권한이 있으면 복원할 수 있습니다.
+createShare.versionsDownload	버전 다운로드
 editShare.title	공유 링크 편집
 editShare.save	변경 사항 저장
 editShare.passwordKeepHint	현재 비밀번호를 유지하려면 비워 두세요

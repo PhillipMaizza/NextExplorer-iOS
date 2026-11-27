@@ -36,7 +36,8 @@ public struct EditShareFeature {
         let openedExpiresAt: Date
 
         public var label: String
-        public var accessMode: ShareAccessMode
+        public var accessChoice: ShareAccessChoice
+        public var permissions: SharePermissions
         public var target: ShareTarget
         public var expiryPreset: ExpiryPreset
         public var expiresAt: Date
@@ -57,6 +58,10 @@ public struct EditShareFeature {
             share.id
         }
 
+        public var accessMode: ShareAccessMode {
+            accessChoice.accessMode
+        }
+
         /// The label opens filled with the share's name. An expired share opens on Custom with a
         /// fresh date a week out, so bringing it back is one tap on Save.
         public init(serverURL: URL, share: Share, now: Date) {
@@ -64,7 +69,8 @@ public struct EditShareFeature {
             self.share = share
             openedAt = now
             label = share.displayName
-            accessMode = share.accessMode
+            accessChoice = ShareAccessChoice(accessMode: share.accessMode, permissions: share.permissions)
+            permissions = share.permissions
             target = share.sharingType
             isPasswordEnabled = share.hasPassword
             selectedUserIDs = Set(share.permittedUserIds ?? [])
@@ -126,6 +132,7 @@ public struct EditShareFeature {
             let isPeopleChanged = target == .users && selectedUserIDs != Set(share.permittedUserIds ?? [])
             return savedLabel != share.trimmedLabel
                 || accessMode != share.accessMode
+                || permissions != share.permissions
                 || target != share.sharingType
                 || isPeopleChanged
                 || isPasswordEnabled != share.hasPassword
@@ -173,6 +180,8 @@ public struct EditShareFeature {
         case task
         case labelChanged(String)
         case accessModeChanged(ShareAccessMode)
+        case accessChoiceChanged(ShareAccessChoice)
+        case permissionsChanged(SharePermissions)
         case targetChanged(ShareTarget)
         case wantsPasswordChanged(Bool)
         case newPasswordChanged(String)
@@ -214,8 +223,18 @@ public struct EditShareFeature {
                 return .none
 
             case let .accessModeChanged(mode):
-                state.accessMode = mode
+                state.accessChoice = ShareAccessChoice(accessMode: mode, permissions: state.permissions)
                 state.errorMessage = nil
+                return .none
+
+            case let .accessChoiceChanged(choice):
+                state.accessChoice = choice
+                state.permissions = choice.applied(to: state.permissions)
+                state.errorMessage = nil
+                return .none
+
+            case let .permissionsChanged(permissions):
+                state.permissions = permissions
                 return .none
 
             case let .targetChanged(target):
@@ -315,7 +334,8 @@ public struct EditShareFeature {
                     target: state.target,
                     expiresAt: state.isExpiryEnabled ? state.expiresAt : nil,
                     userIds: state.target == .users ? state.selectedUserIDs.sorted() : [],
-                    password: state.passwordChange
+                    password: state.passwordChange,
+                    permissions: state.permissions
                 )
                 let serverURL = state.serverURL
                 let shareID = state.share.id

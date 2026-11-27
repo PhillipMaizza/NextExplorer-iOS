@@ -130,13 +130,13 @@
                         MacInspectorControlRow(label: L10n.MacSettings.permission) {
                             MacPopup(
                                 L10n.MacSettings.permission,
-                                valueLabel: share.accessMode.title,
+                                valueLabel: share.accessChoice.title,
                                 selection: Binding(
-                                    get: { share.accessMode },
-                                    set: { store.send(.accessModeChosen(share, $0)) }
+                                    get: { share.accessChoice },
+                                    set: { store.send(.accessChoiceChosen(share, $0)) }
                                 )
                             ) {
-                                ForEach(ShareAccessMode.allCases, id: \.self) { Text($0.title).tag($0) }
+                                ForEach(share.accessChoice.popupOptions, id: \.self) { Text($0.title).tag($0) }
                             }
                             .fixedSize()
                         }
@@ -152,7 +152,7 @@
                             expiryPopover
                         }
                     } else {
-                        MacInspectorRow(L10n.MacSettings.permission, share.accessMode.title)
+                        MacInspectorRow(L10n.MacSettings.permission, share.accessChoice.title)
                         MacInspectorRow(L10n.Common.password, facts.password)
                         MacInspectorRow(facts.expiresTitle, facts.expires, valueColor: expiresColor(facts))
                     }

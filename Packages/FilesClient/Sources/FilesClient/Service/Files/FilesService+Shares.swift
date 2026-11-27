@@ -18,7 +18,8 @@ extension FilesService {
             sharingType: request.target.rawValue,
             password: request.password,
             userIds: request.target == .users ? request.userIds : [],
-            expiresAt: request.expiresAt.map(Self.formatShareExpiry)
+            expiresAt: request.expiresAt.map(Self.formatShareExpiry),
+            permissions: request.permissions
         )
         httpRequest.httpBody = try Self.encode(body)
         return try await sendReportingMessage(httpRequest, decoding: CreatedShare.self)
@@ -68,7 +69,8 @@ extension FilesService {
             sharingType: request.target.rawValue,
             expiresAt: request.expiresAt.map(Self.formatShareExpiry),
             userIds: request.target == .users ? request.userIds : nil,
-            password: request.password
+            password: request.password,
+            permissions: request.permissions
         )
         httpRequest.httpBody = try Self.encode(body)
         return try await sendReportingMessage(httpRequest, decoding: Share.self)

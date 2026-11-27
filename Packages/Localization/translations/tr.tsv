@@ -329,6 +329,22 @@ createShare.summaryPasswordProtected	Korumalı
 createShare.summaryExpires	Son kullanma
 createShare.summarySpecificPeople	Belirli kişiler
 createShare.errorPastExpiration	Gelecekte bir son kullanma tarihi seçin.
+createShare.peopleCan	Kişiler şunları yapabilir
+createShare.accessViewOnly	Yalnızca görüntüleme
+createShare.accessViewOnlyHint	Açma ve okuma. Kopya yok.
+createShare.accessCanDownload	İndirme
+createShare.accessCanDownloadHint	Açma ve indirme.
+createShare.accessCanEdit	Düzenleme
+createShare.accessCanEditHint	Açma, değiştirme, ekleme ve dosya silme.
+createShare.accessCanEditFileHint	Açma, indirme ve dosyayı değiştirme.
+createShare.accessCustomHint	Her izni ayrı seçin.
+createShare.permissionDelete	Dosya silme
+createShare.permissionCreateFolders	Klasör oluşturma
+createShare.permissionCreateFiles	Dosya oluşturma
+createShare.permissionUpload	Dosya ve klasör yükleme
+createShare.versionsVisible	Dosya sürümlerini göster
+createShare.versionsVisibleHint	Bu paylaşımı kullananlar dosyalarının önceki sürümlerini görür ve düzenleme izinleri varsa geri yükleyebilir.
+createShare.versionsDownload	Sürümleri indirme
 editShare.title	Paylaşım Bağlantısını Düzenle
 editShare.save	Değişiklikleri Kaydet
 editShare.passwordKeepHint	Mevcut parolayı korumak için boş bırakın

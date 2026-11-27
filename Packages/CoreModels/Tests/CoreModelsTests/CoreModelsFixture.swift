@@ -148,6 +148,7 @@ enum CoreModelsFixture: String, FixtureFile {
     // MARK: share
 
     case shareAnyoneOwnerString = "share/anyone-owner-string"
+    case shareCustomPermissions = "share/custom-permissions"
     case shareCreatedMissingUrls = "share/created-missing-urls"
     case shareCreatedWithUrls = "share/created-with-urls"
     case shareMissingShareToken = "share/missing-share-token"

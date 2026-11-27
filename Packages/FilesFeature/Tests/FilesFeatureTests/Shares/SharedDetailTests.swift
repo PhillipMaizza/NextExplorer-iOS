@@ -377,15 +377,15 @@ struct SharedDetailTests {
             }
         }
         var edit = EditShareFeature.State(serverURL: serverURL, share: share, now: MockDate.date)
-        edit.accessMode = .readwrite
+        edit.accessChoice = .canEdit
 
-        await store.send(.accessModeChosen(share, .readonly))
-        await store.send(.accessModeChosen(share, .readwrite)) {
+        await store.send(.accessChoiceChosen(share, .canDownload))
+        await store.send(.accessChoiceChosen(share, .canEdit)) {
             $0.editPopover = .inline
             $0.editSheet = edit
         }
         await store.receive(\.editSheet.saveTapped) { $0.editSheet?.isSaving = true }
-        await store.send(.accessModeChosen(share, .readwrite))
+        await store.send(.accessChoiceChosen(share, .canEdit))
         gate.open()
         await store.receive(\.editSheet.saveResponse.failure) {
             $0.editSheet?.isSaving = false
