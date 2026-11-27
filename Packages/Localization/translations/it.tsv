@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Password errata o archivio danneggiato.
 browse.progressCompressing	Compressione…
 browse.offlineBannerDetail	Visualizzazione di una copia salvata da %@
 browse.actionCopy	Copia
-browse.destinationPickerMoveTitle	Sposta in…
+browse.destinationPickerMoveTitle	Sposta in
 browse.destinationPickerConfirmMove	Sposta qui
-browse.destinationPickerCopyTitle	Copia in…
+browse.destinationPickerCopyTitle	Copia in
 browse.destinationPickerConfirmCopy	Copia qui
 browse.actionMoveTo	Sposta in…
 browse.actionCopyTo	Copia in…
@@ -114,6 +114,16 @@ browse.destinationPickerNoFolders	Nessuna cartella qui
 browse.destinationPickerLoadFailed	Impossibile caricare le cartelle.
 browse.destinationPickerRecent	Recenti
 browse.destinationPickerReplaceTitle	Quale file sostituire?
+browse.destinationPickerMoveItems#one	Sposta %lld elemento
+browse.destinationPickerMoveItems#other	Sposta %lld elementi
+browse.destinationPickerCopyItems#one	Copia %lld elemento
+browse.destinationPickerCopyItems#other	Copia %lld elementi
+browse.destinationPickerLocations	Posizioni
+browse.destinationPickerInto	In %@
+browse.destinationPickerAlreadyThere	Già in %@
+browse.destinationPickerIntoItself	Una cartella non può andare dentro sé stessa
+browse.destinationPickerNoRights	Non puoi aggiungere questi elementi qui
+browse.destinationPickerChooseFolder	Scegli una cartella
 browse.actionMove	Sposta
 browse.actionPaste	Incolla
 browse.actionPasteCount	Incolla %lld elementi
@@ -183,7 +193,7 @@ uploads.actionUploadFromPhotos	Carica dalla galleria
 uploads.actionTakePhoto	Scatta foto o video
 uploads.cameraDeniedTitle	Accesso alla fotocamera necessario
 uploads.cameraDeniedMessage	Consenti l'accesso alla fotocamera in Impostazioni per scattare una foto o un video.
-uploads.destinationTitle	Carica in…
+uploads.destinationTitle	Carica in
 uploads.destinationConfirm	Carica qui
 uploads.reviewTitleOne	Carica 1 file
 uploads.reviewTitleMany	Carica %lld file
@@ -342,6 +352,7 @@ createShare.permissionUpload	Caricare file e cartelle
 createShare.versionsVisible	Mostra le versioni dei file
 createShare.versionsVisibleHint	Chi usa questa condivisione vede le versioni precedenti dei suoi file e può ripristinarle se ha il permesso di modifica.
 createShare.versionsDownload	Scaricare le versioni
+createShare.passwordAnyoneOnly	Solo per Chiunque abbia il link. Le persone scelte accedono con il proprio account.
 editShare.title	Modifica link di condivisione
 editShare.save	Salva modifiche
 editShare.passwordKeepHint	Lascia vuoto per mantenere la password attuale
@@ -1344,6 +1355,7 @@ trash.deletedByUnknown	Sconosciuto
 trash.deletedBy	Eliminato da %@
 trash.restore	Ripristina
 trash.restoreTo	Ripristina in…
+trash.restoreToTitle	Ripristina in
 trash.restoreHere	Ripristina qui
 trash.restoreFolder	Ripristina l'intera cartella
 trash.openLocation	Apri posizione originale

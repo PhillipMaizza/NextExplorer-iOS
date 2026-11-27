@@ -110,14 +110,24 @@ browse.archivePasswordInvalid	Hibás jelszó, vagy az archívum sérült.
 browse.progressCompressing	Tömörítés…
 browse.offlineBannerDetail	Mentett másolat megjelenítése innen: %@
 browse.actionCopy	Másolás
-browse.destinationPickerMoveTitle	Áthelyezés ide…
+browse.destinationPickerMoveTitle	Áthelyezés ide
 browse.destinationPickerConfirmMove	Áthelyezés ide
-browse.destinationPickerCopyTitle	Másolás ide…
+browse.destinationPickerCopyTitle	Másolás ide
 browse.destinationPickerConfirmCopy	Másolás ide
 browse.actionMoveTo	Áthelyezés ide…
 browse.actionCopyTo	Másolás ide…
 browse.destinationPickerNoFolders	Itt nincsenek mappák
 browse.destinationPickerLoadFailed	A mappákat nem sikerült betölteni.
+browse.destinationPickerMoveItems#one	%lld elem áthelyezése
+browse.destinationPickerMoveItems#other	%lld elem áthelyezése
+browse.destinationPickerCopyItems#one	%lld elem másolása
+browse.destinationPickerCopyItems#other	%lld elem másolása
+browse.destinationPickerLocations	Helyek
+browse.destinationPickerInto	Ide: %@
+browse.destinationPickerAlreadyThere	Már itt van: %@
+browse.destinationPickerIntoItself	Egy mappa nem kerülhet önmagába
+browse.destinationPickerNoRights	Ide nem adhatod hozzá ezeket az elemeket
+browse.destinationPickerChooseFolder	Válassz mappát
 browse.actionMove	Áthelyezés
 browse.actionPaste	Beillesztés
 browse.actionPasteCount	%lld elem beillesztése
@@ -187,7 +197,7 @@ uploads.actionUploadFromPhotos	Feltöltés a Galériából
 uploads.actionTakePhoto	Fénykép vagy videó készítése
 uploads.cameraDeniedTitle	Kamerahozzáférés szükséges
 uploads.cameraDeniedMessage	Engedélyezze a kamerahozzáférést a Beállításokban fénykép vagy videó készítéséhez.
-uploads.destinationTitle	Feltöltés ide…
+uploads.destinationTitle	Feltöltés ide
 uploads.destinationConfirm	Feltöltés ide
 uploads.reviewTitleOne	1 fájl feltöltése
 uploads.reviewTitleMany	%lld fájl feltöltése
@@ -345,6 +355,7 @@ createShare.permissionUpload	Fájlok és mappák feltöltése
 createShare.versionsVisible	Fájlverziók megjelenítése
 createShare.versionsVisibleHint	A megosztás használói látják a fájlok korábbi verzióit, és visszaállíthatják őket, ha szerkeszthetnek.
 createShare.versionsDownload	Verziók letöltése
+createShare.passwordAnyoneOnly	Csak a „Bárki, aki rendelkezik a hivatkozással” esetén. A kiválasztott személyek inkább bejelentkeznek.
 editShare.title	Megosztási hivatkozás szerkesztése
 editShare.save	Módosítások mentése
 editShare.passwordKeepHint	Hagyja üresen a jelenlegi jelszó megtartásához
@@ -1292,6 +1303,7 @@ trash.deletedByUnknown	Ismeretlen
 trash.deletedBy	Törölte: %@
 trash.restore	Visszaállítás
 trash.restoreTo	Visszaállítás ide…
+trash.restoreToTitle	Visszaállítás ide
 trash.restoreHere	Visszaállítás ide
 trash.restoreFolder	Teljes mappa visszaállítása
 trash.openLocation	Eredeti hely megnyitása

@@ -7,20 +7,13 @@
     import SwiftUI
 
     private enum Metrics {
-        static let padding: CGFloat = .space24
-        static let spacing: CGFloat = .space16
-        static let searchWidth: CGFloat = 180
-        static let height: CGFloat = 456
-        static let minBoxHeight: CGFloat = 160
-        static let rowHeight: CGFloat = .size32
-        static let backRowHeight: CGFloat = .size40
+        static let rowHeight: CGFloat = MacPickerMetrics.rowHeight
         static let rowInset: CGFloat = .space12
-        static let tileSize: CGFloat = 22
+        static let tileSize: CGFloat = MacPickerMetrics.tileSize
+        static let headerTop: CGFloat = .space24
+        static let footerVertical: CGFloat = .space16
     }
 
-    /// Move to, Copy to, Upload to and Restore to as a Mac sheet: recent folders in their own box,
-    /// then the folder on screen with Back and its folders (double click, ⌘↓ or VoiceOver opens one),
-    /// then Cancel and the confirm button for the folder on screen.
     struct MacDestinationPickerSheet: View {
         @Bindable var store: StoreOf<DestinationPickerFeature>
         let title: String
@@ -29,29 +22,54 @@
         @State private var selectedFolderID: FileItem.ID?
         @State private var selectedResultID: SearchResultItem.ID?
 
-        var body: some View {
-            VStack(alignment: .leading, spacing: Metrics.spacing) {
-                header
-                if store.showsRecentsSection {
-                    recentsBox
-                        .macDialogReveal()
-                }
-                folderBox
-                if store.isSearchTermTooShort {
-                    Text(SearchHint.tooShort)
-                        .type(.body3(.regular), style: .secondary)
-                        .macDialogReveal()
-                }
-                MacDialogButtons(
-                    confirmTitle: confirmTitle,
-                    isConfirmEnabled: store.canConfirm,
-                    onCancel: { store.send(.cancelTapped) },
-                    onConfirm: { store.send(.confirmTapped) }
-                )
+        private var showsItems: Bool {
+            (store.purpose == .move || store.purpose == .copy) && !store.items.isEmpty
+        }
+
+        private var headerTitle: String {
+            switch store.purpose {
+            case .move where showsItems: L10n.Browse.destinationPickerMoveItems(store.items.count)
+            case .copy where showsItems: L10n.Browse.destinationPickerCopyItems(store.items.count)
+            default: title
             }
-            .padding(Metrics.padding)
-            .frame(width: MacFormSheetMetrics.width, height: Metrics.height)
-            .animation(DSMotion.stateFade, value: store.showsRecentsSection)
+        }
+
+        var body: some View {
+            VStack(spacing: .zero) {
+                header
+                hairline
+                HStack(spacing: .zero) {
+                    if store.purpose != .replaceFile {
+                        MacPickerSidebar(
+                            recents: store.sidebarRecents,
+                            locations: store.locations,
+                            activeLocation: store.activeLocation,
+                            directoryPath: store.directoryPath,
+                            onRecent: { store.send(.recentTapped($0)) },
+                            onLocation: { store.send(.locationTapped($0)) }
+                        )
+                        Rectangle().fill(Color.macLine).frame(width: .borderWidthHairline)
+                    }
+                    VStack(spacing: .zero) {
+                        MacPickerPathBar(
+                            crumbs: store.crumbs,
+                            isRefining: store.isRefiningSearch,
+                            onBack: { store.send(.breadcrumbTapped(path: parentPath)) },
+                            onCrumb: { store.send(.breadcrumbTapped(path: $0)) }
+                        )
+                        hairline
+                        ZStack(alignment: .top) {
+                            boxContent
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    }
+                    .background(Color.macField)
+                }
+                .frame(height: MacPickerMetrics.bodyHeight)
+                hairline
+                footer
+            }
+            .frame(width: MacPickerMetrics.width)
             .animation(DSMotion.stateFade, value: store.showsSearchResults)
             .background {
                 Button(L10n.Browse.open, action: openSelection)
@@ -59,6 +77,9 @@
                     .opacity(0)
                     .allowsHitTesting(false)
                     .accessibilityHidden(true)
+            }
+            .sheet(isPresented: newFolderBinding) {
+                MacPickerNewFolderSheet(store: store)
             }
             .task { store.send(.onAppear) }
             .onChange(of: selectedFolderID) { _, id in store.send(.rowSelected(id)) }
@@ -73,100 +94,106 @@
                     selectedFolderID = path
                 }
             }
+            .onChange(of: store.selectedFolderPath) { _, path in
+                if let path, !store.showsSearchResults {
+                    selectedFolderID = path
+                }
+            }
+        }
+
+        private var hairline: some View {
+            Rectangle().fill(Color.macLine).frame(height: .borderWidthHairline)
+        }
+
+        private var newFolderBinding: Binding<Bool> {
+            Binding(
+                get: { store.newFolder != nil },
+                set: { isShown in
+                    if !isShown {
+                        store.send(.newFolderCancelled)
+                    }
+                }
+            )
         }
 
         private var header: some View {
-            HStack(spacing: .space8) {
-                Text(title).type(.headline4).lineLimit(1)
-                Spacer(minLength: .space8)
-                if store.isRefiningSearch {
-                    DSSpinner(size: .small)
-                        .macDialogReveal()
+            HStack(spacing: .space12) {
+                if showsItems {
+                    MacPickerItemStack(items: store.items)
                 }
+                VStack(alignment: .leading, spacing: .space2) {
+                    Text(headerTitle).type(.headline4).lineLimit(1)
+                    if showsItems {
+                        Text(store.items.map(\.name).formatted(.list(type: .and)))
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+                }
+                Spacer(minLength: .space8)
                 MacTextField(
                     L10n.Common.search,
                     text: $store.searchQuery.sending(\.searchQueryChanged),
                     prompt: L10n.Common.search
                 )
-                .frame(width: Metrics.searchWidth)
+                .frame(width: MacPickerMetrics.searchWidth)
             }
+            .padding(.horizontal, .space24)
+            .padding(.top, Metrics.headerTop)
+            .padding(.bottom, .space16)
         }
 
-        private var recentsBox: some View {
-            VStack(alignment: .leading, spacing: .zero) {
-                Text(L10n.Browse.destinationPickerRecent)
-                    .type(.caption(.semibold), style: .secondary)
-                    .padding(.horizontal, Metrics.rowInset)
-                    .padding(.top, .space8)
-                    .padding(.bottom, .space2)
-                    .accessibilityAddTraits(.isHeader)
-                ForEach(store.displayedRecents, id: \.self) { path in
-                    Button { store.send(.recentTapped(path)) } label: {
-                        MacPickerRow(
-                            name: PersonalSpace.folderTitle(path),
-                            detail: PersonalSpace.trail((path as NSString).deletingLastPathComponent),
-                            isDirectory: true,
-                            showsChevron: false
-                        )
-                        .padding(.horizontal, Metrics.rowInset)
-                        .contentShape(Rectangle())
+        private var footer: some View {
+            MacDialogButtons(
+                confirmTitle: confirmTitle,
+                isConfirmEnabled: store.canConfirm,
+                onCancel: { store.send(.cancelTapped) },
+                onConfirm: { store.send(.confirmTapped) }
+            ) {
+                if store.purpose != .replaceFile {
+                    Button { store.send(.newFolderTapped) } label: {
+                        Label { Text(L10n.Browse.newFolderTitle) } icon: { IconKit.macNewFolder }
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.macDS(.secondary, size: .small))
+                    .disabled(!store.canCreateFolder)
                 }
+                (status ?? Text(verbatim: ""))
+                    .type(.body3(.regular), style: .secondary)
+                    .lineLimit(1)
+                    .truncationMode(.head)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .contentTransition(.opacity)
+                    .animation(DSMotion.stateFade, value: statusKey)
             }
-            .padding(.bottom, .space4)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .macListBox()
+            .padding(.horizontal, .space24)
+            .padding(.vertical, Metrics.footerVertical)
         }
 
-        private var folderBox: some View {
-            VStack(spacing: .zero) {
-                if !store.showsSearchResults {
-                    backRow
-                        .macDialogReveal()
-                }
-                ZStack(alignment: .top) {
-                    boxContent
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            }
-            .frame(minHeight: Metrics.minBoxHeight, maxHeight: .infinity)
-            .macListBox()
+        private var statusKey: String {
+            "\(store.transferDestination)|\(String(describing: store.refusal))|\(store.isSearchTermTooShort)"
         }
 
-        private var backRow: some View {
-            HStack(spacing: .zero) {
-                if store.directoryPath.isEmpty {
-                    folderTitle
-                } else {
-                    Button { store.send(.breadcrumbTapped(path: parentPath)) } label: {
-                        HStack(spacing: .space4) {
-                            IconKit.back
-                                .imageScale(.small)
-                                .foregroundStyle(Color.macChromeSecondary)
-                            folderTitle
-                        }
-                        .padding(.leading, .space8)
-                        .padding(.trailing, .space12)
-                        .padding(.vertical, .space4)
-                        .background(Capsule().fill(Color.macSegment))
-                        .contentShape(Capsule())
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityLabelWithTooltip(L10n.Common.back)
-                }
-                Spacer(minLength: .zero)
+        private var status: Text? {
+            if store.isSearchTermTooShort {
+                return Text(SearchHint.tooShort)
             }
-            .foregroundStyle(Color.macChromeText)
-            .padding(.horizontal, .space8)
-            .frame(height: Metrics.backRowHeight)
+            if let refusal = store.refusal {
+                return Text(refusalMessage(refusal))
+            }
+            guard store.purpose != .replaceFile, store.phase == .loaded else { return nil }
+            guard !store.transferDestination.isEmpty else {
+                return Text(L10n.Browse.destinationPickerChooseFolder)
+            }
+            return Text(L10n.Browse.destinationPickerInto(store.destinationTrail))
         }
 
-        private var folderTitle: some View {
-            Text(PersonalSpace.folderTitle(store.directoryPath))
-                .type(.body2(.bold))
-                .lineLimit(1)
-                .truncationMode(.middle)
+        private func refusalMessage(_ refusal: FileClipboard.Refusal) -> String {
+            switch refusal {
+            case .noFolder: L10n.Browse.destinationPickerChooseFolder
+            case .noRights: L10n.Browse.destinationPickerNoRights
+            case .intoItself: L10n.Browse.destinationPickerIntoItself
+            case .alreadyThere: L10n.Browse.destinationPickerAlreadyThere(store.destinationName)
+            }
         }
 
         private var parentPath: String {
@@ -197,10 +224,10 @@
             } else if let errorMessage = store.phase.errorMessage {
                 messageRow(errorMessage, isError: true) { store.send(.retryTapped) }
                     .macDialogReveal()
-            } else if store.folders.isEmpty {
+            } else if store.folders.isEmpty, store.files.isEmpty {
                 messageRow(L10n.Browse.destinationPickerNoFolders)
                     .macDialogReveal()
-            } else if store.displayedFolders.isEmpty {
+            } else if store.displayedFolders.isEmpty, !store.searchQuery.isEmpty {
                 messageRow(L10n.EmptyState.noSearchMatches(store.searchQuery))
                     .macDialogReveal()
             } else {
@@ -240,6 +267,15 @@
                     isSelected: folder.id == selectedFolderID,
                     glyph: folder.id == PersonalSpace.rootPath ? IconKit.person : IconKit.folderFill
                 )
+            } footer: {
+                if store.searchQuery.isEmpty {
+                    ForEach(store.files) { file in
+                        MacPickerRow(name: file.name, detail: nil, isDirectory: false, showsChevron: false)
+                            .padding(.horizontal, Metrics.rowInset)
+                            .opacity(.opacityHalf)
+                            .accessibilityAddTraits(.isStaticText)
+                    }
+                }
             }
         }
 
@@ -278,49 +314,6 @@
         }
     }
 
-    private struct MacPickerRow: View {
-        let name: String
-        let detail: String?
-        let isDirectory: Bool
-        let showsChevron: Bool
-        var isSelected = false
-        var glyph = IconKit.folderFill
-
-        var body: some View {
-            HStack(spacing: .space8) {
-                if isDirectory {
-                    MacFolderTile(size: Metrics.tileSize, glyph: glyph)
-                        .environment(\.backgroundProminence, isSelected ? .increased : .standard)
-                } else {
-                    IconKit.document
-                        .foregroundStyle(Color.macChromeSecondary)
-                        .frame(width: Metrics.tileSize)
-                        .accessibilityHidden(true)
-                }
-                Text(name)
-                    .type(.body2(.regular))
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                Spacer(minLength: .space8)
-                if let detail {
-                    Text(detail)
-                        .type(.body3(.regular), style: .secondary)
-                        .lineLimit(1)
-                        .truncationMode(.head)
-                }
-                if showsChevron {
-                    IconKit.chevronRight
-                        .imageScale(.small)
-                        .foregroundStyle(Color.macChromeSecondary)
-                        .accessibilityHidden(true)
-                }
-            }
-            .foregroundStyle(Color.macChromeText)
-            .frame(minHeight: Metrics.rowHeight)
-            .accessibilityElement(children: .combine)
-        }
-    }
-
     @MainActor
     private func previewStore(_ state: DestinationPickerFeature.State) -> StoreOf<DestinationPickerFeature> {
         Store(initialState: state) { DestinationPickerFeature() } withDependencies: {
@@ -336,15 +329,19 @@
                 serverURL: previewServer,
                 items: [FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 1_024, kind: "pdf")]
             )),
-            title: "Move to…",
-            confirmTitle: "Move Here"
+            title: L10n.Browse.destinationPickerMoveTitle,
+            confirmTitle: L10n.Browse.destinationPickerConfirmMove
         )
     }
 
     #Preview("Short term filters by name") {
         var state = DestinationPickerFeature.State(serverURL: previewServer, uploadStartingAt: "")
         state.searchQuery = "P"
-        return MacDestinationPickerSheet(store: previewStore(state), title: "Upload to…", confirmTitle: "Upload here")
+        return MacDestinationPickerSheet(
+            store: previewStore(state),
+            title: L10n.Uploads.destinationTitle,
+            confirmTitle: L10n.Uploads.destinationConfirm
+        )
     }
 
     #Preview("Upload") {
@@ -353,8 +350,8 @@
                 serverURL: previewServer,
                 uploadStartingAt: "Documents"
             )),
-            title: "Upload to…",
-            confirmTitle: "Upload here"
+            title: L10n.Uploads.destinationTitle,
+            confirmTitle: L10n.Uploads.destinationConfirm
         )
     }
 
@@ -367,8 +364,8 @@
                 $0.filesClient = .previewValue
                 $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
             },
-            title: "Move to…",
-            confirmTitle: "Move Here"
+            title: L10n.Browse.destinationPickerMoveTitle,
+            confirmTitle: L10n.Browse.destinationPickerConfirmMove
         )
     }
 #endif

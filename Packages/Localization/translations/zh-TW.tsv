@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	密碼不正確，或壓縮檔已損毀。
 browse.progressCompressing	正在壓縮…
 browse.offlineBannerDetail	正在顯示來自 %@ 的已儲存副本
 browse.actionCopy	拷貝
-browse.destinationPickerMoveTitle	移動到…
+browse.destinationPickerMoveTitle	移動到
 browse.destinationPickerConfirmMove	移動到此處
-browse.destinationPickerCopyTitle	拷貝到…
+browse.destinationPickerCopyTitle	拷貝到
 browse.destinationPickerConfirmCopy	拷貝到此處
 browse.actionMoveTo	移動到…
 browse.actionCopyTo	拷貝到…
@@ -114,6 +114,14 @@ browse.destinationPickerNoFolders	此處沒有檔案夾
 browse.destinationPickerLoadFailed	無法載入檔案夾。
 browse.destinationPickerRecent	最近使用
 browse.destinationPickerReplaceTitle	要取代哪個檔案？
+browse.destinationPickerMoveItems#other	移動 %lld 個項目
+browse.destinationPickerCopyItems#other	拷貝 %lld 個項目
+browse.destinationPickerLocations	位置
+browse.destinationPickerInto	到 %@
+browse.destinationPickerAlreadyThere	已在 %@ 中
+browse.destinationPickerIntoItself	檔案夾無法放入其自身
+browse.destinationPickerNoRights	你無法在此處加入這些項目
+browse.destinationPickerChooseFolder	選擇檔案夾
 browse.actionMove	移動
 browse.actionPaste	貼上
 browse.actionPasteCount	貼上 %lld 個項目
@@ -178,7 +186,7 @@ uploads.actionUploadFromPhotos	從圖庫上傳
 uploads.actionTakePhoto	拍照或錄影
 uploads.cameraDeniedTitle	需要相機取用權限
 uploads.cameraDeniedMessage	請在「設定」中允許相機取用，以便拍照或錄影。
-uploads.destinationTitle	上傳到…
+uploads.destinationTitle	上傳到
 uploads.destinationConfirm	上傳到此處
 uploads.reviewTitleOne	上傳 1 個檔案
 uploads.reviewTitleMany	上傳 %lld 個檔案
@@ -331,6 +339,7 @@ createShare.permissionUpload	上傳檔案和資料夾
 createShare.versionsVisible	顯示檔案版本
 createShare.versionsVisibleHint	使用此共用的人可以看到其檔案的先前版本，若有編輯權限還可以還原。
 createShare.versionsDownload	下載版本
+createShare.passwordAnyoneOnly	僅適用於「任何擁有連結的人」。你選擇的人改為登入存取。
 editShare.title	編輯共享連結
 editShare.save	儲存更改
 editShare.passwordKeepHint	留空以保留目前密碼
@@ -1320,6 +1329,7 @@ trash.deletedByUnknown	未知
 trash.deletedBy	刪除者：%@
 trash.restore	還原
 trash.restoreTo	還原到…
+trash.restoreToTitle	還原到
 trash.restoreHere	回復到這裡
 trash.restoreFolder	還原整個資料夾
 trash.openLocation	開啟原始位置

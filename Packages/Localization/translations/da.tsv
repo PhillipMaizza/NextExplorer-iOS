@@ -110,14 +110,24 @@ browse.archivePasswordInvalid	Forkert adgangskode, eller arkivet er beskadiget.
 browse.progressCompressing	Komprimerer…
 browse.offlineBannerDetail	Viser en gemt kopi fra %@
 browse.actionCopy	Kopiér
-browse.destinationPickerMoveTitle	Flyt til…
+browse.destinationPickerMoveTitle	Flyt til
 browse.destinationPickerConfirmMove	Flyt hertil
-browse.destinationPickerCopyTitle	Kopiér til…
+browse.destinationPickerCopyTitle	Kopiér til
 browse.destinationPickerConfirmCopy	Kopiér hertil
 browse.actionMoveTo	Flyt til…
 browse.actionCopyTo	Kopiér til…
 browse.destinationPickerNoFolders	Ingen mapper her
 browse.destinationPickerLoadFailed	Mapperne kunne ikke indlæses.
+browse.destinationPickerMoveItems#one	Flyt %lld emne
+browse.destinationPickerMoveItems#other	Flyt %lld emner
+browse.destinationPickerCopyItems#one	Kopiér %lld emne
+browse.destinationPickerCopyItems#other	Kopiér %lld emner
+browse.destinationPickerLocations	Placeringer
+browse.destinationPickerInto	Til %@
+browse.destinationPickerAlreadyThere	Allerede i %@
+browse.destinationPickerIntoItself	En mappe kan ikke ligge i sig selv
+browse.destinationPickerNoRights	Du kan ikke tilføje disse emner her
+browse.destinationPickerChooseFolder	Vælg en mappe
 browse.actionMove	Flyt
 browse.actionPaste	Indsæt
 browse.actionPasteCount	Indsæt %lld emner
@@ -187,7 +197,7 @@ uploads.actionUploadFromPhotos	Upload fra Galleri
 uploads.actionTakePhoto	Tag foto eller video
 uploads.cameraDeniedTitle	Adgang til kamera påkrævet
 uploads.cameraDeniedMessage	Tillad adgang til kameraet i Indstillinger for at tage et foto eller en video.
-uploads.destinationTitle	Upload til…
+uploads.destinationTitle	Upload til
 uploads.destinationConfirm	Upload her
 uploads.reviewTitleOne	Upload 1 fil
 uploads.reviewTitleMany	Upload %lld filer
@@ -345,6 +355,7 @@ createShare.permissionUpload	Uploade filer og mapper
 createShare.versionsVisible	Vis filversioner
 createShare.versionsVisibleHint	De, der bruger denne deling, ser tidligere versioner af dens filer og kan gendanne dem, hvis de må redigere.
 createShare.versionsDownload	Download versioner
+createShare.passwordAnyoneOnly	Kun for Alle med linket. De personer, du vælger, logger ind i stedet.
 editShare.title	Rediger delingslink
 editShare.save	Gem ændringer
 editShare.passwordKeepHint	Lad feltet stå tomt for at beholde den nuværende adgangskode
@@ -1292,6 +1303,7 @@ trash.deletedByUnknown	Ukendt
 trash.deletedBy	Slettet af %@
 trash.restore	Gendan
 trash.restoreTo	Gendan til…
+trash.restoreToTitle	Gendan til
 trash.restoreHere	Gendan her
 trash.restoreFolder	Gendan hele mappen
 trash.openLocation	Åbn oprindelig placering

@@ -110,14 +110,24 @@ browse.archivePasswordInvalid	Parola yanlış ya da arşiv hasarlı.
 browse.progressCompressing	Sıkıştırılıyor…
 browse.offlineBannerDetail	%@ tarihli kayıtlı bir kopya gösteriliyor
 browse.actionCopy	Kopyala
-browse.destinationPickerMoveTitle	Şuraya taşı…
+browse.destinationPickerMoveTitle	Şuraya taşı
 browse.destinationPickerConfirmMove	Buraya Taşı
-browse.destinationPickerCopyTitle	Şuraya kopyala…
+browse.destinationPickerCopyTitle	Şuraya kopyala
 browse.destinationPickerConfirmCopy	Buraya Kopyala
 browse.actionMoveTo	Şuraya taşı…
 browse.actionCopyTo	Şuraya kopyala…
 browse.destinationPickerNoFolders	Burada klasör yok
 browse.destinationPickerLoadFailed	Klasörler yüklenemedi.
+browse.destinationPickerMoveItems#one	%lld Öğeyi Taşı
+browse.destinationPickerMoveItems#other	%lld Öğeyi Taşı
+browse.destinationPickerCopyItems#one	%lld Öğeyi Kopyala
+browse.destinationPickerCopyItems#other	%lld Öğeyi Kopyala
+browse.destinationPickerLocations	Konumlar
+browse.destinationPickerInto	Hedef: %@
+browse.destinationPickerAlreadyThere	Zaten %@ içinde
+browse.destinationPickerIntoItself	Bir klasör kendi içine taşınamaz
+browse.destinationPickerNoRights	Bu öğeleri buraya ekleyemezsiniz
+browse.destinationPickerChooseFolder	Bir klasör seçin
 browse.actionMove	Taşı
 browse.actionPaste	Yapıştır
 browse.actionPasteCount	%lld öğeyi yapıştır
@@ -187,7 +197,7 @@ uploads.actionUploadFromPhotos	Galeriden Yükle
 uploads.actionTakePhoto	Fotoğraf veya Video Çek
 uploads.cameraDeniedTitle	Kamera erişimi gerekli
 uploads.cameraDeniedMessage	Fotoğraf veya video çekmek için Ayarlar'da kamera erişimine izin verin.
-uploads.destinationTitle	Şuraya yükle…
+uploads.destinationTitle	Şuraya yükle
 uploads.destinationConfirm	Buraya yükle
 uploads.reviewTitleOne	1 dosya yükle
 uploads.reviewTitleMany	%lld dosya yükle
@@ -345,6 +355,7 @@ createShare.permissionUpload	Dosya ve klasör yükleme
 createShare.versionsVisible	Dosya sürümlerini göster
 createShare.versionsVisibleHint	Bu paylaşımı kullananlar dosyalarının önceki sürümlerini görür ve düzenleme izinleri varsa geri yükleyebilir.
 createShare.versionsDownload	Sürümleri indirme
+createShare.passwordAnyoneOnly	Yalnızca Bağlantıya sahip herkes için. Seçtiğiniz kişiler bunun yerine oturum açar.
 editShare.title	Paylaşım Bağlantısını Düzenle
 editShare.save	Değişiklikleri Kaydet
 editShare.passwordKeepHint	Mevcut parolayı korumak için boş bırakın
@@ -1292,6 +1303,7 @@ trash.deletedByUnknown	Bilinmiyor
 trash.deletedBy	Silen: %@
 trash.restore	Geri Yükle
 trash.restoreTo	Şuraya Geri Yükle…
+trash.restoreToTitle	Şuraya Geri Yükle
 trash.restoreHere	Buraya Geri Yükle
 trash.restoreFolder	Tüm Klasörü Geri Yükle
 trash.openLocation	Özgün Konumu Aç

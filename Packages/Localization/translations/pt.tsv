@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Palavra-passe incorreta, ou o arquivo está danifi
 browse.progressCompressing	A comprimir…
 browse.offlineBannerDetail	A mostrar uma cópia guardada de %@
 browse.actionCopy	Copiar
-browse.destinationPickerMoveTitle	Mover para…
+browse.destinationPickerMoveTitle	Mover para
 browse.destinationPickerConfirmMove	Mover para aqui
-browse.destinationPickerCopyTitle	Copiar para…
+browse.destinationPickerCopyTitle	Copiar para
 browse.destinationPickerConfirmCopy	Copiar para aqui
 browse.actionMoveTo	Mover para…
 browse.actionCopyTo	Copiar para…
@@ -114,6 +114,16 @@ browse.destinationPickerNoFolders	Nenhuma pasta aqui
 browse.destinationPickerLoadFailed	Não foi possível carregar as pastas.
 browse.destinationPickerRecent	Recentes
 browse.destinationPickerReplaceTitle	Que ficheiro substituir?
+browse.destinationPickerMoveItems#one	Mover %lld item
+browse.destinationPickerMoveItems#other	Mover %lld itens
+browse.destinationPickerCopyItems#one	Copiar %lld item
+browse.destinationPickerCopyItems#other	Copiar %lld itens
+browse.destinationPickerLocations	Localizações
+browse.destinationPickerInto	Para %@
+browse.destinationPickerAlreadyThere	Já está em %@
+browse.destinationPickerIntoItself	Uma pasta não pode ir para dentro de si própria
+browse.destinationPickerNoRights	Não pode adicionar estes itens aqui
+browse.destinationPickerChooseFolder	Escolha uma pasta
 browse.actionMove	Mover
 browse.actionPaste	Colar
 browse.actionPasteCount	Colar %lld itens
@@ -183,7 +193,7 @@ uploads.actionUploadFromPhotos	Enviar a partir da galeria
 uploads.actionTakePhoto	Tirar foto ou vídeo
 uploads.cameraDeniedTitle	É necessário acesso à câmara
 uploads.cameraDeniedMessage	Permita o acesso à câmara nas Definições para tirar uma foto ou vídeo.
-uploads.destinationTitle	Enviar para…
+uploads.destinationTitle	Enviar para
 uploads.destinationConfirm	Enviar para aqui
 uploads.reviewTitleOne	Enviar 1 ficheiro
 uploads.reviewTitleMany	Enviar %lld ficheiros
@@ -342,6 +352,7 @@ createShare.permissionUpload	Carregar ficheiros e pastas
 createShare.versionsVisible	Mostrar versões dos ficheiros
 createShare.versionsVisibleHint	Quem usa esta partilha vê as versões anteriores dos ficheiros e pode restaurá-las se tiver permissão para editar.
 createShare.versionsDownload	Transferir versões
+createShare.passwordAnyoneOnly	Apenas para Qualquer pessoa com a ligação. As pessoas escolhidas iniciam sessão com a própria conta.
 editShare.title	Editar ligação de partilha
 editShare.save	Guardar alterações
 editShare.passwordKeepHint	Deixe em branco para manter a palavra-passe atual
@@ -1344,6 +1355,7 @@ trash.deletedByUnknown	Desconhecido
 trash.deletedBy	Eliminado por %@
 trash.restore	Restaurar
 trash.restoreTo	Restaurar para…
+trash.restoreToTitle	Restaurar para
 trash.restoreHere	Restaurar aqui
 trash.restoreFolder	Restaurar a pasta inteira
 trash.openLocation	Abrir localização original

@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Felaktigt lösenord, eller så är arkivet skadat.
 browse.progressCompressing	Komprimerar…
 browse.offlineBannerDetail	Visar en sparad kopia från %@
 browse.actionCopy	Kopiera
-browse.destinationPickerMoveTitle	Flytta till…
+browse.destinationPickerMoveTitle	Flytta till
 browse.destinationPickerConfirmMove	Flytta hit
-browse.destinationPickerCopyTitle	Kopiera till…
+browse.destinationPickerCopyTitle	Kopiera till
 browse.destinationPickerConfirmCopy	Kopiera hit
 browse.actionMoveTo	Flytta till…
 browse.actionCopyTo	Kopiera till…
@@ -114,6 +114,16 @@ browse.destinationPickerNoFolders	Inga mappar här
 browse.destinationPickerLoadFailed	Det gick inte att läsa in mapparna.
 browse.destinationPickerRecent	Senaste
 browse.destinationPickerReplaceTitle	Vilken fil ska ersättas?
+browse.destinationPickerMoveItems#one	Flytta %lld objekt
+browse.destinationPickerMoveItems#other	Flytta %lld objekt
+browse.destinationPickerCopyItems#one	Kopiera %lld objekt
+browse.destinationPickerCopyItems#other	Kopiera %lld objekt
+browse.destinationPickerLocations	Platser
+browse.destinationPickerInto	Till %@
+browse.destinationPickerAlreadyThere	Redan i %@
+browse.destinationPickerIntoItself	En mapp kan inte ligga i sig själv
+browse.destinationPickerNoRights	Du kan inte lägga till de här objekten här
+browse.destinationPickerChooseFolder	Välj en mapp
 browse.actionMove	Flytta
 browse.actionPaste	Klistra in
 browse.actionPasteCount	Klistra in %lld objekt
@@ -183,7 +193,7 @@ uploads.actionUploadFromPhotos	Ladda upp från galleriet
 uploads.actionTakePhoto	Ta foto eller video
 uploads.cameraDeniedTitle	Kameraåtkomst krävs
 uploads.cameraDeniedMessage	Tillåt kameraåtkomst i Inställningar för att ta ett foto eller en video.
-uploads.destinationTitle	Ladda upp till…
+uploads.destinationTitle	Ladda upp till
 uploads.destinationConfirm	Ladda upp här
 uploads.reviewTitleOne	Ladda upp 1 fil
 uploads.reviewTitleMany	Ladda upp %lld filer
@@ -342,6 +352,7 @@ createShare.permissionUpload	Ladda upp filer och mappar
 createShare.versionsVisible	Visa filversioner
 createShare.versionsVisibleHint	De som använder den här delningen ser tidigare versioner av dess filer och kan återställa dem om de får redigera.
 createShare.versionsDownload	Ladda ner versioner
+createShare.passwordAnyoneOnly	Bara för Alla med länken. Personerna du väljer loggar in i stället.
 editShare.title	Redigera delningslänk
 editShare.save	Spara ändringar
 editShare.passwordKeepHint	Lämna tomt för att behålla det nuvarande lösenordet
@@ -1344,6 +1355,7 @@ trash.deletedByUnknown	Okänd
 trash.deletedBy	Raderat av %@
 trash.restore	Återställ
 trash.restoreTo	Återställ till…
+trash.restoreToTitle	Återställ till
 trash.restoreHere	Återställ här
 trash.restoreFolder	Återställ hela mappen
 trash.openLocation	Öppna ursprunglig plats

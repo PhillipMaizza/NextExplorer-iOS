@@ -110,14 +110,22 @@ browse.archivePasswordInvalid	Mật khẩu không đúng, hoặc tệp nén bị
 browse.progressCompressing	Đang nén…
 browse.offlineBannerDetail	Đang hiển thị bản sao đã lưu từ %@
 browse.actionCopy	Sao chép
-browse.destinationPickerMoveTitle	Di chuyển đến…
+browse.destinationPickerMoveTitle	Di chuyển đến
 browse.destinationPickerConfirmMove	Di chuyển vào đây
-browse.destinationPickerCopyTitle	Sao chép đến…
+browse.destinationPickerCopyTitle	Sao chép đến
 browse.destinationPickerConfirmCopy	Sao chép vào đây
 browse.actionMoveTo	Di chuyển đến…
 browse.actionCopyTo	Sao chép đến…
 browse.destinationPickerNoFolders	Không có thư mục nào ở đây
 browse.destinationPickerLoadFailed	Không thể tải các thư mục.
+browse.destinationPickerMoveItems#other	Di chuyển %lld mục
+browse.destinationPickerCopyItems#other	Sao chép %lld mục
+browse.destinationPickerLocations	Vị trí
+browse.destinationPickerInto	Vào %@
+browse.destinationPickerAlreadyThere	Đã ở trong %@
+browse.destinationPickerIntoItself	Không thể đặt thư mục vào chính nó
+browse.destinationPickerNoRights	Bạn không thể thêm các mục này vào đây
+browse.destinationPickerChooseFolder	Chọn thư mục
 browse.actionMove	Di chuyển
 browse.actionPaste	Dán
 browse.actionPasteCount	Dán %lld mục
@@ -182,7 +190,7 @@ uploads.actionUploadFromPhotos	Tải lên từ Thư viện
 uploads.actionTakePhoto	Chụp ảnh hoặc quay video
 uploads.cameraDeniedTitle	Cần quyền truy cập camera
 uploads.cameraDeniedMessage	Hãy cho phép truy cập camera trong Cài đặt để chụp ảnh hoặc quay video.
-uploads.destinationTitle	Tải lên vào…
+uploads.destinationTitle	Tải lên vào
 uploads.destinationConfirm	Tải lên đây
 uploads.reviewTitleOne	Tải lên 1 tệp
 uploads.reviewTitleMany	Tải lên %lld tệp
@@ -334,6 +342,7 @@ createShare.permissionUpload	Tải lên tệp và thư mục
 createShare.versionsVisible	Hiện các phiên bản tệp
 createShare.versionsVisibleHint	Người dùng chia sẻ này thấy các phiên bản trước của tệp và có thể khôi phục nếu được phép chỉnh sửa.
 createShare.versionsDownload	Tải xuống phiên bản
+createShare.passwordAnyoneOnly	Chỉ dành cho Bất kỳ ai có liên kết. Những người bạn chọn sẽ đăng nhập thay vào đó.
 editShare.title	Sửa liên kết chia sẻ
 editShare.save	Lưu thay đổi
 editShare.passwordKeepHint	Để trống để giữ mật khẩu hiện tại
@@ -1268,6 +1277,7 @@ trash.deletedByUnknown	Không xác định
 trash.deletedBy	Người xóa: %@
 trash.restore	Khôi phục
 trash.restoreTo	Khôi phục vào…
+trash.restoreToTitle	Khôi phục vào
 trash.restoreHere	Khôi phục tại đây
 trash.restoreFolder	Khôi phục cả thư mục
 trash.openLocation	Mở vị trí ban đầu

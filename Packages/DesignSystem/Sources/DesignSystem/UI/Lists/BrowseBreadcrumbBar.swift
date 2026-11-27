@@ -253,6 +253,12 @@ public enum PersonalSpace {
     public static let rootPath = "personal"
     public static let receivedSharesRootPath = "share"
 
+    public static func receivedShareRoot(of path: String) -> String? {
+        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
+        guard segments.count >= 2, segments[0] == receivedSharesRootPath else { return nil }
+        return "\(receivedSharesRootPath)/\(segments[1])"
+    }
+
     /// A breadcrumb or title for a path segment: the leading `personal` reads as "My Files".
     public static func displayName(forSegment segment: String, isFirstSegment: Bool) -> String {
         isFirstSegment && segment == rootPath ? L10n.Browse.myFiles : segment

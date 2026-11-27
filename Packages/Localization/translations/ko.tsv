@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	비밀번호가 올바르지 않거나 압축 파�
 browse.progressCompressing	압축하는 중…
 browse.offlineBannerDetail	%@의 저장된 사본을 표시하는 중
 browse.actionCopy	복사
-browse.destinationPickerMoveTitle	이동할 위치…
+browse.destinationPickerMoveTitle	이동할 위치
 browse.destinationPickerConfirmMove	여기로 이동
-browse.destinationPickerCopyTitle	복사할 위치…
+browse.destinationPickerCopyTitle	복사할 위치
 browse.destinationPickerConfirmCopy	여기로 복사
 browse.actionMoveTo	이동할 위치…
 browse.actionCopyTo	복사할 위치…
@@ -114,6 +114,14 @@ browse.destinationPickerNoFolders	여기에 폴더가 없습니다
 browse.destinationPickerLoadFailed	폴더를 불러올 수 없습니다.
 browse.destinationPickerRecent	최근 항목
 browse.destinationPickerReplaceTitle	어떤 파일을 바꿀까요?
+browse.destinationPickerMoveItems#other	항목 %lld개 이동
+browse.destinationPickerCopyItems#other	항목 %lld개 복사
+browse.destinationPickerLocations	위치
+browse.destinationPickerInto	%@(으)로
+browse.destinationPickerAlreadyThere	이미 %@에 있음
+browse.destinationPickerIntoItself	폴더를 자기 자신 안에 넣을 수 없습니다
+browse.destinationPickerNoRights	여기에 이 항목을 추가할 수 없습니다
+browse.destinationPickerChooseFolder	폴더 선택
 browse.actionMove	이동
 browse.actionPaste	붙여넣기
 browse.actionPasteCount	항목 %lld개 붙여넣기
@@ -178,7 +186,7 @@ uploads.actionUploadFromPhotos	갤러리에서 업로드
 uploads.actionTakePhoto	사진 또는 동영상 촬영
 uploads.cameraDeniedTitle	카메라 접근 권한 필요
 uploads.cameraDeniedMessage	사진이나 동영상을 촬영하려면 설정에서 카메라 접근을 허용하세요.
-uploads.destinationTitle	업로드할 위치…
+uploads.destinationTitle	업로드할 위치
 uploads.destinationConfirm	여기에 업로드
 uploads.reviewTitleOne	파일 1개 업로드
 uploads.reviewTitleMany	파일 %lld개 업로드
@@ -331,6 +339,7 @@ createShare.permissionUpload	파일 및 폴더 업로드
 createShare.versionsVisible	파일 버전 표시
 createShare.versionsVisibleHint	이 공유를 사용하는 사람은 파일의 이전 버전을 볼 수 있고, 편집 권한이 있으면 복원할 수 있습니다.
 createShare.versionsDownload	버전 다운로드
+createShare.passwordAnyoneOnly	링크가 있는 모든 사용자에만 해당합니다. 선택한 사용자는 대신 로그인합니다.
 editShare.title	공유 링크 편집
 editShare.save	변경 사항 저장
 editShare.passwordKeepHint	현재 비밀번호를 유지하려면 비워 두세요
@@ -1320,6 +1329,7 @@ trash.deletedByUnknown	알 수 없음
 trash.deletedBy	삭제한 사람: %@
 trash.restore	복원
 trash.restoreTo	다른 위치에 복원…
+trash.restoreToTitle	다른 위치에 복원
 trash.restoreHere	여기에 복원
 trash.restoreFolder	폴더 전체 복원
 trash.openLocation	원래 위치 열기

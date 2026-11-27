@@ -137,9 +137,9 @@ browse.progressCompressing	Compressing…
 browse.offlineBannerDetail	Showing a saved copy from %@
 
 browse.actionCopy	Copy
-browse.destinationPickerMoveTitle	Move to…
+browse.destinationPickerMoveTitle	Move To
 browse.destinationPickerConfirmMove	Move Here
-browse.destinationPickerCopyTitle	Copy to…
+browse.destinationPickerCopyTitle	Copy To
 browse.destinationPickerConfirmCopy	Copy Here
 browse.actionMoveTo	Move To…
 browse.actionCopyTo	Copy To…
@@ -147,6 +147,16 @@ browse.destinationPickerNoFolders	No folders here
 browse.destinationPickerLoadFailed	Couldn't load folders.
 browse.destinationPickerRecent	Recent
 browse.destinationPickerReplaceTitle	Replace Which File?
+browse.destinationPickerMoveItems#one	Move %lld Item
+browse.destinationPickerMoveItems#other	Move %lld Items
+browse.destinationPickerCopyItems#one	Copy %lld Item
+browse.destinationPickerCopyItems#other	Copy %lld Items
+browse.destinationPickerLocations	Locations
+browse.destinationPickerInto	Into %@
+browse.destinationPickerAlreadyThere	Already in %@
+browse.destinationPickerIntoItself	A folder can't go inside itself
+browse.destinationPickerNoRights	You can't add these items here
+browse.destinationPickerChooseFolder	Choose a folder
 browse.actionMove	Move
 browse.actionPaste	Paste
 browse.actionPasteCount	Paste %lld items
@@ -226,8 +236,8 @@ uploads.actionUploadFromPhotos	Upload from Gallery
 uploads.actionTakePhoto	Take Photo or Video
 uploads.cameraDeniedTitle	Camera access needed
 uploads.cameraDeniedMessage	Allow camera access in Settings to take a photo or video.
-uploads.destinationTitle	Upload to…
-uploads.destinationConfirm	Upload here
+uploads.destinationTitle	Upload To
+uploads.destinationConfirm	Upload Here
 uploads.reviewTitleOne	Upload 1 file
 uploads.reviewTitleMany	Upload %lld files
 uploads.reviewSectionFiles	Files
@@ -390,6 +400,7 @@ createShare.permissionUpload	Upload files and folders
 createShare.versionsVisible	Show file versions
 createShare.versionsVisibleHint	People using this share see the earlier versions of its files, and can restore them if they may edit.
 createShare.versionsDownload	Download versions
+createShare.passwordAnyoneOnly	Only for Anyone with link. People you pick sign in instead.
 
 # ---- edit share ----
 editShare.title	Edit Share Link
@@ -1488,6 +1499,7 @@ trash.deletedByUnknown	Unknown
 trash.deletedBy	Deleted by %@
 trash.restore	Restore
 trash.restoreTo	Restore To…
+trash.restoreToTitle	Restore To
 trash.restoreHere	Restore Here
 trash.restoreFolder	Restore Whole Folder
 trash.openLocation	Open Original Location

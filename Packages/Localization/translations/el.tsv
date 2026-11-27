@@ -110,14 +110,24 @@ browse.archivePasswordInvalid	Λάθος κωδικός ή το αρχείο σ�
 browse.progressCompressing	Συμπίεση…
 browse.offlineBannerDetail	Εμφάνιση αποθηκευμένου αντιγράφου από %@
 browse.actionCopy	Αντιγραφή
-browse.destinationPickerMoveTitle	Μετακίνηση σε…
+browse.destinationPickerMoveTitle	Μετακίνηση σε
 browse.destinationPickerConfirmMove	Μετακίνηση εδώ
-browse.destinationPickerCopyTitle	Αντιγραφή σε…
+browse.destinationPickerCopyTitle	Αντιγραφή σε
 browse.destinationPickerConfirmCopy	Αντιγραφή εδώ
 browse.actionMoveTo	Μετακίνηση σε…
 browse.actionCopyTo	Αντιγραφή σε…
 browse.destinationPickerNoFolders	Δεν υπάρχουν φάκελοι εδώ
 browse.destinationPickerLoadFailed	Δεν ήταν δυνατή η φόρτωση των φακέλων.
+browse.destinationPickerMoveItems#one	Μετακίνηση %lld στοιχείου
+browse.destinationPickerMoveItems#other	Μετακίνηση %lld στοιχείων
+browse.destinationPickerCopyItems#one	Αντιγραφή %lld στοιχείου
+browse.destinationPickerCopyItems#other	Αντιγραφή %lld στοιχείων
+browse.destinationPickerLocations	Τοποθεσίες
+browse.destinationPickerInto	Σε %@
+browse.destinationPickerAlreadyThere	Ήδη στο %@
+browse.destinationPickerIntoItself	Ένας φάκελος δεν μπορεί να μπει στον εαυτό του
+browse.destinationPickerNoRights	Δεν μπορείτε να προσθέσετε αυτά τα στοιχεία εδώ
+browse.destinationPickerChooseFolder	Επιλέξτε φάκελο
 browse.actionMove	Μετακίνηση
 browse.actionPaste	Επικόλληση
 browse.actionPasteCount	Επικόλληση %lld στοιχείων
@@ -187,7 +197,7 @@ uploads.actionUploadFromPhotos	Μεταφόρτωση από τη Συλλογή
 uploads.actionTakePhoto	Λήψη φωτογραφίας ή βίντεο
 uploads.cameraDeniedTitle	Απαιτείται πρόσβαση στην κάμερα
 uploads.cameraDeniedMessage	Επιτρέψτε την πρόσβαση στην κάμερα στις Ρυθμίσεις για να τραβήξετε φωτογραφία ή βίντεο.
-uploads.destinationTitle	Μεταφόρτωση σε…
+uploads.destinationTitle	Μεταφόρτωση σε
 uploads.destinationConfirm	Μεταφόρτωση εδώ
 uploads.reviewTitleOne	Μεταφόρτωση 1 αρχείου
 uploads.reviewTitleMany	Μεταφόρτωση %lld αρχείων
@@ -345,6 +355,7 @@ createShare.permissionUpload	Μεταφόρτωση αρχείων και φακ
 createShare.versionsVisible	Εμφάνιση εκδόσεων αρχείων
 createShare.versionsVisibleHint	Όσοι χρησιμοποιούν αυτή την κοινή χρήση βλέπουν τις προηγούμενες εκδόσεις των αρχείων της και μπορούν να τις επαναφέρουν αν έχουν δικαίωμα επεξεργασίας.
 createShare.versionsDownload	Λήψη εκδόσεων
+createShare.passwordAnyoneOnly	Μόνο για «Όποιος έχει τον σύνδεσμο». Τα άτομα που επιλέγετε συνδέονται αντί για αυτό.
 editShare.title	Επεξεργασία συνδέσμου κοινοποίησης
 editShare.save	Αποθήκευση αλλαγών
 editShare.passwordKeepHint	Αφήστε το κενό για να διατηρηθεί ο τρέχων κωδικός πρόσβασης
@@ -1292,6 +1303,7 @@ trash.deletedByUnknown	Άγνωστος
 trash.deletedBy	Διαγράφηκε από %@
 trash.restore	Επαναφορά
 trash.restoreTo	Επαναφορά σε…
+trash.restoreToTitle	Επαναφορά σε
 trash.restoreHere	Επαναφορά εδώ
 trash.restoreFolder	Επαναφορά ολόκληρου του φακέλου
 trash.openLocation	Άνοιγμα αρχικής θέσης

@@ -39,6 +39,7 @@
         let size: Size
         let tint: Color
         let action: () -> Void
+        @Environment(\.isEnabled) private var isEnabled
 
         public init(
             _ icon: Image,
@@ -63,7 +64,7 @@
                     .scaledToFit()
                     .fontWeight(size.weight)
                     .macSquare(size.glyph)
-                    .foregroundStyle(tint)
+                    .foregroundStyle(isEnabled ? tint : Color.macChromeDisabled)
                     .macSquare(size.side)
                     .background(Circle().fill(isFilled ? Color.macSegment : Color.clear))
                     .contentShape(Circle())

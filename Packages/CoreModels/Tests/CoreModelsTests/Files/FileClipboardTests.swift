@@ -22,6 +22,21 @@ struct FileClipboardTests {
         #expect(clip.canPaste(into: TestFolder.documents, canReceive: false) == false)
     }
 
+    @Test(
+        "A refused paste names its reason, the folder checks before the rights",
+        arguments: [
+            ("", true, FileClipboard.Refusal.noFolder),
+            (TestFolder.inbox, true, .alreadyThere),
+            (TestFolder.inbox, false, .alreadyThere),
+            ("\(TestFolder.inbox)/\(TestFile.aText)", true, .intoItself),
+            (TestFolder.documents, false, .noRights),
+        ]
+    )
+    func refusalReason(target: String, canReceive: Bool, expected: FileClipboard.Refusal) {
+        let clip = FileClipboard(items: [file(TestFile.aText, path: TestFolder.inbox)], operation: .move)
+        #expect(clip.refusal(into: target, canReceive: canReceive) == expected)
+    }
+
     @Test("copy into any writable folder is allowed, including the item's own parent")
     func copyIsPermissive() {
         let clip = FileClipboard(items: [file(TestFile.aText, path: TestFolder.inbox)], operation: .copy)

@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Onjuist wachtwoord, of het archief is beschadigd.
 browse.progressCompressing	Comprimeren…
 browse.offlineBannerDetail	Bewaarde kopie van %@ wordt getoond
 browse.actionCopy	Kopiëren
-browse.destinationPickerMoveTitle	Verplaatsen naar…
+browse.destinationPickerMoveTitle	Verplaatsen naar
 browse.destinationPickerConfirmMove	Hierheen verplaatsen
-browse.destinationPickerCopyTitle	Kopiëren naar…
+browse.destinationPickerCopyTitle	Kopiëren naar
 browse.destinationPickerConfirmCopy	Hierheen kopiëren
 browse.actionMoveTo	Verplaatsen naar…
 browse.actionCopyTo	Kopiëren naar…
@@ -114,6 +114,16 @@ browse.destinationPickerNoFolders	Geen mappen hier
 browse.destinationPickerLoadFailed	Kan de mappen niet laden.
 browse.destinationPickerRecent	Recent
 browse.destinationPickerReplaceTitle	Welk bestand vervangen?
+browse.destinationPickerMoveItems#one	%lld item verplaatsen
+browse.destinationPickerMoveItems#other	%lld items verplaatsen
+browse.destinationPickerCopyItems#one	%lld item kopiëren
+browse.destinationPickerCopyItems#other	%lld items kopiëren
+browse.destinationPickerLocations	Locaties
+browse.destinationPickerInto	Naar %@
+browse.destinationPickerAlreadyThere	Al in %@
+browse.destinationPickerIntoItself	Een map kan niet in zichzelf
+browse.destinationPickerNoRights	Je kunt deze items hier niet toevoegen
+browse.destinationPickerChooseFolder	Kies een map
 browse.actionMove	Verplaatsen
 browse.actionPaste	Plakken
 browse.actionPasteCount	%lld items plakken
@@ -183,7 +193,7 @@ uploads.actionUploadFromPhotos	Uploaden vanuit galerij
 uploads.actionTakePhoto	Foto of video maken
 uploads.cameraDeniedTitle	Cameratoegang vereist
 uploads.cameraDeniedMessage	Sta cameratoegang toe in Instellingen om een foto of video te maken.
-uploads.destinationTitle	Uploaden naar…
+uploads.destinationTitle	Uploaden naar
 uploads.destinationConfirm	Hierheen uploaden
 uploads.reviewTitleOne	1 bestand uploaden
 uploads.reviewTitleMany	%lld bestanden uploaden
@@ -342,6 +352,7 @@ createShare.permissionUpload	Bestanden en mappen uploaden
 createShare.versionsVisible	Bestandsversies tonen
 createShare.versionsVisibleHint	Wie deze deellink gebruikt, ziet de eerdere versies van de bestanden en kan ze terugzetten als bewerken is toegestaan.
 createShare.versionsDownload	Versies downloaden
+createShare.passwordAnyoneOnly	Alleen voor Iedereen met de link. Mensen die je kiest, melden zich in plaats daarvan aan.
 editShare.title	Deellink bewerken
 editShare.save	Wijzigingen bewaren
 editShare.passwordKeepHint	Laat leeg om het huidige wachtwoord te behouden
@@ -1344,6 +1355,7 @@ trash.deletedByUnknown	Onbekend
 trash.deletedBy	Verwijderd door %@
 trash.restore	Terugzetten
 trash.restoreTo	Terugzetten naar…
+trash.restoreToTitle	Terugzetten naar
 trash.restoreHere	Hier terugzetten
 trash.restoreFolder	Hele map terugzetten
 trash.openLocation	Oorspronkelijke locatie openen

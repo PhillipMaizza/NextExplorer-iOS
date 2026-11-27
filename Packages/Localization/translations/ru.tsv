@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Неверный пароль или архив п
 browse.progressCompressing	Сжатие…
 browse.offlineBannerDetail	Показана сохранённая копия от %@
 browse.actionCopy	Скопировать
-browse.destinationPickerMoveTitle	Переместить в…
+browse.destinationPickerMoveTitle	Переместить в
 browse.destinationPickerConfirmMove	Переместить сюда
-browse.destinationPickerCopyTitle	Скопировать в…
+browse.destinationPickerCopyTitle	Скопировать в
 browse.destinationPickerConfirmCopy	Скопировать сюда
 browse.actionMoveTo	Переместить в…
 browse.actionCopyTo	Скопировать в…
@@ -114,6 +114,20 @@ browse.destinationPickerNoFolders	Здесь нет папок
 browse.destinationPickerLoadFailed	Не удалось загрузить папки.
 browse.destinationPickerRecent	Недавние
 browse.destinationPickerReplaceTitle	Какой файл заменить?
+browse.destinationPickerMoveItems#one	Переместить %lld объект
+browse.destinationPickerMoveItems#few	Переместить %lld объекта
+browse.destinationPickerMoveItems#many	Переместить %lld объектов
+browse.destinationPickerMoveItems#other	Переместить %lld объекта
+browse.destinationPickerCopyItems#one	Скопировать %lld объект
+browse.destinationPickerCopyItems#few	Скопировать %lld объекта
+browse.destinationPickerCopyItems#many	Скопировать %lld объектов
+browse.destinationPickerCopyItems#other	Скопировать %lld объекта
+browse.destinationPickerLocations	Места
+browse.destinationPickerInto	В %@
+browse.destinationPickerAlreadyThere	Уже в %@
+browse.destinationPickerIntoItself	Папку нельзя поместить в саму себя
+browse.destinationPickerNoRights	Сюда нельзя добавить эти объекты
+browse.destinationPickerChooseFolder	Выберите папку
 browse.actionMove	Переместить
 browse.actionPaste	Вставить
 browse.actionPasteCount	Вставить объектов: %lld
@@ -193,7 +207,7 @@ uploads.actionUploadFromPhotos	Отправить из галереи
 uploads.actionTakePhoto	Сделать фото или видео
 uploads.cameraDeniedTitle	Требуется доступ к камере
 uploads.cameraDeniedMessage	Разрешите доступ к камере в Настройках, чтобы сделать фото или видео.
-uploads.destinationTitle	Отправить в…
+uploads.destinationTitle	Отправить в
 uploads.destinationConfirm	Отправить сюда
 uploads.reviewTitleOne	Отправить 1 файл
 uploads.reviewTitleMany	Отправить файлов: %lld
@@ -364,6 +378,7 @@ createShare.permissionUpload	Загружать файлы и папки
 createShare.versionsVisible	Показывать версии файлов
 createShare.versionsVisibleHint	Пользователи этого общего доступа видят предыдущие версии его файлов и могут восстанавливать их, если им разрешено редактирование.
 createShare.versionsDownload	Скачивать версии
+createShare.passwordAnyoneOnly	Только для варианта «Любой, у кого есть ссылка». Выбранные люди вместо этого входят в аккаунт.
 editShare.title	Изменить ссылку доступа
 editShare.save	Сохранить изменения
 editShare.passwordKeepHint	Оставьте пустым, чтобы сохранить текущий пароль
@@ -1392,6 +1407,7 @@ trash.deletedByUnknown	Неизвестно
 trash.deletedBy	Удалил: %@
 trash.restore	Восстановить
 trash.restoreTo	Восстановить в…
+trash.restoreToTitle	Восстановить в
 trash.restoreHere	Восстановить сюда
 trash.restoreFolder	Восстановить всю папку
 trash.openLocation	Открыть исходное расположение

@@ -77,6 +77,27 @@ with blue selection is not possible natively.
   popovers; an expired share is read only until it gets a new date. Delete Link stays pinned at
   the bottom. The Shared table is flat unless an item has several shares, so its names line up
   with Browse; an outline always reserves the disclosure gap.
+- Action menus (`MacActionMenuPanel`) show a divider only between two rows, by the owner's choice:
+  the panel drops a divider at either end or next to another, so a menu that loses a group to
+  missing rights never shows an empty line. Callers place dividers by group and never count rows.
+- Move to, Copy to, Upload to and Restore to share one 720 wide sheet (proposal A of the Move
+  and Copy To canvas): a sidebar with Recent and Locations (My Files and the volumes from the
+  root listing), a clickable path bar, folders with the folder's files dimmed and never pickable,
+  and a footer with New Folder and one status line: why the folder can't take the items
+  (`FileClipboard.Refusal`), else "Into" the target trail. Move and Copy title the sheet with the
+  item count and show the items as a solid fanned stack of their own tiles (thumbnail, document
+  preview or type icon), injected from FilesFeature through `macPickerItemTile`.
+- App menu commands that act on the selected files (Select All, Copy, Paste, Delete) go to the
+  focused field while a sheet is in front, so typing in a sheet never changes the files behind it.
+  Dialog titles never end in an ellipsis; the menu item that opens them does.
+- Menu icons, by the owner's choice: native menus (context menus, the menu bar, SwiftUI `Menu`)
+  keep SF Symbols, as every Mac app does; the design system's own panels (`MacActionMenuPanel`
+  in More, the peek card and the selection inspector) use the `IconKit.mac` SVG set. One enum,
+  `MenuIcon`, names each action's icon: `image` for native menus, `panelImage` for panels. When a
+  panel would hold a single action, that action takes the place of its More or dots button.
+- The inspector's permissions grid has hairline gridlines between rows and columns, filled check
+  circles for granted rights, and the mode (`rwxr-xr-x · 755`) at its bottom right, by the
+  owner's choice.
 - Dialog motion: anything a dialog shows or hides as its state changes (errors, field errors,
   spinners, loaded content, success notes, a form giving way to its result) fades with
   `DSMotion.stateFade` through `macDialogReveal()`, a transition that carries its own animation, so

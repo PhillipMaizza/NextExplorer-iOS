@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Mot de passe incorrect ou archive endommagée.
 browse.progressCompressing	Compression…
 browse.offlineBannerDetail	Affichage d'une copie enregistrée du %@
 browse.actionCopy	Copier
-browse.destinationPickerMoveTitle	Déplacer vers…
+browse.destinationPickerMoveTitle	Déplacer vers
 browse.destinationPickerConfirmMove	Déplacer ici
-browse.destinationPickerCopyTitle	Copier vers…
+browse.destinationPickerCopyTitle	Copier vers
 browse.destinationPickerConfirmCopy	Copier ici
 browse.actionMoveTo	Déplacer vers…
 browse.actionCopyTo	Copier vers…
@@ -114,6 +114,16 @@ browse.destinationPickerNoFolders	Aucun dossier ici
 browse.destinationPickerLoadFailed	Impossible de charger les dossiers.
 browse.destinationPickerRecent	Récents
 browse.destinationPickerReplaceTitle	Quel fichier remplacer ?
+browse.destinationPickerMoveItems#one	Déplacer %lld élément
+browse.destinationPickerMoveItems#other	Déplacer %lld éléments
+browse.destinationPickerCopyItems#one	Copier %lld élément
+browse.destinationPickerCopyItems#other	Copier %lld éléments
+browse.destinationPickerLocations	Emplacements
+browse.destinationPickerInto	Dans %@
+browse.destinationPickerAlreadyThere	Déjà dans %@
+browse.destinationPickerIntoItself	Un dossier ne peut pas aller dans lui-même
+browse.destinationPickerNoRights	Vous ne pouvez pas ajouter ces éléments ici
+browse.destinationPickerChooseFolder	Choisissez un dossier
 browse.actionMove	Déplacer
 browse.actionPaste	Coller
 browse.actionPasteCount	Coller %lld éléments
@@ -183,7 +193,7 @@ uploads.actionUploadFromPhotos	Envoyer depuis la galerie
 uploads.actionTakePhoto	Prendre une photo ou une vidéo
 uploads.cameraDeniedTitle	Accès à l'appareil photo requis
 uploads.cameraDeniedMessage	Autorisez l'accès à l'appareil photo dans Réglages pour prendre une photo ou une vidéo.
-uploads.destinationTitle	Envoyer vers…
+uploads.destinationTitle	Envoyer vers
 uploads.destinationConfirm	Envoyer ici
 uploads.reviewTitleOne	Envoyer 1 fichier
 uploads.reviewTitleMany	Envoyer %lld fichiers
@@ -342,6 +352,7 @@ createShare.permissionUpload	Importer des fichiers et des dossiers
 createShare.versionsVisible	Afficher les versions des fichiers
 createShare.versionsVisibleHint	Les personnes qui utilisent ce partage voient les versions antérieures de ses fichiers, et peuvent les restaurer si elles ont le droit de modifier.
 createShare.versionsDownload	Télécharger les versions
+createShare.passwordAnyoneOnly	Uniquement pour Toute personne disposant du lien. Les personnes choisies se connectent à la place.
 editShare.title	Modifier le lien de partage
 editShare.save	Enregistrer les modifications
 editShare.passwordKeepHint	Laissez vide pour conserver le mot de passe actuel
@@ -1344,6 +1355,7 @@ trash.deletedByUnknown	Inconnu
 trash.deletedBy	Supprimé par %@
 trash.restore	Restaurer
 trash.restoreTo	Restaurer vers…
+trash.restoreToTitle	Restaurer vers
 trash.restoreHere	Restaurer ici
 trash.restoreFolder	Restaurer tout le dossier
 trash.openLocation	Ouvrir l'emplacement d'origine

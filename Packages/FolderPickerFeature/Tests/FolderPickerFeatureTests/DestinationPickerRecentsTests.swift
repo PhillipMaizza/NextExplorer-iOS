@@ -27,6 +27,7 @@ struct DestinationPickerRecentsTests: DestinationPickerTestHelpers {
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: []) }
         await store.receive(\.recentsResponse) { $0.recents = [TestFolder.documents, TestFolder.media] }
+        await store.receive(\.locationsResponse)
     }
 
     @Test
@@ -46,6 +47,7 @@ struct DestinationPickerRecentsTests: DestinationPickerTestHelpers {
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: []) }
         await store.receive(\.recentsResponse)
+        await store.receive(\.locationsResponse)
         #expect(store.state.recents.isEmpty)
         #expect(store.state.phase == .loaded)
     }

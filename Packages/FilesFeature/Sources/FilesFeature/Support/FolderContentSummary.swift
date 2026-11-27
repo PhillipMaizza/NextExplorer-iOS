@@ -17,26 +17,6 @@ enum FolderContentSummary {
         let folders = items.count(where: \.isDirectory)
         return text(folders: folders, files: items.count - folders)
     }
-
-    static func crumbs(for directoryPath: String, title: String = "", shareName: String? = nil) -> [PathCrumb] {
-        if let root = ReceivedShareSpace.shareRoot(of: directoryPath) {
-            let name = shareName ?? (directoryPath == root && !title.isEmpty
-                ? title
-                : (root as NSString).lastPathComponent)
-            let inner = directoryPath.dropFirst(root.count).split(separator: "/").map(String.init)
-            return [
-                PathCrumb(title: L10n.Shared.sharedWithMe, path: ReceivedShareSpace.rootPath),
-                PathCrumb(title: name, path: root),
-            ] + inner.indices.map { PathCrumb(title: inner[$0], path: ([root] + inner[...$0]).joined(separator: "/")) }
-        }
-        let segments = directoryPath.split(separator: "/").map(String.init)
-        return segments.indices.map { index in
-            PathCrumb(
-                title: PersonalSpace.displayName(forSegment: segments[index], isFirstSegment: index == 0),
-                path: segments[...index].joined(separator: "/")
-            )
-        }
-    }
 }
 
 extension BrowseFeature.State {
@@ -50,7 +30,7 @@ extension BrowseFeature.State {
 
     var headerCrumbs: [PathCrumb] {
         #if os(macOS)
-            FolderContentSummary.crumbs(for: directoryPath, title: title, shareName: shareName)
+            PathCrumb.trail(for: directoryPath, title: title, shareName: shareName)
         #else
             []
         #endif

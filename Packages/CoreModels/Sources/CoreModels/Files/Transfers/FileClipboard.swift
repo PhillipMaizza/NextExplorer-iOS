@@ -25,18 +25,25 @@ public struct FileClipboard: Equatable, Sendable {
         Set(items.map(\.id))
     }
 
-    /// Whether pasting into `directoryPath` is valid. Rejected for: the volume root; a folder
-    /// that can't take the staged items; a folder equal to a staged item or nested inside one (the server
-    /// fails a copy *or* move into a subdirectory of itself with `EINVAL`); and, for a `move`
-    /// only, a folder a staged item already sits directly in (a server no op).
-    public func canPaste(into directoryPath: String, canReceive: Bool) -> Bool {
-        guard !directoryPath.isEmpty, canReceive else { return false }
-        for source in sourceItemPaths where directoryPath == source || directoryPath.hasPrefix("\(source)/") {
-            return false
+    public enum Refusal: Equatable, Sendable {
+        case noFolder
+        case noRights
+        case intoItself
+        case alreadyThere
+    }
+
+    public func refusal(into directoryPath: String, canReceive: Bool) -> Refusal? {
+        guard !directoryPath.isEmpty else { return .noFolder }
+        if sourceItemPaths.contains(where: { directoryPath == $0 || directoryPath.hasPrefix("\($0)/") }) {
+            return .intoItself
         }
         if operation == .move, sourceParentPaths.contains(directoryPath) {
-            return false
+            return .alreadyThere
         }
-        return true
+        return canReceive ? nil : .noRights
+    }
+
+    public func canPaste(into directoryPath: String, canReceive: Bool) -> Bool {
+        refusal(into: directoryPath, canReceive: canReceive) == nil
     }
 }

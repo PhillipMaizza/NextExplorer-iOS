@@ -30526,6 +30526,376 @@
         }
       }
     },
+    "browse.destinationPickerAlreadyThere": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Already in %@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "موجود بالفعل في %@"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Už je v %@"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allerede i %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereits in %@"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ήδη στο %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya está en %@"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jo kansiossa %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déjà dans %@"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "כבר נמצא ב%@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "पहले से %@ में है"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Már itt van: %@"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sudah di %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Già in %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "すでに %@ にあります"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이미 %@에 있음"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allerede i %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al in %@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Już w %@"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Já está em %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Já está em %@"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deja în %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Уже в %@"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redan i %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "อยู่ใน %@ แล้ว"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaten %@ içinde"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вже в %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã ở trong %@"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已在 %@ 中"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已在 %@ 中"
+          }
+        }
+      }
+    },
+    "browse.destinationPickerChooseFolder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a folder"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "اختر مجلدًا"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vyberte složku"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vælg en mappe"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle einen Ordner"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Επιλέξτε φάκελο"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige una carpeta"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valitse kansio"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un dossier"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "בחר תיקייה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ोल्डर चुनें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Válassz mappát"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pilih folder"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli una cartella"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フォルダを選択"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폴더 선택"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Velg en mappe"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kies een map"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wybierz folder"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha uma pasta"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha uma pasta"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alege un dosar"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выберите папку"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Välj en mapp"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เลือกโฟลเดอร์"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir klasör seçin"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Виберіть папку"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn thư mục"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "选择文件夹"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "選擇檔案夾"
+          }
+        }
+      }
+    },
     "browse.destinationPickerConfirmCopy": {
       "extractionState": "manual",
       "localizations": {
@@ -30896,187 +31266,1144 @@
         }
       }
     },
+    "browse.destinationPickerCopyItems": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copy %lld Item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copy %lld Items"
+                }
+              }
+            }
+          }
+        },
+        "ar": {
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نسخ %lld عنصر"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نسخ %lld عنصر"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نسخ %lld عنصرين"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نسخ %lld عناصر"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نسخ %lld عنصرًا"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نسخ %lld عنصر"
+                }
+              }
+            }
+          }
+        },
+        "cs": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopírovat %lld položku"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopírovat %lld položky"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopírovat %lld položky"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopírovat %lld položek"
+                }
+              }
+            }
+          }
+        },
+        "da": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopiér %lld emne"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopiér %lld emner"
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekt kopieren"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekte kopieren"
+                }
+              }
+            }
+          }
+        },
+        "el": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Αντιγραφή %lld στοιχείου"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Αντιγραφή %lld στοιχείων"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiar %lld elemento"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiar %lld elementos"
+                }
+              }
+            }
+          }
+        },
+        "fi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopioi %lld kohde"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopioi %lld kohdetta"
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copier %lld élément"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copier %lld éléments"
+                }
+              }
+            }
+          }
+        },
+        "he": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "העתק פריט %lld"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "העתק %lld פריטים"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "העתק %lld פריטים"
+                }
+              }
+            }
+          }
+        },
+        "hi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम कॉपी करें"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम कॉपी करें"
+                }
+              }
+            }
+          }
+        },
+        "hu": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elem másolása"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elem másolása"
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Salin %lld Item"
+                }
+              }
+            }
+          }
+        },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copia %lld elemento"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copia %lld elementi"
+                }
+              }
+            }
+          }
+        },
+        "ja": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 項目をコピー"
+                }
+              }
+            }
+          }
+        },
+        "ko": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "항목 %lld개 복사"
+                }
+              }
+            }
+          }
+        },
+        "nb": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopier %lld element"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopier %lld elementer"
+                }
+              }
+            }
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item kopiëren"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items kopiëren"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopiuj %lld element"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopiuj %lld elementy"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopiuj %lld elementów"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopiuj %lld elementu"
+                }
+              }
+            }
+          }
+        },
+        "pt": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiar %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiar %lld itens"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiar %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiar %lld itens"
+                }
+              }
+            }
+          }
+        },
+        "ro": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiază %lld element"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiază %lld elemente"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Copiază %lld de elemente"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопировать %lld объект"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопировать %lld объекта"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопировать %lld объектов"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Скопировать %lld объекта"
+                }
+              }
+            }
+          }
+        },
+        "sv": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopiera %lld objekt"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Kopiera %lld objekt"
+                }
+              }
+            }
+          }
+        },
+        "th": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "คัดลอก %lld รายการ"
+                }
+              }
+            }
+          }
+        },
+        "tr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Öğeyi Kopyala"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Öğeyi Kopyala"
+                }
+              }
+            }
+          }
+        },
+        "uk": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Копіювати %lld елемент"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Копіювати %lld елементи"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Копіювати %lld елементів"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Копіювати %lld елемента"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Sao chép %lld mục"
+                }
+              }
+            }
+          }
+        },
+        "zh-CN": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "拷贝 %lld 个项目"
+                }
+              }
+            }
+          }
+        },
+        "zh-TW": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "拷貝 %lld 個項目"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "browse.destinationPickerCopyTitle": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copy to…"
+            "value": "Copy To"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "نسخ إلى…"
+            "value": "نسخ إلى"
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopírovat do…"
+            "value": "Kopírovat do"
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopiér til…"
+            "value": "Kopiér til"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopieren nach…"
+            "value": "Kopieren nach"
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Αντιγραφή σε…"
+            "value": "Αντιγραφή σε"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiar a…"
+            "value": "Copiar a"
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopioi kohteeseen…"
+            "value": "Kopioi kohteeseen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copier vers…"
+            "value": "Copier vers"
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "העתקה אל…"
+            "value": "העתקה אל"
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "यहां कॉपी करें…"
+            "value": "यहां कॉपी करें"
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "Másolás ide…"
+            "value": "Másolás ide"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Salin ke…"
+            "value": "Salin ke"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copia in…"
+            "value": "Copia in"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "コピー先…"
+            "value": "コピー先"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "복사할 위치…"
+            "value": "복사할 위치"
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopier til…"
+            "value": "Kopier til"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopiëren naar…"
+            "value": "Kopiëren naar"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopiuj do…"
+            "value": "Kopiuj do"
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiar para…"
+            "value": "Copiar para"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiar para…"
+            "value": "Copiar para"
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "Copiază în…"
+            "value": "Copiază în"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Скопировать в…"
+            "value": "Скопировать в"
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kopiera till…"
+            "value": "Kopiera till"
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "คัดลอกไปที่…"
+            "value": "คัดลอกไปที่"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Şuraya kopyala…"
+            "value": "Şuraya kopyala"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Копіювати до…"
+            "value": "Копіювати до"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sao chép đến…"
+            "value": "Sao chép đến"
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "拷贝到…"
+            "value": "拷贝到"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "拷貝到…"
+            "value": "拷貝到"
+          }
+        }
+      }
+    },
+    "browse.destinationPickerInto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Into %@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "إلى %@"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do %@"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Til %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nach %@"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Σε %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En %@"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kohteeseen %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans %@"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "אל %@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ में"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ide: %@"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ke %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ へ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@(으)로"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Til %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naar %@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do %@"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para %@"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "În %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В %@"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Till %@"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไปที่ %@"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hedef: %@"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "До %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vào %@"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "到 %@"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "到 %@"
+          }
+        }
+      }
+    },
+    "browse.destinationPickerIntoItself": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A folder can't go inside itself"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يمكن وضع مجلد داخل نفسه"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Složku nelze vložit do sebe sama"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En mappe kan ikke ligge i sig selv"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Ordner kann nicht in sich selbst liegen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ένας φάκελος δεν μπορεί να μπει στον εαυτό του"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una carpeta no puede ir dentro de sí misma"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kansiota ei voi siirtää itsensä sisään"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un dossier ne peut pas aller dans lui-même"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "תיקייה לא יכולה להיכנס לתוך עצמה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ोल्डर खुद के अंदर नहीं जा सकता"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Egy mappa nem kerülhet önmagába"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder tidak bisa masuk ke dalam dirinya sendiri"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una cartella non può andare dentro sé stessa"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フォルダをそれ自体の中に入れることはできません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폴더를 자기 자신 안에 넣을 수 없습니다"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En mappe kan ikke ligge i seg selv"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een map kan niet in zichzelf"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder nie może trafić do samego siebie"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma pasta não pode ir para dentro de si própria"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uma pasta não pode ir para dentro de si mesma"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un dosar nu poate fi pus în el însuși"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папку нельзя поместить в саму себя"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En mapp kan inte ligga i sig själv"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ไม่สามารถวางโฟลเดอร์ไว้ในตัวเองได้"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir klasör kendi içine taşınamaz"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папку не можна вкласти в саму себе"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thể đặt thư mục vào chính nó"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "文件夹不能放入其自身"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "檔案夾無法放入其自身"
           }
         }
       }
@@ -31266,187 +32593,959 @@
         }
       }
     },
+    "browse.destinationPickerLocations": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locations"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المواقع"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Umístění"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placeringer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Orte"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Τοποθεσίες"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ubicaciones"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sijainnit"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emplacements"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "מיקומים"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "स्थान"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Helyek"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokasi"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Posizioni"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "場所"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "위치"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Steder"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locaties"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokalizacje"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localizações"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locais"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locații"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Места"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Platser"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ตำแหน่งที่ตั้ง"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konumlar"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Місця"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vị trí"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "位置"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "位置"
+          }
+        }
+      }
+    },
+    "browse.destinationPickerMoveItems": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Move %lld Item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Move %lld Items"
+                }
+              }
+            }
+          }
+        },
+        "ar": {
+          "variations": {
+            "plural": {
+              "zero": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نقل %lld عنصر"
+                }
+              },
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نقل %lld عنصر"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نقل %lld عنصرين"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نقل %lld عناصر"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نقل %lld عنصرًا"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "نقل %lld عنصر"
+                }
+              }
+            }
+          }
+        },
+        "cs": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Přesunout %lld položku"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Přesunout %lld položky"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Přesunout %lld položky"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Přesunout %lld položek"
+                }
+              }
+            }
+          }
+        },
+        "da": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Flyt %lld emne"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Flyt %lld emner"
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekt bewegen"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Objekte bewegen"
+                }
+              }
+            }
+          }
+        },
+        "el": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Μετακίνηση %lld στοιχείου"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Μετακίνηση %lld στοιχείων"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mover %lld elemento"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mover %lld elementos"
+                }
+              }
+            }
+          }
+        },
+        "fi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Siirrä %lld kohde"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Siirrä %lld kohdetta"
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Déplacer %lld élément"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Déplacer %lld éléments"
+                }
+              }
+            }
+          }
+        },
+        "he": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "העבר פריט %lld"
+                }
+              },
+              "two": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "העבר %lld פריטים"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "העבר %lld פריטים"
+                }
+              }
+            }
+          }
+        },
+        "hi": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम ले जाएं"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld आइटम ले जाएं"
+                }
+              }
+            }
+          }
+        },
+        "hu": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elem áthelyezése"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld elem áthelyezése"
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Pindahkan %lld Item"
+                }
+              }
+            }
+          }
+        },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Sposta %lld elemento"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Sposta %lld elementi"
+                }
+              }
+            }
+          }
+        },
+        "ja": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld 項目を移動"
+                }
+              }
+            }
+          }
+        },
+        "ko": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "항목 %lld개 이동"
+                }
+              }
+            }
+          }
+        },
+        "nb": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Flytt %lld element"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Flytt %lld elementer"
+                }
+              }
+            }
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld item verplaatsen"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld items verplaatsen"
+                }
+              }
+            }
+          }
+        },
+        "pl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Przenieś %lld element"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Przenieś %lld elementy"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Przenieś %lld elementów"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Przenieś %lld elementu"
+                }
+              }
+            }
+          }
+        },
+        "pt": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mover %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mover %lld itens"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mover %lld item"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mover %lld itens"
+                }
+              }
+            }
+          }
+        },
+        "ro": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mută %lld element"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mută %lld elemente"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Mută %lld de elemente"
+                }
+              }
+            }
+          }
+        },
+        "ru": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Переместить %lld объект"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Переместить %lld объекта"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Переместить %lld объектов"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Переместить %lld объекта"
+                }
+              }
+            }
+          }
+        },
+        "sv": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Flytta %lld objekt"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Flytta %lld objekt"
+                }
+              }
+            }
+          }
+        },
+        "th": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "ย้าย %lld รายการ"
+                }
+              }
+            }
+          }
+        },
+        "tr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Öğeyi Taşı"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld Öğeyi Taşı"
+                }
+              }
+            }
+          }
+        },
+        "uk": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Перемістити %lld елемент"
+                }
+              },
+              "few": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Перемістити %lld елементи"
+                }
+              },
+              "many": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Перемістити %lld елементів"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Перемістити %lld елемента"
+                }
+              }
+            }
+          }
+        },
+        "vi": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Di chuyển %lld mục"
+                }
+              }
+            }
+          }
+        },
+        "zh-CN": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "移动 %lld 个项目"
+                }
+              }
+            }
+          }
+        },
+        "zh-TW": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "移動 %lld 個項目"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "browse.destinationPickerMoveTitle": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Move to…"
+            "value": "Move To"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "نقل إلى…"
+            "value": "نقل إلى"
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Přesunout do…"
+            "value": "Přesunout do"
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Flyt til…"
+            "value": "Flyt til"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bewegen nach…"
+            "value": "Bewegen nach"
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Μετακίνηση σε…"
+            "value": "Μετακίνηση σε"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mover a…"
+            "value": "Mover a"
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Siirrä kohteeseen…"
+            "value": "Siirrä kohteeseen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Déplacer vers…"
+            "value": "Déplacer vers"
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "העברה אל…"
+            "value": "העברה אל"
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "यहां ले जाएं…"
+            "value": "यहां ले जाएं"
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "Áthelyezés ide…"
+            "value": "Áthelyezés ide"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pindahkan ke…"
+            "value": "Pindahkan ke"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sposta in…"
+            "value": "Sposta in"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "移動先…"
+            "value": "移動先"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이동할 위치…"
+            "value": "이동할 위치"
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Flytt til…"
+            "value": "Flytt til"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verplaatsen naar…"
+            "value": "Verplaatsen naar"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Przenieś do…"
+            "value": "Przenieś do"
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mover para…"
+            "value": "Mover para"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mover para…"
+            "value": "Mover para"
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mută în…"
+            "value": "Mută în"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Переместить в…"
+            "value": "Переместить в"
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Flytta till…"
+            "value": "Flytta till"
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "ย้ายไปที่…"
+            "value": "ย้ายไปที่"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Şuraya taşı…"
+            "value": "Şuraya taşı"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Перемістити до…"
+            "value": "Перемістити до"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Di chuyển đến…"
+            "value": "Di chuyển đến"
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "移动到…"
+            "value": "移动到"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "移動到…"
+            "value": "移動到"
           }
         }
       }
@@ -31632,6 +33731,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "此處沒有檔案夾"
+          }
+        }
+      }
+    },
+    "browse.destinationPickerNoRights": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can't add these items here"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يمكنك إضافة هذه العناصر هنا"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem tyto položky přidat nemůžete"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan ikke tilføje disse emner her"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kannst diese Objekte hier nicht hinzufügen"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Δεν μπορείτε να προσθέσετε αυτά τα στοιχεία εδώ"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No puedes añadir estos elementos aquí"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Et voi lisätä näitä kohteita tähän"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous ne pouvez pas ajouter ces éléments ici"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "אין לך אפשרות להוסיף את הפריטים האלה כאן"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "आप ये आइटम यहां नहीं जोड़ सकते"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ide nem adhatod hozzá ezeket az elemeket"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anda tidak dapat menambahkan item ini di sini"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non puoi aggiungere questi elementi qui"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ここにはこれらの項目を追加できません"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "여기에 이 항목을 추가할 수 없습니다"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan ikke legge til disse elementene her"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je kunt deze items hier niet toevoegen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie możesz tu dodać tych elementów"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não pode adicionar estes itens aqui"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Você não pode adicionar esses itens aqui"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nu poți adăuga aceste elemente aici"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сюда нельзя добавить эти объекты"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du kan inte lägga till de här objekten här"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "คุณไม่สามารถเพิ่มรายการเหล่านี้ที่นี่ได้"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu öğeleri buraya ekleyemezsiniz"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сюди не можна додати ці елементи"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn không thể thêm các mục này vào đây"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你无法在此处添加这些项目"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "你無法在此處加入這些項目"
           }
         }
       }
@@ -62949,6 +65233,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "沒有其他可共享的使用者。"
+          }
+        }
+      }
+    },
+    "createShare.passwordAnyoneOnly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only for Anyone with link. People you pick sign in instead."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "فقط لـ «أي شخص لديه الرابط». الأشخاص الذين تختارهم يسجلون الدخول بدلاً من ذلك."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jen pro Kdokoli s odkazem. Lidé, které vyberete, se místo toho přihlásí."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kun for Alle med linket. De personer, du vælger, logger ind i stedet."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur für „Jeder mit dem Link“. Ausgewählte Personen melden sich stattdessen an."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Μόνο για «Όποιος έχει τον σύνδεσμο». Τα άτομα που επιλέγετε συνδέονται αντί για αυτό."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo para Cualquiera con el enlace. Las personas que elijas inician sesión en su lugar."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vain kohteelle Kuka tahansa, jolla on linkki. Valitsemasi henkilöt kirjautuvat sisään."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uniquement pour Toute personne disposant du lien. Les personnes choisies se connectent à la place."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "רק עבור „כל מי שיש לו את הקישור”. האנשים שבחרת מתחברים במקום זאת."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "केवल \"लिंक वाला कोई भी व्यक्ति\" के लिए। आपके चुने हुए लोग इसके बजाय साइन इन करते हैं।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Csak a „Bárki, aki rendelkezik a hivatkozással” esetén. A kiválasztott személyek inkább bejelentkeznek."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hanya untuk Siapa saja dengan tautan. Orang yang Anda pilih masuk sebagai gantinya."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo per Chiunque abbia il link. Le persone scelte accedono con il proprio account."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「リンクを知っている全員」の場合のみ。選んだユーザーは代わりにサインインします。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "링크가 있는 모든 사용자에만 해당합니다. 선택한 사용자는 대신 로그인합니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bare for Alle med lenken. Personene du velger, logger på i stedet."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alleen voor Iedereen met de link. Mensen die je kiest, melden zich in plaats daarvan aan."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tylko dla opcji Każdy z linkiem. Wybrane osoby logują się zamiast tego."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apenas para Qualquer pessoa com a ligação. As pessoas escolhidas iniciam sessão com a própria conta."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apenas para Qualquer pessoa com o link. As pessoas escolhidas entram com a própria conta."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Doar pentru Oricine are linkul. Persoanele alese se conectează în schimb."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Только для варианта «Любой, у кого есть ссылка». Выбранные люди вместо этого входят в аккаунт."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bara för Alla med länken. Personerna du väljer loggar in i stället."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "สำหรับ \"ทุกคนที่มีลิงก์\" เท่านั้น ผู้ที่คุณเลือกจะลงชื่อเข้าใช้แทน"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yalnızca Bağlantıya sahip herkes için. Seçtiğiniz kişiler bunun yerine oturum açar."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Лише для варіанта «Будь-хто з посиланням». Вибрані люди натомість входять в обліковий запис."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chỉ dành cho Bất kỳ ai có liên kết. Những người bạn chọn sẽ đăng nhập thay vào đó."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "仅适用于“任何拥有链接的人”。你选择的人改为登录访问。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "僅適用於「任何擁有連結的人」。你選擇的人改為登入存取。"
           }
         }
       }
@@ -225479,6 +227948,191 @@
         }
       }
     },
+    "trash.restoreToTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restore To"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "استعادة إلى"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obnovit do"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gendan til"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederherstellen nach"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Επαναφορά σε"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar en"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palauta kohteeseen"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer vers"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שחזור אל"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "कहीं और पुनर्स्थापित करें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visszaállítás ide"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulihkan ke"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ripristina in"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "復元先を選択"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다른 위치에 복원"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gjenopprett til"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terugzetten naar"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przywróć do"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar para"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar em"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurează în"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Восстановить в"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Återställ till"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "กู้คืนไปที่"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şuraya Geri Yükle"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Відновити в"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Khôi phục vào"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "还原到"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "還原到"
+          }
+        }
+      }
+    },
     "trash.restored": {
       "extractionState": "manual",
       "localizations": {
@@ -251360,7 +254014,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upload here"
+            "value": "Upload Here"
           }
         },
         "ar": {
@@ -251545,181 +254199,181 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upload to…"
+            "value": "Upload To"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "الرفع إلى…"
+            "value": "الرفع إلى"
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nahrát do…"
+            "value": "Nahrát do"
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upload til…"
+            "value": "Upload til"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hochladen nach…"
+            "value": "Hochladen nach"
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "Μεταφόρτωση σε…"
+            "value": "Μεταφόρτωση σε"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Subir a…"
+            "value": "Subir a"
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lähetä kohteeseen…"
+            "value": "Lähetä kohteeseen"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Envoyer vers…"
+            "value": "Envoyer vers"
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "העלאה אל…"
+            "value": "העלאה אל"
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "यहां अपलोड करें…"
+            "value": "यहां अपलोड करें"
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "Feltöltés ide…"
+            "value": "Feltöltés ide"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "Unggah ke…"
+            "value": "Unggah ke"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carica in…"
+            "value": "Carica in"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アップロード先…"
+            "value": "アップロード先"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "업로드할 위치…"
+            "value": "업로드할 위치"
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Last opp til…"
+            "value": "Last opp til"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Uploaden naar…"
+            "value": "Uploaden naar"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Prześlij do…"
+            "value": "Prześlij do"
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enviar para…"
+            "value": "Enviar para"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enviar para…"
+            "value": "Enviar para"
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "Încarcă în…"
+            "value": "Încarcă în"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Отправить в…"
+            "value": "Отправить в"
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ladda upp till…"
+            "value": "Ladda upp till"
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "อัปโหลดไปที่…"
+            "value": "อัปโหลดไปที่"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Şuraya yükle…"
+            "value": "Şuraya yükle"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "Вивантажити до…"
+            "value": "Вивантажити до"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tải lên vào…"
+            "value": "Tải lên vào"
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "上传到…"
+            "value": "上传到"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "上傳到…"
+            "value": "上傳到"
           }
         }
       }

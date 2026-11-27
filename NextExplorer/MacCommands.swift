@@ -80,7 +80,7 @@
                     }
                 }
                 .keyboardShortcut("d")
-                .disabled(fileActions == nil && duplicateSelection == nil)
+                .disabled(fileActions.map { !$0.canDuplicate } ?? (duplicateSelection == nil))
                 Button(L10n.Browse.open) { fileActions?.open() }
                     .keyboardShortcut("o")
                     .disabled(fileActions == nil)
@@ -115,6 +115,7 @@
             CommandGroup(replacing: .pasteboard) {
                 Button(L10n.Browse.actionCut) { perform(fileActions?.cut, fallback: #selector(NSText.cut(_:))) }
                     .keyboardShortcut("x")
+                    .disabled(fileActions.map { !$0.canCut } ?? false)
                 Button(L10n.Browse.actionCopy) { perform(fileActions?.copy, fallback: #selector(NSText.copy(_:))) }
                     .keyboardShortcut("c")
                 Button(L10n.Browse.actionPaste) {
@@ -127,6 +128,7 @@
                 .disabled(fileActions.map { !$0.canPaste } ?? false)
                 Button(L10n.Common.delete) { perform(fileActions?.delete, fallback: #selector(NSText.delete(_:))) }
                     .keyboardShortcut(.delete)
+                    .disabled(fileActions.map { !$0.canDelete } ?? false)
                 Button(L10n.Select.selectAll) { perform(
                     fileActions?.selectAll,
                     fallback: #selector(NSText.selectAll(_:))
@@ -258,7 +260,7 @@
         /// File table actions when the table has focus, otherwise the standard text action down
         /// the responder chain (search field, rename sheet, editor).
         private func perform(_ fileAction: (() -> Void)?, fallback: Selector) {
-            if let fileAction {
+            if let fileAction, !isSheetInFront {
                 fileAction()
             } else {
                 NSApp.sendAction(fallback, to: nil, from: nil)
