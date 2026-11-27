@@ -24,7 +24,7 @@ extension BrowseFeature {
         }
         // A second tap on the same star before the first resolves supersedes it, so a rapid
         // double tap can never fire two competing add/remove requests for one path.
-        .cancellable(id: CancelID.favorite(path), cancelInFlight: true)
+        .cancellable(id: state.cancelID(.favorite(path)), cancelInFlight: true)
     }
 
     func confirmRename(_ state: inout State, newName: String) -> Effect<Action> {
@@ -101,7 +101,7 @@ extension BrowseFeature {
                 try await filesClient.deleteImpact(serverURL, items)
             }))
         }
-        .cancellable(id: CancelID.deleteImpact, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.deleteImpact), cancelInFlight: true)
     }
 
     func confirmDelete(_ state: inout State, deferred: Bool = false, permanent: Bool = false) -> Effect<Action> {
@@ -150,7 +150,7 @@ extension BrowseFeature {
                 return DeleteResult(requested: itemsToDelete, outcome: outcome)
             }), animation: DSMotion.listDiff)
         }
-        .cancellable(id: CancelID.bulkDelete)
+        .cancellable(id: state.cancelID(.bulkDelete))
     }
 
     /// The items the trash refused, deleted for good after the user agreed.

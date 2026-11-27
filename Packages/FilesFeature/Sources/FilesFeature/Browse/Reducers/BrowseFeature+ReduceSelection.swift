@@ -51,7 +51,7 @@ extension BrowseFeature {
         case .bulkDeleteCancelled:
             state.bulkDeletePhase = .idle
             state.deleteImpactCheck = .idle
-            return .cancel(id: CancelID.deleteImpact)
+            return .cancel(id: state.cancelID(.deleteImpact))
 
         case .bulkDeleteConfirmed:
             return confirmBulkDelete(&state)
@@ -68,7 +68,7 @@ extension BrowseFeature {
             state.isBulkActionInFlight = false
             state.bulkDeleteProgress = nil
             // The server stops where it was: what it already removed is gone, so read the folder again.
-            return .merge(.cancel(id: CancelID.bulkDelete), load(&state))
+            return .merge(.cancel(id: state.cancelID(.bulkDelete)), load(&state))
 
         case let .bulkDeleteResponse(.success(result)):
             state.isBulkActionInFlight = false

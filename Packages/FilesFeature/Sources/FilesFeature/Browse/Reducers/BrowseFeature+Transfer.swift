@@ -46,7 +46,7 @@ extension BrowseFeature {
                 try await filesClient.browse(serverURL, retry.destination).items
             }))
         }
-        .cancellable(id: CancelID.transfer)
+        .cancellable(id: state.cancelID(.transfer))
     }
 
     /// No collisions → straight through (server auto rename is a no op when nothing clashes).
@@ -106,7 +106,7 @@ extension BrowseFeature {
                 )
             }), animation: DSMotion.listDiff)
         }
-        .cancellable(id: CancelID.transfer)
+        .cancellable(id: state.cancelID(.transfer))
     }
 
     /// A copy or move into the folder on screen: note what it created, and drop the folder's
@@ -137,7 +137,7 @@ extension BrowseFeature {
             try await clock.sleep(for: Constants.arrivalRecheckDelay)
             await send(.refreshButtonTapped)
         }
-        .cancellable(id: CancelID.arrivalRecheck, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.arrivalRecheck), cancelInFlight: true)
     }
 
     /// Destination items that share a name with something inbound: minus any that *are* the

@@ -33,7 +33,7 @@ extension BrowseFeature {
             guard !Task.isCancelled else { return }
             await send(.searchSavedItemsLoaded(items))
         }
-        .cancellable(id: CancelID.searchSavedItems, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.searchSavedItems), cancelInFlight: true)
     }
 
     /// What the device holds below `base`: the saved listings, and every pinned item below it even when

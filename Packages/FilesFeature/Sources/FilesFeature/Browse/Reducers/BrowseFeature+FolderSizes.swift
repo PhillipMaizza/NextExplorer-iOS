@@ -59,7 +59,7 @@ extension BrowseFeature {
                 await send(.folderSizesUnavailable)
             } catch {}
         }
-        .cancellable(id: CancelID.folderSizes, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.folderSizes), cancelInFlight: true)
     }
 
     func reduceFolderSizes(_ state: inout State, _ action: Action) -> Effect<Action> {
@@ -79,7 +79,7 @@ extension BrowseFeature {
                 try await clock.sleep(for: delay)
                 await send(.folderSizesDue(attempt: attempt + 1))
             }
-            .cancellable(id: CancelID.folderSizes, cancelInFlight: true)
+            .cancellable(id: state.cancelID(.folderSizes), cancelInFlight: true)
 
         case let .folderSizesDue(attempt):
             return loadFolderSizes(state, attempt: attempt)

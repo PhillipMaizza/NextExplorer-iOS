@@ -24,7 +24,7 @@ extension BrowseFeature {
             state.searchShortfall = nil
             state.selectedSearchCategories = []
             state.searchScope = .thisFolder
-            return .merge(.cancel(id: CancelID.search), .cancel(id: CancelID.searchSavedItems))
+            return .merge(.cancel(id: state.cancelID(.search)), .cancel(id: state.cancelID(.searchSavedItems)))
         }
 
         // A term too short to search is never sent; until then the instant matches stand.
@@ -33,7 +33,7 @@ extension BrowseFeature {
             state.searchPhase = .idle
             state.searchShortfall = nil
             // The server never sees this term: the listings saved below the folder answer too.
-            return .merge(.cancel(id: CancelID.search), loadSavedSearchItemsIfNeeded(state))
+            return .merge(.cancel(id: state.cancelID(.search)), loadSavedSearchItemsIfNeeded(state))
         }
         // An earlier answer stays on screen until this term's arrives (the search field says a
         // newer one is coming), so the list never shrinks to the local matches and grows back on
@@ -59,7 +59,7 @@ extension BrowseFeature {
                     term: term
                 ))
             }
-            .cancellable(id: CancelID.search, cancelInFlight: true)
+            .cancellable(id: state.cancelID(.search), cancelInFlight: true)
         #elseif os(iOS)
             return .none
         #endif
@@ -133,7 +133,7 @@ extension BrowseFeature {
                 term: query
             ))
         }
-        .cancellable(id: CancelID.search, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.search), cancelInFlight: true)
     }
 
     /// Favorites whose name matches, inside the search scope, so a favorite is there to open

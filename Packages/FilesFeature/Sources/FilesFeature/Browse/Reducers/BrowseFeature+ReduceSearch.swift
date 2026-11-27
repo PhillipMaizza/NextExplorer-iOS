@@ -21,7 +21,7 @@ extension BrowseFeature {
                 // Google Drive stub files (`.gsheet`, `.gdoc`, …) link out to a real
                 // Google document: open that, don't show the JSON stub.
                 if item.isGoogleDocsPointer {
-                    return openGoogleDocsPointer(serverURL: state.serverURL, item: item)
+                    return openGoogleDocsPointer(state, item: item)
                 }
                 // Sets `previewItem` unconditionally so the viewer presents immediately.
                 // • Files the app has no viewer for (archives it can't browse, known
@@ -61,7 +61,7 @@ extension BrowseFeature {
             state.searchLimit = FilesClient.searchLimitSteps[0]
             // Another folder to search from: what was saved below the old one says nothing.
             state.searchSavedItems = nil
-            return .merge(.cancel(id: CancelID.searchSavedItems), search(&state, isDebounced: false))
+            return .merge(.cancel(id: state.cancelID(.searchSavedItems)), search(&state, isDebounced: false))
 
         case .searchShowMoreTapped:
             guard state.canShowMoreSearchResults else { return .none }
@@ -208,6 +208,6 @@ extension BrowseFeature {
             else { return }
             await send(.folderSortSaved(path: path, echoed))
         }
-        .cancellable(id: CancelID.folderSort(path), cancelInFlight: true)
+        .cancellable(id: state.cancelID(.folderSort(path)), cancelInFlight: true)
     }
 }

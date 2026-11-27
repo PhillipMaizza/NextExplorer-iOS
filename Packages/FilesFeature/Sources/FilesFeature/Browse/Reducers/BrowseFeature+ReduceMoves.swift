@@ -330,7 +330,7 @@ extension BrowseFeature {
             state.transferProgress = nil
             state.pendingTransferRetry = nil
             // The server stops where it was: what it already copied or moved stays, so read the folder again.
-            return .merge(.cancel(id: CancelID.transfer), load(&state))
+            return .merge(.cancel(id: state.cancelID(.transfer)), load(&state))
 
         case let .transferResponse(.success(outcome)):
             let sources = state.pendingTransferRetry?.items ?? []

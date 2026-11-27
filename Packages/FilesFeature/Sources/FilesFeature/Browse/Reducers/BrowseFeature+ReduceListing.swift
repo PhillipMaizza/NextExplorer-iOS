@@ -31,7 +31,7 @@ extension BrowseFeature {
                 state.searchResults?.elements ?? [],
                 ids: &state.searchOnDeviceIDs,
                 store: offlineFileStore.pinned(to: state.cacheScope),
-                cancelID: CancelID.searchOnDevice
+                cancelID: state.cancelID(.searchOnDevice)
             ) { .searchOnDeviceComputed($0) }
 
         case let .searchOnDeviceComputed(ids):
@@ -130,7 +130,7 @@ extension BrowseFeature {
                     preferred: state.favoritePaths,
                     shouldIncludePinnedRoots: true,
                     limit: Constants.maxPrefetchedFolders,
-                    cancelID: CancelID.prefetchChildren
+                    cancelID: state.cancelID(.prefetchChildren)
                 )
             )
 
@@ -150,7 +150,7 @@ extension BrowseFeature {
                 )
                 await send(.offlineListingResolved(cached, error))
             }
-            .cancellable(id: CancelID.load)
+            .cancellable(id: state.cancelID(.load))
 
         case let .offlineListingResolved(cached, error):
             // Offline (server unreachable) with a copy to show: keep it on screen under the
@@ -254,7 +254,7 @@ extension BrowseFeature {
                 paths: Self.favoriteFolderPaths(favorites, knownItems: state.items),
                 scope: state.cacheScope,
                 limit: Constants.maxPrefetchedFavorites,
-                cancelID: CancelID.prefetchFavorites
+                cancelID: state.cancelID(.prefetchFavorites)
             )
 
         default:
