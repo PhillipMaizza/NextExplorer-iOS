@@ -190,6 +190,12 @@ public struct FilesClient: Sendable {
         _ item: FileItem,
         _ onProgress: @Sendable @escaping (_ progress: TransferProgress) -> Void
     ) async throws -> URL
+    public var downloadArchive: @Sendable (
+        _ serverURL: URL,
+        _ items: [FileItem],
+        _ basePath: String,
+        _ onProgress: @Sendable @escaping (_ progress: TransferProgress) -> Void
+    ) async throws -> URL
     public var flushDownloadConnections: @Sendable () async -> Void
     public var uploadFile: @Sendable (
         _ serverURL: URL,

@@ -16,10 +16,12 @@ public struct DownloadSaveRequest: Equatable, Sendable {
 
     public let item: FileItem
     public let target: Target
+    public let archiveOf: [FileItem]
 
-    public init(item: FileItem, target: Target) {
+    public init(item: FileItem, target: Target, archiveOf: [FileItem] = []) {
         self.item = item
         self.target = target
+        self.archiveOf = archiveOf
     }
 }
 
@@ -49,6 +51,15 @@ public struct DownloadSaveRequest: Equatable, Sendable {
         ) async throws -> URL {
             let item = request.item
             let destination = destination(for: item, target: request.target)
+            if !request.archiveOf.isEmpty {
+                let temporary = try await filesClient.downloadArchive(
+                    serverURL, request.archiveOf, item.path, onProgress
+                )
+                defer { try? FileManager.default.removeItem(at: temporary) }
+                try Task.checkCancellation()
+                try local { try move(temporary, to: destination) }
+                return destination
+            }
             guard item.isDirectory else {
                 let temporary = try await filesClient.downloadItem(serverURL, item, onProgress)
                 defer { try? FileManager.default.removeItem(at: temporary) }

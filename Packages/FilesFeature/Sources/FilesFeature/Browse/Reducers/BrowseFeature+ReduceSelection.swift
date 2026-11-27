@@ -103,11 +103,28 @@ extension BrowseFeature {
             guard state.actions(for: targets).canDownload else { return .none }
             leaveSelectMode(&state)
             #if os(macOS)
+                if targets.contains(where: \.isDirectory), targets.contains(where: { !$0.isDirectory }) {
+                    state.bulkDownloadChoice = Array(targets)
+                    return .none
+                }
                 return startBulkDownload(&state, targets: Array(targets))
             #else
                 // Save to Device takes files only; folders in the selection are left out.
                 let files = targets.filter { !$0.isDirectory }
                 return files.isEmpty ? .none : .send(.delegate(.downloadRequested(Array(files))))
+            #endif
+
+        case let .bulkDownloadChoiceMade(choice):
+            guard let targets = state.bulkDownloadChoice else { return .none }
+            state.bulkDownloadChoice = nil
+            #if os(macOS)
+                switch choice {
+                case .oneArchive: return startArchiveDownload(&state, targets: targets)
+                case .separateFiles: return startBulkDownload(&state, targets: targets)
+                case nil: return .none
+                }
+            #else
+                return .none
             #endif
 
         case .bulkOfflineTapped:

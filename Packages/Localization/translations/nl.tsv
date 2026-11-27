@@ -70,6 +70,9 @@ browse.actionExtract	Uitpakken
 browse.actionExtractHere	Hier uitpakken
 browse.actionVersions	Versies
 browse.actionShowAllVersions	Alle versies tonen…
+browse.downloadAsTitle	%lld onderdelen downloaden als
+browse.downloadOneArchive	Eén archief
+browse.downloadSeparateFiles	Losse bestanden
 browse.actionCompress	Comprimeren
 browse.actionDownload	Downloaden
 browse.actionAddToFavorites	Aan favorieten toevoegen

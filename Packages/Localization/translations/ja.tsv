@@ -70,6 +70,9 @@ browse.actionExtract	展開
 browse.actionExtractHere	ここに展開
 browse.actionVersions	バージョン
 browse.actionShowAllVersions	すべてのバージョンを表示…
+browse.downloadAsTitle	%lld 項目のダウンロード方法
+browse.downloadOneArchive	1つのアーカイブ
+browse.downloadSeparateFiles	個別のファイル
 browse.actionCompress	圧縮
 browse.actionDownload	ダウンロード
 browse.actionAddToFavorites	お気に入りに追加

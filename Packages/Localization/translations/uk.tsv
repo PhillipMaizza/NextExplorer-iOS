@@ -73,6 +73,9 @@ browse.actionExtract	Розпакувати
 browse.actionExtractHere	Видобути сюди
 browse.actionVersions	Версії
 browse.actionShowAllVersions	Показати всі версії…
+browse.downloadAsTitle	Завантажити об’єкти (%lld) як
+browse.downloadOneArchive	Один архів
+browse.downloadSeparateFiles	Окремі файли
 browse.actionCompress	Стиснути
 browse.actionDownload	Завантажити
 browse.actionAddToFavorites	Додати до обраного

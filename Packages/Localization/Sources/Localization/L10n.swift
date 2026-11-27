@@ -189,8 +189,11 @@ public enum L10n {
         public static var destinationPickerNoFolders: String { tr("browse.destinationPickerNoFolders") }  // "No folders here"
         public static var destinationPickerRecent: String { tr("browse.destinationPickerRecent") }  // "Recent"
         public static var destinationPickerReplaceTitle: String { tr("browse.destinationPickerReplaceTitle") }  // "Replace Which File?"
+        public static func downloadAsTitle(_ a0: CVarArg) -> String { tr("browse.downloadAsTitle", a0) }
+        public static var downloadOneArchive: String { tr("browse.downloadOneArchive") }  // "One Archive"
         public static func downloadSavedAllTo(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.downloadSavedAllTo", a0, a1) }
         public static func downloadSavedTo(_ a0: CVarArg) -> String { tr("browse.downloadSavedTo", a0) }
+        public static var downloadSeparateFiles: String { tr("browse.downloadSeparateFiles") }  // "Separate Files"
         public static func fileCount(_ a0: CVarArg) -> String { tr("browse.fileCount", a0) }
         public static func folderCount(_ a0: CVarArg) -> String { tr("browse.folderCount", a0) }
         public static var locations: String { tr("browse.locations") }  // "Locations"

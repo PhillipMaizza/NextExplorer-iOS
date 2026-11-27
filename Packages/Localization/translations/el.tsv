@@ -73,6 +73,9 @@ browse.actionExtract	Εξαγωγή
 browse.actionExtractHere	Αποσυμπίεση εδώ
 browse.actionVersions	Εκδόσεις
 browse.actionShowAllVersions	Εμφάνιση όλων των εκδόσεων…
+browse.downloadAsTitle	Λήψη %lld στοιχείων ως
+browse.downloadOneArchive	Ένα αρχείο συμπίεσης
+browse.downloadSeparateFiles	Ξεχωριστά αρχεία
 browse.actionCompress	Συμπίεση
 browse.actionDownload	Λήψη
 browse.actionAddToFavorites	Προσθήκη στα Αγαπημένα

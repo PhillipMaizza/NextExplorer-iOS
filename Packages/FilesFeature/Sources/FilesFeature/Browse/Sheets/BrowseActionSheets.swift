@@ -44,7 +44,23 @@ struct BrowseActionSheets: ViewModifier {
                     MacArchivePasswordAlert(store: store, prompt: prompt)
                 }
             }
+            .dsAlert(isPresented: bulkDownloadBinding) {
+                DSAlertSheet(
+                    icon: IconKit.menuDownload,
+                    title: L10n.Browse.downloadAsTitle(store.bulkDownloadChoice?.count ?? 0),
+                    confirmTitle: L10n.Browse.downloadOneArchive,
+                    dismissTitle: L10n.Common.cancel,
+                    neutralTitle: L10n.Browse.downloadSeparateFiles,
+                    onConfirm: { store.send(.bulkDownloadChoiceMade(.oneArchive)) },
+                    onNeutral: { store.send(.bulkDownloadChoiceMade(.separateFiles)) },
+                    onDismiss: { store.send(.bulkDownloadChoiceMade(nil)) }
+                )
+            }
         #endif
+    }
+
+    private var bulkDownloadBinding: Binding<Bool> {
+        Binding(get: { store.bulkDownloadChoice != nil && isFrontmost }, set: { _ in })
     }
 
     private var archivePasswordBinding: Binding<Bool> {

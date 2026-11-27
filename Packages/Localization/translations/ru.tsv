@@ -70,6 +70,9 @@ browse.actionExtract	Извлечь
 browse.actionExtractHere	Извлечь сюда
 browse.actionVersions	Версии
 browse.actionShowAllVersions	Показать все версии…
+browse.downloadAsTitle	Скачать объекты (%lld) как
+browse.downloadOneArchive	Один архив
+browse.downloadSeparateFiles	Отдельные файлы
 browse.actionCompress	Сжать
 browse.actionDownload	Загрузить
 browse.actionAddToFavorites	Добавить в избранное

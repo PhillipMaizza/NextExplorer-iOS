@@ -70,6 +70,9 @@ browse.actionExtract	압축 풀기
 browse.actionExtractHere	여기에 압축 풀기
 browse.actionVersions	버전
 browse.actionShowAllVersions	모든 버전 보기…
+browse.downloadAsTitle	%lld개 항목 다운로드 방식
+browse.downloadOneArchive	하나의 압축 파일
+browse.downloadSeparateFiles	개별 파일
 browse.actionCompress	압축
 browse.actionDownload	다운로드
 browse.actionAddToFavorites	즐겨찾기에 추가

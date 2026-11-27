@@ -35,3 +35,4 @@ refactor. Number it after the last one and keep it short. A record that stops ho
 | [0024](0024-browse-cancel-ids-per-folder.md) | Browse cancel ids are keyed by the screen's folder |
 | [0025](0025-encrypted-zip-password-prompt.md) | An encrypted zip asks for its password in the app's alert |
 | [0026](0026-versions-in-the-item-menu.md) | Versions in the item menu, Show All Versions in the inspector |
+| [0027](0027-download-several-items.md) | Downloading files and folders together asks One Archive or Separate Files |
