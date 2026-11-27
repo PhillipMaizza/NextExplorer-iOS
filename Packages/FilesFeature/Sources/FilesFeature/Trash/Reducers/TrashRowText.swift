@@ -1,4 +1,5 @@
 import CoreModels
+import DesignSystem
 import Foundation
 import Localization
 
@@ -10,8 +11,17 @@ enum TrashRowText {
     /// Where it was deleted from: the personal folder or a volume, and the folder inside it.
     static func location(_ item: TrashItem) -> String {
         guard let location = item.location else { return L10n.Trash.locationUnknown }
-        let root = location.isPersonal ? L10n.Trash.locationPersonal : location.name ?? L10n.Trash.locationUnknown
+        let root = if location.isPersonal {
+            isOwnPersonalFolder(item) ? L10n.Browse.myFiles : L10n.Trash.locationPersonal
+        } else {
+            location.name ?? L10n.Trash.locationUnknown
+        }
         return location.parent.isEmpty ? root : "\(root)/\(location.parent)"
+    }
+
+    private static func isOwnPersonalFolder(_ item: TrashItem) -> Bool {
+        guard let openPath = item.openPath else { return false }
+        return openPath == PersonalSpace.rootPath || openPath.hasPrefix(PersonalSpace.rootPath + "/")
     }
 
     static func deletedBy(_ item: TrashItem) -> String {

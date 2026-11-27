@@ -236,6 +236,22 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         self.supportsThumbnail = supportsThumbnail
     }
 
+    public func changing(
+        name: String? = nil,
+        path: String? = nil,
+        dateModified: Date? = nil,
+        size: Int64? = nil
+    ) -> FileItem {
+        FileItem(
+            name: name ?? self.name,
+            path: path ?? self.path,
+            dateModified: dateModified ?? self.dateModified,
+            size: size ?? self.size,
+            kind: kind,
+            supportsThumbnail: supportsThumbnail
+        )
+    }
+
     private enum CodingKeys: String, CodingKey {
         case name, path, dateModified, size, kind, supportsThumbnail
     }

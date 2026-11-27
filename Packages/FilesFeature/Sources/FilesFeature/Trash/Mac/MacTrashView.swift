@@ -17,12 +17,32 @@
         static let unavailableOpacity: Double = .opacityHalf
     }
 
+    private enum TrashColumn {
+        case location, deletedBy, deletedOn, removed, size
+
+        static func fit(width: CGFloat) -> MacTableColumnFit<Self> {
+            MacTableColumnFit(
+                width: width,
+                nameWidth: Metrics.nameColumnMinWidth,
+                spacing: MacTableMetrics.columnSpacing,
+                byPriority: [
+                    (.deletedOn, Metrics.dateColumnWidth),
+                    (.location, Metrics.locationColumnMinWidth),
+                    (.removed, Metrics.removedColumnWidth),
+                    (.size, Metrics.sizeColumnWidth),
+                    (.deletedBy, Metrics.deletedByColumnWidth),
+                ]
+            )
+        }
+    }
+
     /// The trash as the Mac sidebar's Trash section: a table like Browse's, with the item actions on
     /// right click, double click to look inside a folder or read a text file, and Empty Trash.
     struct MacTrashView: View {
         @Bindable var store: StoreOf<TrashFeature>
         @State private var selection: Set<TrashItem.ID> = []
         @FocusState private var isFocused: Bool
+        @State private var width = CGFloat.infinity
         @Dependency(\.date) private var date
         @Dependency(\.calendar) private var calendar
 
@@ -30,6 +50,7 @@
             NavigationStack {
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .macToolbarRefresh(onRefresh: { await store.send(.refreshPulled).finish() }, onFinished: {})
                     .safeAreaInset(edge: .top, spacing: .zero) {
                         MacPaneHeader(
                             title: L10n.Trash.title,
@@ -102,7 +123,8 @@
         }
 
         private var table: some View {
-            Table(store.displayedItems, selection: $selection, sortOrder: sortOrder) {
+            let columns = TrashColumn.fit(width: width)
+            return Table(store.displayedItems, selection: $selection, sortOrder: sortOrder) {
                 TableColumn(L10n.Sort.name, value: \.name) { item in
                     HStack(spacing: .space8) {
                         icon(for: item)
@@ -120,32 +142,42 @@
                     .opacity(item.isAvailable ? 1 : Metrics.unavailableOpacity)
                 }
                 .width(min: Metrics.nameColumnMinWidth)
-                TableColumn(L10n.Trash.columnOriginalLocation) { item in
-                    Text(item.isAvailable ? PathTrail.text(TrashRowText.location(item)) : L10n.Trash.unavailable)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .foregroundStyle(.secondary)
+                if columns.shows(.location) {
+                    TableColumn(L10n.Trash.columnOriginalLocation) { item in
+                        Text(item.isAvailable ? PathTrail.text(TrashRowText.location(item)) : L10n.Trash.unavailable)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .foregroundStyle(.secondary)
+                    }
+                    .width(min: Metrics.locationColumnMinWidth)
                 }
-                .width(min: Metrics.locationColumnMinWidth)
-                TableColumn(L10n.Trash.columnDeletedBy) { item in
-                    Text(TrashRowText.deletedBy(item)).foregroundStyle(.secondary)
+                if columns.shows(.deletedBy) {
+                    TableColumn(L10n.Trash.columnDeletedBy) { item in
+                        Text(TrashRowText.deletedBy(item)).foregroundStyle(.secondary)
+                    }
+                    .width(Metrics.deletedByColumnWidth)
                 }
-                .width(Metrics.deletedByColumnWidth)
-                TableColumn(L10n.Trash.columnDeletedOn, value: \.sortDeletedAt) { item in
-                    Text(TrashRowText.deletedOn(item) ?? "").foregroundStyle(.secondary)
+                if columns.shows(.deletedOn) {
+                    TableColumn(L10n.Trash.columnDeletedOn, value: \.sortDeletedAt) { item in
+                        Text(TrashRowText.deletedOn(item) ?? "").foregroundStyle(.secondary)
+                    }
+                    .width(Metrics.dateColumnWidth)
                 }
-                .width(Metrics.dateColumnWidth)
-                TableColumn(L10n.Trash.columnRemoved) { item in
-                    Text(TrashRowText.removal(item, now: date.now, calendar: calendar) ?? "")
-                        .foregroundStyle(.secondary)
+                if columns.shows(.removed) {
+                    TableColumn(L10n.Trash.columnRemoved) { item in
+                        Text(TrashRowText.removal(item, now: date.now, calendar: calendar) ?? "")
+                            .foregroundStyle(.secondary)
+                    }
+                    .width(min: Metrics.removedColumnWidth)
                 }
-                .width(min: Metrics.removedColumnWidth)
-                TableColumn(L10n.Sort.size, value: \.sortSize) { item in
-                    Text(item.isDirectory ? L10n.Browse.noValue : item.size.map(FileSizeFormat.string) ?? "")
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
+                if columns.shows(.size) {
+                    TableColumn(L10n.Sort.size, value: \.sortSize) { item in
+                        Text(item.isDirectory ? L10n.Browse.noValue : item.size.map(FileSizeFormat.string) ?? "")
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                    .width(Metrics.sizeColumnWidth)
                 }
-                .width(Metrics.sizeColumnWidth)
             }
             .contextMenu(forSelectionType: TrashItem.ID.self) { ids in
                 menu(for: ids)
@@ -157,6 +189,7 @@
             }
             .onDeleteCommand { store.send(.deletePermanentlyTapped(items(selection))) }
             .macBoardTable()
+            .macBrowseTableWidth($width)
             .backgroundGradient()
             .clipped()
             .focused($isFocused)

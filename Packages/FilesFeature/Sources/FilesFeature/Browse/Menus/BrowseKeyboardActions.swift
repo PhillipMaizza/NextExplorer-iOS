@@ -23,6 +23,7 @@
         public var canCut = true
         public var canDelete = true
         public var canDuplicate = true
+        public var canOpen = true
     }
 
     /// The visible Browse screen's sort, for the View menu's Sort By.

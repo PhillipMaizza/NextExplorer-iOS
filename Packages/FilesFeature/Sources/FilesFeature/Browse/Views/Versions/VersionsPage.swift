@@ -79,15 +79,17 @@
                     subtitle: version.rowSubtitle,
                     badge: version.isPinned ? L10n.FileInfo.versionKept : nil
                 )
-                Menu {
-                    VersionActions(model: model, rights: rights, version: version)
-                } label: {
-                    IconKit.moreOptions
-                        .foregroundStyle(Color.secondaryDS)
-                        .frame(width: .size44, height: .size44)
-                        .contentShape(Rectangle())
+                if rights.hasVersionActions {
+                    Menu {
+                        VersionActions(model: model, rights: rights, version: version)
+                    } label: {
+                        IconKit.moreOptions
+                            .foregroundStyle(Color.secondaryDS)
+                            .frame(width: .size44, height: .size44)
+                            .contentShape(Rectangle())
+                    }
+                    .accessibilityLabel(L10n.FileInfo.versionActions)
                 }
-                .accessibilityLabel(L10n.FileInfo.versionActions)
             }
             .contextMenu {
                 VersionActions(model: model, rights: rights, version: version)

@@ -54,4 +54,30 @@ struct FileItemKindFlagsTests {
         #expect(item(kind: TestKind.text, dateModified: MockDate.date.addingTimeInterval(0.5), size: 0)
             .cacheSignature == "1700000000.5|0")
     }
+
+    @Test("changing keeps every field it is not given")
+    func changingKeepsTheRest() {
+        let original = FileItem(
+            name: "a.jpg",
+            path: TestFolder.docs,
+            dateModified: MockDate.date,
+            size: 3,
+            kind: TestKind.photo,
+            supportsThumbnail: true
+        )
+        let later = MockDate.date.addingTimeInterval(60)
+
+        let changed = original.changing(path: TestFolder.photos, size: 9)
+
+        #expect(changed == FileItem(
+            name: "a.jpg",
+            path: TestFolder.photos,
+            dateModified: MockDate.date,
+            size: 9,
+            kind: TestKind.photo,
+            supportsThumbnail: true
+        ))
+        #expect(original.changing(name: "b.jpg", dateModified: later).id == "\(TestFolder.docs)/b.jpg")
+        #expect(original.changing(name: "b.jpg", dateModified: later).dateModified == later)
+    }
 }

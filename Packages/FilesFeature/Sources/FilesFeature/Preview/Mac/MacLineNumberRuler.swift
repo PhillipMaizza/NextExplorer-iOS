@@ -74,6 +74,15 @@
             let top = convert(NSPoint.zero, from: textView).y + inset.y
             let visible = textView.visibleRect.offsetBy(dx: -inset.x, dy: -inset.y)
             let glyphs = layoutManager.glyphRange(forBoundingRect: visible, in: container)
+            func drawNumber(_ line: Int, below lineRect: NSRect) {
+                let number = String(line) as NSString
+                let baseline = top + lineRect.maxY + font.descender
+                let origin = NSPoint(
+                    x: ruleThickness - Constants.trailingGap - number.size(withAttributes: attributes).width,
+                    y: baseline - numberFont.ascender
+                )
+                number.draw(at: origin, withAttributes: attributes)
+            }
             var glyphIndex = glyphs.location
             while glyphIndex < NSMaxRange(glyphs) {
                 var lineGlyphs = NSRange()
@@ -81,15 +90,12 @@
                 let offset = layoutManager.characterIndexForGlyph(at: glyphIndex)
                 let line = Self.lineNumber(atOffset: offset, lineStarts: lineStarts)
                 if lineStarts[line - 1] == offset {
-                    let number = String(line) as NSString
-                    let baseline = top + lineRect.maxY + font.descender
-                    let origin = NSPoint(
-                        x: ruleThickness - Constants.trailingGap - number.size(withAttributes: attributes).width,
-                        y: baseline - numberFont.ascender
-                    )
-                    number.draw(at: origin, withAttributes: attributes)
+                    drawNumber(line, below: lineRect)
                 }
                 glyphIndex = max(NSMaxRange(lineGlyphs), glyphIndex + 1)
+            }
+            if layoutManager.extraLineFragmentTextContainer != nil {
+                drawNumber(lineStarts.count, below: layoutManager.extraLineFragmentRect)
             }
         }
     }

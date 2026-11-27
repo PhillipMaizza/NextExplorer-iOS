@@ -232,6 +232,10 @@
                 getInfo: { store.send(.infoSelectionTapped) },
                 canPaste: canPaste,
                 open: {
+                    if store.isPersonalSpaceSelected {
+                        store.send(.personalSpaceTapped)
+                        return
+                    }
                     guard let item = store.singleSelectedItem else { return }
                     open(item)
                 },
@@ -243,7 +247,8 @@
                 redo: { store.send(.redoTapped, animation: DSMotion.listDiff) },
                 canCut: selected.canMove,
                 canDelete: selected.canDelete,
-                canDuplicate: selected.canDuplicate
+                canDuplicate: selected.canDuplicate,
+                canOpen: store.isPersonalSpaceSelected || store.singleSelectedItem != nil
             )
         }
     }

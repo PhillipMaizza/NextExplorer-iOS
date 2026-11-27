@@ -13,13 +13,10 @@ extension BrowseFeature {
         let landed: [(source: FileItem, item: FileItem)] = outcome.result.items.compactMap { entry in
             guard !entry.isSkipped, let source = sourcesByID[Self.trimmedPath(entry.from)] else { return nil }
             let path = Self.trimmedPath(entry.to)
-            let item = FileItem(
+            let item = source.changing(
                 name: (path as NSString).lastPathComponent,
                 path: destination,
-                dateModified: outcome.operation == .copy ? date.now : source.dateModified,
-                size: source.size,
-                kind: source.kind,
-                supportsThumbnail: source.supportsThumbnail
+                dateModified: outcome.operation == .copy ? date.now : nil
             )
             return (source, item)
         }
@@ -105,11 +102,11 @@ extension BrowseFeature {
                     // Undone, each item sits in its old parent again: move it back where it went.
                     let byDestination = Dictionary(grouping: moves, by: \.item.path)
                     for (destination, group) in byDestination {
-                        let items = group.map { $0.item.relocated(to: $0.originalParent) }
+                        let items = group.map { $0.item.changing(path: $0.originalParent) }
                         _ = try await filesClient.transferItems(serverURL, items, destination, .move, nil)
                     }
                 case let .renamed(item, previousName):
-                    _ = try await filesClient.renameItem(serverURL, item.named(previousName), item.name)
+                    _ = try await filesClient.renameItem(serverURL, item.changing(name: previousName), item.name)
                 }
                 return entry
             }))
@@ -118,29 +115,5 @@ extension BrowseFeature {
 
     static func trimmedPath(_ path: String) -> String {
         path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-    }
-}
-
-private extension FileItem {
-    func relocated(to parent: String) -> FileItem {
-        FileItem(
-            name: name,
-            path: parent,
-            dateModified: dateModified,
-            size: size,
-            kind: kind,
-            supportsThumbnail: supportsThumbnail
-        )
-    }
-
-    func named(_ newName: String) -> FileItem {
-        FileItem(
-            name: newName,
-            path: path,
-            dateModified: dateModified,
-            size: size,
-            kind: kind,
-            supportsThumbnail: supportsThumbnail
-        )
     }
 }

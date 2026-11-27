@@ -53,4 +53,12 @@ struct FileVersionHistoryTests {
             try CoreModelsFixture.fileVersionHistoryMissingRights.decodeISO(FileVersionHistory.self)
         }
     }
+
+    @Test("a version has actions when any right to restore, download or remove it is given")
+    func versionActionsFollowTheRights() {
+        let none = FileVersionHistory.Rights(canSee: true, canDownload: false, canRestore: false, canRemove: false)
+        let removeOnly = FileVersionHistory.Rights(canSee: true, canDownload: false, canRestore: false, canRemove: true)
+        #expect(!none.hasVersionActions)
+        #expect(removeOnly.hasVersionActions)
+    }
 }

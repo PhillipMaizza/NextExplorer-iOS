@@ -76,7 +76,7 @@ struct BrowseActionSheets: ViewModifier {
             }
             .dsAlert(isPresented: bulkDownloadBinding) {
                 DSAlertSheet(
-                    icon: IconKit.menuDownload,
+                    icon: .download,
                     title: L10n.Browse.downloadAsTitle(store.bulkDownloadChoice?.count ?? 0),
                     confirmTitle: L10n.Browse.downloadOneArchive,
                     dismissTitle: L10n.Common.cancel,
@@ -200,6 +200,9 @@ struct BrowseActionSheets: ViewModifier {
             confirmTitle: L10n.Common.save,
             initialName: item.name,
             isBusy: store.isPerformingFileAction,
+            additionalRule: { [items = store.items] name in
+                FileNameValidation.takenMessage(name, in: items, except: item.id)
+            },
             onConfirm: { store.send(.renameConfirmed($0)) },
             onCancel: { store.send(.renameCancelled) }
         )
@@ -291,6 +294,9 @@ struct BrowseListSheets: ViewModifier {
                     placeholder: L10n.Browse.newFolderPlaceholder,
                     confirmTitle: L10n.Browse.newFolderConfirm,
                     isBusy: store.isPerformingFileAction,
+                    additionalRule: { [items = store.items] name in
+                        FileNameValidation.takenMessage(name, in: items)
+                    },
                     onConfirm: { store.send(.newFolderConfirmed($0)) },
                     onCancel: { store.send(.newFolderCancelled) }
                 )
@@ -302,9 +308,9 @@ struct BrowseListSheets: ViewModifier {
                     placeholder: L10n.Browse.newFilePlaceholder,
                     confirmTitle: L10n.Browse.newFolderConfirm,
                     isBusy: store.isPerformingFileAction,
-                    additionalRule: { [extensions = store.newFileServerExtensions] name in
+                    additionalRule: { [extensions = store.newFileServerExtensions, items = store.items] name in
                         EditableTextFiles.isEditable(name: name, serverExtensions: extensions)
-                            ? nil
+                            ? FileNameValidation.takenMessage(name, in: items)
                             : L10n.Browse.newFileTypeHint
                     },
                     hint: L10n.Browse.newFileTypeHint,

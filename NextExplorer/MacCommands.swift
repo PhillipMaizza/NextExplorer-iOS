@@ -83,7 +83,7 @@
                 .disabled(fileActions.map { !$0.canDuplicate } ?? (duplicateSelection == nil))
                 Button(L10n.Browse.open) { fileActions?.open() }
                     .keyboardShortcut("o")
-                    .disabled(fileActions == nil)
+                    .disabled(fileActions.map { !$0.canOpen } ?? true)
                 Button(L10n.Browse.actionGetInfo) {
                     if let fileActions {
                         fileActions.getInfo()
@@ -211,13 +211,15 @@
         /// Finder's Go ▸ Recent Folders: the folders opened in Browse this session.
         private var recentFoldersMenu: some View {
             Menu(L10n.Menu.recentFolders) {
-                ForEach(recentFolders, id: \.self) { path in
-                    Button(PersonalSpace.folderTitle(path)) { send(.goToFolderRequested(path)) }
+                if !recentFolders.isEmpty {
+                    ForEach(recentFolders, id: \.self) { path in
+                        Button(PersonalSpace.folderTitle(path)) { send(.goToFolderRequested(path)) }
+                    }
+                    Divider()
                 }
-                Divider()
                 Button(L10n.Menu.clearRecent) { send(.recentFoldersCleared) }
+                    .disabled(recentFolders.isEmpty)
             }
-            .disabled(recentFolders.isEmpty)
         }
 
         /// Sort By for the visible Browse screen, with a checkmark on the current choice.
@@ -230,6 +232,7 @@
                     ForEach(BrowseFeature.SortOption.allCases, id: \.self) { Text($0.menuTitle).tag($0) }
                 }
                 .pickerStyle(.inline)
+                .labelsHidden()
                 Picker(L10n.Sort.sheetTitle, selection: Binding(
                     get: { viewOptions?.sortDirection ?? .ascending },
                     set: { viewOptions?.setSortDirection($0) }
@@ -237,6 +240,7 @@
                     ForEach(BrowseFeature.SortDirection.allCases, id: \.self) { Text($0.menuTitle).tag($0) }
                 }
                 .pickerStyle(.inline)
+                .labelsHidden()
             }
             .disabled(viewOptions == nil)
         }

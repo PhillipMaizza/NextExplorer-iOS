@@ -21,6 +21,10 @@ public struct FileVersionHistory: Decodable, Equatable, Sendable {
         public let canRestore: Bool
         public let canRemove: Bool
 
+        public var hasVersionActions: Bool {
+            canRestore || canDownload || canRemove
+        }
+
         private enum CodingKeys: String, CodingKey {
             case canSee = "see"
             case canDownload = "download"

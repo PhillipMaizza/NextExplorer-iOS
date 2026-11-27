@@ -25,7 +25,8 @@
             let scrollView = NSScrollView()
             scrollView.drawsBackground = false
             scrollView.hasVerticalScroller = true
-            let textView = NSTextView(usingTextLayoutManager: false)
+            let textView = EditorTextView(usingTextLayoutManager: false)
+            textView.isFocusedWhenShown = isEditable
             textView.autoresizingMask = .width
             textView.isVerticallyResizable = true
             textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude)
@@ -59,7 +60,11 @@
 
         func updateNSView(_ scrollView: NSScrollView, context: Context) {
             guard let textView = scrollView.documentView as? NSTextView else { return }
+            let becameEditable = isEditable && !textView.isEditable
             textView.isEditable = isEditable
+            if becameEditable, let textView = textView as? EditorTextView {
+                textView.focusSoon()
+            }
             context.coordinator.onEscape = onEscape
             guard context.coordinator.lastReportedText != text else { return }
             context.coordinator.lastReportedText = text
@@ -169,6 +174,24 @@
                     storage.addAttribute(.foregroundColor, value: color, range: span.range)
                 }
                 storage.endEditing()
+            }
+        }
+    }
+
+    private final class EditorTextView: NSTextView {
+        var isFocusedWhenShown = false
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            guard isFocusedWhenShown, window != nil else { return }
+            isFocusedWhenShown = false
+            focusSoon()
+        }
+
+        func focusSoon() {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                window?.makeFirstResponder(self)
             }
         }
     }

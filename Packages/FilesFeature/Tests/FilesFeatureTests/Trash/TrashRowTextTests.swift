@@ -1,4 +1,5 @@
 import CoreModels
+import DesignSystem
 @testable import FilesFeature
 import Foundation
 import Localization
@@ -42,14 +43,38 @@ struct TrashRowTextTests {
         #expect(parts[3] == L10n.Trash.sharesBadge)
     }
 
-    @Test("Locations name the personal folder, a volume root, or say they are unknown")
+    @Test("Locations name My Files, someone's personal folder, a volume root, or say they are unknown")
     func locations() {
+        #expect(TrashRowText.location(TrashItem(
+            id: "own",
+            name: "own",
+            location: .init(isPersonal: true, name: "ada", parent: ""),
+            openPath: PersonalSpace.rootPath
+        ))
+            == L10n.Browse.myFiles)
         #expect(TrashRowText.location(TrashItem(
             id: "a",
             name: "a",
             location: .init(isPersonal: true, name: "ada", parent: "")
         ))
             == L10n.Trash.locationPersonal)
+    }
+
+    @Test("A file someone else deleted from my folder through a share is still in My Files")
+    func ownFolderDeletedBySomeoneElse() {
+        let item = TrashItem(
+            id: "shared",
+            name: "notes.txt",
+            deletedBy: .init(label: "Ada", isYou: false),
+            location: .init(isPersonal: true, name: "me", parent: "Shared Folder"),
+            openPath: "\(PersonalSpace.rootPath)/Shared Folder"
+        )
+
+        #expect(TrashRowText.location(item) == "\(L10n.Browse.myFiles)/Shared Folder")
+    }
+
+    @Test("Volume roots are named, and a missing location is unknown")
+    func volumeAndUnknownLocations() {
         #expect(TrashRowText.location(TrashItem(
             id: "b",
             name: "b",

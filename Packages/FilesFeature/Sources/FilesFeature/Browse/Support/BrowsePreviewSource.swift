@@ -27,6 +27,10 @@ extension BrowseFeature.State {
         directoryPath.isEmpty && isPersonalSpaceEnabled && !isSearching && !isSelecting
     }
 
+    var isPersonalSpaceSelected: Bool {
+        shouldShowPersonalSpace && selectedItemIDs == [PersonalSpace.rootPath]
+    }
+
     var hasNothingToList: Bool {
         !hasDisplayedItems && !shouldShowPersonalSpace
     }

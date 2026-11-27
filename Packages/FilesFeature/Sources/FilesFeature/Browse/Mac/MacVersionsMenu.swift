@@ -43,18 +43,28 @@
                         .disabled(true)
                 }
                 ForEach(history.versions.prefix(Constants.listedVersions)) { version in
-                    Menu(version.label ?? VersionsModel.date(version.modifiedAt)) {
-                        if history.rights.canRestore {
-                            Button(L10n.FileInfo.versionRestore) { onPick(); versions.beginRestore(version, of: item) }
-                        }
-                        if history.rights.canDownload {
-                            Button(L10n.FileInfo.versionDownload) { onPick(); versions.download(version, of: item) }
-                            if store.canCreateFileHere {
-                                Button(L10n.FileInfo.versionSaveCopy) { onPick(); versions.saveCopy(version, of: item) }
+                    let title = version.label ?? VersionsModel.date(version.modifiedAt)
+                    if version.isAvailable != false, history.rights.canActOnVersion {
+                        Menu(title) {
+                            if history.rights.canRestore {
+                                Button(L10n.FileInfo.versionRestore) {
+                                    onPick(); versions.beginRestore(version, of: item)
+                                }
+                            }
+                            if history.rights.canDownload {
+                                Button(L10n.FileInfo.versionDownload) { onPick(); versions.download(version, of: item) }
+                                if store.canCreateFileHere {
+                                    Button(L10n.FileInfo.versionSaveCopy) { onPick(); versions.saveCopy(
+                                        version,
+                                        of: item
+                                    ) }
+                                }
                             }
                         }
+                    } else {
+                        Button(title) {}
+                            .disabled(true)
                     }
-                    .disabled(version.isAvailable == false || !history.rights.canActOnVersion)
                 }
             }
             if phase != .unloaded {

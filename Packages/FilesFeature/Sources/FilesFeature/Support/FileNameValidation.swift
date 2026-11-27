@@ -1,5 +1,6 @@
 import CoreModels
 import FolderPickerFeature
+import Localization
 
 /// `FileNameRule` with its reasons worded for the user. Validates the trimmed name, which is what the
 /// reducer actually sends.
@@ -12,5 +13,13 @@ enum FileNameValidation {
 
     static func isAcceptable(trimmed name: String) -> Bool {
         FileNameRule.isAcceptable(trimmed: name)
+    }
+
+    static func takenMessage(
+        _ name: String,
+        in items: some Collection<FileItem>,
+        except id: FileItem.ID? = nil
+    ) -> String? {
+        items.contains { $0.name == name && $0.id != id } ? L10n.Browse.transferConflictMessageOne(name) : nil
     }
 }

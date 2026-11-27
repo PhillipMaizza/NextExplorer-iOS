@@ -14,6 +14,10 @@ struct BrowseTextEditorTests {
     private let notes = BrowseFixtures.file(TestFile.notes, in: TestFolder.docs)
     private let other = BrowseFixtures.file("other.txt", in: TestFolder.docs)
 
+    private func afterSave(_ item: FileItem, _ text: String) -> FileItem {
+        item.changing(dateModified: MockDate.date, size: Int64(text.utf8.count))
+    }
+
     private func editingState() -> BrowseFeature.State {
         var state = BrowseFixtures.loadedState(TestFolder.docs, items: [notes, other])
         state.previewItem = notes
@@ -63,6 +67,7 @@ struct BrowseTextEditorTests {
         }
         gate.open()
         await store.receive(\.textSaveResponse) {
+            $0.items[id: notes.id] = afterSave(notes, "new")
             $0.savingTexts = [:]
         }
     }
@@ -126,6 +131,7 @@ struct BrowseTextEditorTests {
         await store.send(.textSaveTapped("three"))
         gate.open()
         await store.receive(\.textSaveResponse) {
+            $0.items[id: notes.id] = afterSave(notes, "one")
             $0.savingTexts = [:]
             $0.textContent = "one"
         }
@@ -167,11 +173,13 @@ struct BrowseTextEditorTests {
         }
         #expect(store.state.isSavingTextContent)
         await store.receive(\.textSaveResponse) {
+            $0.items[id: other.id] = afterSave(other, "two")
             $0.savingTexts[other.id] = nil
             $0.textContent = "two"
         }
         gate.open()
         await store.receive(\.textSaveResponse) {
+            $0.items[id: notes.id] = afterSave(notes, "one")
             $0.savingTexts = [:]
         }
         #expect(Set(saved.value) == [TestPath.docsNotes, "Docs/other.txt"])
@@ -203,6 +211,7 @@ struct BrowseTextEditorTests {
         }
         gate.open()
         await store.receive(\.textSaveResponse) {
+            $0.items[id: notes.id] = afterSave(notes, "one")
             $0.savingTexts = [:]
         }
         #expect(finished.value)
@@ -242,6 +251,7 @@ struct BrowseTextEditorTests {
             $0.savingTexts[notes.id] = "mine"
         }
         await store.receive(\.textSaveResponse) {
+            $0.items[id: notes.id] = afterSave(notes, "mine")
             $0.savingTexts = [:]
             $0.textContent = "mine"
         }

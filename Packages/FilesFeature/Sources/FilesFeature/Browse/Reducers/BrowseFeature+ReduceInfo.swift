@@ -134,6 +134,9 @@ extension BrowseFeature {
             if isStillOpen {
                 state.textContent = savedContent
             }
+            if let saved = state.items[id: path] {
+                state.items[id: path] = saved.changing(dateModified: date.now, size: Int64(savedContent.utf8.count))
+            }
             return .none
 
         case let .textSaveResponse(path, .failure(error)):
