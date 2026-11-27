@@ -198,12 +198,19 @@
                     .accessibilityAddTraits(action.isOn ? .isSelected : [])
                 }
                 if showsMore {
-                    Button { isMoreOpen.toggle() } label: {
-                        tile(icon: IconKit.ellipsis, title: L10n.Common.more, isOn: isMoreOpen)
-                    }
-                    .buttonStyle(.plain)
-                    .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
-                        MacActionMenuPanel(content: more)
+                    MacActionMenuSoleItem(content: more) { item in
+                        Button(action: item.action) {
+                            tile(icon: item.icon, title: item.title, isOn: false)
+                        }
+                        .buttonStyle(.plain)
+                    } many: {
+                        Button { isMoreOpen.toggle() } label: {
+                            tile(icon: IconKit.ellipsis, title: L10n.Common.more, isOn: isMoreOpen)
+                        }
+                        .buttonStyle(.plain)
+                        .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
+                            MacActionMenuPanel(content: more)
+                        }
                     }
                 }
             }
