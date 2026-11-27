@@ -194,6 +194,7 @@ downloads.errorMissing	Το αρχείο δεν βρέθηκε πλέον.
 downloads.errorGeneric	Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας.
 unsupportedPreview.genericType	Αρχείο
 unsupportedPreview.cannotOpen	Αυτή η εφαρμογή δεν μπορεί να ανοίξει αυτόν τον τύπο αρχείου.
+unsupportedPreview.noPreview	Δεν υπάρχει προεπισκόπηση για αρχεία %@
 uploads.navigationTitle	Μεταφορτώσεις
 uploads.menuTitle	Μεταφόρτωση
 uploads.actionUploadFromFiles	Μεταφόρτωση από τα Αρχεία

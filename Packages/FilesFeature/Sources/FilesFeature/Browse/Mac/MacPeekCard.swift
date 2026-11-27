@@ -46,7 +46,6 @@
         var body: some View {
             VStack(spacing: .zero) {
                 header
-                MacPeekSeparator()
                 MacPeekContent(
                     item: item,
                     serverURL: serverURL,
@@ -55,13 +54,10 @@
                     showsHiddenFiles: showsHiddenFiles
                 )
                 .onPreferenceChange(MacPeekFolderSummaryKey.self) { folderSummary = $0 }
-                MacPeekSeparator()
                 footer
             }
             .macPeekCardChrome()
-            .focusable()
-            .focused($isFocused)
-            .focusEffectDisabled()
+            .macKeyFocus($isFocused)
             .onAppear { isFocused = true }
             .onKeyPress(.space) {
                 onClose()
@@ -113,7 +109,7 @@
                 .frame(maxWidth: .infinity, alignment: .leading)
                 if let onOpen {
                     Button(L10n.Browse.open, action: onOpen)
-                        .buttonStyle(.macDS(.primary, size: .small))
+                        .buttonStyle(.macDS(.primary))
                 }
                 if let onShare {
                     MacIconButton(IconKit.link, label: L10n.Common.share, action: onShare)
@@ -149,14 +145,6 @@
             }
             .padding(.horizontal, .space24)
             .padding(.vertical, .space12)
-        }
-    }
-
-    struct MacPeekSeparator: View {
-        var body: some View {
-            Rectangle()
-                .fill(Color.macLine)
-                .frame(height: .borderWidthHairline)
         }
     }
 

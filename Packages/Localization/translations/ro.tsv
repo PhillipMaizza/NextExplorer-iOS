@@ -1013,7 +1013,7 @@ shareUpload.retrySignInBody	Conectează-te în NextExplorer, apoi atinge din nou
 shareUpload.causeFolder	Folderele nu pot fi partajate. Partajează în schimb fișierele din interior.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	încă %lld
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	Nicio previzualizare pentru fișierele %@
 uploadSettings.navigationTitle	Încărcări
 uploadSettings.subtitle	Configurează modul în care fișierele sunt trimise către server.
 uploadSettings.chunkedEnable	Activează încărcările fragmentate

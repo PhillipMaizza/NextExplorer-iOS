@@ -56,12 +56,7 @@
                 radius: MacPeekMetrics.shadowRadius,
                 y: MacPeekMetrics.shadowOffset
             )
-            .background {
-                Color.clear
-                    .focusable()
-                    .focused($isFocused)
-                    .focusEffectDisabled()
-            }
+            .macKeyFocus($isFocused)
             .onAppear { isFocused = true }
             .onExitCommand(perform: onMinimize ?? onClose)
             .accessibilityElement(children: .contain)

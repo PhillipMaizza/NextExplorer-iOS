@@ -28,7 +28,12 @@
                     content: { QuickLookPreview(url: $0).ignoresSafeArea() }
                 )
                 .backgroundGradient()
-                .previewChrome(title: item.name, systemShare: .remote(item, serverURL: serverURL), onClose: onDismiss)
+                .previewChrome(
+                    title: item.name,
+                    systemShare: .remote(item, serverURL: serverURL),
+                    file: item,
+                    onClose: onDismiss
+                )
             }
         }
     }

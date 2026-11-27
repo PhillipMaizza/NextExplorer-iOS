@@ -993,7 +993,7 @@ shareUpload.retrySignInBody	Inicie sessão no NextExplorer e toque em “Tentar 
 shareUpload.causeFolder	As pastas não podem ser partilhadas. Partilhe os ficheiros que estão dentro delas.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	mais %lld
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	Sem pré-visualização para ficheiros %@
 uploadSettings.navigationTitle	Envios
 uploadSettings.subtitle	Configure a forma como os ficheiros são enviados para o servidor.
 uploadSettings.chunkedEnable	Ativar envios por partes

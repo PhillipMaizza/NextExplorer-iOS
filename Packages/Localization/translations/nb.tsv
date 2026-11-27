@@ -194,6 +194,7 @@ downloads.errorMissing	Fant ikke filen lenger.
 downloads.errorGeneric	Kunne ikke fullføre handlingen.
 unsupportedPreview.genericType	Fil
 unsupportedPreview.cannotOpen	Denne appen kan ikke åpne denne filtypen.
+unsupportedPreview.noPreview	Ingen forhåndsvisning av %@-filer
 uploads.navigationTitle	Opplastinger
 uploads.menuTitle	Last opp
 uploads.actionUploadFromFiles	Last opp fra Filer

@@ -230,7 +230,7 @@ downloads.errorGeneric	Couldn't complete that action.
 # ---- unsupported file preview ----
 unsupportedPreview.genericType	File
 unsupportedPreview.cannotOpen	This app can't open this type of file.
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	No preview for %@ files
 
 # ---- uploads ----
 uploads.navigationTitle	Uploads

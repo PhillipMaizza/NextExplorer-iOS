@@ -2,6 +2,7 @@
     import DesignSystem
     import Quartz
     import SwiftUI
+    import UniformTypeIdentifiers
 
     /// macOS counterpart of the `QLPreviewController` wrapper. `QLPreviewView` renders one item
     /// at a time, so paging between several URLs is driven here with the arrow keys.
@@ -22,11 +23,18 @@
         }
 
         var body: some View {
-            QuickLookItemView(url: urls.indices.contains(index) ? urls[index] : nil)
-                .focusable()
-                .focusEffectDisabled()
-                .onKeyPress(.leftArrow) { step(by: -1) }
-                .onKeyPress(.rightArrow) { step(by: 1) }
+            let url = urls.indices.contains(index) ? urls[index] : nil
+            Group {
+                if let url, UTType(filenameExtension: url.pathExtension)?.conforms(to: .svg) == true {
+                    SVGItemView(url: url)
+                } else {
+                    QuickLookItemView(url: url)
+                }
+            }
+            .focusable()
+            .focusEffectDisabled()
+            .onKeyPress(.leftArrow) { step(by: -1) }
+            .onKeyPress(.rightArrow) { step(by: 1) }
         }
 
         private func step(by offset: Int) -> KeyPress.Result {
@@ -35,6 +43,31 @@
             index = next
             onIndexChange?(next)
             return .handled
+        }
+    }
+
+    private struct SVGItemView: View {
+        let url: URL
+
+        @State private var image: NSImage?
+        @State private var isLoaded = false
+
+        var body: some View {
+            ZStack {
+                Color.clear
+                if let image {
+                    Image(nsImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .padding(.space16)
+                } else if isLoaded {
+                    QuickLookItemView(url: url)
+                }
+            }
+            .task(id: url) {
+                image = NSImage(contentsOf: url)
+                isLoaded = true
+            }
         }
     }
 
@@ -62,5 +95,14 @@
     #Preview {
         QuickLookPreview(url: URL(fileURLWithPath: "/System/Library/CoreServices/SystemVersion.plist"))
             .previewCanvas(.dialog)
+    }
+
+    #Preview("SVG") {
+        QuickLookPreview(
+            url: URL(
+                fileURLWithPath: "/System/Library/PrivateFrameworks/BiometricKitUI.framework/Resources/drawing.svg"
+            )
+        )
+        .previewCanvas(.dialog)
     }
 #endif

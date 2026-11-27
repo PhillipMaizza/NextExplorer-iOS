@@ -199,7 +199,7 @@ downloads.errorMissing	Não foi possível encontrar esse arquivo.
 downloads.errorGeneric	Não foi possível concluir essa ação.
 unsupportedPreview.genericType	Arquivo
 unsupportedPreview.cannotOpen	Esta app não consegue abrir este tipo de arquivo.
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	Sem pré-visualização para arquivos %@
 uploads.navigationTitle	Envios
 uploads.menuTitle	Enviar
 uploads.actionUploadFromFiles	Enviar a partir de Arquivos

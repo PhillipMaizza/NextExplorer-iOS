@@ -123,6 +123,11 @@
                     Button {} label: { Label { Text(L10n.Common.download) } icon: { IconKit.upload } }
                         .buttonStyle(.macToolbarAccent)
                 }
+                MacSplitButton(menuLabel: L10n.Common.more, action: {}) {
+                    Text(L10n.Common.save)
+                } items: {
+                    Button(L10n.Common.edit) {}
+                }
             }
         }
     }

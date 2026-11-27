@@ -187,6 +187,7 @@ downloads.errorMissing	Không còn tìm thấy tệp đó.
 downloads.errorGeneric	Không thể hoàn tất thao tác đó.
 unsupportedPreview.genericType	Tệp
 unsupportedPreview.cannotOpen	Ứng dụng này không thể mở loại tệp này.
+unsupportedPreview.noPreview	Không có bản xem trước cho tệp %@
 uploads.navigationTitle	Tải lên
 uploads.menuTitle	Tải lên
 uploads.actionUploadFromFiles	Tải lên từ Tệp

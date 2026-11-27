@@ -251973,187 +251973,187 @@
         }
       }
     },
-    "unsupportedPreview.macDescription": {
+    "unsupportedPreview.noPreview": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "No preview for %@ files"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "لا توجد معاينة لملفات %@"
           }
         },
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Pro soubory %@ není náhled"
           }
         },
         "da": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Ingen forhåndsvisning af %@-filer"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Keine Vorschau für %@-Dateien"
           }
         },
         "el": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Δεν υπάρχει προεπισκόπηση για αρχεία %@"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "No hay vista previa para archivos %@"
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "%@-tiedostoille ei ole esikatselua"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Aucun aperçu pour les fichiers %@"
           }
         },
         "he": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "אין תצוגה מקדימה לקובצי %@"
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "%@ फ़ाइलों के लिए कोई प्रीव्यू नहीं"
           }
         },
         "hu": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "A(z) %@ fájlokhoz nincs előnézet"
           }
         },
         "id": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Tidak ada pratinjau untuk file %@"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Nessuna anteprima per i file %@"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "%@ファイルはプレビューできません"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "%@ 파일은 미리 볼 수 없습니다"
           }
         },
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Ingen forhåndsvisning av %@-filer"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Geen voorvertoning voor %@-bestanden"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Brak podglądu plików %@"
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Sem pré-visualização para ficheiros %@"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Sem pré-visualização para arquivos %@"
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Nicio previzualizare pentru fișierele %@"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Нет предпросмотра для файлов %@"
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Ingen förhandsvisning av %@-filer"
           }
         },
         "th": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "ไม่มีการแสดงตัวอย่างสำหรับไฟล์ %@"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "%@ dosyaları için önizleme yok"
           }
         },
         "uk": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Немає попереднього перегляду для файлів %@"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "Không có bản xem trước cho tệp %@"
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "%@ 文件无法预览"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ · %2$@\n%3$@"
+            "value": "%@ 檔案無法預覽"
           }
         }
       }

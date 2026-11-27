@@ -973,7 +973,7 @@ shareUpload.retrySignInBody	NextExplorerにサインインしてから、もう�
 shareUpload.causeFolder	フォルダは共有できません。代わりに中のファイルを共有してください。
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	ほか %lld 件
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	%@ファイルはプレビューできません
 uploadSettings.navigationTitle	アップロード
 uploadSettings.subtitle	ファイルをサーバーへ送る方法を設定します。
 uploadSettings.chunkedEnable	分割アップロードを有効にする

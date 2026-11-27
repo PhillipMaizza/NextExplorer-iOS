@@ -4,7 +4,7 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let iconSize: CGFloat = .size64
+    static let tileSize: CGFloat = 112
 }
 
 /// Full screen stand in for a file the app has no viewer for (`FileItem.isUnsupportedForPreview`)
@@ -41,28 +41,18 @@ struct UnsupportedFilePreviewView: View {
 
     private var content: some View {
         #if os(macOS)
-            // Finder's look for a file Quick Look can't show: its real icon, name and details,
-            // then the apps that can open it.
-            ContentUnavailableView {
-                Label {
-                    Text(item.name)
-                } icon: {
-                    Image(nsImage: MacFileTypeIcon.image(forFileName: item.name))
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: Constants.iconSize, height: Constants.iconSize)
-                }
-            } description: {
-                Text(verbatim: L10n.UnsupportedPreview.macDescription(
-                    item.previewTypeText, FileSizeFormat.string(item.size), L10n.UnsupportedPreview.cannotOpen
-                ))
-            } actions: {
-                MacOpenWithButtons(source: canExport ? systemShare : .unavailable)
+            VStack(spacing: .space12) {
+                MacFileTile(item: item, size: Constants.tileSize, shouldShowPlayBadge: false)
+                    .accessibilityHidden(true)
+                Text(L10n.UnsupportedPreview.noPreview(item.previewTypeText))
+                    .type(.body2(.regular), style: .secondary)
+                    .multilineTextAlignment(.center)
+                MacOpenWithSplitButton(source: canExport ? systemShare : .unavailable)
+                    .padding(.top, .space8)
             }
-            // Fills the sheet: without it the sheet centers a content sized view, leaving empty
-            // bands above the bar and below the content.
+            .padding(.space24)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.backgroundPrimary.ignoresSafeArea())
+            .background(Color.macCard.ignoresSafeArea())
         #else
             FileSummaryView(item: item, message: L10n.UnsupportedPreview.cannotOpen)
         #endif

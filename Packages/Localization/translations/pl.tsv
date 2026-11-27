@@ -1033,7 +1033,7 @@ shareUpload.retrySignInBody	Zaloguj się w NextExplorer, a potem ponownie dotkni
 shareUpload.causeFolder	Folderów nie można udostępniać. Udostępnij zamiast tego znajdujące się w nich pliki.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld więcej
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	Brak podglądu plików %@
 uploadSettings.navigationTitle	Przesyłanie
 uploadSettings.subtitle	Skonfiguruj sposób wysyłania plików na serwer.
 uploadSettings.chunkedEnable	Włącz przesyłanie fragmentaryczne

@@ -973,7 +973,7 @@ shareUpload.retrySignInBody	请先登录 NextExplorer，然后再次点按“重
 shareUpload.causeFolder	无法共享文件夹。请改为共享其中的文件。
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	另外 %lld 个
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	%@ 文件无法预览
 uploadSettings.navigationTitle	上传
 uploadSettings.subtitle	配置文件发送到服务器的方式。
 uploadSettings.chunkedEnable	启用分块上传

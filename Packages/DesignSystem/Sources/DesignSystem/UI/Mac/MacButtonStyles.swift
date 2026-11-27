@@ -207,6 +207,17 @@
         }
     }
 
+    public extension View {
+        func macKeyFocus(_ isFocused: FocusState<Bool>.Binding) -> some View {
+            background {
+                Color.clear
+                    .focusable()
+                    .focused(isFocused)
+                    .focusEffectDisabled()
+            }
+        }
+    }
+
     #Preview("Buttons") {
         VStack(alignment: .leading, spacing: .space16) {
             ForEach(DSButtonSize.allCases, id: \.self) { size in

@@ -993,7 +993,7 @@ shareUpload.retrySignInBody	NextExplorer में साइन इन करे
 shareUpload.causeFolder	फ़ोल्डर शेयर नहीं किए जा सकते। इसके बजाय उनके अंदर की फ़ाइलें शेयर करें।
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld अन्य
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	%@ फ़ाइलों के लिए कोई प्रीव्यू नहीं
 uploadSettings.navigationTitle	अपलोड
 uploadSettings.subtitle	कॉन्फ़िगर करें कि फ़ाइलें सर्वर पर कैसे भेजी जाती हैं।.
 uploadSettings.chunkedEnable	चंक्ड अपलोड सक्षम करें

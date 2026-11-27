@@ -1033,7 +1033,7 @@ shareUpload.retrySignInBody	Войдите в NextExplorer, затем снов�
 shareUpload.causeFolder	Папки нельзя отправлять. Поделитесь файлами внутри них.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	ещё %lld
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	Нет предпросмотра для файлов %@
 uploadSettings.navigationTitle	Отправки
 uploadSettings.subtitle	Настройте способ отправки файлов на сервер.
 uploadSettings.chunkedEnable	Включить загрузку по частям

@@ -15,18 +15,20 @@ struct FilePreviewContainerView: View {
     var onRename: (() -> Void)?
     var onDownload: (() -> Void)?
     var onDelete: (() -> Void)?
+    var file: FileItem?
 
     var body: some View {
         NavigationStack {
             content
                 .backgroundGradient()
                 .previewChrome(
-                    title: fileURL?.lastPathComponent,
+                    title: file?.name ?? fileURL?.lastPathComponent,
                     systemShare: .local(fileURL),
                     onShareLink: onShareLink,
                     onRename: onRename,
                     onDownload: onDownload,
                     onDelete: onDelete,
+                    file: file,
                     onClose: onDismiss
                 )
         }
@@ -36,7 +38,9 @@ struct FilePreviewContainerView: View {
     private var content: some View {
         if let fileURL {
             QuickLookPreview(url: fileURL)
+            #if os(iOS)
                 .ignoresSafeArea()
+            #endif
         } else {
             statusContent
         }

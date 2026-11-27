@@ -1,69 +1,89 @@
 #if os(macOS)
+    import CoreModels
     import DesignSystem
     import Localization
     import SwiftUI
 
-    /// The bar across the top of a Mac preview sheet, like Preview's title bar: Close (Esc) on
-    /// the leading edge, the file name in the middle, the actions trailing. A Mac sheet shows no
-    /// `NavigationStack` toolbar, so every preview draws this instead.
-    struct MacPreviewBar<Leading: View, Trailing: View>: View {
+    struct MacPreviewBar<Trailing: View>: View {
         let title: String?
+        var file: FileItem?
         let onClose: () -> Void
-        @ViewBuilder var leading: () -> Leading
         @ViewBuilder var trailing: () -> Trailing
 
         var body: some View {
-            HStack(spacing: .space8) {
-                HStack(spacing: .space8) {
-                    MacIconButton(IconKit.close, label: L10n.PreviewToolbar.close, isFilled: false, action: onClose)
-                        .keyboardShortcut(.cancelAction)
-                    leading()
+            HStack(spacing: .space12) {
+                if let file {
+                    MacFileTile(item: file, size: MacPeekMetrics.iconSize, shouldShowPlayBadge: false)
+                        .accessibilityHidden(true)
+                }
+                VStack(alignment: .leading, spacing: .space2) {
+                    if let title {
+                        Text(title)
+                            .type(.subtitle2)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                    if let file {
+                        Text(file.macPeekFacts)
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                if let title {
-                    Text(title)
-                        .type(.body1(.bold))
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .layoutPriority(1)
-                }
                 HStack(spacing: .space8) {
                     trailing()
+                    MacIconButton(IconKit.close, label: L10n.PreviewToolbar.close, action: onClose)
+                        .keyboardShortcut(.cancelAction)
                 }
-                .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            .padding(.horizontal, .space16)
-            .padding(.vertical, .space12)
+            .padding(.leading, .space24)
+            .padding(.trailing, .space16)
+            .padding(.vertical, .space16)
             .background(Color.macCard)
-            .overlay(alignment: .bottom) {
-                Rectangle()
-                    .fill(Color.macLine)
-                    .frame(height: .borderWidthHairline)
-            }
         }
     }
 
     extension View {
         func macPreviewBar(
             title: String?,
+            file: FileItem? = nil,
             onClose: @escaping () -> Void,
-            @ViewBuilder leading: @escaping () -> some View = { EmptyView() },
             @ViewBuilder trailing: @escaping () -> some View = { EmptyView() }
         ) -> some View {
             safeAreaInset(edge: .top, spacing: 0) {
-                MacPreviewBar(title: title, onClose: onClose, leading: leading, trailing: trailing)
+                MacPreviewBar(title: title, file: file, onClose: onClose, trailing: trailing)
             }
         }
     }
 
-    #Preview("Preview bar") {
+    extension View {
+        func macWorking(_ isWorking: Bool) -> some View {
+            opacity(isWorking ? .zero : 1)
+                .overlay {
+                    if isWorking {
+                        MacSpinner()
+                    }
+                }
+        }
+    }
+
+    #Preview("Name only") {
         Text(verbatim: "notes.txt")
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .macPreviewBar(title: "notes.txt", onClose: {}) {
-                EmptyView()
-            } trailing: {
                 Button(L10n.Common.edit) {}
-                    .buttonStyle(.macDS(.primary, size: .small))
+                    .buttonStyle(.macDS(.primary))
+            }
+            .previewCanvas(.dialog)
+    }
+
+    #Preview("File") {
+        let file = FileItem(name: "Welcome.pdf", path: "", dateModified: Date(), size: 188_416, kind: "pdf")
+        Text(verbatim: file.name)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .macPreviewBar(title: file.name, file: file, onClose: {}) {
+                MacIconButton(IconKit.link, label: L10n.PreviewToolbar.createShareLink) {}
+                MacIconButton(IconKit.ellipsis, label: L10n.Common.more) {}
             }
             .previewCanvas(.dialog)
     }

@@ -28,9 +28,7 @@ struct BrowsePreviewRouter: View {
             // the preview for the new file, so the image gallery starts on it too.
             routed
                 .id(item.id)
-                .focusable()
-                .focusEffectDisabled()
-                .focused($isFocused)
+                .macKeyFocus($isFocused)
                 .onAppear { isFocused = true }
                 .onKeyPress(.leftArrow) { step(by: -1) }
                 .onKeyPress(.rightArrow) { step(by: 1) }
@@ -159,7 +157,8 @@ struct BrowsePreviewRouter: View {
                     onShareLink: bound(actions.onShare),
                     onRename: bound(actions.onRename),
                     onDownload: bound(actions.onDownload),
-                    onDelete: bound(actions.onDelete)
+                    onDelete: bound(actions.onDelete),
+                    file: item
                 )
             case .text:
                 textEditor
@@ -186,7 +185,7 @@ struct BrowsePreviewRouter: View {
         )
         .dsAlert(isPresented: Binding(get: { store.isTextSaveConflictPresented }, set: { _ in })) {
             DSAlertSheet(
-                icon: IconKit.warning,
+                icon: .warning,
                 title: L10n.TextPreview.conflictTitle(item.name),
                 message: L10n.TextPreview.conflictMessage,
                 confirmTitle: L10n.TextPreview.conflictOverwrite,

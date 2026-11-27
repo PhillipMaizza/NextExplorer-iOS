@@ -1073,7 +1073,7 @@ shareUpload.retrySignInBody	سجّل الدخول إلى NextExplorer، ثم ا�
 shareUpload.causeFolder	لا يمكن مشاركة المجلدات. شارك الملفات الموجودة بداخلها بدلًا من ذلك.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld أخرى
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	لا توجد معاينة لملفات %@
 uploadSettings.navigationTitle	الرفع
 uploadSettings.subtitle	اضبط طريقة إرسال الملفات إلى الخادم.
 uploadSettings.chunkedEnable	تفعيل الرفع على أجزاء

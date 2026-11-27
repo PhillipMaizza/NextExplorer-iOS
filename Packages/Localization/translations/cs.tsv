@@ -208,6 +208,7 @@ downloads.errorMissing	Tento soubor již nebylo možné najít.
 downloads.errorGeneric	Tuto akci se nepodařilo dokončit.
 unsupportedPreview.genericType	Soubor
 unsupportedPreview.cannotOpen	Tato aplikace tento typ souboru neotevře.
+unsupportedPreview.noPreview	Pro soubory %@ není náhled
 uploads.navigationTitle	Nahrávání
 uploads.menuTitle	Nahrát
 uploads.actionUploadFromFiles	Nahrát ze Souborů

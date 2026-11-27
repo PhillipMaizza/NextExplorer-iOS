@@ -993,7 +993,7 @@ shareUpload.retrySignInBody	Logga in i NextExplorer och tryck sedan på ”Förs
 shareUpload.causeFolder	Mappar kan inte delas. Dela filerna i dem i stället.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld till
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	Ingen förhandsvisning av %@-filer
 uploadSettings.navigationTitle	Uppladdningar
 uploadSettings.subtitle	Konfigurera hur filer skickas till servern.
 uploadSettings.chunkedEnable	Aktivera uppladdning i delar

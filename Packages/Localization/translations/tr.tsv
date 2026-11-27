@@ -194,6 +194,7 @@ downloads.errorMissing	Bu dosya artık bulunamıyor.
 downloads.errorGeneric	Bu işlem tamamlanamadı.
 unsupportedPreview.genericType	Dosya
 unsupportedPreview.cannotOpen	Bu uygulama bu dosya türünü açamıyor.
+unsupportedPreview.noPreview	%@ dosyaları için önizleme yok
 uploads.navigationTitle	Yüklemeler
 uploads.menuTitle	Yükle
 uploads.actionUploadFromFiles	Dosyalar'dan Yükle

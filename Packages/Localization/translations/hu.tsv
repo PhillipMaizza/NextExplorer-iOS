@@ -194,6 +194,7 @@ downloads.errorMissing	A fájlt már nem sikerült megtalálni.
 downloads.errorGeneric	A műveletet nem sikerült befejezni.
 unsupportedPreview.genericType	Fájl
 unsupportedPreview.cannotOpen	Ez az alkalmazás nem tudja megnyitni ezt a fájltípust.
+unsupportedPreview.noPreview	A(z) %@ fájlokhoz nincs előnézet
 uploads.navigationTitle	Feltöltések
 uploads.menuTitle	Feltöltés
 uploads.actionUploadFromFiles	Feltöltés a Fájlokból

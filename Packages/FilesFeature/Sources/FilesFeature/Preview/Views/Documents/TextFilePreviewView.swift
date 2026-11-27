@@ -85,7 +85,7 @@ struct TextFilePreviewView: View {
             .dsToast($savedToast)
             .dsAlert(isPresented: isConfirmingClose) {
                 DSAlertSheet(
-                    icon: IconKit.rename,
+                    icon: .rename,
                     title: L10n.TextPreview.unsavedTitle(fileName),
                     message: L10n.TextPreview.unsavedMessage,
                     confirmTitle: L10n.Common.save,
@@ -133,9 +133,7 @@ struct TextFilePreviewView: View {
             // and ⌘S saves while editing, like any Mac editor.
             editorBody
                 .background(Color.macCard.ignoresSafeArea())
-                .macPreviewBar(title: fileName, onClose: requestClose) {
-                    EmptyView()
-                } trailing: {
+                .macPreviewBar(title: fileName, file: item, onClose: requestClose) {
                     macEditButton
                     macMoreButton
                 }
@@ -167,7 +165,7 @@ struct TextFilePreviewView: View {
                 DSSpinner(size: .small)
             } else if content != nil, canEdit {
                 Button(isEditing ? L10n.Common.save : L10n.Common.edit, action: toggleEditing)
-                    .buttonStyle(.macDS(.primary, size: .small))
+                    .buttonStyle(.macDS(.primary))
                     .keyboardShortcut(isEditing ? KeyboardShortcut("s") : nil)
             }
         }
@@ -175,7 +173,7 @@ struct TextFilePreviewView: View {
         @ViewBuilder
         private var macMoreButton: some View {
             if isHTML, let url = FilesClient.rawFileURL(serverURL: serverURL, item: item) {
-                MacIconButton(IconKit.web, label: L10n.Browse.actionOpenInBrowser, isFilled: false) { openURL(url) }
+                MacIconButton(IconKit.web, label: L10n.Browse.actionOpenInBrowser) { openURL(url) }
             }
         }
     #else

@@ -19,16 +19,12 @@
         var body: some View {
             VStack(spacing: .zero) {
                 header
-                MacPeekSeparator()
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                MacPeekSeparator()
                 footer
             }
             .macPeekCardChrome()
-            .focusable()
-            .focused($isFocused)
-            .focusEffectDisabled()
+            .macKeyFocus($isFocused)
             .onAppear {
                 isFocused = true
                 store.send(.task)
@@ -62,7 +58,7 @@
                 .frame(maxWidth: .infinity, alignment: .leading)
                 if let onExtract, store.canExtract, store.phase == .loaded {
                     Button(L10n.Browse.actionExtract) { onExtract(store.extractPaths) }
-                        .buttonStyle(.macDS(.primary, size: .small))
+                        .buttonStyle(.macDS(.primary))
                 }
                 MacIconButton(IconKit.close, label: L10n.Common.close, action: onClose)
             }

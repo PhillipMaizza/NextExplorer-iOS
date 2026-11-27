@@ -973,7 +973,7 @@ shareUpload.retrySignInBody	NextExplorer에 로그인한 다음 “재시도”�
 shareUpload.causeFolder	폴더는 공유할 수 없습니다. 대신 폴더 안의 파일을 공유하세요.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	외 %lld개
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	%@ 파일은 미리 볼 수 없습니다
 uploadSettings.navigationTitle	업로드
 uploadSettings.subtitle	파일을 서버로 전송하는 방식을 설정합니다.
 uploadSettings.chunkedEnable	청크 업로드 활성화

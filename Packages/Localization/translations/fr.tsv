@@ -993,7 +993,7 @@ shareUpload.retrySignInBody	Connectez-vous à NextExplorer, puis touchez à nouv
 shareUpload.causeFolder	Les dossiers ne peuvent pas être partagés. Partagez plutôt les fichiers qu’ils contiennent.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld de plus
-unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+unsupportedPreview.noPreview	Aucun aperçu pour les fichiers %@
 uploadSettings.navigationTitle	Envois
 uploadSettings.subtitle	Configurez le transport utilisé pour envoyer les fichiers vers le serveur.
 uploadSettings.chunkedEnable	Activer les téléversements par chunks

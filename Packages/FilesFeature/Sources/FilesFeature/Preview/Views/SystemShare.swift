@@ -71,15 +71,11 @@ struct SystemShareButton: View {
     var body: some View {
         #if os(macOS)
             Button { model.prepare(source) } label: {
-                Label { Text(L10n.PreviewToolbar.share) } icon: {
-                    if model.isPreparing {
-                        MacSpinner()
-                    } else {
-                        IconKit.share.foregroundStyle(model.hasFailed ? Color.negativeText : Color.primaryDS)
-                    }
-                }
+                MacIconGlyph(IconKit.share, tint: model.hasFailed ? Color.negativeText : Color.primaryDS)
+                    .macWorking(model.isPreparing)
             }
-            .help(L10n.PreviewToolbar.share)
+            .buttonStyle(.plain)
+            .accessibilityLabelWithTooltip(L10n.PreviewToolbar.share)
             // The red glyph alone says the file couldn't be fetched; VoiceOver hears it too.
             .accessibilityValue(model.hasFailed ? L10n.OpenWith.failed : "")
             .disabled(isDisabled)

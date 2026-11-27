@@ -187,6 +187,7 @@ downloads.errorMissing	File itu tidak dapat ditemukan lagi.
 downloads.errorGeneric	Tidak dapat menyelesaikan tindakan itu.
 unsupportedPreview.genericType	File
 unsupportedPreview.cannotOpen	Aplikasi ini tidak dapat membuka jenis file ini.
+unsupportedPreview.noPreview	Tidak ada pratinjau untuk file %@
 uploads.navigationTitle	Unggahan
 uploads.menuTitle	Unggah
 uploads.actionUploadFromFiles	Unggah dari File

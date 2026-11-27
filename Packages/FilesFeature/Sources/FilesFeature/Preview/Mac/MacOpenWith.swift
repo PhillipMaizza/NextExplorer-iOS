@@ -8,7 +8,6 @@
         static let rawTextSheetWidth: CGFloat = 760
         static let rawTextSheetHeight: CGFloat = 560
         static let buttonSpacing: CGFloat = .space12
-        static let buttonMaxWidth: CGFloat = 320
         /// The spinner sits just outside the buttons while the file downloads.
         static let workingIndicatorOffset: CGFloat = .space32
     }
@@ -52,14 +51,13 @@
                     }
                 }
             } label: {
-                if model.isWorking {
-                    DSSpinner()
-                } else {
-                    MenuIcon.openWith.image
-                }
+                MacIconGlyph(MenuIcon.openWith.image)
+                    .macWorking(model.isWorking)
             }
-            .menuStyle(.borderlessButton)
+            .menuStyle(.button)
+            .buttonStyle(.plain)
             .menuIndicator(.hidden)
+            .fixedSize()
             .accessibilityLabelWithTooltip(L10n.OpenWith.openWith)
             .focusedSceneValue(\.printPreview, model.printKind == nil ? nil : FocusedMenuAction { model.print() })
             .modifier(MacOpenWithPresentation(model: model))
@@ -103,9 +101,7 @@
         }
     }
 
-    /// The same actions as prominent buttons, for the "can't preview this file" screen where
-    /// opening elsewhere is the main thing to do.
-    struct MacOpenWithButtons: View {
+    struct MacOpenWithSplitButton: View {
         @State private var model: MacOpenWithModel
 
         init(source: SystemShareSource) {
@@ -114,39 +110,50 @@
 
         var body: some View {
             let apps = model.apps
+            let others = apps.map { lookup in lookup.all.filter { $0.id != lookup.preferred?.id } } ?? []
             VStack(spacing: Metrics.buttonSpacing) {
                 if let preferred = apps?.preferred {
-                    Button { model.open(with: nil) } label: {
-                        Label { Text(L10n.OpenWith.openIn(preferred.name)) } icon: { preferred.icon }
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .disabled(model.isWorking)
-                }
-                if let all = apps?.all, all.count > 1 {
-                    Menu(L10n.OpenWith.openWith) {
-                        ForEach(all) { app in
-                            Button { model.open(with: app) } label: {
-                                Label { Text(app.name) } icon: { app.icon }
-                            }
+                    if others.isEmpty {
+                        Button { model.open(with: nil) } label: { openLabel(preferred) }
+                            .buttonStyle(.macDS(.primary))
+                    } else {
+                        MacSplitButton(menuLabel: L10n.OpenWith.openWith) {
+                            model.open(with: nil)
+                        } label: {
+                            openLabel(preferred)
+                        } items: {
+                            appItems(others)
                         }
                     }
-                    .menuStyle(.button)
-                    .controlSize(.large)
+                } else if !others.isEmpty {
+                    MacPopupMenu(L10n.OpenWith.openWith, valueLabel: L10n.OpenWith.openWith) {
+                        appItems(others)
+                    }
                 }
                 if model.canViewAsText {
                     Button(L10n.OpenWith.viewAsText) { model.viewAsText() }
-                        .buttonStyle(.link)
+                        .buttonStyle(.macDS(.tertiary))
                 }
             }
-            .frame(maxWidth: Metrics.buttonMaxWidth)
+            .disabled(model.isWorking)
             .overlay(alignment: .trailing) {
                 if model.isWorking {
                     MacSpinner().offset(x: Metrics.workingIndicatorOffset)
                 }
             }
             .modifier(MacOpenWithPresentation(model: model))
+        }
+
+        private func openLabel(_ app: MacOpenWithApp) -> some View {
+            Label { Text(L10n.OpenWith.openIn(app.name)) } icon: { app.icon }
+        }
+
+        private func appItems(_ apps: [MacOpenWithApp]) -> some View {
+            ForEach(apps) { app in
+                Button { model.open(with: app) } label: {
+                    Label { Text(app.name) } icon: { app.icon }
+                }
+            }
         }
     }
 
@@ -191,12 +198,12 @@
     }
 
     #Preview("Buttons") {
-        MacOpenWithButtons(source: .local(URL(fileURLWithPath: "/System/Library/CoreServices/SystemVersion.plist")))
+        MacOpenWithSplitButton(source: .local(URL(fileURLWithPath: "/System/Library/CoreServices/SystemVersion.plist")))
             .padding(.space24)
     }
 
     #Preview("Unavailable") {
-        MacOpenWithButtons(source: .unavailable)
+        MacOpenWithSplitButton(source: .unavailable)
             .padding(.space24)
     }
 

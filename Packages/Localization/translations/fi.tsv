@@ -194,6 +194,7 @@ downloads.errorMissing	Tiedostoa ei enää löytynyt.
 downloads.errorGeneric	Toimintoa ei voitu suorittaa loppuun.
 unsupportedPreview.genericType	Tiedosto
 unsupportedPreview.cannotOpen	Tämä sovellus ei voi avata tämäntyyppistä tiedostoa.
+unsupportedPreview.noPreview	%@-tiedostoille ei ole esikatselua
 uploads.navigationTitle	Lähetykset
 uploads.menuTitle	Lähetä
 uploads.actionUploadFromFiles	Lähetä Tiedostoista

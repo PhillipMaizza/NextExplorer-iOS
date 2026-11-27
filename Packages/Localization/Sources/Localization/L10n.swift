@@ -1400,7 +1400,7 @@ public enum L10n {
     public enum UnsupportedPreview {
         public static var cannotOpen: String { tr("unsupportedPreview.cannotOpen") }  // "This app can't open this type of file."
         public static var genericType: String { tr("unsupportedPreview.genericType") }  // "File"
-        public static func macDescription(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("unsupportedPreview.macDescription", a0, a1, a2) }
+        public static func noPreview(_ a0: CVarArg) -> String { tr("unsupportedPreview.noPreview", a0) }
     }
     public enum UploadSettings {
         public static var autoFallback: String { tr("uploadSettings.autoFallback") }  // "Fall Back to Chunked Uploads"

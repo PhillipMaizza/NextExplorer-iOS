@@ -187,6 +187,7 @@ downloads.errorMissing	ไม่พบไฟล์นั้นอีกต่อ
 downloads.errorGeneric	ไม่สามารถดำเนินการนั้นให้เสร็จสิ้นได้
 unsupportedPreview.genericType	ไฟล์
 unsupportedPreview.cannotOpen	แอปนี้ไม่สามารถเปิดไฟล์ชนิดนี้ได้
+unsupportedPreview.noPreview	ไม่มีการแสดงตัวอย่างสำหรับไฟล์ %@
 uploads.navigationTitle	การอัปโหลด
 uploads.menuTitle	อัปโหลด
 uploads.actionUploadFromFiles	อัปโหลดจากไฟล์

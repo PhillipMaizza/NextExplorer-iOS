@@ -173,14 +173,17 @@ private struct PreviewChrome: ViewModifier {
     }
 
     private var hasFileActions: Bool {
-        [onInfo, onRename, onMove, onCopy, onShareLink, onDownload, onDelete].contains { $0 != nil }
-            || offlineAction != nil
+        hasMenuOnlyActions || onShareLink != nil
+    }
+
+    private var hasMenuOnlyActions: Bool {
+        [onInfo, onRename, onMove, onCopy, onDownload, onDelete].contains { $0 != nil } || offlineAction != nil
     }
 
     /// The file's actions, grouped: about the file, sending it, keeping it, removing it. The
     /// title menu on iOS, the More menu on the Mac.
     @ViewBuilder
-    private func fileActions(includesShare: Bool, includesDelete: Bool) -> some View {
+    private func fileActions(includesShare: Bool, includesShareLink: Bool = true, includesDelete: Bool) -> some View {
         Section {
             menuButton(L10n.Browse.actionGetInfo, icon: IconKit.info, action: onInfo)
             menuButton(L10n.PreviewToolbar.rename, icon: IconKit.rename, action: onRename)
@@ -188,7 +191,13 @@ private struct PreviewChrome: ViewModifier {
             menuButton(L10n.Browse.actionCopy, icon: IconKit.copy, action: onCopy)
         }
         Section {
-            menuButton(L10n.PreviewToolbar.createShareLink, icon: IconKit.shareLink, action: onShareLink)
+            menuButton(
+                L10n.PreviewToolbar.createShareLink,
+                icon: IconKit.shareLink,
+                action: includesShareLink
+                    ? onShareLink
+                    : nil
+            )
             if includesShare, hasSystemShare {
                 Button { shareModel.prepare(shareSource) } label: {
                     Label { Text(L10n.PreviewToolbar.share) } icon: { menuIcon(IconKit.share) }
@@ -229,33 +238,30 @@ private struct PreviewChrome: ViewModifier {
     }
 
     #if os(macOS)
-        /// Close (Esc) on the leading edge, the file name in the middle, then Edit, Open With and
-        /// Share as buttons and every other action in one More menu, like Finder's toolbar.
         private var macBar: some View {
-            MacPreviewBar(title: title, onClose: onClose) {
-                EmptyView()
-            } trailing: {
+            MacPreviewBar(title: title, file: file, onClose: onClose) {
                 if let onEdit {
-                    Button(action: onEdit) {
-                        Label { Text(L10n.Common.edit) } icon: { IconKit.rename }
-                    }
-                    .help(L10n.Common.edit)
+                    MacIconButton(IconKit.rename, label: L10n.Common.edit, action: onEdit)
                 }
                 if hasSystemShare {
-                    MacOpenWithMenu(source: shareSource)
-                        .fixedSize()
+                    if file?.isUnsupportedForPreview != true {
+                        MacOpenWithMenu(source: shareSource)
+                    }
                     SystemShareButton(source: shareSource)
                 }
-                if hasFileActions {
+                if let onShareLink {
+                    MacIconButton(IconKit.link, label: L10n.PreviewToolbar.createShareLink, action: onShareLink)
+                }
+                if hasMenuOnlyActions {
                     Menu {
-                        fileActions(includesShare: false, includesDelete: true)
+                        fileActions(includesShare: false, includesShareLink: false, includesDelete: true)
                     } label: {
-                        IconKit.moreOptions
+                        MacIconGlyph(IconKit.ellipsis)
                     }
-                    .menuStyle(.borderlessButton)
+                    .menuStyle(.button)
+                    .buttonStyle(.plain)
                     .menuIndicator(.hidden)
                     .fixedSize()
-                    .tint(Color.primaryDS)
                     .accessibilityLabelWithTooltip(L10n.Common.more)
                 }
             }

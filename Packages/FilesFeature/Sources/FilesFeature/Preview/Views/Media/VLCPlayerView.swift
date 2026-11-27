@@ -145,9 +145,7 @@ struct VLCPlayerView: View {
             }
         #if os(macOS)
             // Space plays and pauses, as a Mac player does; the arrows keep stepping through the folder.
-            .focusable()
-            .focusEffectDisabled()
-            .focused($isKeyboardFocused)
+            .macKeyFocus($isKeyboardFocused)
             .task { isKeyboardFocused = true }
             .onKeyPress(.space) {
                 controller.togglePlayPause()

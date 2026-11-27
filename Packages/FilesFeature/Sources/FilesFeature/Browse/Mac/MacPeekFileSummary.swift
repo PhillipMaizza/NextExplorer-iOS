@@ -18,27 +18,20 @@
         @Entry var macPeekFallback: MacPeekFallback?
     }
 
+    @MainActor
+    extension FileItem {
+        var macPeekFacts: String {
+            [previewTypeText, size > .zero ? FileSizeFormat.string(size) : nil]
+                .compactMap(\.self)
+                .joined(separator: MacPeekMetrics.separator)
+        }
+    }
+
     struct MacPeekFileSummary: View {
         let item: FileItem
         let serverURL: URL
         var message: String?
         var onRetry: (() -> Void)?
-
-        @State private var openWith: MacOpenWithModel
-
-        init(item: FileItem, serverURL: URL, message: String? = nil, onRetry: (() -> Void)? = nil) {
-            self.item = item
-            self.serverURL = serverURL
-            self.message = message
-            self.onRetry = onRetry
-            _openWith = State(initialValue: MacOpenWithModel(source: .remote(item, serverURL: serverURL)))
-        }
-
-        private var facts: String {
-            [item.previewTypeText, item.size > .zero ? FileSizeFormat.string(item.size) : nil]
-                .compactMap(\.self)
-                .joined(separator: MacPeekMetrics.separator)
-        }
 
         var body: some View {
             VStack(spacing: .space12) {
@@ -50,10 +43,10 @@
                     .lineLimit(2)
                     .truncationMode(.middle)
                     .padding(.top, .space4)
-                Text(facts)
+                Text(item.macPeekFacts)
                     .type(.body3(.regular), style: .secondary)
                     .monospacedDigit()
-                if let notice = openWith.errorMessage ?? message {
+                if let notice = message {
                     Label {
                         Text(notice)
                     } icon: {
@@ -77,21 +70,9 @@
             HStack(spacing: .space12) {
                 if let onRetry {
                     Button(L10n.Common.retry, action: onRetry)
-                        .buttonStyle(.macDS(.secondary, size: .small))
+                        .buttonStyle(.macDS(.secondary))
                 }
-                if let preferred = openWith.apps?.preferred {
-                    Button {
-                        openWith.open(with: nil)
-                    } label: {
-                        Label {
-                            Text(L10n.OpenWith.openIn(preferred.name))
-                        } icon: {
-                            preferred.icon
-                        }
-                    }
-                    .buttonStyle(.macDS(.primary, size: .small))
-                    .disabled(openWith.isWorking)
-                }
+                MacOpenWithSplitButton(source: .remote(item, serverURL: serverURL))
             }
         }
     }

@@ -40,7 +40,7 @@
                     onDismiss: onDismiss
                 )
             } else if item.isPreviewableViaDownload {
-                FilePreviewContainerView(fileURL: fileURL, errorMessage: nil, onDismiss: onDismiss)
+                FilePreviewContainerView(fileURL: fileURL, errorMessage: nil, onDismiss: onDismiss, file: item)
             } else if item.isStreamableMedia {
                 // Local extracted file, so no auth cookie needed either way. `item.supportsThumbnail`
                 // is always `false` for archive entries, so `StreamingPreviewView`'s poster never

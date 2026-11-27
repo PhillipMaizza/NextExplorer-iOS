@@ -201,6 +201,7 @@ downloads.errorMissing	לא ניתן היה למצוא את הקובץ הזה י
 downloads.errorGeneric	לא ניתן היה להשלים את הפעולה.
 unsupportedPreview.genericType	קובץ
 unsupportedPreview.cannotOpen	האפליקציה הזו לא יכולה לפתוח סוג קובץ זה.
+unsupportedPreview.noPreview	אין תצוגה מקדימה לקובצי %@
 uploads.navigationTitle	העלאות
 uploads.menuTitle	העלאה
 uploads.actionUploadFromFiles	העלאה מ"קבצים"

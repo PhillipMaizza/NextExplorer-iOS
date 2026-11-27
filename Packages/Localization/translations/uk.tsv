@@ -208,6 +208,7 @@ downloads.errorMissing	Цей файл більше не вдалося знай
 downloads.errorGeneric	Не вдалося виконати цю дію.
 unsupportedPreview.genericType	Файл
 unsupportedPreview.cannotOpen	Цей застосунок не може відкрити файл такого типу.
+unsupportedPreview.noPreview	Немає попереднього перегляду для файлів %@
 uploads.navigationTitle	Вивантаження
 uploads.menuTitle	Вивантажити
 uploads.actionUploadFromFiles	Вивантажити з «Файлів»
