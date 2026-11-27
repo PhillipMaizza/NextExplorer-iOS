@@ -41,7 +41,7 @@
         }
 
         private var subtitle: String {
-            let label = share?.trimmedLabel.map { L10n.Shared.quotedLabel($0) }
+            let label = share?.trimmedLabel.flatMap { $0 == item.name ? nil : L10n.Shared.quotedLabel($0) }
             let place = isByMe
                 ? MacInspectorLocation.trail(parent: item.location ?? "")
                 : L10n.Shared.fromSharer(store.state.sharedByLabel(for: share ?? item.shares[0]))
