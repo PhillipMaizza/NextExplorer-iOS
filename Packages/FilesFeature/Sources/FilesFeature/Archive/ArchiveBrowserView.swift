@@ -8,347 +8,179 @@
     import SwiftUI
 
     private enum Constants {
-        static let rowSpacing: CGFloat = .space16
         static let backIconSize: CGFloat = .iconSmall
-        static let rowIconSize: CGFloat = .iconMedium
-        static let statusSpacing: CGFloat = .space16
+        static let assetsFolder = "assets"
     }
 
-    /// One row of the current folder level within `ArchiveBrowserView`: directories are
-    /// synthesized from entry path prefixes (most archives don't include explicit directory
-    /// entries for every intermediate folder), not just the ones the archive lists directly.
-    /// One row of the archive's current folder: a file, or a folder its entries imply.
-    struct ArchiveRow: Identifiable {
-        let name: String
-        let isDirectory: Bool
-        let size: UInt64?
-
-        var id: String {
-            "\(isDirectory ? "d" : "f")/\(name)"
-        }
-    }
-
-    /// One in-archive file opened for preview, bundled with its extracted location and the row
-    /// name it grew from (the `.zoom` transition source).
     private struct ArchiveEntryPreview: Identifiable, Equatable {
         let item: FileItem
         let fileURL: URL
-        let sourceID: String
 
         var id: String {
             fileURL.path
         }
     }
 
-    /// Result of a background entry extraction: `tooLarge` is split out so the user gets a
-    /// "too large to open" message rather than the generic open failure.
-    private enum ArchiveExtractionOutcome: Sendable {
-        case success
-        case tooLarge
-        case failed
-    }
-
-    /// Full-screen client-side browser for `.zip`/`.rar` contents (`FileItem.isBrowsableArchive`)
-    /// downloads the archive once via `FilesClient.downloadRawFile`, then navigates its entry
-    /// list like a real folder tree, entirely in memory. Google-Drive-style "open and see what's
-    /// inside," without the server ever fully extracting anything to disk. Files inside are
-    /// previewable the same way top-level files are: see `ArchiveEntryPreviewView`.
     struct ArchiveBrowserView: View {
         let item: FileItem
         let serverURL: URL
-        /// When set, the archive is already on disk (an archive extracted from *inside* another
-        /// archive: a nested .zip/.rar) and this file is browsed directly instead of downloading
-        /// from the server. Owned by the parent browser; never deleted here.
-        var localFileURL: URL?
         let onDismiss: () -> Void
 
-        @State private var entries: [ArchiveEntry] = []
-        @State private var source: ArchiveSource?
-        @State private var currentPath: [String] = []
-        @State private var phase: DataPhase = .loading
-        @State private var previewingEntry: ArchiveEntryPreview?
-        /// Name of the row whose entry is currently being extracted off the main thread: drives
-        /// its trailing spinner and blocks a second concurrent extraction.
-        @State private var extractingRow: String?
+        @State private var store: StoreOf<ArchiveBrowserFeature>
         @State private var toastMessage: DSToastMessage?
-        /// Pairs each file row with its full-screen preview cover so it opens and interactively
-        /// swipes-to-dismiss with the native `.zoom` morph, same as the browse tab.
-        @Namespace private var entryTransition
         @Dependency(\.filesClient) private var filesClient
+        @Dependency(\.archiveReader) private var archiveReader
 
-        private var visibleRows: [ArchiveRow] {
-            let prefix = currentPath.isEmpty ? "" : currentPath.joined(separator: "/") + "/"
-            var seenDirectoryNames = Set<String>()
-            var rows: [ArchiveRow] = []
-            for entry in entries {
-                guard prefix.isEmpty || entry.path.hasPrefix(prefix) else { continue }
-                let remainder = entry.path.dropFirst(prefix.count)
-                guard !remainder.isEmpty else { continue }
-                let components = remainder.split(separator: "/", omittingEmptySubsequences: true)
-                guard let first = components.first else { continue }
-                let name = String(first)
-                if components.count == 1, !entry.isDirectory {
-                    rows.append(ArchiveRow(name: name, isDirectory: false, size: entry.size))
-                } else if !seenDirectoryNames.contains(name) {
-                    seenDirectoryNames.insert(name)
-                    rows.append(ArchiveRow(name: name, isDirectory: true, size: nil))
-                }
-            }
-            return rows.sorted { lhs, rhs in
-                lhs.isDirectory != rhs.isDirectory
-                    ? lhs.isDirectory
-                    : lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
-            }
+        init(item: FileItem, serverURL: URL, localFileURL: URL? = nil, onDismiss: @escaping () -> Void) {
+            self.item = item
+            self.serverURL = serverURL
+            self.onDismiss = onDismiss
+            _store = State(initialValue: Store(
+                initialState: ArchiveBrowserFeature.State(
+                    archive: item,
+                    serverURL: serverURL,
+                    localFileURL: localFileURL
+                )
+            ) { ArchiveBrowserFeature() })
         }
 
-        private var title: String {
-            currentPath.last ?? item.name
+        private var openedPreview: Binding<ArchiveEntryPreview?> {
+            Binding(
+                get: {
+                    guard let entry = store.entry, case let .loaded(url) = entry.phase,
+                          let file = store.files.first(where: { $0.path == entry.path }) else { return nil }
+                    return ArchiveEntryPreview(item: file.fileItem, fileURL: url)
+                },
+                set: { preview in
+                    if preview == nil, store.entry != nil {
+                        store.send(.backTapped)
+                    }
+                }
+            )
+        }
+
+        private var thumbnails: ArchiveThumbnailLoader? {
+            ArchiveThumbnailLoader(archive: item, serverURL: serverURL, source: store.source)
         }
 
         var body: some View {
-            chrome
-                .dsToast($toastMessage)
-                // A real cover, nested inside the archive's own `.fullScreenCover`: the entry
-                // preview morphs from its row and swipes back to it (`.zoom`), and dismissing it
-                // lands back in the archive listing rather than closing everything.
-                .fullScreenCover(item: $previewingEntry) { entry in
-                    PreviewZoomContainer(sourceID: entry.sourceID, namespace: entryTransition) {
-                        ArchiveEntryPreviewView(
-                            item: entry.item,
-                            fileURL: entry.fileURL,
-                            serverURL: serverURL,
-                            resolveAsset: { relativePath in
-                                await resolveAsset(relativePath, relativeTo: entry.item.path)
-                            },
-                            onDismiss: { previewingEntry = nil }
-                        )
-                    }
-                }
-                .task {
-                    await load()
-                }
-                // Navigating a folder abandons any in flight extraction the user walked away from.
-                .onChange(of: currentPath) { _, _ in extractingRow = nil }
-                // Closing the browser purges this archive's extracted entries and resolved assets from
-                // `tmp`: otherwise the last opened entry of every archive ever browsed lingers there
-                // until the OS purges under pressure. Skipped while an extraction is still running so we
-                // never delete a file out from under an in flight write.
-                .onDisappear {
-                    guard extractingRow == nil else { return }
-                    let directory = Self.temporaryDirectory(for: item)
-                    Task.detached(priority: .utility) { [directory] in
-                        try? FileManager.default.removeItem(at: directory)
-                    }
-                }
-        }
-
-        private var chrome: some View {
             NavigationStack {
                 content
                     .backgroundGradient()
-                    .navigationTitle(title)
+                    .navigationTitle(store.path.last ?? item.name)
                     .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        if !currentPath.isEmpty {
-                            ToolbarItem(placement: .topBarLeading) {
-                                Button {
-                                    currentPath.removeLast()
-                                } label: {
-                                    IconKit.back
-                                        .resizable()
-                                        .scaledToFit()
-                                        .foregroundStyle(Color.primaryDS)
-                                        .frame(width: Constants.backIconSize, height: Constants.backIconSize)
-                                }
-                                .accessibilityLabel(L10n.Common.back)
-                            }
-                        }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button { onDismiss() } label: {
-                                IconKit.close.foregroundStyle(Color.primaryDS)
-                            }
-                            .accessibilityLabel(L10n.Common.close)
-                        }
+                    .toolbar { toolbar }
+            }
+            .dsToast($toastMessage)
+            .fullScreenCover(item: openedPreview) { preview in
+                ArchiveEntryPreviewView(
+                    item: preview.item,
+                    fileURL: preview.fileURL,
+                    serverURL: serverURL,
+                    resolveAsset: { relativePath in
+                        await resolveAsset(relativePath, relativeTo: preview.item.path)
+                    },
+                    onDismiss: { store.send(.backTapped) }
+                )
+            }
+            .onChange(of: entryFailure) { _, failure in
+                guard let failure else { return }
+                toastMessage = DSToastMessage(icon: IconKit.errorFill, text: failure)
+                store.send(.backTapped)
+            }
+            .task { store.send(.task) }
+            .onDisappear {
+                store.send(.closed)
+                let directory = ArchiveBrowserFeature.scratchDirectory(for: item)
+                Task.detached(priority: .utility) {
+                    try? FileManager.default.removeItem(at: directory)
+                }
+            }
+        }
+
+        private var entryFailure: String? {
+            guard case let .failed(message)? = store.entry?.phase else { return nil }
+            return message
+        }
+
+        @ToolbarContentBuilder
+        private var toolbar: some ToolbarContent {
+            if !store.path.isEmpty {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { store.send(.backTapped) } label: {
+                        IconKit.back
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.primaryDS)
+                            .frame(width: Constants.backIconSize, height: Constants.backIconSize)
                     }
+                    .accessibilityLabel(L10n.Common.back)
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { onDismiss() } label: {
+                    IconKit.close.foregroundStyle(Color.primaryDS)
+                }
+                .accessibilityLabel(L10n.Common.close)
             }
         }
 
         @ViewBuilder
         private var content: some View {
-            if case let .failed(message) = phase {
-                failureContent(message)
-            } else if !phase.hasLoaded {
-                statusContent(icon: nil, message: nil, tint: .primaryDS)
-            } else if entries.isEmpty {
-                failureContent(L10n.Archive.unreadable)
-            } else if visibleRows.isEmpty {
-                statusContent(icon: IconKit.folderFill, message: L10n.Archive.emptyFolder, tint: .secondaryDS)
+            if let failure = store.phase.errorMessage {
+                EmptyStateView(icon: IconKit.warning, message: failure) { store.send(.retryTapped) }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if store.phase != .loaded {
+                DSSpinner()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if store.entries.isEmpty {
+                EmptyStateView(icon: IconKit.folderFill, message: L10n.Archive.emptyFolder)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                DSGroupedList(visibleRows) { row in
-                    Button {
-                        handleTap(row)
-                    } label: {
-                        rowContent(row)
+                ScrollView {
+                    FileGrid {
+                        ForEach(store.entries) { entry in
+                            Button {
+                                store.send(.fileOpened(entry))
+                            } label: {
+                                ArchiveTile(
+                                    entry: entry,
+                                    thumbnails: thumbnails,
+                                    isOpening: store.entry?.path == entry.path && store.entry?.phase == .loading
+                                )
+                            }
+                            .buttonStyle(DSPressableButtonStyle())
+                            .disabled(store.entry?.phase == .loading)
+                        }
                     }
-                    .listRowBackground(Color.backgroundSecondary)
-                }
-                .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)
-            }
-        }
-
-        private func rowContent(_ row: ArchiveRow) -> some View {
-            HStack(spacing: Constants.rowSpacing) {
-                if row.isDirectory {
-                    IconKit.folderFill
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.accent)
-                        .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                } else {
-                    FileTypeIcon(kind: (row.name as NSString).pathExtension)
-                        .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        .matchedTransitionSource(id: row.name, in: entryTransition)
-                }
-                Text(row.name).type(.body2(.semibold), style: .primaryOnSurface)
-                Spacer()
-                if extractingRow == row.name {
-                    DSSpinner(size: .small)
-                } else if let size = row.size {
-                    Text(FileSizeFormat.string(Int64(size)))
-                        .type(.body3(.regular), style: .secondary)
-                }
-                if row.isDirectory {
-                    IconKit.chevronRight
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.secondaryDS)
-                        .frame(width: .iconXSmall, height: .iconXSmall)
+                    .padding(FileGridMetrics.margin)
                 }
             }
         }
 
-        private func failureContent(_ message: String) -> some View {
-            statusContent(icon: IconKit.warning, message: message, tint: .negative)
-        }
-
-        private func statusContent(icon: Image?, message: String?, tint: Color) -> some View {
-            VStack(spacing: Constants.statusSpacing) {
-                if let icon, let message {
-                    icon
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(tint)
-                        .frame(width: .iconMedium, height: .iconMedium)
-                    Text(message).type(.body1(.regular), style: .secondary)
-                } else {
-                    DSSpinner()
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-
-        private func handleTap(_ row: ArchiveRow) {
-            guard !row.isDirectory else {
-                currentPath.append(row.name)
-                return
-            }
-            guard extractingRow == nil, let source else { return }
-            let rowName = row.name
-            let fullPath = currentPath.isEmpty ? rowName : currentPath.joined(separator: "/") + "/" + rowName
-            let parent = (fullPath as NSString).deletingLastPathComponent
-            let entryItem = FileItem(
-                name: rowName,
-                path: parent,
-                dateModified: Date(timeIntervalSince1970: 0),
-                size: Int64(row.size ?? 0),
-                kind: (rowName as NSString).pathExtension
-            )
-            guard let destination = SafeDestination.within(Self.temporaryDirectory(for: item), rowName) else {
-                toastMessage = DSToastMessage(icon: IconKit.errorFill, text: L10n.Archive.openFailed)
-                return
-            }
-            extractingRow = rowName
-            Task {
-                // Off the main thread: a multi-gigabyte entry (a large video, or an unsupported
-                // binary opened just to be shared) would otherwise freeze the UI while it unpacks.
-                let outcome = await Task.detached(priority: .userInitiated) { () -> ArchiveExtractionOutcome in
-                    try? FileManager.default.removeItem(at: destination)
-                    try? FileManager.default.createDirectory(
-                        at: destination.deletingLastPathComponent(),
-                        withIntermediateDirectories: true
-                    )
-                    do {
-                        try ArchiveReader.extract(fullPath, from: source, to: destination)
-                        return .success
-                    } catch ArchiveReaderError.entryTooLarge {
-                        return .tooLarge
-                    } catch {
-                        return .failed
-                    }
-                }.value
-                // Bail if the user navigated away or tapped another row meanwhile.
-                guard extractingRow == rowName else { return }
-                extractingRow = nil
-                switch outcome {
-                case .success:
-                    previewingEntry = ArchiveEntryPreview(item: entryItem, fileURL: destination, sourceID: rowName)
-                case .tooLarge:
-                    toastMessage = DSToastMessage(icon: IconKit.errorFill, text: L10n.Archive.entryTooLarge)
-                case .failed:
-                    toastMessage = DSToastMessage(icon: IconKit.errorFill, text: L10n.Archive.openFailed)
-                }
-            }
-        }
-
-        /// Resolves and extracts a sibling asset referenced by an in-archive HTML/Markdown file
-        /// (e.g. `style.css` next to `page.html`) from the same open archive: the archive
-        /// equivalent of `TextFilePreviewView.resolveServerAsset`.
         private func resolveAsset(_ relativePath: String, relativeTo directory: String) async -> URL? {
-            guard let source,
-                  let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: directory) else { return nil }
+            guard let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: directory) else { return nil }
             let entryPath = resolved.parent.isEmpty ? resolved.name : "\(resolved.parent)/\(resolved.name)"
-            let assetsBase = Self.temporaryDirectory(for: item).appendingPathComponent("assets", isDirectory: true)
-            guard let destination = SafeDestination.within(assetsBase, entryPath) else { return nil }
+            let base = ArchiveBrowserFeature.scratchDirectory(for: item)
+                .appendingPathComponent(Constants.assetsFolder, isDirectory: true)
+            guard let destination = SafeDestination.within(base, entryPath) else { return nil }
             try? FileManager.default.createDirectory(
                 at: destination.deletingLastPathComponent(),
                 withIntermediateDirectories: true
             )
             try? FileManager.default.removeItem(at: destination)
-            return (try? ArchiveReader.extract(entryPath, from: source, to: destination)) != nil ? destination : nil
-        }
-
-        private func load() async {
-            do {
-                let fileURL: URL = if let localFileURL {
-                    localFileURL
-                } else {
-                    try await filesClient.downloadRawFile(serverURL, item)
-                }
-                let kind = item.kind
-                // Opening the container and listing its entries parses the whole archive; keep both
-                // off the main actor so a large or deeply nested archive does not freeze the UI on
-                // open, matching the extract path below.
-                let (opened, listed) = try await Task.detached(priority: .userInitiated) {
-                    let source = try ArchiveReader.open(fileURL: fileURL, kind: kind)
-                    return try (source, ArchiveReader.entries(from: source))
-                }.value
-                source = opened
-                entries = listed
-                phase = .loaded
-            } catch {
-                noteSessionExpiry(error)
-                // Backing out mid download cancels this; not an open failure, so don't flash the
-                // "couldn't open archive" screen on the way out.
-                guard !Task.isCancelled else { return }
-                phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Archive.openArchiveFailed)
+            switch store.source {
+            case .unresolved:
+                return nil
+            case .server:
+                guard let downloaded = try? await filesClient.downloadArchiveEntry(serverURL, item, entryPath),
+                      (try? FileManager.default.moveItem(at: downloaded, to: destination)) != nil else { return nil }
+                return destination
+            case let .local(url):
+                return await (try? archiveReader.extract(url, item.kind, entryPath, destination)) != nil
+                    ? destination
+                    : nil
             }
-        }
-
-        private static func temporaryDirectory(for item: FileItem) -> URL {
-            FileManager.default.temporaryDirectory
-                .appendingPathComponent(SessionScratchLocation.archiveBrowser, isDirectory: true)
-                .appendingPathComponent(item.id.replacingOccurrences(of: "/", with: "_"), isDirectory: true)
         }
     }
 
