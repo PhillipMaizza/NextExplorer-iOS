@@ -222,7 +222,7 @@ struct BrowseOfflineCacheTests {
 
     @Test(
         "A server error after the saved copy was painted shows the error, not the stale list",
-        arguments: [404, 403, 500]
+        arguments: [404, 403]
     )
     func aServerErrorAfterTheCachePaintShowsTheErrorNotTheStaleList(statusCode: Int) async {
         let error = FilesClientError.server(statusCode: statusCode)
@@ -251,6 +251,7 @@ struct BrowseOfflineCacheTests {
             $0.access = nil
             $0.phase = .failed(error.userMessage)
             $0.isShowingCachePaint = false
+            $0.listingFailure = BrowseFeature.ListingFailure(error)
         }
         await store.receive(\.favoritesResponse) {
             $0.hasLoadedFavorites = true
@@ -275,6 +276,7 @@ struct BrowseOfflineCacheTests {
             $0.access = nil
             $0.phase = .failed(error.userMessage)
             $0.dataSource = .live
+            $0.listingFailure = .folderMissing
         }
         await store.receive(\.favoritesResponse) {
             $0.hasLoadedFavorites = true

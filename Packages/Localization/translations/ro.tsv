@@ -1554,3 +1554,10 @@ emptyGuide.browseRootNoVolumesTitle	Serverul nu are volume
 emptyGuide.browseRootVolumeFolders	Fiecare dosar din directorul de volume al serverului apare aici ca volum.
 emptyGuide.browseRootAddFolder	Adaugă un dosar acolo pe server, apoi alege Reîmprospătează.
 common.minimize	Minimizează
+emptyGuide.folderMissingTitle	Acest dosar nu este aici
+emptyGuide.folderMissingBody	Poate a fost mutat, redenumit sau șters, ori nu ai acces la el.
+emptyGuide.serverProblemTitle	Serverul a întâmpinat o problemă
+emptyGuide.serverProblemBody	Dosarul nu a putut fi deschis acum. Serverul poate fi ocupat sau în curs de repornire, așa că o nouă încercare de obicei reușește.
+emptyGuide.goBack	Înapoi
+emptyGuide.errorCode	Eroare %lld
+browse.serverProblemFooter	Serverul a întâmpinat o problemă.

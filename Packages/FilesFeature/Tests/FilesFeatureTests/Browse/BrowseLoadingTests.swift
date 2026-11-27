@@ -121,7 +121,7 @@ struct BrowseLoadingTests {
         let favorites = AsyncGate()
         let store = BrowseFixtures.store(BrowseFixtures.loadedState(TestPath.docsLowercase, items: items)) {
             $0.serveEmptyFolders()
-            $0.filesClient.browse = { _, _ in throw FilesClientError.server(statusCode: 500) }
+            $0.filesClient.browse = { _, _ in throw FilesClientError.server(statusCode: 403) }
             $0.holdFavorites(favorites)
         }
 
@@ -130,7 +130,7 @@ struct BrowseLoadingTests {
         }
         await store.receive(\.itemsResponse.failure) {
             $0.phase = .loaded
-            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 500).userMessage
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
         }
         await store.receive(\.offlineAvailabilityComputed)
         favorites.open()

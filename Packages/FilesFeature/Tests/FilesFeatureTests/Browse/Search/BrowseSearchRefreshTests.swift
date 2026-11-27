@@ -149,10 +149,11 @@ struct BrowseSearchRefreshTests {
         state.isShowingCachePaint = true
         state.searchQuery = Constants.shortTerm
         state.searchResults = [photoMatch]
-        let error = FilesClientError.server(statusCode: 500)
+        let error = FilesClientError.server(statusCode: 404)
         let store = BrowseFixtures.store(state)
 
         await store.send(.itemsResponse(.failure(error))) {
+            $0.listingFailure = .folderMissing
             $0.isShowingCachePaint = false
             $0.items = []
             $0.access = nil

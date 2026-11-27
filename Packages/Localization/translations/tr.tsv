@@ -1443,3 +1443,10 @@ emptyGuide.browseRootNoVolumesTitle	Sunucuda birim yok
 emptyGuide.browseRootVolumeFolders	Sunucunun birim dizinindeki her klasör burada bir birim olarak görünür.
 emptyGuide.browseRootAddFolder	Sunucuda oraya bir klasör ekleyin, ardından Yenile’yi seçin.
 common.minimize	Küçült
+emptyGuide.folderMissingTitle	Bu klasör burada değil
+emptyGuide.folderMissingBody	Taşınmış, yeniden adlandırılmış veya silinmiş olabilir ya da erişiminiz yok.
+emptyGuide.serverProblemTitle	Sunucu bir sorunla karşılaştı
+emptyGuide.serverProblemBody	Bu klasör şu anda açılamadı. Sunucu meşgul olabilir veya yeniden başlıyor olabilir; tekrar denemek genellikle işe yarar.
+emptyGuide.goBack	Geri Dön
+emptyGuide.errorCode	Hata %lld
+browse.serverProblemFooter	Sunucu bir sorunla karşılaştı.

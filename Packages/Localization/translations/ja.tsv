@@ -1474,3 +1474,10 @@ emptyGuide.browseRootNoVolumesTitle	サーバにボリュームがありませ�
 emptyGuide.browseRootVolumeFolders	サーバのボリュームディレクトリ内の各フォルダが、ここにボリュームとして表示されます。
 emptyGuide.browseRootAddFolder	サーバのそのディレクトリにフォルダを追加してから、更新を選択してください。
 common.minimize	最小化
+emptyGuide.folderMissingTitle	このフォルダはここにありません
+emptyGuide.folderMissingBody	移動、名前の変更、削除されたか、アクセス権がない可能性があります。
+emptyGuide.serverProblemTitle	サーバで問題が発生しました
+emptyGuide.serverProblemBody	いまこのフォルダを開けませんでした。サーバが混雑しているか再起動中の可能性があるため、もう一度試すと通常は開けます。
+emptyGuide.goBack	戻る
+emptyGuide.errorCode	エラー %lld
+browse.serverProblemFooter	サーバで問題が発生しました。

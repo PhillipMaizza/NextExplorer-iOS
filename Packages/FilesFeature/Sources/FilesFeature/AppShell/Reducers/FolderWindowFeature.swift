@@ -53,7 +53,8 @@
                     return BrowseTabFeature.refresh(for: change).map(Action.browse)
                 case let .goToFolderRequested(rawPath):
                     guard let path = MainTabFeature.goToFolderPath(rawPath) else { return .none }
-                    return .send(.browse(.navigateToDirectory(path: path, title: (path as NSString).lastPathComponent)))
+                    let title = PersonalSpace.folderTitle(path)
+                    return .send(.browse(.navigateToItem(folder: path, title: title, revealing: nil)))
                 }
             }
         }
@@ -63,16 +64,23 @@
         let store: StoreOf<FolderWindowFeature>
         @State private var isGoToFolderPresented = false
         @State private var enclosingFolderOpener: MacSectionOpener
+        @State private var previousFolderOpener: MacSectionOpener
+        @State private var retryFolderOpener: MacSectionOpener
 
         public init(store: StoreOf<FolderWindowFeature>) {
             self.store = store
             _enclosingFolderOpener = State(initialValue: MacSectionOpener { store.send(.browse(.goToEnclosingFolder)) })
+            _previousFolderOpener = State(initialValue: MacSectionOpener { store.send(.browse(.goBack)) })
+            _retryFolderOpener = State(initialValue: MacSectionOpener { store.send(.browse(.refreshVisibleFolder)) })
         }
 
         public var body: some View {
             BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
+                .macFailureGuide(store.browse.visibleFolder.failureGuide)
                 .macEmptyGuideOverlay()
                 .environment(\.showMacEnclosingFolder, enclosingFolderOpener)
+                .environment(\.showMacPreviousFolder, previousFolderOpener)
+                .environment(\.retryMacFolder, retryFolderOpener)
                 .environment(\.canOpenMacAccessRules, store.browse.root.isAdmin)
                 .macPeekHosting()
                 .macWindowToolbar()

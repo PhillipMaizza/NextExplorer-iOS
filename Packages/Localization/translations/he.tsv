@@ -1487,3 +1487,10 @@ emptyGuide.browseRootNoVolumesTitle	אין כרכים בשרת
 emptyGuide.browseRootVolumeFolders	כל תיקייה בתיקיית הכרכים של השרת מופיעה כאן ככרך.
 emptyGuide.browseRootAddFolder	הוסיפו שם תיקייה בשרת ואז בחרו רענון.
 common.minimize	מזער
+emptyGuide.folderMissingTitle	התיקייה הזו לא נמצאת כאן
+emptyGuide.folderMissingBody	ייתכן שהיא הועברה, שונה שמה או נמחקה, או שאין לך גישה אליה.
+emptyGuide.serverProblemTitle	השרת נתקל בבעיה
+emptyGuide.serverProblemBody	לא ניתן היה לפתוח את התיקייה כרגע. ייתכן שהשרת עמוס או מופעל מחדש, ולכן ניסיון נוסף בדרך כלל מצליח.
+emptyGuide.goBack	חזרה
+emptyGuide.errorCode	שגיאה %lld
+browse.serverProblemFooter	השרת נתקל בבעיה.

@@ -40,12 +40,18 @@ public struct ThumbnailPendingError: Error, Equatable, Sendable {
     }
 }
 
+public extension FilesClientError {
+    var statusCode: Int? {
+        switch self {
+        case let .server(statusCode), let .serverMessage(statusCode, _): statusCode
+        default: nil
+        }
+    }
+}
+
 extension FilesClientError {
     /// The server or a proxy in front of it refused the request for its size (413).
     var isPayloadTooLarge: Bool {
-        switch self {
-        case let .server(statusCode), let .serverMessage(statusCode, _): statusCode == HTTPStatus.payloadTooLarge
-        default: false
-        }
+        statusCode.map { $0 == HTTPStatus.payloadTooLarge } ?? false
     }
 }

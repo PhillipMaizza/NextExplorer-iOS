@@ -1443,3 +1443,10 @@ emptyGuide.browseRootNoVolumesTitle	A kiszolgálón nincsenek kötetek
 emptyGuide.browseRootVolumeFolders	A kiszolgáló kötetkönyvtárának minden mappája kötetként jelenik meg itt.
 emptyGuide.browseRootAddFolder	Adj hozzá egy mappát ott a kiszolgálón, majd válaszd a Frissítést.
 common.minimize	Kis méret
+emptyGuide.folderMissingTitle	Ez a mappa nincs itt
+emptyGuide.folderMissingBody	Lehet, hogy áthelyezték, átnevezték vagy törölték, vagy nincs hozzáférésed.
+emptyGuide.serverProblemTitle	Hiba történt a szerveren
+emptyGuide.serverProblemBody	A mappát most nem sikerült megnyitni. A szerver lehet, hogy foglalt vagy újraindul, ezért egy újabb próbálkozás általában sikerül.
+emptyGuide.goBack	Vissza
+emptyGuide.errorCode	Hiba: %lld
+browse.serverProblemFooter	Hiba történt a szerveren.

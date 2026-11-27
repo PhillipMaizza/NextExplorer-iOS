@@ -22,7 +22,7 @@ import TestUtils
             }
 
             await store.send(.goToFolderRequested(" /Photos/2026/ "))
-            await store.receive(\.browse.navigateToDirectory) {
+            await store.receive(\.browse.navigateToItem) {
                 $0.browse.path[id: 0] = BrowseFeature.State(
                     serverURL: serverURL,
                     directoryPath: "Photos/2026",

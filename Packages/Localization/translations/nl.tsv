@@ -1514,3 +1514,10 @@ emptyGuide.browseRootNoVolumesTitle	De server heeft geen volumes
 emptyGuide.browseRootVolumeFolders	Elke map in de volumemap van de server verschijnt hier als volume.
 emptyGuide.browseRootAddFolder	Voeg daar op de server een map toe en kies dan Vernieuwen.
 common.minimize	Minimaliseer
+emptyGuide.folderMissingTitle	Deze map is hier niet
+emptyGuide.folderMissingBody	Hij is misschien verplaatst, hernoemd of verwijderd, of je hebt er geen toegang toe.
+emptyGuide.serverProblemTitle	De server liep tegen een probleem aan
+emptyGuide.serverProblemBody	Deze map kon nu niet worden geopend. De server is misschien druk of start opnieuw op, dus opnieuw proberen werkt meestal.
+emptyGuide.goBack	Ga terug
+emptyGuide.errorCode	Fout %lld
+browse.serverProblemFooter	De server liep tegen een probleem aan.

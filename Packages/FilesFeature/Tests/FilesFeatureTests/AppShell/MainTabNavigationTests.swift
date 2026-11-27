@@ -57,13 +57,39 @@ struct MainTabNavigationTests: MainTabTestSupport {
             $0.isGoToFolderPresented = false
             $0.selectedTab = .browse
         }
-        await store.receive(\.browse.navigateToDirectory) {
+        await store.receive(\.browse.navigateToItem) {
             $0.browse.path[id: 0] = BrowseFeature.State(
                 serverURL: serverURL,
                 directoryPath: TestPath.documentsReports,
                 title: "Reports"
             )
             $0.recentFolders = [TestPath.documentsReports]
+        }
+    }
+
+    @Test("Go to Folder opens over the folder on screen, so Back returns to it")
+    func goToFolderKeepsTheOpenFolderForBack() async {
+        let files = BrowseFeature.State(
+            serverURL: serverURL,
+            directoryPath: TestFolder.files,
+            title: TestFolder.files
+        )
+        let missing = TestFolder.files + "/Made Up"
+        let store = makeStore(makeState { $0.browse.path.append(files) })
+
+        await store.send(.goToFolderRequested(missing))
+        await store.receive(\.browse.navigateToItem) {
+            $0.browse.path[id: 1] = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: missing,
+                title: "Made Up"
+            )
+            $0.recentFolders = [missing]
+        }
+        await store.send(.backRequested)
+        await store.receive(\.browse.goBack) {
+            $0.browse.forwardStack = [$0.browse.path.removeLast()]
+            $0.recentFolders = [TestFolder.files, missing]
         }
     }
 

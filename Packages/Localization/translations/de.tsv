@@ -1514,3 +1514,10 @@ emptyGuide.browseRootNoVolumesTitle	Der Server hat keine Volumes
 emptyGuide.browseRootVolumeFolders	Jeder Ordner im Volume-Verzeichnis des Servers erscheint hier als Volume.
 emptyGuide.browseRootAddFolder	Lege dort auf dem Server einen Ordner an und wähle dann Aktualisieren.
 common.minimize	Minimieren
+emptyGuide.folderMissingTitle	Dieser Ordner ist nicht hier
+emptyGuide.folderMissingBody	Er wurde vielleicht verschoben, umbenannt oder gelöscht, oder du hast keinen Zugriff darauf.
+emptyGuide.serverProblemTitle	Auf dem Server ist ein Problem aufgetreten
+emptyGuide.serverProblemBody	Der Ordner ließ sich gerade nicht öffnen. Der Server ist vielleicht ausgelastet oder startet neu, ein neuer Versuch klappt meist.
+emptyGuide.goBack	Zurück
+emptyGuide.errorCode	Fehler %lld
+browse.serverProblemFooter	Auf dem Server ist ein Problem aufgetreten.

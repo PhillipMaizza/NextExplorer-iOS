@@ -31,7 +31,12 @@
             } else {
                 VStack(spacing: 0) {
                     table
-                    BrowseOfflineFooter(dataSource: store.dataSource)
+                    BrowseOfflineFooter(
+                        dataSource: store.dataSource,
+                        onServerProblemRetry: store.listingFailure?.shouldKeepSavedCopy == true
+                            ? { store.send(.refreshButtonTapped) }
+                            : nil
+                    )
                 }
                 .transition(.opacity)
             }

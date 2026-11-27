@@ -425,9 +425,8 @@ public struct BrowseTabFeature {
 
 private extension BrowseTabFeature.State {
     mutating func jump(to path: String, title: String) {
-        forwardStack = []
         inspectorLeftOpenPaths = []
-        BrowseNavigation.jump(to: path, title: title, serverURL: root.serverURL, stack: &self.path)
+        jump(to: path, title: title, serverURL: root.serverURL)
     }
 
     mutating func reveal(_ reveal: BrowseReveal) {

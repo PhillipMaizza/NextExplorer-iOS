@@ -1474,3 +1474,10 @@ emptyGuide.browseRootNoVolumesTitle	服务器上没有卷
 emptyGuide.browseRootVolumeFolders	服务器卷目录中的每个文件夹都会在这里显示为一个卷。
 emptyGuide.browseRootAddFolder	在服务器的该目录中添加一个文件夹，然后选择刷新。
 common.minimize	最小化
+emptyGuide.folderMissingTitle	此文件夹不在这里
+emptyGuide.folderMissingBody	它可能已被移动、重命名或删除，或者你没有访问权限。
+emptyGuide.serverProblemTitle	服务器遇到了问题
+emptyGuide.serverProblemBody	现在无法打开此文件夹。服务器可能繁忙或正在重启，通常再试一次就可以。
+emptyGuide.goBack	返回
+emptyGuide.errorCode	错误 %lld
+browse.serverProblemFooter	服务器遇到了问题。

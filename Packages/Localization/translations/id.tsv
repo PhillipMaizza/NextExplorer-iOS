@@ -1405,3 +1405,10 @@ emptyGuide.browseRootNoVolumesTitle	Server tidak memiliki volume
 emptyGuide.browseRootVolumeFolders	Setiap folder di direktori volume server muncul di sini sebagai volume.
 emptyGuide.browseRootAddFolder	Tambahkan folder di sana pada server, lalu pilih Segarkan.
 common.minimize	Minimalkan
+emptyGuide.folderMissingTitle	Folder ini tidak ada di sini
+emptyGuide.folderMissingBody	Mungkin folder ini dipindahkan, diganti namanya, atau dihapus, atau Anda tidak punya akses.
+emptyGuide.serverProblemTitle	Server mengalami masalah
+emptyGuide.serverProblemBody	Folder ini tidak bisa dibuka sekarang. Server mungkin sibuk atau sedang dimulai ulang, jadi mencoba lagi biasanya berhasil.
+emptyGuide.goBack	Kembali
+emptyGuide.errorCode	Kesalahan %lld
+browse.serverProblemFooter	Server mengalami masalah.

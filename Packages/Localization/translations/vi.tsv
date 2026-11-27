@@ -1405,3 +1405,10 @@ emptyGuide.browseRootNoVolumesTitle	Máy chủ không có volume nào
 emptyGuide.browseRootVolumeFolders	Mỗi thư mục trong thư mục volume của máy chủ hiển thị ở đây dưới dạng một volume.
 emptyGuide.browseRootAddFolder	Thêm một thư mục ở đó trên máy chủ, rồi chọn Làm mới.
 common.minimize	Thu nhỏ
+emptyGuide.folderMissingTitle	Thư mục này không có ở đây
+emptyGuide.folderMissingBody	Có thể thư mục đã bị di chuyển, đổi tên hoặc xóa, hoặc bạn không có quyền truy cập.
+emptyGuide.serverProblemTitle	Máy chủ gặp sự cố
+emptyGuide.serverProblemBody	Không thể mở thư mục này lúc này. Máy chủ có thể đang bận hoặc đang khởi động lại, nên thử lại thường sẽ được.
+emptyGuide.goBack	Quay lại
+emptyGuide.errorCode	Lỗi %lld
+browse.serverProblemFooter	Máy chủ gặp sự cố.

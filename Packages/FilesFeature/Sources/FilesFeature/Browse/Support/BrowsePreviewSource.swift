@@ -36,6 +36,14 @@ extension BrowseFeature.State {
         return isUserVolumesEnabled && !isAdmin ? .browseRootUnassigned : .browseRootNoVolumes
     }
 
+    var failureGuide: ListGuide? {
+        switch listingFailure {
+        case .folderMissing: .folderMissing
+        case let .serverProblem(statusCode): .serverProblem(statusCode: statusCode)
+        case nil: nil
+        }
+    }
+
     var readOnlyEmptyGuide: ListGuide? {
         guard !directoryPath.isEmpty, !isSelecting, !isSearching, let access,
               !access.canWrite, !access.canUpload, !access.canCreateFolder, !access.canCreateFile

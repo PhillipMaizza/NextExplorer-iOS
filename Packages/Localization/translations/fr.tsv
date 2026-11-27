@@ -1514,3 +1514,10 @@ emptyGuide.browseRootNoVolumesTitle	Le serveur n’a aucun volume
 emptyGuide.browseRootVolumeFolders	Chaque dossier du répertoire des volumes du serveur apparaît ici comme un volume.
 emptyGuide.browseRootAddFolder	Ajoutez-y un dossier sur le serveur, puis choisissez Actualiser.
 common.minimize	Réduire
+emptyGuide.folderMissingTitle	Ce dossier n’est pas ici
+emptyGuide.folderMissingBody	Il a peut-être été déplacé, renommé ou supprimé, ou vous n’y avez pas accès.
+emptyGuide.serverProblemTitle	Le serveur a rencontré un problème
+emptyGuide.serverProblemBody	Impossible d’ouvrir ce dossier pour le moment. Le serveur est peut-être occupé ou en cours de redémarrage, réessayer fonctionne généralement.
+emptyGuide.goBack	Revenir
+emptyGuide.errorCode	Erreur %lld
+browse.serverProblemFooter	Le serveur a rencontré un problème.

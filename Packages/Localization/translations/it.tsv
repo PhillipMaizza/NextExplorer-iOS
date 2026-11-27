@@ -1514,3 +1514,10 @@ emptyGuide.browseRootNoVolumesTitle	Il server non ha volumi
 emptyGuide.browseRootVolumeFolders	Ogni cartella nella directory dei volumi del server appare qui come volume.
 emptyGuide.browseRootAddFolder	Aggiungi una cartella lì sul server, poi scegli Aggiorna.
 common.minimize	Riduci
+emptyGuide.folderMissingTitle	Questa cartella non è qui
+emptyGuide.folderMissingBody	Potrebbe essere stata spostata, rinominata o eliminata, oppure non hai accesso.
+emptyGuide.serverProblemTitle	Il server ha avuto un problema
+emptyGuide.serverProblemBody	Non è stato possibile aprire questa cartella ora. Il server potrebbe essere occupato o in riavvio, quindi riprovare di solito funziona.
+emptyGuide.goBack	Torna indietro
+emptyGuide.errorCode	Errore %lld
+browse.serverProblemFooter	Il server ha avuto un problema.

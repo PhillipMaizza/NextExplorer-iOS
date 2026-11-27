@@ -1526,3 +1526,10 @@ emptyGuide.browseRootNoVolumesTitle	Server nemá žádné svazky
 emptyGuide.browseRootVolumeFolders	Každá složka v adresáři svazků na serveru se tu zobrazí jako svazek.
 emptyGuide.browseRootAddFolder	Přidejte tam na serveru složku a pak zvolte Obnovit.
 common.minimize	Minimalizovat
+emptyGuide.folderMissingTitle	Tato složka tu není
+emptyGuide.folderMissingBody	Mohla být přesunuta, přejmenována nebo smazána, nebo k ní nemáte přístup.
+emptyGuide.serverProblemTitle	Server narazil na problém
+emptyGuide.serverProblemBody	Tuto složku teď nešlo otevřít. Server může být vytížený nebo se restartuje, takže další pokus obvykle pomůže.
+emptyGuide.goBack	Zpět
+emptyGuide.errorCode	Chyba %lld
+browse.serverProblemFooter	Server narazil na problém.

@@ -1443,3 +1443,10 @@ emptyGuide.browseRootNoVolumesTitle	Serveren har ingen drev
 emptyGuide.browseRootVolumeFolders	Hver mappe i serverens drevmappe vises her som et drev.
 emptyGuide.browseRootAddFolder	Tilføj en mappe der på serveren, og vælg derefter Opdater.
 common.minimize	Minimer
+emptyGuide.folderMissingTitle	Denne mappe er her ikke
+emptyGuide.folderMissingBody	Den kan være flyttet, omdøbt eller slettet, eller du har ikke adgang til den.
+emptyGuide.serverProblemTitle	Serveren løb ind i et problem
+emptyGuide.serverProblemBody	Mappen kunne ikke åbnes lige nu. Serveren kan være optaget eller ved at genstarte, så det virker som regel at prøve igen.
+emptyGuide.goBack	Gå tilbage
+emptyGuide.errorCode	Fejl %lld
+browse.serverProblemFooter	Serveren løb ind i et problem.

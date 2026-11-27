@@ -79,6 +79,7 @@ public struct BrowseFeature {
         /// browse response lands (success or failure), so the view shows the loading skeleton
         /// rather than the empty state until then; `phase.errorMessage` carries a failed load.
         public var phase: DataPhase = .idle
+        var listingFailure: ListingFailure?
         /// `.cached` while the listing on screen is an offline copy; back to `.live` as soon as
         /// a fresh fetch lands. Drives the "showing saved copy" banner.
         public var dataSource: DataSource = .live

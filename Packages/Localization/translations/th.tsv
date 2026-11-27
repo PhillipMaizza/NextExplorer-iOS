@@ -1405,3 +1405,10 @@ emptyGuide.browseRootNoVolumesTitle	เซิร์ฟเวอร์ไม่�
 emptyGuide.browseRootVolumeFolders	แต่ละโฟลเดอร์ในไดเรกทอรีวอลุ่มของเซิร์ฟเวอร์จะแสดงที่นี่เป็นวอลุ่ม
 emptyGuide.browseRootAddFolder	เพิ่มโฟลเดอร์ที่ตำแหน่งนั้นบนเซิร์ฟเวอร์ แล้วเลือกรีเฟรช
 common.minimize	ย่อ
+emptyGuide.folderMissingTitle	ไม่มีโฟลเดอร์นี้ที่นี่
+emptyGuide.folderMissingBody	อาจถูกย้าย เปลี่ยนชื่อ หรือลบไปแล้ว หรือคุณไม่มีสิทธิ์เข้าถึง
+emptyGuide.serverProblemTitle	เซิร์ฟเวอร์พบปัญหา
+emptyGuide.serverProblemBody	เปิดโฟลเดอร์นี้ไม่ได้ในตอนนี้ เซิร์ฟเวอร์อาจไม่ว่างหรือกำลังรีสตาร์ต ลองอีกครั้งมักจะได้ผล
+emptyGuide.goBack	ย้อนกลับ
+emptyGuide.errorCode	ข้อผิดพลาด %lld
+browse.serverProblemFooter	เซิร์ฟเวอร์พบปัญหา

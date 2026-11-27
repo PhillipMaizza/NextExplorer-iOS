@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import Foundation
 
 /// Shared helpers for the folder drill in navigation stack that `BrowseTabFeature` and
@@ -108,6 +109,21 @@ extension BrowseHistoryState {
         path.append(screen)
     }
 
+    mutating func jump(to directoryPath: String, title: String, serverURL: URL) {
+        let openIndex = directoryPath.isEmpty
+            ? -1
+            : path.ids.lastIndex { path[id: $0]?.directoryPath == directoryPath }
+        guard let openIndex else {
+            forwardStack = []
+            BrowseNavigation.jump(to: directoryPath, title: title, serverURL: serverURL, stack: &path)
+            return
+        }
+        guard path.ids.indices.contains(openIndex + 1) else { return }
+        let firstLeft = path.ids[openIndex + 1]
+        recordPop(from: firstLeft)
+        path.pop(from: firstLeft)
+    }
+
     /// Leaving with the toolbar's Back pops everything from `id` up; those levels can come back
     /// with Forward, the nearest first.
     mutating func recordPop(from id: StackElementID) {
@@ -138,7 +154,7 @@ extension BrowseHistoryState {
         path.append(BrowseFeature.State(
             serverURL: serverURL,
             directoryPath: parent,
-            title: (parent as NSString).lastPathComponent
+            title: PersonalSpace.folderTitle(parent)
         ))
     }
 }

@@ -1443,3 +1443,10 @@ emptyGuide.browseRootNoVolumesTitle	Palvelimella ei ole taltioita
 emptyGuide.browseRootVolumeFolders	Jokainen palvelimen taltiohakemiston kansio näkyy täällä taltiona.
 emptyGuide.browseRootAddFolder	Lisää kansio sinne palvelimelle ja valitse sitten Päivitä.
 common.minimize	Pienennä
+emptyGuide.folderMissingTitle	Tätä kansiota ei ole täällä
+emptyGuide.folderMissingBody	Se on ehkä siirretty, nimetty uudelleen tai poistettu, tai sinulla ei ole siihen käyttöoikeutta.
+emptyGuide.serverProblemTitle	Palvelimella ilmeni ongelma
+emptyGuide.serverProblemBody	Kansiota ei voitu avata juuri nyt. Palvelin voi olla kiireinen tai käynnistymässä uudelleen, joten uusi yritys yleensä onnistuu.
+emptyGuide.goBack	Takaisin
+emptyGuide.errorCode	Virhe %lld
+browse.serverProblemFooter	Palvelimella ilmeni ongelma.

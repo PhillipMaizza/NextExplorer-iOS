@@ -690,8 +690,7 @@ public struct FavoritesFeature {
                 return .merge(effects)
 
             case let .navigateToDirectory(path, title):
-                state.forwardStack = []
-                BrowseNavigation.jump(to: path, title: title, serverURL: state.serverURL, stack: &state.path)
+                state.jump(to: path, title: title, serverURL: state.serverURL)
                 return .none
 
             case .syncPathStack:

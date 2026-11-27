@@ -52,7 +52,7 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
         // assertion cannot rewind. What the stack holds after a jump to a real path is covered by
         // navigateToDirectoryReplacesThePathStackWithASingleLevel.
         await store.send(.path(.element(id: 0, action: .delegate(.openPath(path: "", title: "Home")))))
-        await store.receive(\.navigateToDirectory) { $0.path = StackState() }
+        await store.receive(\.navigateToDirectory) { $0.forwardStack = [$0.path.removeLast()] }
     }
 
     @Test
@@ -121,7 +121,7 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
     }
 
     @Test
-    func navigateToDirectoryWithAnEmptyPathJustClearsTheStack() async {
+    func navigateToDirectoryWithAnEmptyPathClearsTheStackForForward() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Old", title: "Old"))
 
@@ -130,7 +130,7 @@ struct FavoritesNavigationTests: FavoritesTestSupport {
         }
 
         await store.send(.navigateToDirectory(path: "", title: "Home")) {
-            $0.path = StackState()
+            $0.forwardStack = [$0.path.removeLast()]
         }
     }
 

@@ -1514,3 +1514,10 @@ emptyGuide.browseRootNoVolumesTitle	सर्वर पर कोई वॉल�
 emptyGuide.browseRootVolumeFolders	सर्वर की वॉल्यूम डायरेक्टरी का हर फ़ोल्डर यहाँ एक वॉल्यूम के रूप में दिखता है।
 emptyGuide.browseRootAddFolder	वहाँ सर्वर पर एक फ़ोल्डर जोड़ें, फिर रीफ़्रेश करें चुनें।
 common.minimize	छोटा करें
+emptyGuide.folderMissingTitle	यह फ़ोल्डर यहाँ नहीं है
+emptyGuide.folderMissingBody	हो सकता है इसे ले जाया गया हो, नाम बदला गया हो या हटा दिया गया हो, या आपके पास इसकी पहुँच न हो।
+emptyGuide.serverProblemTitle	सर्वर में समस्या आई
+emptyGuide.serverProblemBody	यह फ़ोल्डर अभी नहीं खुल सका। सर्वर व्यस्त हो सकता है या फिर से शुरू हो रहा हो, इसलिए दोबारा कोशिश करना आमतौर पर काम करता है।
+emptyGuide.goBack	वापस जाएँ
+emptyGuide.errorCode	त्रुटि %lld
+browse.serverProblemFooter	सर्वर में समस्या आई।

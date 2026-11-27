@@ -1,7 +1,9 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
@@ -36,6 +38,20 @@ struct BrowseTabHistoryTests {
         }
     }
 
+    @Test("Enclosing Folder from a folder opened alone in My Files opens My Files by its name")
+    func goToEnclosingFolderNamesMyFiles() async {
+        let store = makeStore(pushing: [PersonalSpace.rootPath + "/Made Up"])
+
+        await store.send(.goToEnclosingFolder) {
+            $0.path.removeLast()
+            $0.path.append(BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: PersonalSpace.rootPath,
+                title: L10n.Browse.myFiles
+            ))
+        }
+    }
+
     @Test("Forward reopens the folder left by going back, and does nothing when there is none")
     func forwardReopensTheFolderLeftByGoingBack() async {
         let store = makeStore(pushing: ["A"])
@@ -49,6 +65,25 @@ struct BrowseTabHistoryTests {
             $0.path.append(screen("A"))
         }
         await store.send(.goForward)
+    }
+
+    @Test("A breadcrumb to an open folder goes back to it, and Forward reopens the folders it left")
+    func aBreadcrumbToAnOpenFolderKeepsForward() async {
+        let store = makeStore(pushing: ["A", "A/B", "A/B/C"])
+
+        await store.send(.navigateToDirectory(path: "A", title: "A")) {
+            $0.path.removeLast(2)
+            $0.forwardStack = [screen("A/B/C"), screen("A/B")]
+        }
+        await store.send(.goForward) {
+            $0.forwardStack = [screen("A/B/C")]
+            $0.path.append(screen("A/B"))
+        }
+        await store.send(.navigateToDirectory(path: "A/B", title: "B"))
+        await store.send(.navigateToDirectory(path: "", title: "")) {
+            $0.path.removeAll()
+            $0.forwardStack = [screen("A/B/C"), screen("A/B"), screen("A")]
+        }
     }
 
     @Test("Navigating somewhere new clears Forward")

@@ -1474,3 +1474,10 @@ emptyGuide.browseRootNoVolumesTitle	伺服器上沒有卷宗
 emptyGuide.browseRootVolumeFolders	伺服器卷宗目錄中的每個資料夾都會在這裡顯示為一個卷宗。
 emptyGuide.browseRootAddFolder	在伺服器的該目錄中加入一個資料夾，然後選擇重新整理。
 common.minimize	縮到最小
+emptyGuide.folderMissingTitle	此資料夾不在這裡
+emptyGuide.folderMissingBody	它可能已被移動、重新命名或刪除，或者你沒有存取權限。
+emptyGuide.serverProblemTitle	伺服器發生問題
+emptyGuide.serverProblemBody	現在無法開啟此資料夾。伺服器可能忙碌或正在重新啟動，通常再試一次就可以。
+emptyGuide.goBack	返回
+emptyGuide.errorCode	錯誤 %lld
+browse.serverProblemFooter	伺服器發生問題。

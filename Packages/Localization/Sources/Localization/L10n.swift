@@ -245,6 +245,7 @@ public enum L10n {
         public static var searchStoppedEarly: String { tr("browse.searchStoppedEarly") }
         public static func searchTooShort(_ a0: CVarArg) -> String { tr("browse.searchTooShort", a0) }
         public static var sectionPersonal: String { tr("browse.sectionPersonal") }  // "Personal"
+        public static var serverProblemFooter: String { tr("browse.serverProblemFooter") }  // "The server ran into a problem."
         public static var showInEnclosingFolder: String { tr("browse.showInEnclosingFolder") }  // "Show in Enclosing Folder"
         public static var showInFinder: String { tr("browse.showInFinder") }  // "Show in Finder"
         public static var today: String { tr("browse.today") }  // "Today"
@@ -448,9 +449,13 @@ public enum L10n {
         public static var browseRootUnassignedBody: String { tr("emptyGuide.browseRootUnassignedBody") }
         public static var browseRootUnassignedTitle: String { tr("emptyGuide.browseRootUnassignedTitle") }  // "No volumes assigned."
         public static var browseRootVolumeFolders: String { tr("emptyGuide.browseRootVolumeFolders") }
+        public static func errorCode(_ a0: CVarArg) -> String { tr("emptyGuide.errorCode", a0) }
         public static func favoritesBody(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("emptyGuide.favoritesBody", a0, a1) }
         public static func favoritesBodyTouch(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("emptyGuide.favoritesBodyTouch", a0, a1) }
         public static var favoritesTitle: String { tr("emptyGuide.favoritesTitle") }  // "Keep folders one click away"
+        public static var folderMissingBody: String { tr("emptyGuide.folderMissingBody") }
+        public static var folderMissingTitle: String { tr("emptyGuide.folderMissingTitle") }  // "This folder isn't here"
+        public static var goBack: String { tr("emptyGuide.goBack") }  // "Go Back"
         public static var goToBrowse: String { tr("emptyGuide.goToBrowse") }  // "Go to Browse"
         public static var goToShared: String { tr("emptyGuide.goToShared") }  // "Go to Shared"
         public static func offlineBody(_ a0: CVarArg) -> String { tr("emptyGuide.offlineBody", a0) }
@@ -462,6 +467,8 @@ public enum L10n {
         public static var readOnlyOpen: String { tr("emptyGuide.readOnlyOpen") }  // "Files added here show up for you to open and download."
         public static var readOnlyOpenOnly: String { tr("emptyGuide.readOnlyOpenOnly") }  // "Files added here show up for you to open."
         public static var readOnlyTitle: String { tr("emptyGuide.readOnlyTitle") }  // "This folder is read only"
+        public static var serverProblemBody: String { tr("emptyGuide.serverProblemBody") }
+        public static var serverProblemTitle: String { tr("emptyGuide.serverProblemTitle") }  // "The server ran into a problem"
         public static func sharedBody(_ a0: CVarArg) -> String { tr("emptyGuide.sharedBody", a0) }
         public static func sharedBodyTouch(_ a0: CVarArg) -> String { tr("emptyGuide.sharedBodyTouch", a0) }
         public static var sharedTitle: String { tr("emptyGuide.sharedTitle") }  // "Share with a link"

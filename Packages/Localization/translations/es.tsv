@@ -1514,3 +1514,10 @@ emptyGuide.browseRootNoVolumesTitle	El servidor no tiene volúmenes
 emptyGuide.browseRootVolumeFolders	Cada carpeta del directorio de volúmenes del servidor aparece aquí como un volumen.
 emptyGuide.browseRootAddFolder	Añade una carpeta allí en el servidor y luego elige Actualizar.
 common.minimize	Minimizar
+emptyGuide.folderMissingTitle	Esta carpeta no está aquí
+emptyGuide.folderMissingBody	Puede que se haya movido, renombrado o eliminado, o que no tengas acceso a ella.
+emptyGuide.serverProblemTitle	El servidor ha tenido un problema
+emptyGuide.serverProblemBody	No se ha podido abrir esta carpeta ahora. Puede que el servidor esté ocupado o reiniciándose, así que volver a intentarlo suele funcionar.
+emptyGuide.goBack	Volver
+emptyGuide.errorCode	Error %lld
+browse.serverProblemFooter	El servidor ha tenido un problema.

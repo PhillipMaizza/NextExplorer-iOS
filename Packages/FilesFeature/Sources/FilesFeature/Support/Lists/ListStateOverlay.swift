@@ -7,6 +7,8 @@ enum ListGuide: Equatable {
     case browseRootUnassigned, browseRootNoVolumes
     case readOnlyFolder(canDownload: Bool)
     case trash(retentionDays: Int?)
+    case folderMissing
+    case serverProblem(statusCode: Int)
 }
 
 enum ListPhase: Equatable {

@@ -1443,3 +1443,10 @@ emptyGuide.browseRootNoVolumesTitle	Serveren har ingen volumer
 emptyGuide.browseRootVolumeFolders	Hver mappe i serverens volummappe vises her som et volum.
 emptyGuide.browseRootAddFolder	Legg til en mappe der på serveren, og velg deretter Oppdater.
 common.minimize	Minimer
+emptyGuide.folderMissingTitle	Denne mappen er ikke her
+emptyGuide.folderMissingBody	Den kan ha blitt flyttet, gitt nytt navn eller slettet, eller du har ikke tilgang til den.
+emptyGuide.serverProblemTitle	Serveren fikk et problem
+emptyGuide.serverProblemBody	Mappen kunne ikke åpnes akkurat nå. Serveren kan være opptatt eller starte på nytt, så det fungerer som regel å prøve igjen.
+emptyGuide.goBack	Gå tilbake
+emptyGuide.errorCode	Feil %lld
+browse.serverProblemFooter	Serveren fikk et problem.

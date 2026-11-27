@@ -1443,3 +1443,10 @@ emptyGuide.browseRootNoVolumesTitle	Ο διακομιστής δεν έχει τ
 emptyGuide.browseRootVolumeFolders	Κάθε φάκελος στον κατάλογο τόμων του διακομιστή εμφανίζεται εδώ ως τόμος.
 emptyGuide.browseRootAddFolder	Προσθέστε έναν φάκελο εκεί στον διακομιστή και μετά επιλέξτε Ανανέωση.
 common.minimize	Ελαχιστοποίηση
+emptyGuide.folderMissingTitle	Αυτός ο φάκελος δεν είναι εδώ
+emptyGuide.folderMissingBody	Μπορεί να μετακινήθηκε, να μετονομάστηκε ή να διαγράφηκε, ή δεν έχετε πρόσβαση σε αυτόν.
+emptyGuide.serverProblemTitle	Ο διακομιστής αντιμετώπισε πρόβλημα
+emptyGuide.serverProblemBody	Δεν ήταν δυνατό να ανοίξει αυτός ο φάκελος τώρα. Ο διακομιστής ίσως είναι απασχολημένος ή επανεκκινείται, οπότε μια νέα προσπάθεια συνήθως πετυχαίνει.
+emptyGuide.goBack	Πίσω
+emptyGuide.errorCode	Σφάλμα %lld
+browse.serverProblemFooter	Ο διακομιστής αντιμετώπισε πρόβλημα.

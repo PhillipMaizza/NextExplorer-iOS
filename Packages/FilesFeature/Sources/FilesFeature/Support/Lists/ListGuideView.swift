@@ -29,6 +29,8 @@
             case .browseRootUnassigned: L10n.EmptyGuide.browseRootUnassignedTitle
             case .browseRootNoVolumes: L10n.EmptyGuide.browseRootNoVolumesTitle
             case .readOnlyFolder: L10n.EmptyGuide.readOnlyTitle
+            case .folderMissing: L10n.EmptyGuide.folderMissingTitle
+            case .serverProblem: L10n.EmptyGuide.serverProblemTitle
             }
         }
 
@@ -40,6 +42,8 @@
             case .trash: IconKit.delete
             case .browseRootUnassigned, .browseRootNoVolumes: IconKit.server
             case .readOnlyFolder: IconKit.lock
+            case .folderMissing: IconKit.folder
+            case .serverProblem: IconKit.warning
             }
         }
 
@@ -71,6 +75,10 @@
                     text: canDownload ? L10n.EmptyGuide.readOnlyOpen : L10n.EmptyGuide.readOnlyOpenOnly
                 )
                 EmptyGuideBullet(icon: IconKit.lock, text: L10n.EmptyGuide.readOnlyLocked)
+            case .folderMissing:
+                message(L10n.EmptyGuide.folderMissingBody)
+            case .serverProblem:
+                message(L10n.EmptyGuide.serverProblemBody)
             }
         }
 

@@ -50,15 +50,13 @@ struct BrowseOverlayContent<Skeleton: View, EmptyFolder: View>: View {
             skeleton()
                 .transition(.opacity)
         case .error:
-            if let errorMessage = store.phase.errorMessage {
-                EmptyStateView(
-                    icon: IconKit.warning,
-                    message: errorMessage
-                ) {
-                    store.send(.refreshButtonTapped)
+            #if os(macOS)
+                if store.failureGuide == nil {
+                    errorState
                 }
-                .transition(.opacity)
-            }
+            #else
+                errorState
+            #endif
         case .empty:
             emptyFolder()
                 .transition(.opacity)
@@ -74,6 +72,19 @@ struct BrowseOverlayContent<Skeleton: View, EmptyFolder: View>: View {
                 .transition(.opacity)
         case .none:
             EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private var errorState: some View {
+        if let errorMessage = store.phase.errorMessage {
+            EmptyStateView(
+                icon: IconKit.warning,
+                message: errorMessage
+            ) {
+                store.send(.refreshButtonTapped)
+            }
+            .transition(.opacity)
         }
     }
 }

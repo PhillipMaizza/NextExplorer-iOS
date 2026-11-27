@@ -1674,3 +1674,10 @@ emptyGuide.browseRootNoVolumesTitle	لا توجد وحدات تخزين على �
 emptyGuide.browseRootVolumeFolders	يظهر هنا كل مجلد في دليل وحدات التخزين على الخادم كوحدة تخزين.
 emptyGuide.browseRootAddFolder	أضف مجلدًا هناك على الخادم، ثم اختر تحديث.
 common.minimize	تصغير
+emptyGuide.folderMissingTitle	هذا المجلد غير موجود هنا
+emptyGuide.folderMissingBody	ربما تم نقله أو إعادة تسميته أو حذفه، أو ليس لديك صلاحية الوصول إليه.
+emptyGuide.serverProblemTitle	واجه الخادم مشكلة
+emptyGuide.serverProblemBody	تعذّر فتح هذا المجلد الآن. قد يكون الخادم مشغولًا أو قيد إعادة التشغيل، لذا عادةً ما تنجح إعادة المحاولة.
+emptyGuide.goBack	رجوع
+emptyGuide.errorCode	الخطأ %lld
+browse.serverProblemFooter	واجه الخادم مشكلة.

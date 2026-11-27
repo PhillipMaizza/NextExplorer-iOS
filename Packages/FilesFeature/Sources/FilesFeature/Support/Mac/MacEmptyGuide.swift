@@ -27,6 +27,8 @@
         @Entry var showMacBrowse: MacSectionOpener?
         @Entry var showMacSharedWithMe: MacSectionOpener?
         @Entry var showMacEnclosingFolder: MacSectionOpener?
+        @Entry var showMacPreviousFolder: MacSectionOpener?
+        @Entry var retryMacFolder: MacSectionOpener?
         @Entry var canOpenMacAccessRules = false
     }
 
@@ -41,6 +43,12 @@
     extension View {
         func macEmptyGuide(_ guide: ListGuide?) -> some View {
             preference(key: MacEmptyGuideKey.self, value: guide)
+        }
+
+        func macFailureGuide(_ guide: ListGuide?) -> some View {
+            transformPreference(MacEmptyGuideKey.self) { value in
+                value = guide ?? value
+            }
         }
 
         func macEmptyGuideOverlay() -> some View {
@@ -247,6 +255,10 @@
                 }
             case let .readOnlyFolder(canDownload):
                 MacReadOnlyFolderGuide(canDownload: canDownload)
+            case .folderMissing:
+                MacFolderMissingGuide()
+            case let .serverProblem(statusCode):
+                MacServerProblemGuide(statusCode: statusCode)
             case .browseRootNoVolumes:
                 EmptyGuide(title: L10n.EmptyGuide.browseRootNoVolumesTitle) {
                     EmptyGuideTile(icon: IconKit.macSidebarBrowse)

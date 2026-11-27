@@ -268,6 +268,30 @@ public extension BrowseFeature {
         /// Served from the offline cache, stamped with when it was last fetched from the server.
         case cached(fetchedAt: Date)
     }
+
+    enum ListingFailure: Equatable, Sendable {
+        case folderMissing
+        case serverProblem(statusCode: Int)
+
+        init?(_ error: FilesClientError) {
+            guard let statusCode = error.statusCode else { return nil }
+            if statusCode == HTTPStatus.notFound {
+                self = .folderMissing
+            } else if HTTPStatus.serverError.contains(statusCode) {
+                self = .serverProblem(statusCode: statusCode)
+            } else {
+                return nil
+            }
+        }
+
+        var shouldKeepSavedCopy: Bool {
+            if case .serverProblem = self {
+                true
+            } else {
+                false
+            }
+        }
+    }
 }
 
 extension BrowseFeature {

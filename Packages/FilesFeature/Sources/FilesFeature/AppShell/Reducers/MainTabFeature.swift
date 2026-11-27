@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import Foundation
 import Localization
 import NetworkClient
@@ -107,6 +108,15 @@ public struct MainTabFeature {
             case .browse: currentBrowseDirectory
             case .shared: sharedBrowse.path.last?.directoryPath
             case .favorites, .downloads, .settings, .trash: nil
+            }
+        }
+
+        var visibleFailureGuide: ListGuide? {
+            switch selectedTab {
+            case .browse: browse.visibleFolder.failureGuide
+            case .shared: sharedBrowse.path.last?.failureGuide
+            case .favorites: favorites.path.last?.failureGuide
+            case .downloads, .settings, .trash: nil
             }
         }
     }
@@ -338,7 +348,12 @@ public struct MainTabFeature {
                 case let .goToFolderRequested(rawPath):
                     state.isGoToFolderPresented = false
                     guard let path = Self.goToFolderPath(rawPath) else { return .none }
-                    return Self.open(path, title: (path as NSString).lastPathComponent, in: &state)
+                    guard ReceivedShareSpace.shareRoot(of: path) == nil else {
+                        return Self.open(path, title: (path as NSString).lastPathComponent, in: &state)
+                    }
+                    state.selectedTab = .browse
+                    let title = PersonalSpace.folderTitle(path)
+                    return .send(.browse(.navigateToItem(folder: path, title: title, revealing: nil)))
 
                 case .spotlightToggled where state.spotlight != nil:
                     state.spotlight = nil

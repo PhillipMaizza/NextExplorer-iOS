@@ -129,6 +129,7 @@ extension BrowseFeature {
     /// An Offline tab screen lists what is kept on the device, with no request; any other screen
     /// (or an Offline tab folder with nothing kept yet) asks the server.
     func load(_ state: inout State, fromDevice: Bool? = nil) -> Effect<Action> {
+        state.listingFailure = nil
         if fromDevice ?? state.isKeptOffline {
             state.phase = .loading
             let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)

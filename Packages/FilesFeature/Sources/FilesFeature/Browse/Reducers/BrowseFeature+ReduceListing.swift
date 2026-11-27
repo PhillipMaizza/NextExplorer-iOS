@@ -139,7 +139,10 @@ extension BrowseFeature {
             )
 
         case let .itemsResponse(.failure(error)):
-            guard error == .offline else { return failItemsLoad(&state, error) }
+            state.listingFailure = ListingFailure(error)
+            guard error == .offline || state.listingFailure?.shouldKeepSavedCopy == true else {
+                return failItemsLoad(&state, error)
+            }
             let directoryCacheStore = directoryCacheStore.bound(to: state.cacheScope)
             let offlineFileStore = offlineFileStore.pinned(to: state.cacheScope)
             let serverURL = state.serverURL

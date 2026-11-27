@@ -1509,3 +1509,10 @@ emptyGuide.browseRootNoVolumesTitle	O servidor não tem volumes
 emptyGuide.browseRootVolumeFolders	Cada pasta no diretório de volumes do servidor aparece aqui como um volume.
 emptyGuide.browseRootAddFolder	Adicione uma pasta lá no servidor e depois escolha Atualizar.
 common.minimize	Minimizar
+emptyGuide.folderMissingTitle	Esta pasta não está aqui
+emptyGuide.folderMissingBody	Ela pode ter sido movida, renomeada ou apagada, ou você não tem acesso a ela.
+emptyGuide.serverProblemTitle	O servidor teve um problema
+emptyGuide.serverProblemBody	Não foi possível abrir esta pasta agora. O servidor pode estar ocupado ou reiniciando, então tentar de novo costuma funcionar.
+emptyGuide.goBack	Voltar
+emptyGuide.errorCode	Erro %lld
+browse.serverProblemFooter	O servidor teve um problema.

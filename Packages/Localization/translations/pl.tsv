@@ -1594,3 +1594,10 @@ emptyGuide.browseRootNoVolumesTitle	Serwer nie ma woluminów
 emptyGuide.browseRootVolumeFolders	Każdy folder w katalogu woluminów na serwerze pojawia się tutaj jako wolumin.
 emptyGuide.browseRootAddFolder	Dodaj tam folder na serwerze, a potem wybierz Odśwież.
 common.minimize	Minimalizuj
+emptyGuide.folderMissingTitle	Tego folderu tu nie ma
+emptyGuide.folderMissingBody	Mógł zostać przeniesiony, przemianowany lub usunięty albo nie masz do niego dostępu.
+emptyGuide.serverProblemTitle	Na serwerze wystąpił problem
+emptyGuide.serverProblemBody	Nie udało się teraz otworzyć tego folderu. Serwer może być zajęty lub uruchamiać się ponownie, więc kolejna próba zwykle się udaje.
+emptyGuide.goBack	Wróć
+emptyGuide.errorCode	Błąd %lld
+browse.serverProblemFooter	Na serwerze wystąpił problem.

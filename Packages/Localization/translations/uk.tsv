@@ -1527,3 +1527,10 @@ emptyGuide.browseRootNoVolumesTitle	На сервері немає томів
 emptyGuide.browseRootVolumeFolders	Кожна папка в каталозі томів сервера відображається тут як том.
 emptyGuide.browseRootAddFolder	Додайте туди папку на сервері, а потім виберіть «Оновити».
 common.minimize	Згорнути
+emptyGuide.folderMissingTitle	Цієї папки тут немає
+emptyGuide.folderMissingBody	Можливо, її перемістили, перейменували чи видалили, або у вас немає до неї доступу.
+emptyGuide.serverProblemTitle	На сервері виникла проблема
+emptyGuide.serverProblemBody	Зараз не вдалося відкрити цю папку. Сервер може бути зайнятий або перезапускається, тож повторна спроба зазвичай допомагає.
+emptyGuide.goBack	Назад
+emptyGuide.errorCode	Помилка %lld
+browse.serverProblemFooter	На сервері виникла проблема.

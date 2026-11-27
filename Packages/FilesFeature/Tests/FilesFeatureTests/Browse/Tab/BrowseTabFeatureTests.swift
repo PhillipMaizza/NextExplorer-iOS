@@ -135,7 +135,7 @@ struct BrowseTabFeatureTests {
         let store = makeStore(state)
 
         await store.send(.navigateToDirectory(path: "A", title: "A")) {
-            $0.path.removeLast()
+            $0.forwardStack = [$0.path.removeLast()]
         }
     }
 
@@ -152,12 +152,12 @@ struct BrowseTabFeatureTests {
         }
     }
 
-    @Test("Navigating to the empty path clears the stack and stays on the root")
+    @Test("Navigating to the empty path clears the stack, and Forward can reopen what it left")
     func navigatingToAnEmptyPathClearsTheStackAndStaysOnRoot() async {
         let store = makeStore(makeState(pushing: ["A"]))
 
         await store.send(.navigateToDirectory(path: "", title: "Home")) {
-            $0.path = StackState()
+            $0.forwardStack = [$0.path.removeLast()]
         }
     }
 
@@ -178,7 +178,7 @@ struct BrowseTabFeatureTests {
 
         await store.send(.path(.element(id: state.path.ids[0], action: .delegate(.openPath(path: "", title: "Home")))))
         await store.receive(.navigateToDirectory(path: "", title: "Home")) {
-            $0.path = StackState()
+            $0.forwardStack = [$0.path.removeLast()]
         }
     }
 

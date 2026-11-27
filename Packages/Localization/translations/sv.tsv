@@ -1514,3 +1514,10 @@ emptyGuide.browseRootNoVolumesTitle	Servern har inga volymer
 emptyGuide.browseRootVolumeFolders	Varje mapp i serverns volymkatalog visas här som en volym.
 emptyGuide.browseRootAddFolder	Lägg till en mapp där på servern och välj sedan Uppdatera.
 common.minimize	Minimera
+emptyGuide.folderMissingTitle	Den här mappen finns inte här
+emptyGuide.folderMissingBody	Den kan ha flyttats, bytt namn eller raderats, eller så har du inte åtkomst till den.
+emptyGuide.serverProblemTitle	Servern stötte på ett problem
+emptyGuide.serverProblemBody	Mappen gick inte att öppna just nu. Servern kan vara upptagen eller starta om, så ett nytt försök brukar fungera.
+emptyGuide.goBack	Gå tillbaka
+emptyGuide.errorCode	Fel %lld
+browse.serverProblemFooter	Servern stötte på ett problem.

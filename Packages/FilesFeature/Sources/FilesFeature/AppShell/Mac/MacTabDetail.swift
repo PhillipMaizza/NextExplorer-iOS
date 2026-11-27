@@ -12,12 +12,16 @@
         @State private var browseOpener: MacSectionOpener
         @State private var sharedWithMeOpener: MacSectionOpener
         @State private var enclosingFolderOpener: MacSectionOpener
+        @State private var previousFolderOpener: MacSectionOpener
+        @State private var retryFolderOpener: MacSectionOpener
 
         init(store: StoreOf<MainTabFeature>) {
             self.store = store
             _browseOpener = State(initialValue: MacSectionOpener { store.send(.tabSelected(.browse)) })
             _sharedWithMeOpener = State(initialValue: MacSectionOpener { store.send(.sharedWithMeRequested) })
             _enclosingFolderOpener = State(initialValue: MacSectionOpener { store.send(.enclosingFolderRequested) })
+            _previousFolderOpener = State(initialValue: MacSectionOpener { store.send(.backRequested) })
+            _retryFolderOpener = State(initialValue: MacSectionOpener { store.send(.refreshSelectedTab) })
         }
 
         var body: some View {
@@ -28,11 +32,14 @@
                 MacPaneCard(title: nil, subtitle: nil, reserve: inspectorReserve) {
                     section.padding(.horizontal, MacPaneInset.section)
                 }
+                .macFailureGuide(store.visibleFailureGuide)
                 .macEmptyGuideOverlay()
                 .macToastPane()
                 .environment(\.showMacBrowse, browseOpener)
                 .environment(\.showMacSharedWithMe, sharedWithMeOpener)
                 .environment(\.showMacEnclosingFolder, enclosingFolderOpener)
+                .environment(\.showMacPreviousFolder, previousFolderOpener)
+                .environment(\.retryMacFolder, retryFolderOpener)
                 .environment(\.canOpenMacAccessRules, store.browse.root.isAdmin)
                 .onPreferenceChange(MacInspectorReserveKey.self) { reserve in
                     withAnimation(DSMotion.stateFade) { inspectorReserve = reserve }
@@ -121,7 +128,7 @@
                 isFullScreen: isFullScreen,
                 isSidebarCompact: isSidebarCompact,
                 toggleSidebar: toggleSidebar,
-                refresh: sharedSegment == nil ? refresh : nil,
+                refresh: refresh,
                 searchText: searchText,
                 actions: MacWindowActions(
                     upload: upload,

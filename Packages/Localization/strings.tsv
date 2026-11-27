@@ -1613,3 +1613,10 @@ emptyGuide.goToShared	Go to Shared
 emptyGuide.browseRootNoVolumesTitle	The server has no volumes
 emptyGuide.browseRootVolumeFolders	Each folder in the server's volume directory shows up here as a volume.
 emptyGuide.browseRootAddFolder	Add a folder there on the server, then Refresh.
+emptyGuide.folderMissingTitle	This folder isn't here
+emptyGuide.folderMissingBody	It may have been moved, renamed or deleted, or you don't have access to it.
+emptyGuide.serverProblemTitle	The server ran into a problem
+emptyGuide.serverProblemBody	It couldn't open this folder just now. It may be busy or restarting, so trying again usually works.
+emptyGuide.goBack	Go Back
+emptyGuide.errorCode	Error %lld
+browse.serverProblemFooter	The server ran into a problem.
