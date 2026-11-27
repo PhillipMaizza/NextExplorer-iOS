@@ -21,7 +21,7 @@
                         .lineLimit(1)
                         .truncationMode(.middle)
                     if !location.isEmpty {
-                        Text(PathTrail.text(location))
+                        Text(PersonalSpace.trail(location))
                             .type(.caption(.regular), style: .secondary)
                             .lineLimit(1)
                             .truncationMode(.head)

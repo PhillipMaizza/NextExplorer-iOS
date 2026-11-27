@@ -173,20 +173,21 @@ struct MainTabFanOutTests: MainTabTestSupport {
     }
 
     @Test(
-        "View in Shared from either screen switches to the Shared tab and refreshes it",
+        "View in Shared from either screen opens Shared on the links I made and refreshes it",
         arguments: [
             Source(name: "from Browse", action: .browse(.delegate(.goToSharedTab))),
             Source(name: "from Favorites", action: .favorites(.delegate(.goToSharedTab))),
         ]
     )
     func goToSharedTabSwitchesTabs(_ source: Source) async {
-        let store = makeStore {
+        let store = makeStore(makeState { $0.shared.segment = .withMe }) {
             $0.filesClient.mySharedLinks = { _ in [] }
             $0.filesClient.shareableUsers = { _ in [] }
         }
 
         await store.send(source.action) {
             $0.selectedTab = .shared
+            $0.shared.segment = .byMe
         }
         await store.receive(\.shared.refreshRequested) {
             $0.shared.phases[.byMe] = .loading

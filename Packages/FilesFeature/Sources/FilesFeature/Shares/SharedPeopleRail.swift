@@ -68,7 +68,7 @@ private struct SharedRailButton: View {
         switch option.filter {
         case .all: L10n.Shared.filterAll
         case .anyone: L10n.Shared.filterAnyone
-        case .people: option.name.split(separator: " ").first.map(String.init) ?? option.name
+        case .people: option.name
         }
     }
 
@@ -89,6 +89,7 @@ private struct SharedRailButton: View {
                 Text(label)
                     .type(.caption(isSelected ? .bold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
                     .lineLimit(1)
+                    .help(option.name)
             }
             .frame(width: isCompact ? Constants.compactItemWidth : Constants.itemWidth)
             .contentShape(Rectangle())

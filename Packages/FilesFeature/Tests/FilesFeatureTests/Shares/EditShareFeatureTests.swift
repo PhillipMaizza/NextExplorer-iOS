@@ -72,6 +72,19 @@ struct EditShareFeatureTests {
         #expect(fresh.passwordChange == .keep) // never had one
     }
 
+    @Test("Sharing with named users drops a link password, as the web does, so it never guards them")
+    func namedUsersClearTheLinkPassword() {
+        var state = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: true), now: fixedNow)
+        state.target = .users
+        state.newPassword = TestAccount.password
+        #expect(state.passwordChange == .remove)
+
+        var fresh = EditShareFeature.State(serverURL: serverURL, share: share(hasPassword: false), now: fixedNow)
+        fresh.target = .users
+        fresh.newPassword = TestAccount.password
+        #expect(fresh.passwordChange == .keep)
+    }
+
     @Test
     func switchingToUsersLoadsTheShareableListOnce() async {
         let store = TestStore(

@@ -156,6 +156,9 @@ public struct EditShareFeature {
         /// What to do with the password on save. A field left blank with the toggle still on keeps
         /// the current password; turning the toggle off on a protected share removes it.
         var passwordChange: UpdateShareRequest.PasswordChange {
+            if target == .users {
+                return share.hasPassword ? .remove : .keep
+            }
             if isPasswordEnabled, !newPassword.isEmpty {
                 return .set(newPassword)
             }
