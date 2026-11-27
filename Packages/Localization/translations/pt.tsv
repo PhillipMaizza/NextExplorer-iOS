@@ -1480,11 +1480,15 @@ requireSignIn.toggle	Exigir início de sessão
 emptyGuide.goToBrowse	Ir para Explorar
 emptyGuide.favoritesTitle	As suas pastas à distância de um clique
 emptyGuide.favoritesBody	Clique com o botão direito numa pasta em Explorar e escolha «%1$@».\nAparece aqui, e «%2$@» dá-lhe um nome, uma cor e um ícone próprios.
+emptyGuide.favoritesBodyTouch	Toque sem soltar numa pasta em Explorar e escolha «%1$@».\nAparece aqui, e «%2$@» dá-lhe um nome, uma cor e um ícone próprios.
 emptyGuide.sharedTitle	Partilhar com uma ligação
 emptyGuide.sharedBody	Clique com o botão direito num ficheiro ou pasta em Explorar e escolha «%@».\nA ligação aparece aqui, com quem a pode abrir e até quando.
+emptyGuide.sharedBodyTouch	Toque sem soltar num ficheiro ou pasta em Explorar e escolha «%@».\nA ligação aparece aqui, com quem a pode abrir e até quando.
 emptyGuide.sharedWithMeTitle	Ainda nada foi partilhado consigo
 emptyGuide.offlineTitle	Manter ficheiros neste Mac
+emptyGuide.offlineTitleDevice	Manter ficheiros neste dispositivo
 emptyGuide.offlineBody	Clique com o botão direito em qualquer ficheiro ou pasta em Explorar e escolha «%@».\nAs pastas recebem ficheiros novos sempre que a app sincroniza.\n\nOs ficheiros transferidos abrem mesmo sem ligação.
+emptyGuide.offlineBodyTouch	Toque sem soltar em qualquer ficheiro ou pasta em Explorar e escolha «%@».\nAs pastas recebem ficheiros novos sempre que a app sincroniza.\n\nOs ficheiros transferidos abrem mesmo sem ligação.
 emptyGuide.accessRulesTitle	Ainda sem regras de pastas
 emptyGuide.accessRulesReadOnly	%@ permite abrir uma pasta, mas não alterar o conteúdo.
 emptyGuide.accessRulesHidden	%@ retira uma pasta de todas as listas e pesquisas.

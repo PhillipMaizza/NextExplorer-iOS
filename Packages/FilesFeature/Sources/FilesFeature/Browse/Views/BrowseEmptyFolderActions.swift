@@ -38,7 +38,11 @@ struct BrowseEmptyFolderActions: View {
                 actions
             }
         #elseif os(iOS)
-            actions
+            if let guide = store.rootEmptyGuide ?? store.readOnlyEmptyGuide {
+                ListGuideView(guide: guide)
+            } else {
+                actions
+            }
         #endif
     }
 

@@ -72,7 +72,7 @@
         private var header: some View {
             VStack(alignment: .leading, spacing: .space12) {
                 HStack(alignment: .center, spacing: .space12) {
-                    MacEmptyGuideTile(icon: icon, size: Metrics.headerTile)
+                    EmptyGuideTile(icon: icon, size: Metrics.headerTile)
                     VStack(alignment: .leading, spacing: .space2) {
                         Text(title).type(.headline4)
                         if !rows.isEmpty {

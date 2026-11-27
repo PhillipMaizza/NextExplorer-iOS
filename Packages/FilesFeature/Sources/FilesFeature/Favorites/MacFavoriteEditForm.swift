@@ -49,7 +49,7 @@
 
         private var nameRow: some View {
             HStack(alignment: .top, spacing: .space12) {
-                MacFolderTile(
+                FolderTile(
                     size: Metrics.tile,
                     glyph: FavoriteIcon.symbol(for: store.iconDraft),
                     tint: store.tint

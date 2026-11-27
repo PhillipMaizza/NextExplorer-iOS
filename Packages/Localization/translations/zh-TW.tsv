@@ -1440,11 +1440,15 @@ requireSignIn.toggle	要求登入
 emptyGuide.goToBrowse	前往瀏覽
 emptyGuide.favoritesTitle	一鍵直達資料夾
 emptyGuide.favoritesBody	在「瀏覽」中右鍵點按資料夾並選擇「%1$@」。\n它會顯示在這裡，用「%2$@」可為它設定名稱、顏色和圖示。
+emptyGuide.favoritesBodyTouch	在「瀏覽」中按住資料夾並選擇「%1$@」。\n它會顯示在這裡，用「%2$@」可為它設定名稱、顏色和圖示。
 emptyGuide.sharedTitle	透過連結分享
 emptyGuide.sharedBody	在「瀏覽」中右鍵點按檔案或資料夾並選擇「%@」。\n連結會顯示在這裡，並註明誰可以開啟以及期限。
+emptyGuide.sharedBodyTouch	在「瀏覽」中按住檔案或資料夾並選擇「%@」。\n連結會顯示在這裡，並註明誰可以開啟以及期限。
 emptyGuide.sharedWithMeTitle	還沒有人與你分享內容
 emptyGuide.offlineTitle	將檔案保留在這台 Mac 上
+emptyGuide.offlineTitleDevice	將檔案保留在這台裝置上
 emptyGuide.offlineBody	在「瀏覽」中右鍵點按任何檔案或資料夾並選擇「%@」。\n每次 App 同步時，資料夾都會取得新檔案。\n\n已下載的檔案即使沒有連線也能開啟。
+emptyGuide.offlineBodyTouch	在「瀏覽」中按住任何檔案或資料夾並選擇「%@」。\n每次 App 同步時，資料夾都會取得新檔案。\n\n已下載的檔案即使沒有連線也能開啟。
 emptyGuide.accessRulesTitle	還沒有檔案夾規則
 emptyGuide.accessRulesReadOnly	「%@」允許打開檔案夾，但不能更改其中的內容。
 emptyGuide.accessRulesHidden	「%@」會把檔案夾從所有列表和搜尋中移除。

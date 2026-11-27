@@ -1560,11 +1560,15 @@ requireSignIn.toggle	Wymagaj logowania
 emptyGuide.goToBrowse	Przejdź do sekcji Przeglądaj
 emptyGuide.favoritesTitle	Foldery na jedno kliknięcie
 emptyGuide.favoritesBody	Kliknij prawym przyciskiem folder w sekcji Przeglądaj i wybierz „%1$@”.\nPojawi się tutaj, a „%2$@” nada mu własną nazwę, kolor i ikonę.
+emptyGuide.favoritesBodyTouch	Przytrzymaj folder w sekcji Przeglądaj i wybierz „%1$@”.\nPojawi się tutaj, a „%2$@” nada mu własną nazwę, kolor i ikonę.
 emptyGuide.sharedTitle	Udostępnij przez link
 emptyGuide.sharedBody	Kliknij prawym przyciskiem plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nLink pojawi się tutaj, razem z tym, kto może go otworzyć i do kiedy.
+emptyGuide.sharedBodyTouch	Przytrzymaj plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nLink pojawi się tutaj, razem z tym, kto może go otworzyć i do kiedy.
 emptyGuide.sharedWithMeTitle	Nikt jeszcze niczego Ci nie udostępnił
 emptyGuide.offlineTitle	Zachowaj pliki na tym Macu
+emptyGuide.offlineTitleDevice	Zachowaj pliki na tym urządzeniu
 emptyGuide.offlineBody	Kliknij prawym przyciskiem dowolny plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nFoldery pobierają nowe pliki przy każdej synchronizacji aplikacji.\n\nPobrane pliki otwierają się nawet bez połączenia.
+emptyGuide.offlineBodyTouch	Przytrzymaj dowolny plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nFoldery pobierają nowe pliki przy każdej synchronizacji aplikacji.\n\nPobrane pliki otwierają się nawet bez połączenia.
 emptyGuide.accessRulesTitle	Brak jeszcze reguł folderów
 emptyGuide.accessRulesReadOnly	%@ pozwala otworzyć folder, ale nie zmieniać jego zawartości.
 emptyGuide.accessRulesHidden	%@ usuwa folder ze wszystkich list i wyszukiwań.

@@ -7,7 +7,7 @@
         let favorite: Favorite
 
         var body: some View {
-            MacFolderTile(
+            FolderTile(
                 size: MacBrowseTableMetrics.tileSize,
                 glyph: FavoriteIcon.symbol(for: favorite.icon),
                 tint: FavoriteColor.resolve(favorite.color) ?? Color.accent

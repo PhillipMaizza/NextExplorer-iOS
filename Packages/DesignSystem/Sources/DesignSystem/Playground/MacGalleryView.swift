@@ -30,8 +30,8 @@
                     MacGallerySection(title: "Inspector") { MacGalleryInspector() }
                     MacGallerySection(title: "List") { MacGalleryList() }
                     MacGallerySection(title: "Empty guide") {
-                        MacEmptyGuideBullet(icon: IconKit.macRestore, text: "Restore puts an item back.")
-                        MacEmptyGuideTile(icon: IconKit.macTrash, size: .size56)
+                        EmptyGuideBullet(icon: IconKit.macRestore, text: "Restore puts an item back.")
+                        EmptyGuideTile(icon: IconKit.macTrash, size: .size56)
                     }
                     MacGallerySection(title: "Feedback") { MacGalleryFeedback() }
                     MacGallerySection(title: "Alert") {

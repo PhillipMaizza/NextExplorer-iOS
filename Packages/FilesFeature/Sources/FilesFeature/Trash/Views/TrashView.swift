@@ -61,7 +61,11 @@ struct TrashView: View {
             onRetry: { store.send(.retryTapped) }
         ) {
             VStack(spacing: .space24) {
-                EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
+                #if os(iOS)
+                    ListGuideView(guide: .trash(retentionDays: store.retentionDays))
+                #elseif os(macOS)
+                    MacListGuideView(guide: .trash(retentionDays: store.retentionDays))
+                #endif
                 footer
             }
             .padding(.space16)

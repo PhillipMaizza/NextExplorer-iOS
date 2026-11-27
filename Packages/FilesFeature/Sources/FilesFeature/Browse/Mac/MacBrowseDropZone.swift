@@ -15,7 +15,7 @@
 
         var body: some View {
             VStack(spacing: .space12) {
-                MacEmptyGuideTile(icon: IconKit.macUpload, size: .size64)
+                EmptyGuideTile(icon: IconKit.macUpload, size: .size64)
                 Text(L10n.EmptyGuide.browseDropTitle)
                     .type(.headline2)
                     .foregroundStyle(Color.primaryDS)

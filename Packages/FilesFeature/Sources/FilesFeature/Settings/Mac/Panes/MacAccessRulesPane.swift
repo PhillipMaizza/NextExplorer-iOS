@@ -52,14 +52,14 @@
         }
 
         private var emptyGuide: some View {
-            MacEmptyGuide(title: L10n.EmptyGuide.accessRulesTitle) {
-                MacEmptyGuideTile(icon: IconKit.accessRules)
+            EmptyGuide(title: L10n.EmptyGuide.accessRulesTitle) {
+                EmptyGuideTile(icon: IconKit.accessRules)
             } detail: {
-                MacEmptyGuideBullet(
+                EmptyGuideBullet(
                     icon: IconKit.macLock,
                     text: L10n.EmptyGuide.accessRulesReadOnly(L10n.AccessRules.permissionReadOnly)
                 )
-                MacEmptyGuideBullet(
+                EmptyGuideBullet(
                     icon: IconKit.macEyeSlash,
                     text: L10n.EmptyGuide.accessRulesHidden(L10n.AccessRules.permissionHidden)
                 )

@@ -1480,11 +1480,15 @@ requireSignIn.toggle	Inloggen vereisen
 emptyGuide.goToBrowse	Naar Verkennen
 emptyGuide.favoritesTitle	Mappen op één klik afstand
 emptyGuide.favoritesBody	Klik in Verkennen met de rechtermuisknop op een map en kies ‘%1$@’.\nHij verschijnt hier, en met ‘%2$@’ geef je hem een eigen naam, kleur en symbool.
+emptyGuide.favoritesBodyTouch	Houd in Verkennen een map ingedrukt en kies ‘%1$@’.\nHij verschijnt hier, en met ‘%2$@’ geef je hem een eigen naam, kleur en symbool.
 emptyGuide.sharedTitle	Delen met een link
 emptyGuide.sharedBody	Klik in Verkennen met de rechtermuisknop op een bestand of map en kies ‘%@’.\nDe link verschijnt hier, met wie hem kan openen en tot wanneer.
+emptyGuide.sharedBodyTouch	Houd in Verkennen een bestand of map ingedrukt en kies ‘%@’.\nDe link verschijnt hier, met wie hem kan openen en tot wanneer.
 emptyGuide.sharedWithMeTitle	Nog niets met je gedeeld
 emptyGuide.offlineTitle	Bestanden op deze Mac bewaren
+emptyGuide.offlineTitleDevice	Bestanden op dit apparaat bewaren
 emptyGuide.offlineBody	Klik in Verkennen met de rechtermuisknop op een bestand of map en kies ‘%@’.\nMappen halen nieuwe bestanden op bij elke synchronisatie van de app.\n\nGedownloade bestanden openen ook zonder verbinding.
+emptyGuide.offlineBodyTouch	Houd in Verkennen een bestand of map ingedrukt en kies ‘%@’.\nMappen halen nieuwe bestanden op bij elke synchronisatie van de app.\n\nGedownloade bestanden openen ook zonder verbinding.
 emptyGuide.accessRulesTitle	Nog geen mapregels
 emptyGuide.accessRulesReadOnly	%@ laat een map openen maar de inhoud niet wijzigen.
 emptyGuide.accessRulesHidden	%@ haalt een map uit elk overzicht en elke zoekopdracht.

@@ -1371,11 +1371,15 @@ requireSignIn.toggle	Wajibkan Masuk
 emptyGuide.goToBrowse	Buka Jelajahi
 emptyGuide.favoritesTitle	Folder hanya sekali klik
 emptyGuide.favoritesBody	Klik kanan folder di Jelajahi lalu pilih “%1$@”.\nFolder akan muncul di sini, dan “%2$@” memberinya nama, warna, dan ikon sendiri.
+emptyGuide.favoritesBodyTouch	Sentuh lama folder di Jelajahi lalu pilih “%1$@”.\nFolder akan muncul di sini, dan “%2$@” memberinya nama, warna, dan ikon sendiri.
 emptyGuide.sharedTitle	Bagikan dengan tautan
 emptyGuide.sharedBody	Klik kanan file atau folder di Jelajahi lalu pilih “%@”.\nTautannya muncul di sini, beserta siapa yang dapat membukanya dan sampai kapan.
+emptyGuide.sharedBodyTouch	Sentuh lama file atau folder di Jelajahi lalu pilih “%@”.\nTautannya muncul di sini, beserta siapa yang dapat membukanya dan sampai kapan.
 emptyGuide.sharedWithMeTitle	Belum ada yang dibagikan dengan Anda
 emptyGuide.offlineTitle	Simpan file di Mac ini
+emptyGuide.offlineTitleDevice	Simpan file di perangkat ini
 emptyGuide.offlineBody	Klik kanan file atau folder apa pun di Jelajahi lalu pilih “%@”.\nFolder mendapat file baru setiap kali aplikasi menyinkronkan.\n\nFile yang diunduh terbuka walau tanpa koneksi.
+emptyGuide.offlineBodyTouch	Sentuh lama file atau folder apa pun di Jelajahi lalu pilih “%@”.\nFolder mendapat file baru setiap kali aplikasi menyinkronkan.\n\nFile yang diunduh terbuka walau tanpa koneksi.
 emptyGuide.accessRulesTitle	Belum ada aturan folder
 emptyGuide.accessRulesReadOnly	%@ memungkinkan folder dibuka tanpa mengubah isinya.
 emptyGuide.accessRulesHidden	%@ mengeluarkan folder dari semua daftar dan pencarian.

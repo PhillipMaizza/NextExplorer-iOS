@@ -1409,11 +1409,15 @@ requireSignIn.toggle	Vaadi kirjautuminen
 emptyGuide.goToBrowse	Siirry Selaa-näkymään
 emptyGuide.favoritesTitle	Kansiot yhden klikkauksen päässä
 emptyGuide.favoritesBody	Napsauta kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%1$@”.\nSe näkyy täällä, ja ”%2$@” antaa sille oman nimen, värin ja kuvakkeen.
+emptyGuide.favoritesBodyTouch	Paina pitkään kansiota Selaa-näkymässä ja valitse ”%1$@”.\nSe näkyy täällä, ja ”%2$@” antaa sille oman nimen, värin ja kuvakkeen.
 emptyGuide.sharedTitle	Jaa linkillä
 emptyGuide.sharedBody	Napsauta tiedostoa tai kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%@”.\nLinkki näkyy täällä, ja siinä kerrotaan, kuka voi avata sen ja mihin asti.
+emptyGuide.sharedBodyTouch	Paina pitkään tiedostoa tai kansiota Selaa-näkymässä ja valitse ”%@”.\nLinkki näkyy täällä, ja siinä kerrotaan, kuka voi avata sen ja mihin asti.
 emptyGuide.sharedWithMeTitle	Kanssasi ei ole vielä jaettu mitään
 emptyGuide.offlineTitle	Pidä tiedostot tällä Macilla
+emptyGuide.offlineTitleDevice	Pidä tiedostot tällä laitteella
 emptyGuide.offlineBody	Napsauta mitä tahansa tiedostoa tai kansiota hiiren oikealla painikkeella Selaa-näkymässä ja valitse ”%@”.\nKansiot saavat uudet tiedostot aina, kun sovellus synkronoi.\n\nLadatut tiedostot aukeavat myös ilman yhteyttä.
+emptyGuide.offlineBodyTouch	Paina pitkään mitä tahansa tiedostoa tai kansiota Selaa-näkymässä ja valitse ”%@”.\nKansiot saavat uudet tiedostot aina, kun sovellus synkronoi.\n\nLadatut tiedostot aukeavat myös ilman yhteyttä.
 emptyGuide.accessRulesTitle	Ei vielä kansiosääntöjä
 emptyGuide.accessRulesReadOnly	%@ sallii kansion avaamisen mutta ei sen sisällön muuttamista.
 emptyGuide.accessRulesHidden	%@ poistaa kansion kaikista luetteloista ja hauista.

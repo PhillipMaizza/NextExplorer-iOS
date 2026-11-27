@@ -38,7 +38,7 @@
         var body: some View {
             Group {
                 if isDirectory {
-                    MacFolderTile(size: size, glyph: folderGlyph)
+                    FolderTile(size: size, glyph: folderGlyph)
                 } else {
                     FileTypeIcon(kind: kind)
                         .background(

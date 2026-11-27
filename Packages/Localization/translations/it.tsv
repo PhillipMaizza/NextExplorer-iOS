@@ -1480,11 +1480,15 @@ requireSignIn.toggle	Richiedi accesso
 emptyGuide.goToBrowse	Vai a Esplora
 emptyGuide.favoritesTitle	Cartelle a portata di clic
 emptyGuide.favoritesBody	Fai clic destro su una cartella in Esplora e scegli «%1$@».\nComparirà qui, e con «%2$@» puoi darle un nome, un colore e un’icona.
+emptyGuide.favoritesBodyTouch	Tieni premuta una cartella in Esplora e scegli «%1$@».\nComparirà qui, e con «%2$@» puoi darle un nome, un colore e un’icona.
 emptyGuide.sharedTitle	Condividi con un link
 emptyGuide.sharedBody	Fai clic destro su un file o una cartella in Esplora e scegli «%@».\nIl link comparirà qui, con chi può aprirlo e fino a quando.
+emptyGuide.sharedBodyTouch	Tieni premuto un file o una cartella in Esplora e scegli «%@».\nIl link comparirà qui, con chi può aprirlo e fino a quando.
 emptyGuide.sharedWithMeTitle	Ancora nulla condiviso con te
 emptyGuide.offlineTitle	Tieni i file su questo Mac
+emptyGuide.offlineTitleDevice	Tieni i file su questo dispositivo
 emptyGuide.offlineBody	Fai clic destro su un file o una cartella in Esplora e scegli «%@».\nLe cartelle ricevono i nuovi file a ogni sincronizzazione dell’app.\n\nI file scaricati si aprono anche senza connessione.
+emptyGuide.offlineBodyTouch	Tieni premuto un file o una cartella in Esplora e scegli «%@».\nLe cartelle ricevono i nuovi file a ogni sincronizzazione dell’app.\n\nI file scaricati si aprono anche senza connessione.
 emptyGuide.accessRulesTitle	Ancora nessuna regola sulle cartelle
 emptyGuide.accessRulesReadOnly	%@ permette di aprire una cartella senza modificarne il contenuto.
 emptyGuide.accessRulesHidden	%@ toglie una cartella da ogni elenco e ricerca.

@@ -2,7 +2,7 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-enum MacListGuide: Equatable {
+enum ListGuide: Equatable {
     case favorites, sharedByMe, sharedWithMe, offline
     case browseRootUnassigned, browseRootNoVolumes
     case readOnlyFolder(canDownload: Bool)
@@ -53,7 +53,7 @@ struct ListStateOverlay: View {
     let emptyMessage: String
     let noResultsMessage: String
     var pullOffset: CGFloat = 0
-    var macGuide: MacListGuide?
+    var guide: ListGuide?
     let onRetry: () -> Void
 
     var body: some View {
@@ -83,13 +83,17 @@ struct ListStateOverlay: View {
     @ViewBuilder
     private var emptyState: some View {
         #if os(macOS)
-            if let macGuide {
-                Color.clear.macEmptyGuide(phase == .empty ? macGuide : nil)
+            if let guide {
+                Color.clear.macEmptyGuide(phase == .empty ? guide : nil)
             } else {
                 EmptyStateView(icon: emptyIcon, message: emptyMessage)
             }
         #elseif os(iOS)
-            EmptyStateView(icon: emptyIcon, message: emptyMessage)
+            if let guide {
+                ListGuideView(guide: guide)
+            } else {
+                EmptyStateView(icon: emptyIcon, message: emptyMessage)
+            }
         #endif
     }
 }

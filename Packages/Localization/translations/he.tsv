@@ -1453,11 +1453,15 @@ requireSignIn.toggle	דרישת התחברות
 emptyGuide.goToBrowse	מעבר לעיון
 emptyGuide.favoritesTitle	תיקיות במרחק לחיצה
 emptyGuide.favoritesBody	לחצו לחיצה ימנית על תיקייה בעיון ובחרו ״%1$@״.\nהיא תופיע כאן, ו״%2$@״ ייתן לה שם, צבע וסמל משלה.
+emptyGuide.favoritesBodyTouch	לחצו לחיצה ארוכה על תיקייה בעיון ובחרו ״%1$@״.\nהיא תופיע כאן, ו״%2$@״ ייתן לה שם, צבע וסמל משלה.
 emptyGuide.sharedTitle	שיתוף בקישור
 emptyGuide.sharedBody	לחצו לחיצה ימנית על קובץ או תיקייה בעיון ובחרו ״%@״.\nהקישור יופיע כאן, עם מי יכול לפתוח אותו ועד מתי.
+emptyGuide.sharedBodyTouch	לחצו לחיצה ארוכה על קובץ או תיקייה בעיון ובחרו ״%@״.\nהקישור יופיע כאן, עם מי יכול לפתוח אותו ועד מתי.
 emptyGuide.sharedWithMeTitle	עדיין לא שיתפו איתך דבר
 emptyGuide.offlineTitle	שמירת קבצים ב־Mac הזה
+emptyGuide.offlineTitleDevice	שמירת קבצים במכשיר הזה
 emptyGuide.offlineBody	לחצו לחיצה ימנית על כל קובץ או תיקייה בעיון ובחרו ״%@״.\nתיקיות מקבלות קבצים חדשים בכל סנכרון של האפליקציה.\n\nקבצים שהורדו נפתחים גם ללא חיבור.
+emptyGuide.offlineBodyTouch	לחצו לחיצה ארוכה על כל קובץ או תיקייה בעיון ובחרו ״%@״.\nתיקיות מקבלות קבצים חדשים בכל סנכרון של האפליקציה.\n\nקבצים שהורדו נפתחים גם ללא חיבור.
 emptyGuide.accessRulesTitle	עדיין אין כללי תיקיות
 emptyGuide.accessRulesReadOnly	%@ מאפשרת לפתוח תיקייה בלי לשנות את תוכנה.
 emptyGuide.accessRulesHidden	%@ מוציא תיקייה מכל רשימה וחיפוש.

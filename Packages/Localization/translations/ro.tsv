@@ -1520,11 +1520,15 @@ requireSignIn.toggle	Solicită autentificarea
 emptyGuide.goToBrowse	Mergi la Explorează
 emptyGuide.favoritesTitle	Dosarele la un clic distanță
 emptyGuide.favoritesBody	Fă clic dreapta pe un dosar în Explorează și alege „%1$@”.\nApare aici, iar „%2$@” îi dă un nume, o culoare și o pictogramă proprii.
+emptyGuide.favoritesBodyTouch	Ține apăsat pe un dosar în Explorează și alege „%1$@”.\nApare aici, iar „%2$@” îi dă un nume, o culoare și o pictogramă proprii.
 emptyGuide.sharedTitle	Partajează cu un link
 emptyGuide.sharedBody	Fă clic dreapta pe un fișier sau dosar în Explorează și alege „%@”.\nLinkul apare aici, cu cine îl poate deschide și până când.
+emptyGuide.sharedBodyTouch	Ține apăsat pe un fișier sau dosar în Explorează și alege „%@”.\nLinkul apare aici, cu cine îl poate deschide și până când.
 emptyGuide.sharedWithMeTitle	Nimic nu a fost partajat cu tine încă
 emptyGuide.offlineTitle	Păstrează fișiere pe acest Mac
+emptyGuide.offlineTitleDevice	Păstrează fișiere pe acest dispozitiv
 emptyGuide.offlineBody	Fă clic dreapta pe orice fișier sau dosar în Explorează și alege „%@”.\nDosarele primesc fișierele noi la fiecare sincronizare a aplicației.\n\nFișierele descărcate se deschid chiar și fără conexiune.
+emptyGuide.offlineBodyTouch	Ține apăsat pe orice fișier sau dosar în Explorează și alege „%@”.\nDosarele primesc fișierele noi la fiecare sincronizare a aplicației.\n\nFișierele descărcate se deschid chiar și fără conexiune.
 emptyGuide.accessRulesTitle	Încă nu există reguli pentru dosare
 emptyGuide.accessRulesReadOnly	%@ permite deschiderea unui dosar fără modificarea conținutului.
 emptyGuide.accessRulesHidden	%@ scoate un dosar din toate listele și căutările.

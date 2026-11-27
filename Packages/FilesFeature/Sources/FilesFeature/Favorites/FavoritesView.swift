@@ -89,7 +89,7 @@ struct FavoritesView: View {
             emptyMessage: L10n.Favorites.emptyList,
             noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
             pullOffset: pullOffset,
-            macGuide: .favorites,
+            guide: .favorites,
             onRetry: { store.send(store.isSearching ? .searchRetryTapped : .refreshButtonTapped) }
         )
     }

@@ -202,12 +202,12 @@ struct GridCellView: View {
         if isDirectory {
             GridWellSymbol(kind: "") { _ in
                 GeometryReader { proxy in
-                    #if os(macOS)
-                        MacFolderTile(size: min(proxy.size.width, proxy.size.height))
+                    if customIcon == nil {
+                        FolderTile(size: min(proxy.size.width, proxy.size.height))
                             .frame(width: proxy.size.width, height: proxy.size.height)
-                    #elseif os(iOS)
+                    } else {
                         folderIcon
-                    #endif
+                    }
                 }
             }
         } else if isEligibleForThumbnail, let serverURL, let itemID {

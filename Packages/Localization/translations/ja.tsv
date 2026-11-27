@@ -1440,11 +1440,15 @@ requireSignIn.toggle	サインインを要求
 emptyGuide.goToBrowse	ブラウズへ移動
 emptyGuide.favoritesTitle	フォルダにワンクリックで
 emptyGuide.favoritesBody	ブラウズでフォルダを右クリックして「%1$@」を選択します。\nここに表示され、「%2$@」で名前、色、アイコンを設定できます。
+emptyGuide.favoritesBodyTouch	ブラウズでフォルダを長押しして「%1$@」を選択します。\nここに表示され、「%2$@」で名前、色、アイコンを設定できます。
 emptyGuide.sharedTitle	リンクで共有
 emptyGuide.sharedBody	ブラウズでファイルまたはフォルダを右クリックして「%@」を選択します。\nリンクがここに表示され、誰がいつまで開けるかもわかります。
+emptyGuide.sharedBodyTouch	ブラウズでファイルまたはフォルダを長押しして「%@」を選択します。\nリンクがここに表示され、誰がいつまで開けるかもわかります。
 emptyGuide.sharedWithMeTitle	まだ共有されているものはありません
 emptyGuide.offlineTitle	このMacにファイルを保持
+emptyGuide.offlineTitleDevice	このデバイスにファイルを保持
 emptyGuide.offlineBody	ブラウズで任意のファイルまたはフォルダを右クリックして「%@」を選択します。\nフォルダはアプリが同期するたびに新しいファイルを取り込みます。\n\nダウンロードしたファイルは接続がなくても開けます。
+emptyGuide.offlineBodyTouch	ブラウズで任意のファイルまたはフォルダを長押しして「%@」を選択します。\nフォルダはアプリが同期するたびに新しいファイルを取り込みます。\n\nダウンロードしたファイルは接続がなくても開けます。
 emptyGuide.accessRulesTitle	フォルダのルールはまだありません
 emptyGuide.accessRulesReadOnly	「%@」はフォルダを開けますが、中身は変更できません。
 emptyGuide.accessRulesHidden	「%@」はフォルダをすべての一覧と検索から外します。

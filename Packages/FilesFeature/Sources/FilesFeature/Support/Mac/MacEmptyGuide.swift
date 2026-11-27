@@ -31,15 +31,15 @@
     }
 
     struct MacEmptyGuideKey: PreferenceKey {
-        static let defaultValue: MacListGuide? = nil
+        static let defaultValue: ListGuide? = nil
 
-        static func reduce(value: inout MacListGuide?, nextValue: () -> MacListGuide?) {
+        static func reduce(value: inout ListGuide?, nextValue: () -> ListGuide?) {
             value = value ?? nextValue()
         }
     }
 
     extension View {
-        func macEmptyGuide(_ guide: MacListGuide?) -> some View {
+        func macEmptyGuide(_ guide: ListGuide?) -> some View {
             preference(key: MacEmptyGuideKey.self, value: guide)
         }
 
@@ -149,7 +149,7 @@
         let highlighted: MacEmptyGuideMenu.Item
 
         var body: some View {
-            MacEmptyGuide(title: title) {
+            EmptyGuide(title: title) {
                 MacEmptyGuideMenu(highlighted: highlighted)
             } detail: {
                 MacEmptyGuideMessage(message: message)
@@ -165,14 +165,14 @@
         @AppStorage(AppStorageKeys.macSettingsPane) private var settingsPane = MacSettingsCategory.appearance
 
         var body: some View {
-            MacEmptyGuide(title: L10n.EmptyGuide.readOnlyTitle) {
-                MacEmptyGuideTile(icon: IconKit.macLock)
+            EmptyGuide(title: L10n.EmptyGuide.readOnlyTitle) {
+                EmptyGuideTile(icon: IconKit.macLock)
             } detail: {
-                MacEmptyGuideBullet(
+                EmptyGuideBullet(
                     icon: IconKit.macEye,
                     text: canDownload ? L10n.EmptyGuide.readOnlyOpen : L10n.EmptyGuide.readOnlyOpenOnly
                 )
-                MacEmptyGuideBullet(icon: IconKit.macLock, text: L10n.EmptyGuide.readOnlyLocked)
+                EmptyGuideBullet(icon: IconKit.macLock, text: L10n.EmptyGuide.readOnlyLocked)
                 HStack(spacing: .space8) {
                     if let enclosingFolder {
                         Button { enclosingFolder() } label: {
@@ -201,7 +201,7 @@
     }
 
     struct MacListGuideView: View {
-        let guide: MacListGuide
+        let guide: ListGuide
 
         var body: some View {
             switch guide {
@@ -218,8 +218,8 @@
                     highlighted: .share
                 )
             case .sharedWithMe:
-                MacEmptyGuide(title: L10n.EmptyGuide.sharedWithMeTitle) {
-                    MacEmptyGuideTile(icon: IconKit.macSidebarShared)
+                EmptyGuide(title: L10n.EmptyGuide.sharedWithMeTitle) {
+                    EmptyGuideTile(icon: IconKit.macSidebarShared)
                 } detail: {
                     MacEmptyGuideMessage(message: L10n.Shared.emptyWithMe, destination: nil)
                 }
@@ -230,29 +230,29 @@
                     highlighted: .offline
                 )
             case let .trash(retentionDays):
-                MacEmptyGuide(title: L10n.EmptyGuide.trashTitle) {
-                    MacEmptyGuideTile(icon: IconKit.macTrash)
+                EmptyGuide(title: L10n.EmptyGuide.trashTitle) {
+                    EmptyGuideTile(icon: IconKit.macTrash)
                 } detail: {
                     if let retentionDays {
-                        MacEmptyGuideBullet(icon: IconKit.macClock, text: L10n.Trash.subtitle(retentionDays))
+                        EmptyGuideBullet(icon: IconKit.macClock, text: L10n.Trash.subtitle(retentionDays))
                     }
-                    MacEmptyGuideBullet(icon: IconKit.macRestore, text: L10n.EmptyGuide.trashRestore)
-                    MacEmptyGuideBullet(icon: IconKit.macSidebarShared, text: L10n.EmptyGuide.trashShareLinks)
+                    EmptyGuideBullet(icon: IconKit.macRestore, text: L10n.EmptyGuide.trashRestore)
+                    EmptyGuideBullet(icon: IconKit.macSidebarShared, text: L10n.EmptyGuide.trashShareLinks)
                 }
             case .browseRootUnassigned:
-                MacEmptyGuide(title: L10n.EmptyGuide.browseRootUnassignedTitle) {
-                    MacEmptyGuideTile(icon: IconKit.macSidebarBrowse)
+                EmptyGuide(title: L10n.EmptyGuide.browseRootUnassignedTitle) {
+                    EmptyGuideTile(icon: IconKit.macSidebarBrowse)
                 } detail: {
                     MacEmptyGuideMessage(message: L10n.EmptyGuide.browseRootUnassignedBody, destination: .sharedWithMe)
                 }
             case let .readOnlyFolder(canDownload):
                 MacReadOnlyFolderGuide(canDownload: canDownload)
             case .browseRootNoVolumes:
-                MacEmptyGuide(title: L10n.EmptyGuide.browseRootNoVolumesTitle) {
-                    MacEmptyGuideTile(icon: IconKit.macSidebarBrowse)
+                EmptyGuide(title: L10n.EmptyGuide.browseRootNoVolumesTitle) {
+                    EmptyGuideTile(icon: IconKit.macSidebarBrowse)
                 } detail: {
-                    MacEmptyGuideBullet(icon: IconKit.macSidebarBrowse, text: L10n.EmptyGuide.browseRootVolumeFolders)
-                    MacEmptyGuideBullet(icon: IconKit.macToolbarRefresh, text: L10n.EmptyGuide.browseRootAddFolder)
+                    EmptyGuideBullet(icon: IconKit.macSidebarBrowse, text: L10n.EmptyGuide.browseRootVolumeFolders)
+                    EmptyGuideBullet(icon: IconKit.macToolbarRefresh, text: L10n.EmptyGuide.browseRootAddFolder)
                 }
             }
         }

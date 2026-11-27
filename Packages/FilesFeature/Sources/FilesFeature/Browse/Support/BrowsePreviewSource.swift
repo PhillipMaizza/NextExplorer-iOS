@@ -31,12 +31,12 @@ extension BrowseFeature.State {
         !hasDisplayedItems && !shouldShowPersonalSpace
     }
 
-    var rootEmptyGuide: MacListGuide? {
+    var rootEmptyGuide: ListGuide? {
         guard directoryPath.isEmpty else { return nil }
         return isUserVolumesEnabled && !isAdmin ? .browseRootUnassigned : .browseRootNoVolumes
     }
 
-    var readOnlyEmptyGuide: MacListGuide? {
+    var readOnlyEmptyGuide: ListGuide? {
         guard !directoryPath.isEmpty, !isSelecting, !isSearching, let access,
               !access.canWrite, !access.canUpload, !access.canCreateFolder, !access.canCreateFile
         else { return nil }

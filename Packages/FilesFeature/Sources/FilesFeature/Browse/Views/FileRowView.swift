@@ -5,7 +5,8 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let iconFrame: CGFloat = .iconMedium
+    static let iconFrame: CGFloat = .size32
+    static let tileRadius: CGFloat = .radiusSmall
     static let chevronSize: CGFloat = .iconXSmall
     static let fullOpacity: Double = 1.0
     static let halfOpacity: Double = .opacityHalf
@@ -248,20 +249,18 @@ struct FileRowView: View {
             ThumbnailImage(
                 serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document,
                 fallbackKind: kind,
-                iconTint: Color.secondaryDS, fileSize: file?.size, modified: file?.dateModified
+                iconTint: Color.secondaryDS, fileSize: file?.size, modified: file?.dateModified,
+                fill: .crop
             )
             .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+            .clipShape(RoundedRectangle(cornerRadius: Constants.tileRadius, style: .continuous))
         } else if isEligibleForDocumentThumbnail, let serverURL, let file {
             DocumentThumbnailImage(serverURL: serverURL, item: file) {
                 FileTypeIcon(kind: file.kind)
             }
             .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isDirectory {
-            IconKit.folderFill
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(Color.accent)
-                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+            FolderTile(size: Constants.iconFrame)
         } else {
             FileTypeIcon(kind: kind ?? "")
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)

@@ -80222,6 +80222,191 @@
         }
       }
     },
+    "emptyGuide.favoritesBodyTouch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touch and hold a folder in Browse and choose %1$@.\nIt shows up here, and %2$@ gives it its own name, color and icon."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المس مع الاستمرار مجلدًا في تصفح واختر «%1$@».\nسيظهر هنا، ويمنحه «%2$@» اسمًا ولونًا وأيقونة خاصة به."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podržte prst na složce v sekci Procházet a vyberte „%1$@“.\nObjeví se tady a pomocí „%2$@“ jí dáte vlastní název, barvu a ikonu."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold fingeren på en mappe i Gennemse, og vælg “%1$@”.\nDen vises her, og med “%2$@” giver du den sit eget navn, farve og symbol."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halte in Durchsuchen einen Ordner gedrückt und wähle „%1$@“.\nEr erscheint hier, und mit „%2$@“ gibst du ihm einen eigenen Namen, eine Farbe und ein Symbol."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Πατήστε παρατεταμένα έναν φάκελο στην Περιήγηση και επιλέξτε «%1$@».\nΕμφανίζεται εδώ, και με το «%2$@» του δίνετε δικό του όνομα, χρώμα και εικονίδιο."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantén pulsada una carpeta en Explorar y elige «%1$@».\nAparece aquí, y «%2$@» le da su propio nombre, color e icono."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paina pitkään kansiota Selaa-näkymässä ja valitse ”%1$@”.\nSe näkyy täällä, ja ”%2$@” antaa sille oman nimen, värin ja kuvakkeen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez longuement un dossier dans Explorer et choisissez « %1$@ ».\nIl apparaît ici, et « %2$@ » lui donne un nom, une couleur et une icône."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "לחצו לחיצה ארוכה על תיקייה בעיון ובחרו ״%1$@״.\nהיא תופיע כאן, ו״%2$@״ ייתן לה שם, צבע וסמל משלה."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्राउज़ करें में किसी फ़ोल्डर को दबाकर रखें और “%1$@” चुनें।\nवह यहाँ दिखेगा, और “%2$@” से उसे अपना नाम, रंग और आइकन मिलता है।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarts nyomva egy mappát a Böngészésben, és válaszd a „%1$@” lehetőséget.\nItt jelenik meg, a „%2$@” pedig saját nevet, színt és ikont ad neki."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sentuh lama folder di Jelajahi lalu pilih “%1$@”.\nFolder akan muncul di sini, dan “%2$@” memberinya nama, warna, dan ikon sendiri."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tieni premuta una cartella in Esplora e scegli «%1$@».\nComparirà qui, e con «%2$@» puoi darle un nome, un colore e un’icona."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブラウズでフォルダを長押しして「%1$@」を選択します。\nここに表示され、「%2$@」で名前、色、アイコンを設定できます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "탐색에서 폴더를 길게 누르고 ‘%1$@’를 선택하세요.\n여기에 표시되며, ‘%2$@’로 이름, 색상, 아이콘을 지정할 수 있습니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold fingeren på en mappe i Utforsk og velg «%1$@».\nDen vises her, og med «%2$@» gir du den eget navn, farge og symbol."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Houd in Verkennen een map ingedrukt en kies ‘%1$@’.\nHij verschijnt hier, en met ‘%2$@’ geef je hem een eigen naam, kleur en symbool."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj folder w sekcji Przeglądaj i wybierz „%1$@”.\nPojawi się tutaj, a „%2$@” nada mu własną nazwę, kolor i ikonę."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque sem soltar numa pasta em Explorar e escolha «%1$@».\nAparece aqui, e «%2$@» dá-lhe um nome, uma cor e um ícone próprios."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque e segure uma pasta em Explorar e escolha “%1$@”.\nEla aparece aqui, e “%2$@” dá a ela um nome, uma cor e um ícone próprios."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ține apăsat pe un dosar în Explorează și alege „%1$@”.\nApare aici, iar „%2$@” îi dă un nume, o culoare și o pictogramă proprii."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите и удерживайте папку в Обзоре и выберите «%1$@».\nОна появится здесь, а «%2$@» даст ей своё имя, цвет и значок."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Håll fingret på en mapp i Bläddra och välj ”%1$@”.\nDen visas här, och med ”%2$@” ger du den ett eget namn, en färg och en symbol."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แตะค้างที่โฟลเดอร์ในเรียกดูแล้วเลือก “%1$@”\nโฟลเดอร์จะแสดงที่นี่ และ “%2$@” ให้ชื่อ สี และไอคอนของตัวเอง"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gözat’ta bir klasörü basılı tutup “%1$@” seçeneğini seçin.\nBurada görünür ve “%2$@” ona kendi adını, rengini ve simgesini verir."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натисніть і утримуйте папку в Огляді й виберіть «%1$@».\nВона з’явиться тут, а «%2$@» дасть їй власну назву, колір і значок."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chạm và giữ một thư mục trong Duyệt và chọn “%1$@”.\nThư mục sẽ hiện ở đây, và “%2$@” cho nó tên, màu và biểu tượng riêng."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“浏览”中按住文件夹并选择“%1$@”。\n它会显示在这里，用“%2$@”可为它设置名称、颜色和图标。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在「瀏覽」中按住資料夾並選擇「%1$@」。\n它會顯示在這裡，用「%2$@」可為它設定名稱、顏色和圖示。"
+          }
+        }
+      }
+    },
     "emptyGuide.favoritesTitle": {
       "extractionState": "manual",
       "localizations": {
@@ -80962,6 +81147,191 @@
         }
       }
     },
+    "emptyGuide.offlineBodyTouch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touch and hold any file or folder in Browse and choose %@.\nFolders pick up new files each time the app syncs.\n\nDownloaded files open even without a connection."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المس مع الاستمرار أي ملف أو مجلد في تصفح واختر «%@».\nتحصل المجلدات على الملفات الجديدة في كل مزامنة للتطبيق.\n\nتُفتح الملفات التي جرى تنزيلها حتى بدون اتصال."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podržte prst na libovolném souboru nebo složce v sekci Procházet a vyberte „%@“.\nSložky si nové soubory stáhnou při každé synchronizaci aplikace.\n\nStažené soubory se otevřou i bez připojení."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold fingeren på en fil eller mappe i Gennemse, og vælg “%@”.\nMapper henter nye filer, hver gang appen synkroniserer.\n\nHentede filer kan åbnes, selv uden forbindelse."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halte in Durchsuchen eine Datei oder einen Ordner gedrückt und wähle „%@“.\nOrdner übernehmen neue Dateien bei jedem Abgleich der App.\n\nHeruntergeladene Dateien lassen sich auch ohne Verbindung öffnen."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Πατήστε παρατεταμένα οποιοδήποτε αρχείο ή φάκελο στην Περιήγηση και επιλέξτε «%@».\nΟι φάκελοι παίρνουν τα νέα αρχεία σε κάθε συγχρονισμό της εφαρμογής.\n\nΤα αρχεία που έχουν ληφθεί ανοίγουν ακόμη και χωρίς σύνδεση."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantén pulsado cualquier archivo o carpeta en Explorar y elige «%@».\nLas carpetas reciben los archivos nuevos cada vez que la app se sincroniza.\n\nLos archivos descargados se abren incluso sin conexión."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paina pitkään mitä tahansa tiedostoa tai kansiota Selaa-näkymässä ja valitse ”%@”.\nKansiot saavat uudet tiedostot aina, kun sovellus synkronoi.\n\nLadatut tiedostot aukeavat myös ilman yhteyttä."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez longuement un fichier ou un dossier dans Explorer et choisissez « %@ ».\nLes dossiers récupèrent les nouveaux fichiers à chaque synchronisation de l’app.\n\nLes fichiers téléchargés s'ouvrent même sans connexion."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "לחצו לחיצה ארוכה על כל קובץ או תיקייה בעיון ובחרו ״%@״.\nתיקיות מקבלות קבצים חדשים בכל סנכרון של האפליקציה.\n\nקבצים שהורדו נפתחים גם ללא חיבור."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्राउज़ करें में किसी भी फ़ाइल या फ़ोल्डर को दबाकर रखें और “%@” चुनें।\nहर बार ऐप सिंक होने पर फ़ोल्डरों में नई फ़ाइलें आ जाती हैं।\n\nडाउनलोड की गई फ़ाइलें बिना कनेक्शन के भी खुलती हैं।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarts nyomva bármely fájlt vagy mappát a Böngészésben, és válaszd a „%@” lehetőséget.\nA mappák minden szinkronizáláskor megkapják az új fájlokat.\n\nA letöltött fájlok kapcsolat nélkül is megnyílnak."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sentuh lama file atau folder apa pun di Jelajahi lalu pilih “%@”.\nFolder mendapat file baru setiap kali aplikasi menyinkronkan.\n\nFile yang diunduh terbuka walau tanpa koneksi."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tieni premuto un file o una cartella in Esplora e scegli «%@».\nLe cartelle ricevono i nuovi file a ogni sincronizzazione dell’app.\n\nI file scaricati si aprono anche senza connessione."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブラウズで任意のファイルまたはフォルダを長押しして「%@」を選択します。\nフォルダはアプリが同期するたびに新しいファイルを取り込みます。\n\nダウンロードしたファイルは接続がなくても開けます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "탐색에서 아무 파일이나 폴더를 길게 누르고 ‘%@’를 선택하세요.\n폴더는 앱이 동기화할 때마다 새 파일을 받아옵니다.\n\n다운로드한 파일은 연결이 없어도 열 수 있습니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold fingeren på en fil eller mappe i Utforsk og velg «%@».\nMapper henter nye filer hver gang appen synkroniserer.\n\nNedlastede filer kan åpnes selv uten tilkobling."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Houd in Verkennen een bestand of map ingedrukt en kies ‘%@’.\nMappen halen nieuwe bestanden op bij elke synchronisatie van de app.\n\nGedownloade bestanden openen ook zonder verbinding."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj dowolny plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nFoldery pobierają nowe pliki przy każdej synchronizacji aplikacji.\n\nPobrane pliki otwierają się nawet bez połączenia."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque sem soltar em qualquer ficheiro ou pasta em Explorar e escolha «%@».\nAs pastas recebem ficheiros novos sempre que a app sincroniza.\n\nOs ficheiros transferidos abrem mesmo sem ligação."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque e segure qualquer arquivo ou pasta em Explorar e escolha “%@”.\nAs pastas recebem arquivos novos sempre que o app sincroniza.\n\nOs arquivos baixados abrem mesmo sem conexão."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ține apăsat pe orice fișier sau dosar în Explorează și alege „%@”.\nDosarele primesc fișierele noi la fiecare sincronizare a aplicației.\n\nFișierele descărcate se deschid chiar și fără conexiune."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите и удерживайте любой файл или папку в Обзоре и выберите «%@».\nПапки получают новые файлы при каждой синхронизации приложения.\n\nЗагруженные файлы открываются даже без подключения."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Håll fingret på valfri fil eller mapp i Bläddra och välj ”%@”.\nMappar hämtar nya filer varje gång appen synkar.\n\nHämtade filer öppnas även utan anslutning."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แตะค้างที่ไฟล์หรือโฟลเดอร์ใดก็ได้ในเรียกดูแล้วเลือก “%@”\nโฟลเดอร์จะได้รับไฟล์ใหม่ทุกครั้งที่แอปซิงค์\n\nไฟล์ที่ดาวน์โหลดแล้วเปิดได้แม้ไม่มีการเชื่อมต่อ"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gözat’ta herhangi bir dosyayı veya klasörü basılı tutup “%@” seçeneğini seçin.\nKlasörler, uygulama her eşitlendiğinde yeni dosyaları alır.\n\nİndirilen dosyalar bağlantı olmasa bile açılır."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натисніть і утримуйте будь-який файл або папку в Огляді й виберіть «%@».\nПапки отримують нові файли під час кожної синхронізації застосунку.\n\nЗавантажені файли відкриваються навіть без з’єднання."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chạm và giữ bất kỳ tệp hoặc thư mục nào trong Duyệt và chọn “%@”.\nThư mục nhận tệp mới mỗi lần ứng dụng đồng bộ.\n\nCác tệp đã tải xuống vẫn mở được khi không có kết nối."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“浏览”中按住任意文件或文件夹并选择“%@”。\n每次 App 同步时，文件夹都会获取新文件。\n\n已下载的文件即使没有网络也能打开。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在「瀏覽」中按住任何檔案或資料夾並選擇「%@」。\n每次 App 同步時，資料夾都會取得新檔案。\n\n已下載的檔案即使沒有連線也能開啟。"
+          }
+        }
+      }
+    },
     "emptyGuide.offlineTitle": {
       "extractionState": "manual",
       "localizations": {
@@ -81143,6 +81513,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "將檔案保留在這台 Mac 上"
+          }
+        }
+      }
+    },
+    "emptyGuide.offlineTitleDevice": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep files on this device"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "احتفظ بالملفات على هذا الجهاز"
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mít soubory v tomto zařízení"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Behold filer på denne enhed"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateien auf diesem Gerät behalten"
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Κρατήστε αρχεία σε αυτή τη συσκευή"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar archivos en este dispositivo"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pidä tiedostot tällä laitteella"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garder des fichiers sur cet appareil"
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "שמירת קבצים במכשיר הזה"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ाइलें इस डिवाइस पर रखें"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fájlok megtartása ezen az eszközön"
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Simpan file di perangkat ini"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tieni i file su questo dispositivo"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このデバイスにファイルを保持"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 기기에 파일 보관"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Behold filer på denne enheten"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestanden op dit apparaat bewaren"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zachowaj pliki na tym urządzeniu"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manter ficheiros neste dispositivo"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manter arquivos neste dispositivo"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Păstrează fișiere pe acest dispozitiv"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Храните файлы на этом устройстве"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Behåll filer på den här enheten"
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "เก็บไฟล์ไว้ในอุปกรณ์นี้"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dosyaları bu cihazda tut"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Зберігайте файли на цьому пристрої"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giữ tệp trên thiết bị này"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "将文件保留在这台设备上"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "將檔案保留在這台裝置上"
           }
         }
       }
@@ -82253,6 +82808,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "在「瀏覽」中右鍵點按檔案或資料夾並選擇「%@」。\n連結會顯示在這裡，並註明誰可以開啟以及期限。"
+          }
+        }
+      }
+    },
+    "emptyGuide.sharedBodyTouch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touch and hold a file or folder in Browse and choose %@.\nIts link shows up here, with who can open it and until when."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "المس مع الاستمرار ملفًا أو مجلدًا في تصفح واختر «%@».\nيظهر رابطه هنا، مع من يمكنه فتحه وحتى متى."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Podržte prst na souboru nebo složce v sekci Procházet a vyberte „%@“.\nOdkaz se objeví tady, i s tím, kdo ho může otevřít a do kdy."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold fingeren på en fil eller mappe i Gennemse, og vælg “%@”.\nLinket vises her, med hvem der kan åbne det og indtil hvornår."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Halte in Durchsuchen eine Datei oder einen Ordner gedrückt und wähle „%@“.\nDer Link erscheint hier, mit wer ihn öffnen kann und bis wann."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Πατήστε παρατεταμένα ένα αρχείο ή φάκελο στην Περιήγηση και επιλέξτε «%@».\nΟ σύνδεσμος εμφανίζεται εδώ, με το ποιος μπορεί να τον ανοίξει και μέχρι πότε."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mantén pulsado un archivo o carpeta en Explorar y elige «%@».\nSu enlace aparece aquí, con quién puede abrirlo y hasta cuándo."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paina pitkään tiedostoa tai kansiota Selaa-näkymässä ja valitse ”%@”.\nLinkki näkyy täällä, ja siinä kerrotaan, kuka voi avata sen ja mihin asti."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez longuement un fichier ou un dossier dans Explorer et choisissez « %@ ».\nSon lien apparaît ici, avec qui peut l’ouvrir et jusqu’à quand."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "לחצו לחיצה ארוכה על קובץ או תיקייה בעיון ובחרו ״%@״.\nהקישור יופיע כאן, עם מי יכול לפתוח אותו ועד מתי."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ब्राउज़ करें में किसी फ़ाइल या फ़ोल्डर को दबाकर रखें और “%@” चुनें।\nउसका लिंक यहाँ दिखेगा, साथ में कौन उसे खोल सकता है और कब तक।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarts nyomva egy fájlt vagy mappát a Böngészésben, és válaszd a „%@” lehetőséget.\nA link itt jelenik meg, azzal együtt, hogy ki és meddig nyithatja meg."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sentuh lama file atau folder di Jelajahi lalu pilih “%@”.\nTautannya muncul di sini, beserta siapa yang dapat membukanya dan sampai kapan."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tieni premuto un file o una cartella in Esplora e scegli «%@».\nIl link comparirà qui, con chi può aprirlo e fino a quando."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ブラウズでファイルまたはフォルダを長押しして「%@」を選択します。\nリンクがここに表示され、誰がいつまで開けるかもわかります。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "탐색에서 파일이나 폴더를 길게 누르고 ‘%@’를 선택하세요.\n링크가 여기에 표시되며, 누가 언제까지 열 수 있는지도 보입니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hold fingeren på en fil eller mappe i Utforsk og velg «%@».\nLenken vises her, med hvem som kan åpne den og til når."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Houd in Verkennen een bestand of map ingedrukt en kies ‘%@’.\nDe link verschijnt hier, met wie hem kan openen en tot wanneer."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przytrzymaj plik lub folder w sekcji Przeglądaj i wybierz „%@”.\nLink pojawi się tutaj, razem z tym, kto może go otworzyć i do kiedy."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque sem soltar num ficheiro ou pasta em Explorar e escolha «%@».\nA ligação aparece aqui, com quem a pode abrir e até quando."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque e segure um arquivo ou pasta em Explorar e escolha “%@”.\nO link aparece aqui, com quem pode abrir e até quando."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ține apăsat pe un fișier sau dosar în Explorează și alege „%@”.\nLinkul apare aici, cu cine îl poate deschide și până când."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите и удерживайте файл или папку в Обзоре и выберите «%@».\nСсылка появится здесь вместе с тем, кто и до какого срока может её открыть."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Håll fingret på en fil eller mapp i Bläddra och välj ”%@”.\nLänken visas här, med vem som kan öppna den och till när."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "แตะค้างที่ไฟล์หรือโฟลเดอร์ในเรียกดูแล้วเลือก “%@”\nลิงก์จะแสดงที่นี่ พร้อมผู้ที่เปิดได้และถึงเมื่อใด"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gözat’ta bir dosyayı veya klasörü basılı tutup “%@” seçeneğini seçin.\nBağlantısı burada, kimin ne zamana kadar açabileceğiyle birlikte görünür."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Натисніть і утримуйте файл або папку в Огляді й виберіть «%@».\nПосилання з’явиться тут разом із тим, хто й до коли може його відкрити."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chạm và giữ tệp hoặc thư mục trong Duyệt và chọn “%@”.\nLiên kết hiện ở đây, kèm ai có thể mở và đến khi nào."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在“浏览”中按住文件或文件夹并选择“%@”。\n链接会显示在这里，并注明谁可以打开以及有效期限。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "在「瀏覽」中按住檔案或資料夾並選擇「%@」。\n連結會顯示在這裡，並註明誰可以開啟以及期限。"
           }
         }
       }

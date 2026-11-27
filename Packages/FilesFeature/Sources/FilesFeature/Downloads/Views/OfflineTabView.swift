@@ -200,7 +200,7 @@ struct OfflineTabView: View {
             emptyIcon: IconKit.availableOffline,
             emptyMessage: L10n.Offline.tabEmpty,
             noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
-            macGuide: .offline,
+            guide: .offline,
             onRetry: { store.send(.refreshButtonTapped) }
         )
     }

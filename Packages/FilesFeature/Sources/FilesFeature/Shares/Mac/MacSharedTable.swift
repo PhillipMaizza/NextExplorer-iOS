@@ -180,7 +180,7 @@
                         emptyMessage: store.state.emptyMessage(for: segment),
                         noResultsMessage: store.state.noResultsMessage(for: segment),
                         pullOffset: 0,
-                        macGuide: isByMe ? .sharedByMe : .sharedWithMe,
+                        guide: isByMe ? .sharedByMe : .sharedWithMe,
                         onRetry: { store.send(.refreshRequested) }
                     )
                 }

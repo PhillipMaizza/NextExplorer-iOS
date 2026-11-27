@@ -1580,11 +1580,15 @@ browse.contentSummary	%1$@, %2$@
 emptyGuide.goToBrowse	Go to Browse
 emptyGuide.favoritesTitle	Keep folders one click away
 emptyGuide.favoritesBody	Right click a folder in Browse and choose %1$@.\nIt shows up here, and %2$@ gives it its own name, color and icon.
+emptyGuide.favoritesBodyTouch	Touch and hold a folder in Browse and choose %1$@.\nIt shows up here, and %2$@ gives it its own name, color and icon.
 emptyGuide.sharedTitle	Share with a link
 emptyGuide.sharedBody	Right click a file or folder in Browse and choose %@.\nIts link shows up here, with who can open it and until when.
+emptyGuide.sharedBodyTouch	Touch and hold a file or folder in Browse and choose %@.\nIts link shows up here, with who can open it and until when.
 emptyGuide.sharedWithMeTitle	Nothing shared with you yet
 emptyGuide.offlineTitle	Keep files on this Mac
+emptyGuide.offlineTitleDevice	Keep files on this device
 emptyGuide.offlineBody	Right click any file or folder in Browse and choose %@.\nFolders pick up new files each time the app syncs.\n\nDownloaded files open even without a connection.
+emptyGuide.offlineBodyTouch	Touch and hold any file or folder in Browse and choose %@.\nFolders pick up new files each time the app syncs.\n\nDownloaded files open even without a connection.
 emptyGuide.accessRulesTitle	No folder rules yet
 emptyGuide.accessRulesReadOnly	%@ lets people open a folder but not change what is in it.
 emptyGuide.accessRulesHidden	%@ takes a folder out of every listing and search.

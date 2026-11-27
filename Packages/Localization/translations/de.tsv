@@ -1480,11 +1480,15 @@ requireSignIn.toggle	Anmeldung erforderlich
 emptyGuide.goToBrowse	Zu Durchsuchen
 emptyGuide.favoritesTitle	Ordner mit einem Klick erreichen
 emptyGuide.favoritesBody	Klicke in Durchsuchen mit der rechten Maustaste auf einen Ordner und wähle „%1$@“.\nEr erscheint hier, und mit „%2$@“ gibst du ihm einen eigenen Namen, eine Farbe und ein Symbol.
+emptyGuide.favoritesBodyTouch	Halte in Durchsuchen einen Ordner gedrückt und wähle „%1$@“.\nEr erscheint hier, und mit „%2$@“ gibst du ihm einen eigenen Namen, eine Farbe und ein Symbol.
 emptyGuide.sharedTitle	Mit einem Link teilen
 emptyGuide.sharedBody	Klicke in Durchsuchen mit der rechten Maustaste auf eine Datei oder einen Ordner und wähle „%@“.\nDer Link erscheint hier, mit wer ihn öffnen kann und bis wann.
+emptyGuide.sharedBodyTouch	Halte in Durchsuchen eine Datei oder einen Ordner gedrückt und wähle „%@“.\nDer Link erscheint hier, mit wer ihn öffnen kann und bis wann.
 emptyGuide.sharedWithMeTitle	Noch nichts mit dir geteilt
 emptyGuide.offlineTitle	Dateien auf diesem Mac behalten
+emptyGuide.offlineTitleDevice	Dateien auf diesem Gerät behalten
 emptyGuide.offlineBody	Klicke in Durchsuchen mit der rechten Maustaste auf eine Datei oder einen Ordner und wähle „%@“.\nOrdner übernehmen neue Dateien bei jedem Abgleich der App.\n\nHeruntergeladene Dateien lassen sich auch ohne Verbindung öffnen.
+emptyGuide.offlineBodyTouch	Halte in Durchsuchen eine Datei oder einen Ordner gedrückt und wähle „%@“.\nOrdner übernehmen neue Dateien bei jedem Abgleich der App.\n\nHeruntergeladene Dateien lassen sich auch ohne Verbindung öffnen.
 emptyGuide.accessRulesTitle	Noch keine Ordnerregeln
 emptyGuide.accessRulesReadOnly	%@ lässt einen Ordner öffnen, aber seinen Inhalt nicht ändern.
 emptyGuide.accessRulesHidden	%@ nimmt einen Ordner aus allen Listen und der Suche.

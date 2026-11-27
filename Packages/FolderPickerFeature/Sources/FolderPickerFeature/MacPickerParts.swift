@@ -69,7 +69,7 @@
             if let tile {
                 tile.make(item, Metrics.stackTile)
             } else {
-                MacFolderTile(
+                FolderTile(
                     size: Metrics.stackTile,
                     glyph: item.isDirectory ? IconKit.folderFill : IconKit.document,
                     tint: item.isDirectory ? .accent : .secondaryDS
@@ -134,7 +134,7 @@
         private func row(_ title: String, glyph: Image, isActive: Bool, action: @escaping () -> Void) -> some View {
             Button(action: action) {
                 HStack(spacing: .space8) {
-                    MacFolderTile(size: Metrics.tileSize, glyph: glyph)
+                    FolderTile(size: Metrics.tileSize, glyph: glyph)
                         .environment(\.backgroundProminence, isActive ? .increased : .standard)
                     Text(title)
                         .type(.body2(.regular))
@@ -252,7 +252,7 @@
         var body: some View {
             HStack(spacing: .space8) {
                 if isDirectory {
-                    MacFolderTile(size: Metrics.tileSize, glyph: glyph)
+                    FolderTile(size: Metrics.tileSize, glyph: glyph)
                         .environment(\.backgroundProminence, isSelected ? .increased : .standard)
                 } else {
                     IconKit.document

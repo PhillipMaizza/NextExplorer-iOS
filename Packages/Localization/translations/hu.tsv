@@ -1409,11 +1409,15 @@ requireSignIn.toggle	Bejelentkezés kérése
 emptyGuide.goToBrowse	Ugrás a Böngészéshez
 emptyGuide.favoritesTitle	Mappák egy kattintásnyira
 emptyGuide.favoritesBody	Kattints jobb gombbal egy mappára a Böngészésben, és válaszd a „%1$@” lehetőséget.\nItt jelenik meg, a „%2$@” pedig saját nevet, színt és ikont ad neki.
+emptyGuide.favoritesBodyTouch	Tarts nyomva egy mappát a Böngészésben, és válaszd a „%1$@” lehetőséget.\nItt jelenik meg, a „%2$@” pedig saját nevet, színt és ikont ad neki.
 emptyGuide.sharedTitle	Megosztás linkkel
 emptyGuide.sharedBody	Kattints jobb gombbal egy fájlra vagy mappára a Böngészésben, és válaszd a „%@” lehetőséget.\nA link itt jelenik meg, azzal együtt, hogy ki és meddig nyithatja meg.
+emptyGuide.sharedBodyTouch	Tarts nyomva egy fájlt vagy mappát a Böngészésben, és válaszd a „%@” lehetőséget.\nA link itt jelenik meg, azzal együtt, hogy ki és meddig nyithatja meg.
 emptyGuide.sharedWithMeTitle	Még semmit sem osztottak meg veled
 emptyGuide.offlineTitle	Fájlok megtartása ezen a Macen
+emptyGuide.offlineTitleDevice	Fájlok megtartása ezen az eszközön
 emptyGuide.offlineBody	Kattints jobb gombbal bármely fájlra vagy mappára a Böngészésben, és válaszd a „%@” lehetőséget.\nA mappák minden szinkronizáláskor megkapják az új fájlokat.\n\nA letöltött fájlok kapcsolat nélkül is megnyílnak.
+emptyGuide.offlineBodyTouch	Tarts nyomva bármely fájlt vagy mappát a Böngészésben, és válaszd a „%@” lehetőséget.\nA mappák minden szinkronizáláskor megkapják az új fájlokat.\n\nA letöltött fájlok kapcsolat nélkül is megnyílnak.
 emptyGuide.accessRulesTitle	Még nincsenek mappaszabályok
 emptyGuide.accessRulesReadOnly	A(z) %@ megengedi a mappa megnyitását, de a tartalma nem módosítható.
 emptyGuide.accessRulesHidden	A(z) %@ kiveszi a mappát minden listából és keresésből.

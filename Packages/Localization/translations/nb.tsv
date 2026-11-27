@@ -1409,11 +1409,15 @@ requireSignIn.toggle	Krev pålogging
 emptyGuide.goToBrowse	Gå til Utforsk
 emptyGuide.favoritesTitle	Mapper ett klikk unna
 emptyGuide.favoritesBody	Høyreklikk på en mappe i Utforsk og velg «%1$@».\nDen vises her, og med «%2$@» gir du den eget navn, farge og symbol.
+emptyGuide.favoritesBodyTouch	Hold fingeren på en mappe i Utforsk og velg «%1$@».\nDen vises her, og med «%2$@» gir du den eget navn, farge og symbol.
 emptyGuide.sharedTitle	Del med en lenke
 emptyGuide.sharedBody	Høyreklikk på en fil eller mappe i Utforsk og velg «%@».\nLenken vises her, med hvem som kan åpne den og til når.
+emptyGuide.sharedBodyTouch	Hold fingeren på en fil eller mappe i Utforsk og velg «%@».\nLenken vises her, med hvem som kan åpne den og til når.
 emptyGuide.sharedWithMeTitle	Ingenting er delt med deg ennå
 emptyGuide.offlineTitle	Behold filer på denne Macen
+emptyGuide.offlineTitleDevice	Behold filer på denne enheten
 emptyGuide.offlineBody	Høyreklikk på en fil eller mappe i Utforsk og velg «%@».\nMapper henter nye filer hver gang appen synkroniserer.\n\nNedlastede filer kan åpnes selv uten tilkobling.
+emptyGuide.offlineBodyTouch	Hold fingeren på en fil eller mappe i Utforsk og velg «%@».\nMapper henter nye filer hver gang appen synkroniserer.\n\nNedlastede filer kan åpnes selv uten tilkobling.
 emptyGuide.accessRulesTitle	Ingen mapperegler ennå
 emptyGuide.accessRulesReadOnly	%@ lar folk åpne en mappe, men ikke endre innholdet.
 emptyGuide.accessRulesHidden	%@ fjerner en mappe fra alle lister og søk.

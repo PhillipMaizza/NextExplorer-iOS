@@ -1371,11 +1371,15 @@ requireSignIn.toggle	Yêu cầu đăng nhập
 emptyGuide.goToBrowse	Đi tới Duyệt
 emptyGuide.favoritesTitle	Thư mục chỉ cách một cú nhấp
 emptyGuide.favoritesBody	Nhấp chuột phải vào một thư mục trong Duyệt và chọn “%1$@”.\nThư mục sẽ hiện ở đây, và “%2$@” cho nó tên, màu và biểu tượng riêng.
+emptyGuide.favoritesBodyTouch	Chạm và giữ một thư mục trong Duyệt và chọn “%1$@”.\nThư mục sẽ hiện ở đây, và “%2$@” cho nó tên, màu và biểu tượng riêng.
 emptyGuide.sharedTitle	Chia sẻ bằng liên kết
 emptyGuide.sharedBody	Nhấp chuột phải vào tệp hoặc thư mục trong Duyệt và chọn “%@”.\nLiên kết hiện ở đây, kèm ai có thể mở và đến khi nào.
+emptyGuide.sharedBodyTouch	Chạm và giữ tệp hoặc thư mục trong Duyệt và chọn “%@”.\nLiên kết hiện ở đây, kèm ai có thể mở và đến khi nào.
 emptyGuide.sharedWithMeTitle	Chưa có gì được chia sẻ với bạn
 emptyGuide.offlineTitle	Giữ tệp trên máy Mac này
+emptyGuide.offlineTitleDevice	Giữ tệp trên thiết bị này
 emptyGuide.offlineBody	Nhấp chuột phải vào bất kỳ tệp hoặc thư mục nào trong Duyệt và chọn “%@”.\nThư mục nhận tệp mới mỗi lần ứng dụng đồng bộ.\n\nCác tệp đã tải xuống vẫn mở được khi không có kết nối.
+emptyGuide.offlineBodyTouch	Chạm và giữ bất kỳ tệp hoặc thư mục nào trong Duyệt và chọn “%@”.\nThư mục nhận tệp mới mỗi lần ứng dụng đồng bộ.\n\nCác tệp đã tải xuống vẫn mở được khi không có kết nối.
 emptyGuide.accessRulesTitle	Chưa có quy tắc thư mục
 emptyGuide.accessRulesReadOnly	%@ cho phép mở thư mục nhưng không thay đổi nội dung.
 emptyGuide.accessRulesHidden	%@ sẽ đưa thư mục ra khỏi mọi danh sách và tìm kiếm.

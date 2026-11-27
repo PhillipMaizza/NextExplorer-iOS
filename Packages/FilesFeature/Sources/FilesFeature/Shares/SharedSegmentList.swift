@@ -100,6 +100,7 @@ struct SharedSegmentList: View {
                 emptyMessage: store.state.emptyMessage(for: segment),
                 noResultsMessage: store.state.noResultsMessage(for: segment),
                 pullOffset: pullOffset,
+                guide: segment == .byMe ? .sharedByMe : .sharedWithMe,
                 onRetry: { store.send(.refreshRequested) }
             )
             .animation(DSMotion.contentReveal, value: listPhase)

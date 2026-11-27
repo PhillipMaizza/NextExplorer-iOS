@@ -1640,11 +1640,15 @@ requireSignIn.toggle	طلب تسجيل الدخول
 emptyGuide.goToBrowse	الانتقال إلى تصفح
 emptyGuide.favoritesTitle	مجلداتك على بُعد نقرة
 emptyGuide.favoritesBody	انقر بزر الماوس الأيمن على مجلد في تصفح واختر «%1$@».\nسيظهر هنا، ويمنحه «%2$@» اسمًا ولونًا وأيقونة خاصة به.
+emptyGuide.favoritesBodyTouch	المس مع الاستمرار مجلدًا في تصفح واختر «%1$@».\nسيظهر هنا، ويمنحه «%2$@» اسمًا ولونًا وأيقونة خاصة به.
 emptyGuide.sharedTitle	المشاركة عبر رابط
 emptyGuide.sharedBody	انقر بزر الماوس الأيمن على ملف أو مجلد في تصفح واختر «%@».\nيظهر رابطه هنا، مع من يمكنه فتحه وحتى متى.
+emptyGuide.sharedBodyTouch	المس مع الاستمرار ملفًا أو مجلدًا في تصفح واختر «%@».\nيظهر رابطه هنا، مع من يمكنه فتحه وحتى متى.
 emptyGuide.sharedWithMeTitle	لم يُشارَك معك شيء بعد
 emptyGuide.offlineTitle	احتفظ بالملفات على هذا الـ Mac
+emptyGuide.offlineTitleDevice	احتفظ بالملفات على هذا الجهاز
 emptyGuide.offlineBody	انقر بزر الماوس الأيمن على أي ملف أو مجلد في تصفح واختر «%@».\nتحصل المجلدات على الملفات الجديدة في كل مزامنة للتطبيق.\n\nتُفتح الملفات التي جرى تنزيلها حتى بدون اتصال.
+emptyGuide.offlineBodyTouch	المس مع الاستمرار أي ملف أو مجلد في تصفح واختر «%@».\nتحصل المجلدات على الملفات الجديدة في كل مزامنة للتطبيق.\n\nتُفتح الملفات التي جرى تنزيلها حتى بدون اتصال.
 emptyGuide.accessRulesTitle	لا توجد قواعد للمجلدات بعد
 emptyGuide.accessRulesReadOnly	يتيح «%@» فتح المجلد دون تغيير محتواه.
 emptyGuide.accessRulesHidden	يُخرج «%@» المجلد من كل القوائم ونتائج البحث.

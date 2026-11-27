@@ -1492,11 +1492,15 @@ requireSignIn.toggle	Vyžadovat přihlášení
 emptyGuide.goToBrowse	Přejít do sekce Procházet
 emptyGuide.favoritesTitle	Složky na jedno kliknutí
 emptyGuide.favoritesBody	Klikněte pravým tlačítkem na složku v sekci Procházet a vyberte „%1$@“.\nObjeví se tady a pomocí „%2$@“ jí dáte vlastní název, barvu a ikonu.
+emptyGuide.favoritesBodyTouch	Podržte prst na složce v sekci Procházet a vyberte „%1$@“.\nObjeví se tady a pomocí „%2$@“ jí dáte vlastní název, barvu a ikonu.
 emptyGuide.sharedTitle	Sdílet odkazem
 emptyGuide.sharedBody	Klikněte pravým tlačítkem na soubor nebo složku v sekci Procházet a vyberte „%@“.\nOdkaz se objeví tady, i s tím, kdo ho může otevřít a do kdy.
+emptyGuide.sharedBodyTouch	Podržte prst na souboru nebo složce v sekci Procházet a vyberte „%@“.\nOdkaz se objeví tady, i s tím, kdo ho může otevřít a do kdy.
 emptyGuide.sharedWithMeTitle	Zatím s vámi nikdo nic nesdílel
 emptyGuide.offlineTitle	Mít soubory na tomto Macu
+emptyGuide.offlineTitleDevice	Mít soubory v tomto zařízení
 emptyGuide.offlineBody	Klikněte pravým tlačítkem na libovolný soubor nebo složku v sekci Procházet a vyberte „%@“.\nSložky si nové soubory stáhnou při každé synchronizaci aplikace.\n\nStažené soubory se otevřou i bez připojení.
+emptyGuide.offlineBodyTouch	Podržte prst na libovolném souboru nebo složce v sekci Procházet a vyberte „%@“.\nSložky si nové soubory stáhnou při každé synchronizaci aplikace.\n\nStažené soubory se otevřou i bez připojení.
 emptyGuide.accessRulesTitle	Zatím žádná pravidla složek
 emptyGuide.accessRulesReadOnly	%@ umožní složku otevřít, ale ne měnit její obsah.
 emptyGuide.accessRulesHidden	%@ odstraní složku ze všech výpisů i z hledání.
