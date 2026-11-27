@@ -191,7 +191,6 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
             }
             .tint(.primaryDS)
-            .macMenuShortcut(.return, modifiers: [])
         }
     }
 
