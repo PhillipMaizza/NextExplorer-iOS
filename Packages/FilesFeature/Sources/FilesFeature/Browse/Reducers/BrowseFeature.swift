@@ -593,6 +593,7 @@ public struct BrowseFeature {
         case deleteImpactResponse(Result<DeleteImpact, FilesClientError>)
         case deleteResponse(Result<DeleteResult, FilesClientError>)
         case extractTapped(FileItem, entryPaths: [String]? = nil)
+        case extractHereTapped(FileItem)
         case extractResponse(Result<[FileItem], FilesClientError>)
         case compressTapped(FileItem)
         case compressSelectionTapped

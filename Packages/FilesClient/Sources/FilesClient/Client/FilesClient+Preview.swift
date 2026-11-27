@@ -209,6 +209,7 @@ public extension FilesClient {
                 kind: "directory"
             )
         },
+        extractZipHere: { _, _ in [] },
         listArchive: { _, _, inside in
             ArchiveListing(inside: inside, entries: [])
         },

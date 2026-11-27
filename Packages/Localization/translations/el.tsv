@@ -70,6 +70,7 @@ browse.actionGetInfo	Λήψη πληροφοριών
 browse.actionPermissions	Δικαιώματα
 browse.actionRename	Μετονομασία
 browse.actionExtract	Εξαγωγή
+browse.actionExtractHere	Αποσυμπίεση εδώ
 browse.actionCompress	Συμπίεση
 browse.actionDownload	Λήψη
 browse.actionAddToFavorites	Προσθήκη στα Αγαπημένα

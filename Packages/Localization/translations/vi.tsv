@@ -70,6 +70,7 @@ browse.actionGetInfo	Xem thông tin
 browse.actionPermissions	Quyền
 browse.actionRename	Đổi tên
 browse.actionExtract	Giải nén
+browse.actionExtractHere	Giải nén tại đây
 browse.actionCompress	Nén
 browse.actionDownload	Tải xuống
 browse.actionAddToFavorites	Thêm vào Yêu thích

@@ -141,6 +141,7 @@ public enum L10n {
         public static var actionDownload: String { tr("browse.actionDownload") }  // "Download"
         public static var actionDuplicate: String { tr("browse.actionDuplicate") }  // "Duplicate"
         public static var actionExtract: String { tr("browse.actionExtract") }  // "Extract"
+        public static var actionExtractHere: String { tr("browse.actionExtractHere") }  // "Extract here"
         public static var actionGetInfo: String { tr("browse.actionGetInfo") }  // "Get Info"
         public static var actionKeepOffline: String { tr("browse.actionKeepOffline") }  // "Keep Offline"
         public static var actionMove: String { tr("browse.actionMove") }  // "Move"

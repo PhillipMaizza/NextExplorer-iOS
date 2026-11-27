@@ -91,6 +91,7 @@ browse.actionPermissions	Permissions
 browse.actionRename	Rename
 browse.actionRefreshSize	Refresh Size
 browse.actionExtract	Extract
+browse.actionExtractHere	Extract here
 browse.actionCompress	Compress
 browse.actionDownload	Download
 browse.actionAvailableOffline	Available Offline

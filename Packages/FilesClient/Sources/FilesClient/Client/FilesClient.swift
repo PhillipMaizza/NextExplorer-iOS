@@ -156,6 +156,7 @@ public struct FilesClient: Sendable {
     public var fetchTextContent: @Sendable (_ serverURL: URL, _ path: String) async throws -> String
     public var saveTextContent: @Sendable (_ serverURL: URL, _ path: String, _ content: String) async throws -> Void
     public var extractZip: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
+    public var extractZipHere: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> [FileItem]
     public var listArchive: @Sendable (
         _ serverURL: URL, _ archive: FileItem, _ inside: String
     ) async throws -> ArchiveListing

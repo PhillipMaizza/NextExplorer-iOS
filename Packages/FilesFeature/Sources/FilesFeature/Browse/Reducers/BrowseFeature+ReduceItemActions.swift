@@ -234,16 +234,14 @@ extension BrowseFeature {
             return refetchAfterAmbiguousFailure(&state, error)
 
         case let .extractTapped(item, entryPaths):
-            guard !state.isPerformingFileAction, state.actions(for: item).canExtract else { return .none }
-            state.isPerformingFileAction = true
-            state.fileActionProgressMessage = L10n.Browse.progressExtracting
-            let serverURL = state.serverURL
-            let filesClient = filesClient
-            return .run { send in
-                try await send(.extractResponse(apiResult {
-                    guard let entryPaths else { return try await [filesClient.extractZip(serverURL, item)] }
-                    return try await filesClient.extractArchiveEntries(serverURL, item, entryPaths)
-                }))
+            return extract(&state, item) { filesClient, serverURL in
+                guard let entryPaths else { return try await [filesClient.extractZip(serverURL, item)] }
+                return try await filesClient.extractArchiveEntries(serverURL, item, entryPaths)
+            }
+
+        case let .extractHereTapped(item):
+            return extract(&state, item) { filesClient, serverURL in
+                try await filesClient.extractZipHere(serverURL, item)
             }
 
         case let .extractResponse(.success(extracted)):
@@ -329,6 +327,21 @@ extension BrowseFeature {
 
         default:
             return .none
+        }
+    }
+
+    private func extract(
+        _ state: inout State,
+        _ item: FileItem,
+        operation: @escaping @Sendable (FilesClient, URL) async throws -> [FileItem]
+    ) -> Effect<Action> {
+        guard !state.isPerformingFileAction, state.actions(for: item).canExtract else { return .none }
+        state.isPerformingFileAction = true
+        state.fileActionProgressMessage = L10n.Browse.progressExtracting
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            try await send(.extractResponse(apiResult { try await operation(filesClient, serverURL) }))
         }
     }
 
