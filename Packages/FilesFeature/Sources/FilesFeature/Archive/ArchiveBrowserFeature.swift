@@ -49,7 +49,7 @@ struct ArchiveBrowserFeature {
         }
 
         var canExtract: Bool {
-            source == .server
+            source == .server && openedIndex.map { !files[$0].isEncrypted } ?? true
         }
 
         var extractPaths: [String]? {

@@ -145,6 +145,7 @@ struct ArchiveBrowserFeatureTests {
         await store.send(.fileOpened(locked)) {
             $0.entry = .init(path: TestFile.report, phase: .failed(L10n.Archive.entryEncrypted))
         }
+        #expect(!store.state.canExtract)
     }
 
     @Test("A file opens from only its own bytes, steps to the next file, and Back returns to the folder")
