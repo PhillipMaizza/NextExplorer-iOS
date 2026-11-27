@@ -25,3 +25,13 @@ enum SaveActionStyle {
         #endif
     }
 }
+
+enum MoveActionStyle {
+    static var title: String {
+        #if os(macOS)
+            L10n.Browse.actionMoveTo
+        #elseif os(iOS)
+            L10n.Browse.actionMove
+        #endif
+    }
+}
