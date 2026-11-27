@@ -129,6 +129,14 @@ struct SharedFeatureItemsTests {
         #expect(Set(names) == ["Night notes", "Report.pdf"])
     }
 
+    @Test("Searching With me finds a labelled share by its file or folder name too, as the web does")
+    func withMeSearchFindsALabelledShareByItsName() {
+        var searched = state(withMe: [withMe("w1", owner: "u1", name: "QA Night", label: "Night notes")])
+        searched.searchQuery = "QA Night"
+
+        #expect(searched.displayedShares(for: .withMe).map(\.id) == ["w1"])
+    }
+
     @Test
     func unresolvedRecipientsCountAsUnnamed() {
         let share = byMe("a", path: "Plan.md", users: ["u1", "u99"])

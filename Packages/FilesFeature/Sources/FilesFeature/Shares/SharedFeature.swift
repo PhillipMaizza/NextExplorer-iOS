@@ -152,6 +152,7 @@ public struct SharedFeature {
                 ? shares(for: segment).filter { share in
                     term.matches(share.displayName)
                         || term.matches(share.sourcePath ?? "")
+                        || term.matches(share.sourceName ?? "")
                         || peopleNames(of: share).contains { term.matches($0) }
                 }
                 : shares(for: segment)
