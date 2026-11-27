@@ -63,6 +63,11 @@ struct BrowseActionSheets: ViewModifier {
                     onCancel: { store.send(.bulkDownloadChoiceMade(nil)) }
                 )
             }
+            .dsSheet(isPresented: archivePasswordSheetBinding) {
+                if let prompt = store.archivePasswordPrompt {
+                    ArchivePasswordSheet(store: store, prompt: prompt)
+                }
+            }
         #else
             .sheet(isPresented: archivePasswordBinding) {
                 if let prompt = store.archivePasswordPrompt {
@@ -110,6 +115,17 @@ struct BrowseActionSheets: ViewModifier {
 
     private var bulkDownloadBinding: Binding<Bool> {
         Binding(get: { store.bulkDownloadChoice != nil && isFrontmost }, set: { _ in })
+    }
+
+    private var archivePasswordSheetBinding: Binding<Bool> {
+        Binding(
+            get: { store.archivePasswordPrompt != nil && isFrontmost },
+            set: { isPresented in
+                if !isPresented, store.archivePasswordPrompt != nil {
+                    store.send(.archivePasswordCancelled)
+                }
+            }
+        )
     }
 
     private var archivePasswordBinding: Binding<Bool> {

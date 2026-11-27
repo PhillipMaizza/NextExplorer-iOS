@@ -385,14 +385,12 @@ extension BrowseFeature {
                 case .currentFolder: try await filesClient.extractZipHere(serverURL, prompt.item, password)
                 }
             }
-            #if os(macOS)
-                switch result {
-                case .failure(.archivePasswordRequired), .failure(.archiveInvalidPassword):
-                    return await send(.archivePasswordRequired(prompt))
-                default:
-                    break
-                }
-            #endif
+            switch result {
+            case .failure(.archivePasswordRequired), .failure(.archiveInvalidPassword):
+                return await send(.archivePasswordRequired(prompt))
+            default:
+                break
+            }
             await send(.extractResponse(result))
         }
     }
