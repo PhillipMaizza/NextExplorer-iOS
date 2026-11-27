@@ -37,8 +37,7 @@
                         .onSubmit(submit)
                         if prompt.isInvalid {
                             Text(L10n.Browse.archivePasswordInvalid)
-                                .type(.caption(.regular))
-                                .foregroundStyle(Color.negative)
+                                .type(.caption(.regular), style: .error)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                     }

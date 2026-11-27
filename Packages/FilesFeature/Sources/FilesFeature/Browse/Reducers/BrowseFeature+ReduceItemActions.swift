@@ -244,11 +244,11 @@ extension BrowseFeature {
         case let .extractHereTapped(item):
             return extractZip(&state, ArchivePasswordPrompt(item: item, destination: .currentFolder), password: nil)
 
-        case .archivePasswordRequired(var prompt, let invalid):
+        case var .archivePasswordRequired(prompt):
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
-            prompt = state.archivePasswordPrompt ?? prompt
-            if invalid {
+            if let shown = state.archivePasswordPrompt {
+                prompt = shown
                 prompt.invalidAttempts += 1
             }
             state.archivePasswordPrompt = prompt
@@ -385,10 +385,8 @@ extension BrowseFeature {
             }
             #if os(macOS)
                 switch result {
-                case .failure(.archivePasswordRequired):
-                    return await send(.archivePasswordRequired(prompt, invalid: false))
-                case .failure(.archiveInvalidPassword):
-                    return await send(.archivePasswordRequired(prompt, invalid: true))
+                case .failure(.archivePasswordRequired), .failure(.archiveInvalidPassword):
+                    return await send(.archivePasswordRequired(prompt))
                 default:
                     break
                 }

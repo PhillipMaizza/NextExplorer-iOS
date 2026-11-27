@@ -208,8 +208,7 @@
                 VStack(alignment: .leading, spacing: .space4) {
                     MacSecureField("Archive password", text: .constant("secret"), isInvalid: true)
                     Text("Incorrect password, or the archive is damaged.")
-                        .type(.caption(.regular))
-                        .foregroundStyle(Color.negative)
+                        .type(.caption(.regular), style: .error)
                 }
             }
         )
