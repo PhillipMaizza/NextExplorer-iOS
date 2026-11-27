@@ -6,7 +6,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let avatarSize: CGFloat = .size40
+        static let avatarSize: CGFloat = .size56
         static let fieldWidth: CGFloat = 300
         static let tallRowHeight: CGFloat = .size64
         static let accountActionWidth: CGFloat = 140
@@ -37,7 +37,13 @@
         private var header: some View {
             HStack(spacing: .space12) {
                 AvatarView.person(user.displayLabel, size: Metrics.avatarSize)
-                MacFormRowTitle(title: user.displayLabel, subtitle: user.email ?? "")
+                VStack(alignment: .leading, spacing: .space4) {
+                    Text(user.displayLabel)
+                        .type(.headline4)
+                    Text(user.email ?? "")
+                        .type(.body3(.regular), style: .secondary)
+                }
+                .lineLimit(1)
                 Spacer(minLength: .space16)
                 MacSegmentedPicker(
                     L10n.UserManagement.tabProfile,
@@ -50,7 +56,7 @@
 
         private var profileTab: some View {
             VStack(alignment: .leading, spacing: .space8) {
-                MacFormGroup {
+                MacFormGroup(L10n.UserDetail.sectionGeneralInfo) {
                     profileFieldRows
                 }
                 profileNotes
@@ -62,10 +68,14 @@
                         isEnabled: store.isProfileSaveEnabled
                     ) { store.send(.saveProfileTapped) }
                 }
-                MacFormGroup {
-                    accountRows
+                MacFormGroup(L10n.UserDetail.sectionRoles) {
+                    roleRow
                 }
                 .padding(.top, .space8)
+                if !store.isViewingOwnAccount {
+                    dangerZone
+                        .padding(.top, .space16)
+                }
             }
         }
 
@@ -91,8 +101,7 @@
             )
         }
 
-        @ViewBuilder
-        private var accountRows: some View {
+        private var roleRow: some View {
             MacFormRow {
                 MacFormRowTitle(
                     title: L10n.UserDetail.roleAdmin,
@@ -109,22 +118,29 @@
                 }
             }
             .frame(minHeight: Metrics.tallRowHeight)
-            if !store.isViewingOwnAccount {
-                MacFormRow {
-                    VStack(alignment: .leading, spacing: .space2) {
-                        Text(L10n.UserDetail.dangerZoneTitle)
-                            .foregroundStyle(Color.negativeText)
-                        Text(L10n.UserDetail.dangerZoneSubtitle)
-                            .type(.body3(.regular), style: .secondary)
-                            .fixedSize(horizontal: false, vertical: true)
+        }
+
+        private var dangerZone: some View {
+            VStack(alignment: .leading, spacing: .space8) {
+                Text(L10n.UserDetail.dangerZoneTitle)
+                    .type(.body2(.semibold))
+                    .foregroundStyle(Color.negativeText)
+                    .padding(.horizontal, .space4)
+                    .accessibilityAddTraits(.isHeader)
+                MacFormGroup {
+                    MacFormRow {
+                        MacFormRowTitle(
+                            title: L10n.UserDetail.dangerZoneRemoveUser,
+                            subtitle: L10n.UserDetail.dangerZoneSubtitle
+                        )
+                    } control: {
+                        Button(role: .destructive) { store.send(.deleteUserTapped(user)) } label: {
+                            accountActionLabel(L10n.UserDetail.dangerZoneRemoveUser, icon: IconKit.delete)
+                        }
+                        .buttonStyle(.macDS(.outline, size: .small))
                     }
-                } control: {
-                    Button(role: .destructive) { store.send(.deleteUserTapped(user)) } label: {
-                        accountActionLabel(L10n.UserDetail.dangerZoneRemoveUser, icon: IconKit.delete)
-                    }
-                    .buttonStyle(.macDS(.secondary, size: .small))
+                    .frame(minHeight: Metrics.tallRowHeight)
                 }
-                .frame(minHeight: Metrics.tallRowHeight)
             }
         }
 

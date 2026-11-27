@@ -5,29 +5,36 @@
     import Localization
     import SwiftUI
 
-    private enum Metrics {
-        static let searchWidth: CGFloat = 320
-    }
-
     struct MacUsersSettingsPane: View {
         @Bindable var store: StoreOf<UserManagementFeature>
 
         var body: some View {
-            MacFormPage {
-                MacTextField(
-                    L10n.UserManagement.searchPrompt,
-                    text: $store.searchQuery.sending(\.searchQueryChanged),
-                    prompt: L10n.UserManagement.searchPrompt
-                )
-                .frame(width: Metrics.searchWidth)
-                MacUsersTable(store: store)
-                if let user = store.detailUser {
-                    MacUserDetailForm(store: store, user: user)
+            HStack(spacing: .zero) {
+                MacUsersList(store: store)
+                    .frame(width: MacUsersList.width)
+                    .frame(maxHeight: .infinity)
+                    .background(Color.macRow)
+                Rectangle()
+                    .fill(Color.macLine)
+                    .frame(width: .borderWidthHairline)
+                MacFormPage {
+                    if let user = store.detailUser {
+                        MacUserDetailForm(store: store, user: user)
+                    }
                 }
             }
+            .overlay(alignment: .top) {
+                Rectangle()
+                    .fill(Color.macLine)
+                    .frame(height: .borderWidthHairline)
+            }
+            .padding(.top, .space16)
             .task { store.send(.onAppear) }
-            .onChange(of: store.displayedUsers.first?.id, initial: true) { _, firstID in
-                if store.detailUserID == nil, let firstID {
+            .onChange(
+                of: store.detailUserID == nil ? store.displayedUsers.first?.id : nil,
+                initial: true
+            ) { _, firstID in
+                if let firstID {
                     store.send(.userTapped(firstID))
                 }
             }
@@ -54,7 +61,7 @@
             }
             .dsAlert(isPresented: Binding(get: { store.volumeToRemove != nil }, set: { _ in })) {
                 DSAlertSheet(
-                    icon: IconKit.drive,
+                    icon: .drive,
                     title: L10n.UserDetail.removeVolumeTitle,
                     message: store.volumeToRemove.map { L10n.UserDetail.removeVolumeMessage($0.label) },
                     confirmTitle: L10n.Common.remove,
@@ -67,7 +74,7 @@
             }
             .dsAlert(isPresented: Binding(get: { store.userToGrantAdmin != nil }, set: { _ in })) {
                 DSAlertSheet(
-                    icon: IconKit.shield,
+                    icon: .shield,
                     title: L10n.UserDetail.grantAdminTitle,
                     message: store.userToGrantAdmin.map { L10n.UserDetail.grantAdminMessage($0.displayLabel) },
                     confirmTitle: L10n.UserDetail.roleGrantAdmin,
@@ -83,7 +90,7 @@
             }
             .dsAlert(isPresented: Binding(get: { store.userToDelete != nil }, set: { _ in })) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: L10n.UserDetail.removeUserTitle,
                     message: store.userToDelete.map { L10n.UserDetail.removeUserMessage($0.displayLabel) },
                     confirmTitle: L10n.Common.remove,
