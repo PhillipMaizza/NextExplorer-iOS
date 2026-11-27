@@ -73,6 +73,9 @@ browse.actionExtract	Pakk ut
 browse.actionExtractHere	Pakk ut her
 browse.actionVersions	Versjoner
 browse.actionShowAllVersions	Vis alle versjoner…
+browse.downloadAsTitle	Last ned %lld elementer som
+browse.downloadOneArchive	Ett arkiv
+browse.downloadSeparateFiles	Separate filer
 browse.actionCompress	Komprimer
 browse.actionDownload	Last ned
 browse.actionAddToFavorites	Legg til i favoritter

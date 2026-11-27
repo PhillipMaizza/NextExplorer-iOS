@@ -73,6 +73,9 @@ browse.actionExtract	חילוץ
 browse.actionExtractHere	חלץ לכאן
 browse.actionVersions	גרסאות
 browse.actionShowAllVersions	הצגת כל הגרסאות…
+browse.downloadAsTitle	הורדת %lld פריטים בתור
+browse.downloadOneArchive	ארכיון אחד
+browse.downloadSeparateFiles	קבצים נפרדים
 browse.actionCompress	דחיסה
 browse.actionDownload	הורדה
 browse.actionAddToFavorites	הוספה למועדפים

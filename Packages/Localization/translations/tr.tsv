@@ -73,6 +73,9 @@ browse.actionExtract	Arşivden Çıkar
 browse.actionExtractHere	Buraya çıkar
 browse.actionVersions	Sürümler
 browse.actionShowAllVersions	Tüm Sürümleri Göster…
+browse.downloadAsTitle	%lld öğeyi şöyle indir
+browse.downloadOneArchive	Tek Arşiv
+browse.downloadSeparateFiles	Ayrı Dosyalar
 browse.actionCompress	Sıkıştır
 browse.actionDownload	İndir
 browse.actionAddToFavorites	Favorilere Ekle

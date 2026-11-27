@@ -219,10 +219,35 @@ extension FilesService {
             onProgress(TransferProgress(receivedBytes: size, expectedBytes: size))
             return copy
         }
+        return try await streamDownload(
+            DownloadRawFileBody(path: item.id),
+            serverURL: serverURL,
+            onProgress: onProgress
+        )
+    }
+
+    func downloadArchive(
+        serverURL: URL,
+        items: [FileItem],
+        basePath: String,
+        onProgress: @Sendable @escaping (TransferProgress) -> Void
+    ) async throws -> URL {
+        try await streamDownload(
+            DownloadArchiveBody(items: items.map(\.id), basePath: basePath),
+            serverURL: serverURL,
+            onProgress: onProgress
+        )
+    }
+
+    private func streamDownload(
+        _ body: some Encodable,
+        serverURL: URL,
+        onProgress: @Sendable @escaping (TransferProgress) -> Void
+    ) async throws -> URL {
         let url = serverURL.appendingPathComponent(APIPath.download)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(DownloadRawFileBody(path: item.id))
+        request.httpBody = try Self.encode(body)
 
         let downloadedURL: URL
         let response: HTTPURLResponse

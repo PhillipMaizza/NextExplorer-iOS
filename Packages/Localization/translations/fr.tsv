@@ -70,6 +70,9 @@ browse.actionExtract	Extraire
 browse.actionExtractHere	Extraire ici
 browse.actionVersions	Versions
 browse.actionShowAllVersions	Afficher toutes les versions…
+browse.downloadAsTitle	Télécharger %lld éléments en tant que
+browse.downloadOneArchive	Une archive
+browse.downloadSeparateFiles	Fichiers séparés
 browse.actionCompress	Compresser
 browse.actionDownload	Télécharger
 browse.actionAddToFavorites	Ajouter aux favoris

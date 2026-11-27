@@ -136,6 +136,11 @@ public extension BrowseFeature {
         }
     }
 
+    enum BulkDownloadChoice: Equatable, Sendable {
+        case oneArchive
+        case separateFiles
+    }
+
     enum ArchiveExtractDestination: Equatable, Sendable {
         case newFolder
         case currentFolder

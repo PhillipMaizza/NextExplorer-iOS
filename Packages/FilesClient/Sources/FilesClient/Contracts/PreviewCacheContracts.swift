@@ -6,4 +6,9 @@ extension FilesService {
     struct DownloadRawFileBody: Encodable {
         let path: String
     }
+
+    struct DownloadArchiveBody: Encodable {
+        let items: [String]
+        let basePath: String
+    }
 }

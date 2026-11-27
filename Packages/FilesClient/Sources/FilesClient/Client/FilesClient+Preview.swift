@@ -234,6 +234,12 @@ public extension FilesClient {
             onProgress(TransferProgress(receivedBytes: 1, expectedBytes: 1))
             return fileURL
         },
+        downloadArchive: { _, _, _, onProgress in
+            let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            try? Data().write(to: fileURL)
+            onProgress(TransferProgress(receivedBytes: 1, expectedBytes: nil))
+            return fileURL
+        },
         flushDownloadConnections: {},
         uploadFile: { _, _, _, _, onProgress in onProgress(1) },
         reserveFolderUpload: { _, _, folderName in folderName },

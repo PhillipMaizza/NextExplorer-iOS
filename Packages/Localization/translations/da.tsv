@@ -73,6 +73,9 @@ browse.actionExtract	Udpak
 browse.actionExtractHere	Udpak her
 browse.actionVersions	Versioner
 browse.actionShowAllVersions	Vis alle versioner…
+browse.downloadAsTitle	Download %lld emner som
+browse.downloadOneArchive	Ét arkiv
+browse.downloadSeparateFiles	Separate filer
 browse.actionCompress	Komprimér
 browse.actionDownload	Hent
 browse.actionAddToFavorites	Føj til favoritter

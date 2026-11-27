@@ -70,6 +70,9 @@ browse.actionExtract	Extrage
 browse.actionExtractHere	Extrage aici
 browse.actionVersions	Versiuni
 browse.actionShowAllVersions	Afișează toate versiunile…
+browse.downloadAsTitle	Descarcă %lld elemente ca
+browse.downloadOneArchive	O arhivă
+browse.downloadSeparateFiles	Fișiere separate
 browse.actionCompress	Comprimă
 browse.actionDownload	Descarcă
 browse.actionAddToFavorites	Adaugă la favorite

@@ -242,6 +242,7 @@ public struct BrowseFeature {
         /// prompt that offers to delete them for good.
         public var keptDeletes: [KeptDelete] = []
         public var archivePasswordPrompt: ArchivePasswordPrompt?
+        public var bulkDownloadChoice: [FileItem]?
         /// Set after a delete sent anything to the trash; becomes a toast that opens the trash.
         public var trashNotice: MovedToTrashNotice?
         /// Drives a persistent progress toast: `nil` when no extract/compress/download is
@@ -631,6 +632,7 @@ public struct BrowseFeature {
         case bulkFavoriteTapped
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped
+        case bulkDownloadChoiceMade(BulkDownloadChoice?)
         /// Share on device content: the kept copies of these files go to the system share sheet.
         case keptShareTapped([FileItem])
         case keptShareResolved([URL])

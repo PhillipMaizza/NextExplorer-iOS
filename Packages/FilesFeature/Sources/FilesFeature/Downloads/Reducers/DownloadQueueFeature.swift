@@ -44,6 +44,7 @@ public struct DownloadQueueFeature {
         public var bytesPerSecond: Double?
         /// Mac: where the user chose to save it in Finder; `nil` saves into the Downloads tab.
         public var saveTarget: DownloadSaveRequest.Target?
+        public var archiveOf: [FileItem] = []
         /// Mac: where a finished save landed, for Show in Finder.
         public var savedURL: URL?
 
@@ -217,12 +218,9 @@ public struct DownloadQueueFeature {
                     state.jobs.removeAll { $0.status.isTerminal }
                 }
                 for request in requests {
-                    state.jobs.append(DownloadJob(
-                        id: uuid(),
-                        item: request.item,
-                        status: .queued,
-                        saveTarget: request.target
-                    ))
+                    var job = DownloadJob(id: uuid(), item: request.item, status: .queued, saveTarget: request.target)
+                    job.archiveOf = request.archiveOf
+                    state.jobs.append(job)
                 }
                 return .send(.startNextIfIdle)
 
@@ -377,7 +375,7 @@ public struct DownloadQueueFeature {
                         #if os(macOS)
                             if let target = job.saveTarget {
                                 return try await MacDownloadSaving.save(
-                                    DownloadSaveRequest(item: job.item, target: target),
+                                    DownloadSaveRequest(item: job.item, target: target, archiveOf: job.archiveOf),
                                     serverURL: serverURL,
                                     filesClient: filesClient
                                 ) { update in

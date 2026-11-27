@@ -70,6 +70,9 @@ browse.actionExtract	Extrahera
 browse.actionExtractHere	Extrahera här
 browse.actionVersions	Versioner
 browse.actionShowAllVersions	Visa alla versioner…
+browse.downloadAsTitle	Ladda ner %lld objekt som
+browse.downloadOneArchive	Ett arkiv
+browse.downloadSeparateFiles	Separata filer
 browse.actionCompress	Komprimera
 browse.actionDownload	Ladda ner
 browse.actionAddToFavorites	Lägg till i favoriter

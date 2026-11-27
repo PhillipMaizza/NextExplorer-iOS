@@ -73,6 +73,9 @@ browse.actionExtract	แตกไฟล์
 browse.actionExtractHere	แตกไฟล์ที่นี่
 browse.actionVersions	เวอร์ชัน
 browse.actionShowAllVersions	แสดงทุกเวอร์ชัน…
+browse.downloadAsTitle	ดาวน์โหลด %lld รายการเป็น
+browse.downloadOneArchive	ไฟล์บีบอัดเดียว
+browse.downloadSeparateFiles	แยกเป็นไฟล์
 browse.actionCompress	บีบอัด
 browse.actionDownload	ดาวน์โหลด
 browse.actionAddToFavorites	เพิ่มในรายการโปรด
