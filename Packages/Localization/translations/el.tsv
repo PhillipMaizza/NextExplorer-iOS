@@ -1228,6 +1228,7 @@ offline.newFilesBadge	Νέα αρχεία διαθέσιμα εκτός σύνδ
 search.onDevice	Στη συσκευή
 search.remote	Απομακρυσμένα
 search.inOtherFolders	Σε άλλους φακέλους
+search.volumes	Τόμοι
 search.noMatchesAnywhere	Κανένα αποτέλεσμα πουθενά για «%@».
 search.nothingInThisFolder	Τίποτα σε αυτόν τον φάκελο δεν ονομάζεται ή δεν περιέχει «%@».
 search.showAllEverywhere	Εμφάνιση όλων των αποτελεσμάτων παντού

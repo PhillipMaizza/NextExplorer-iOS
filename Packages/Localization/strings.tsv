@@ -1151,6 +1151,7 @@ offline.newFilesBadge	New files available offline
 search.onDevice	On device
 search.remote	Remote
 search.inOtherFolders	In other folders
+search.volumes	Volumes
 search.noMatchesAnywhere	No matches anywhere for “%@”.
 search.nothingInThisFolder	Nothing named or containing “%@” in this folder.
 search.showAllEverywhere	Show all results everywhere

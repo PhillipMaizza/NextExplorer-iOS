@@ -1263,6 +1263,7 @@ offline.newFilesBadge	Nové soubory dostupné offline
 search.onDevice	V zařízení
 search.remote	Vzdálené
 search.inOtherFolders	V jiných složkách
+search.volumes	Svazky
 search.noMatchesAnywhere	Nikde žádné výsledky pro „%@“.
 search.nothingInThisFolder	V této složce nic nemá v názvu ani neobsahuje „%@“.
 search.showAllEverywhere	Zobrazit všechny výsledky všude

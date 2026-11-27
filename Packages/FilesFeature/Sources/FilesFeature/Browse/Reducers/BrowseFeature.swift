@@ -93,8 +93,21 @@ public struct BrowseFeature {
             elsewherePhase == .loaded && !elsewhereResults.isEmpty
         }
 
+        var volumeSearch = VolumeSearch()
+
         func searchHit(id: String) -> SearchResultItem? {
-            searchResults?[id: id] ?? elsewhereResults.first { $0.id == id }
+            searchResults?[id: id]
+                ?? elsewhereResults.first { $0.id == id }
+                ?? volumeSearch.results.first { $0.id == id }
+        }
+
+        public var isSearchingMyFilesAndVolumes: Bool {
+            #if os(macOS)
+                effectiveSearchScope == .everywhere
+                    && directoryPath.split(separator: "/").first.map(String.init) == PersonalSpace.rootPath
+            #else
+                false
+            #endif
         }
 
         /// How far below the root this folder sits: 0 at the root, 1 for a top level location.
@@ -114,7 +127,10 @@ public struct BrowseFeature {
 
         /// The folder a search runs from: the root everywhere, this folder otherwise.
         var searchBasePath: String {
-            effectiveSearchScope == .everywhere ? "" : directoryPath
+            if isSearchingMyFilesAndVolumes {
+                return PersonalSpace.rootPath
+            }
+            return effectiveSearchScope == .everywhere ? "" : directoryPath
         }
 
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
@@ -454,15 +470,39 @@ public struct BrowseFeature {
             SearchResultSections(displayedSearchResults.map(Array.init) ?? [], onDeviceIDs: searchOnDeviceIDs)
         }
 
+        var displayedVolumeResults: [SearchResultItem] {
+            let visible = visibleVolumeResults
+            guard !selectedSearchCategories.isEmpty else { return visible }
+            return visible.filter { selectedSearchCategories.contains(Self.category(of: $0)) }
+        }
+
+        var volumeResultSections: SearchResultSections {
+            SearchResultSections(displayedVolumeResults, onDeviceIDs: searchOnDeviceIDs)
+        }
+
+        public var isEverySearchLaneEmpty: Bool {
+            (displayedSearchResults?.isEmpty ?? true) && displayedVolumeResults.isEmpty
+        }
+
+        public var isAnySearchLanePending: Bool {
+            isSearchPending || (isSearching && volumeSearch.phase == .loading)
+        }
+
+        private var visibleVolumeResults: [SearchResultItem] {
+            preferences.shouldShowHiddenFiles
+                ? volumeSearch.results
+                : volumeSearch.results.filter { !isHiddenFileName($0.name) }
+        }
+
         /// The categories actually present in the current (hidden filtered) results, in display
         /// order: the rows the filter sheet offers. Independent of the current selection, so
         /// toggling a category off doesn't make it vanish from the sheet.
         public var availableSearchCategories: [FileCategory] {
-            FileCategory.present(in: visibleSearchResults)
+            FileCategory.present(in: visibleSearchResults + visibleVolumeResults)
         }
 
         public var searchCategoryCounts: [FileCategory: Int] {
-            FileCategory.counts(in: visibleSearchResults)
+            FileCategory.counts(in: visibleSearchResults + visibleVolumeResults)
         }
 
         private var visibleSearchResults: [SearchResultItem] {
@@ -557,6 +597,8 @@ public struct BrowseFeature {
         case searchSavedItemsLoaded([FileItem])
         case searchResultsResponse(Result<SearchPage, FilesClientError>, term: String)
         case searchElsewhereResponse(Result<SearchPage, FilesClientError>, term: String)
+        case searchVolumesResponse(Result<SearchPage, FilesClientError>, term: String)
+        case searchVolumesShowMoreTapped
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
         case sortChanged(SortOption, SortDirection)
@@ -754,7 +796,8 @@ public struct BrowseFeature {
     /// Internal (not private) so the effect helpers extracted into `BrowseFeature+*.swift`
     /// can reference these cancel ids across files.
     enum CancelID: Hashable {
-        case search, searchSavedItems, bulkDelete, transfer, googleDocsPointer, deleteImpact, load, preview, info,
+        case search, searchVolumes, searchSavedItems, bulkDelete, transfer, googleDocsPointer, deleteImpact, load,
+             preview, info,
              previewDeferredAction, folderSizes
         case prefetchChildren, prefetchFavorites, offlineAvailability, searchOnDevice, arrivalRecheck, newFileExtensions
         /// Per path, so spamming one item's star collapses to a single in flight toggle

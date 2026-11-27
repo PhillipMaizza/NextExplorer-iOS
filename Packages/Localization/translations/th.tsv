@@ -1210,6 +1210,7 @@ offline.newFilesBadge	มีไฟล์ใหม่ใช้งานแบบ�
 search.onDevice	บนอุปกรณ์
 search.remote	ระยะไกล
 search.inOtherFolders	ในโฟลเดอร์อื่น
+search.volumes	วอลุ่ม
 search.noMatchesAnywhere	ไม่พบผลลัพธ์สำหรับ “%@” ในที่ใดเลย
 search.nothingInThisFolder	ไม่มีรายการที่ชื่อหรือมี “%@” ในโฟลเดอร์นี้
 search.showAllEverywhere	แสดงผลลัพธ์ทั้งหมดจากทุกที่

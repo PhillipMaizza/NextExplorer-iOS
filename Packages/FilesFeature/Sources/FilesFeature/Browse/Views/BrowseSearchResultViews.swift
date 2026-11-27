@@ -109,7 +109,8 @@ struct BrowseSearchFooter: View {
     var body: some View {
         SearchStatusFooter(
             message: Self.message(store),
-            canShowMore: store.canShowMoreSearchResults && store.searchPhase != .loading,
+            canShowMore: store.canShowMoreSearchResults && store.searchPhase != .loading
+                && !store.isSearchingMyFilesAndVolumes,
             onShowMore: { store.send(.searchShowMoreTapped) },
             onSearchEverywhere: Self
                 .canOfferWiderSearch(store) ? { store.send(.searchScopeChanged(.everywhere)) } : nil,
@@ -125,7 +126,9 @@ struct BrowseSearchFooter: View {
         SearchStatusFooter.message(
             failure: store.searchFailureMessage,
             isTooShort: store.isSearchTermTooShort,
-            shortfall: store.searchShortfall
+            shortfall: store.isSearchingMyFilesAndVolumes && store.canShowMoreSearchResults
+                ? nil
+                : store.searchShortfall
         )
     }
 

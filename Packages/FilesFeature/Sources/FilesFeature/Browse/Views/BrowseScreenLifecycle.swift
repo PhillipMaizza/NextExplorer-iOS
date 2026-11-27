@@ -59,7 +59,10 @@ struct BrowseScreenLifecycle: ViewModifier {
                 store.send(.revealItemShown(id))
             }
             // New results, or a change in what this folder keeps offline: find the results on the device.
-            .task(id: SearchOnDeviceKey(results: store.searchResults?.ids.elements, offline: store.offlineItemIDs)) {
+            .task(id: SearchOnDeviceKey(
+                results: (store.searchResults?.ids.elements ?? []) + store.volumeSearch.results.map(\.id),
+                offline: store.offlineItemIDs
+            )) {
                 store.send(.computeSearchOnDevice)
             }
             // A finished offline download can change what's available here, so refresh the badges.

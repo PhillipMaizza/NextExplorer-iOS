@@ -53,12 +53,14 @@ extension BrowseFeature {
             state.searchQuery = query
             guard isNewTerm else { return .none }
             state.searchLimit = FilesClient.searchLimitSteps[0]
+            state.volumeSearch.limit = FilesClient.searchLimitSteps[0]
             return search(&state)
 
         case let .searchScopeChanged(scope):
             guard scope != state.searchScope else { return .none }
             state.searchScope = scope
             state.searchLimit = FilesClient.searchLimitSteps[0]
+            state.volumeSearch = VolumeSearch()
             // Another folder to search from: what was saved below the old one says nothing.
             state.searchSavedItems = nil
             return .merge(.cancel(id: state.cancelID(.searchSavedItems)), search(&state, isDebounced: false))
@@ -71,6 +73,31 @@ extension BrowseFeature {
 
         case .searchRetryTapped:
             return refreshSearch(&state)
+
+        case .searchVolumesShowMoreTapped:
+            guard state.volumeSearch.canShowMore, state.volumeSearch.phase != .loading else { return .none }
+            let steps = FilesClient.searchLimitSteps
+            state.volumeSearch.limit = steps.first { $0 > state.volumeSearch.limit } ?? state.volumeSearch.limit
+            state.volumeSearch.phase = .loading
+            return fetchVolumeResults(state, isDebounced: false)
+
+        case let .searchVolumesResponse(_, term)
+            where term != SearchTerm(state.searchQuery).text || !state.isSearchingMyFilesAndVolumes:
+            return .none
+
+        case let .searchVolumesResponse(.success(page), _):
+            state.volumeSearch.phase = .loaded
+            state.volumeSearch.results = Array(
+                IdentifiedArray(page.items, id: \.id, uniquingIDsWith: { first, _ in first })
+            )
+            state.volumeSearch.shortfall = SearchShortfall(page)
+            return .none
+
+        case let .searchVolumesResponse(.failure(error), _):
+            state.volumeSearch.results = []
+            state.volumeSearch.shortfall = nil
+            state.volumeSearch.phase = Self.meansNoVolumes(error) ? .loaded : .failed(searchFailureMessage(error))
+            return .none
 
         case let .searchSavedItemsLoaded(items):
             savedSearchItemsLoaded(items, state: &state)
@@ -190,6 +217,14 @@ extension BrowseFeature {
 }
 
 extension BrowseFeature {
+    static func meansNoVolumes(_ error: FilesClientError) -> Bool {
+        switch error {
+        case .forbidden, .offline, .server(statusCode: HTTPStatus.notFound),
+             .serverMessage(statusCode: HTTPStatus.notFound, _): true
+        default: false
+        }
+    }
+
     func saveSort(_ state: inout State, option: SortOption, direction: SortDirection) -> Effect<Action> {
         let sort = FolderSort(field: option.rawValue, isAscending: direction == .ascending)
         let path = FolderSort.folderKey(state.directoryPath)

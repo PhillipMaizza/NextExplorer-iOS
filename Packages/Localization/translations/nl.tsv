@@ -1280,6 +1280,7 @@ offline.newFilesBadge	Nieuwe bestanden offline beschikbaar
 search.onDevice	Op apparaat
 search.remote	Extern
 search.inOtherFolders	In andere mappen
+search.volumes	Volumes
 search.noMatchesAnywhere	Nergens resultaten voor ‘%@’.
 search.nothingInThisFolder	Niets in deze map heet of bevat ‘%@’.
 search.showAllEverywhere	Alle resultaten overal tonen

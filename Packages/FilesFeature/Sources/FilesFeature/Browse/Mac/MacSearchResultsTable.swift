@@ -16,6 +16,7 @@
         let sections: SearchResultSections
         var elsewhere: [SearchResultItem] = []
         var elsewhereNote: AttributedString?
+        var lanes: [MacSearchLane] = []
         let favoritePaths: Set<String>
         var serverURL: URL?
         let onOpen: (SearchResultItem) -> Void
@@ -25,7 +26,7 @@
         @State private var sortOrder: [KeyPathComparator<SearchResultItem>] = []
 
         private var results: [SearchResultItem] {
-            sections.onDevice + sections.remote + elsewhere
+            sections.onDevice + sections.remote + elsewhere + lanes.flatMap(\.rows)
         }
 
         var body: some View {
@@ -68,7 +69,15 @@
                 }
                 .width(min: Metrics.matchColumnMinWidth)
             } rows: {
-                if sections.isSplit {
+                if !lanes.isEmpty {
+                    ForEach(lanes.filter(\.isShown)) { lane in
+                        Section {
+                            ForEach(sorted(lane.rows)) { TableRow($0) }
+                        } header: {
+                            MacSearchLaneHeader(lane: lane)
+                        }
+                    }
+                } else if sections.isSplit {
                     Section(L10n.Search.onDevice) {
                         ForEach(sorted(sections.onDevice)) { TableRow($0) }
                     }

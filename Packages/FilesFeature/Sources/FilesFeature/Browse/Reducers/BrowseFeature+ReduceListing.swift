@@ -28,7 +28,7 @@ extension BrowseFeature {
 
         case .computeSearchOnDevice:
             return .searchOnDevice(
-                state.searchResults?.elements ?? [],
+                (state.searchResults?.elements ?? []) + state.volumeSearch.results,
                 ids: &state.searchOnDeviceIDs,
                 store: offlineFileStore.pinned(to: state.cacheScope),
                 cancelID: state.cancelID(.searchOnDevice)

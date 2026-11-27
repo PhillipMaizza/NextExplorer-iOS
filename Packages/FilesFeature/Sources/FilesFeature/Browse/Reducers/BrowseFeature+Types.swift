@@ -53,6 +53,18 @@ public extension BrowseFeature {
         }
     }
 
+    struct VolumeSearch: Equatable, Sendable {
+        var phase: DataPhase = .idle
+        var results: [SearchResultItem] = []
+        var limit = FilesClient.searchLimitSteps[0]
+        var shortfall: SearchShortfall?
+
+        var canShowMore: Bool {
+            guard case .firstOnly = shortfall else { return false }
+            return limit < (FilesClient.searchLimitSteps.last ?? limit)
+        }
+    }
+
     /// How `displayedItems` orders a folder's contents. Folders always sort before files
     /// regardless of option; this only decides the order within each of those two groups.
     enum SortOption: String, Hashable, Sendable, CaseIterable {

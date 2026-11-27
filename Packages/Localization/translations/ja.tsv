@@ -1262,6 +1262,7 @@ offline.newFilesBadge	新しいファイルがオフラインで利用可能
 search.onDevice	このデバイス上
 search.remote	リモート
 search.inOtherFolders	ほかのフォルダ
+search.volumes	ボリューム
 search.noMatchesAnywhere	どこにも「%@」の結果がありません。
 search.nothingInThisFolder	このフォルダには「%@」という名前のもの、または含むものはありません。
 search.showAllEverywhere	すべての場所の結果を表示

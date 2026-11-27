@@ -1316,6 +1316,7 @@ offline.newFilesBadge	Новые файлы доступны офлайн
 search.onDevice	На устройстве
 search.remote	Удалённо
 search.inOtherFolders	В других папках
+search.volumes	Тома
 search.noMatchesAnywhere	Нигде нет результатов для «%@».
 search.nothingInThisFolder	В этой папке нет ничего с именем или содержимым «%@».
 search.showAllEverywhere	Показать все результаты отовсюду

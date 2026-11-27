@@ -17,13 +17,13 @@ enum BrowseOverlayState: Hashable {
             self = .error
         } else if store.isListingKnown, !store.isSearching, store.hasNothingToList {
             self = .empty
-        } else if store.isSearchPending, store.displayedSearchResults?.isEmpty ?? true {
+        } else if store.isAnySearchLanePending, store.isEverySearchLaneEmpty {
             // A recursive backend search is in flight with nothing to show yet (the instant
             // matches found nothing local): placeholders rather than a flash of "no results".
             self = .searching
-        } else if store.searchFailureMessage != nil, store.displayedSearchResults?.isEmpty ?? true {
+        } else if store.searchFailureMessage != nil, store.isEverySearchLaneEmpty {
             self = .searchFailed
-        } else if store.isSearching, let results = store.displayedSearchResults, results.isEmpty {
+        } else if store.isSearching, store.displayedSearchResults != nil, store.isEverySearchLaneEmpty {
             switch store.elsewherePhase {
             case .loading: self = .searching
             case .loaded where store.isShowingElsewhereResults: self = .none

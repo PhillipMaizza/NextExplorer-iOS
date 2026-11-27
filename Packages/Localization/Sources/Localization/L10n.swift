@@ -851,6 +851,7 @@ public enum L10n {
         public static var onDevice: String { tr("search.onDevice") }  // "On device"
         public static var remote: String { tr("search.remote") }  // "Remote"
         public static var showAllEverywhere: String { tr("search.showAllEverywhere") }  // "Show all results everywhere"
+        public static var volumes: String { tr("search.volumes") }  // "Volumes"
     }
     public enum SearchIndexSettings {
         public static var addButton: String { tr("searchIndexSettings.addButton") }  // "Add"

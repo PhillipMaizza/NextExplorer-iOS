@@ -1352,6 +1352,7 @@ offline.newFilesBadge	ملفات جديدة متاحة دون اتصال
 search.onDevice	على الجهاز
 search.remote	عن بُعد
 search.inOtherFolders	في مجلدات أخرى
+search.volumes	وحدات التخزين
 search.noMatchesAnywhere	لا نتائج في أي مكان لـ ‏«%@».
 search.nothingInThisFolder	لا شيء باسم ‏«%@» أو يحتويه في هذا المجلد.
 search.showAllEverywhere	عرض كل النتائج في كل مكان

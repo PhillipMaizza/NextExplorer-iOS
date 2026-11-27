@@ -255,10 +255,14 @@ struct BrowseSearchAnswerTests {
         ])
     }
 
-    @Test("Searching everywhere from My Files leaves its files out of the instant matches, as the server does")
-    func everywhereFromMyFilesSkipsItsFiles() {
+    @Test("Searching everywhere from My Files matches its files at once on the Mac, which asks My Files too")
+    func everywhereFromMyFilesInstantMatches() {
         let myFiles = reportsState(PersonalSpace.rootPath, scope: .everywhere)
-        #expect(instantIDs(TestSearch.rankTerm, in: myFiles).isEmpty)
+        #if os(macOS)
+            #expect(instantIDs(TestSearch.rankTerm, in: myFiles).count == 3)
+        #else
+            #expect(instantIDs(TestSearch.rankTerm, in: myFiles).isEmpty)
+        #endif
         #expect(instantIDs(TestSearch.rankTerm, in: reportsState(PersonalSpace.rootPath)).count == 3)
     }
 

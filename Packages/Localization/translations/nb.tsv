@@ -1228,6 +1228,7 @@ offline.newFilesBadge	Nye filer tilgjengelig frakoblet
 search.onDevice	På enheten
 search.remote	Eksternt
 search.inOtherFolders	I andre mapper
+search.volumes	Volumer
 search.noMatchesAnywhere	Ingen treff noe sted for «%@».
 search.nothingInThisFolder	Ingenting i denne mappen heter eller inneholder «%@».
 search.showAllEverywhere	Vis alle resultater overalt
