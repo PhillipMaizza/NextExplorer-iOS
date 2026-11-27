@@ -163,7 +163,7 @@
 
         var body: some View {
             DSFlowLayout(horizontalSpacing: .space8, verticalSpacing: .space8) {
-                MacChip(text: share.accessMode.title, tone: .gray, icon: share.accessMode.icon)
+                MacChip(text: share.accessChoice.title, tone: .gray, icon: share.accessChoice.icon)
                 if share.hasPassword {
                     MacChip(text: L10n.Common.password, tone: .amber, icon: IconKit.lock)
                 }
