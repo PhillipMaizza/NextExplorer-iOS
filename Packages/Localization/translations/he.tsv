@@ -1028,6 +1028,7 @@ macSettings.roleUser	משתמש
 macSettings.status	מצב
 macSettings.statusSignedIn	מחובר
 macSettings.cache	מטמון
+macSettings.cachedFiles	קבצים במטמון
 macSettings.support	עזרה ותמיכה…
 macSettings.permission	הרשאה
 macSettings.icon	סמל

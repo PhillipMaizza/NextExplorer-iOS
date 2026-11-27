@@ -793,6 +793,7 @@ macSettings.roleUser	Użytkownik
 macSettings.status	Stan
 macSettings.statusSignedIn	Zalogowano
 macSettings.cache	Pamięć podręczna
+macSettings.cachedFiles	Pliki w pamięci podręcznej
 macSettings.support	Pomoc i wsparcie…
 macSettings.permission	Uprawnienie
 macSettings.icon	Ikona

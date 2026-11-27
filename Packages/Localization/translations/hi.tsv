@@ -771,6 +771,7 @@ macSettings.roleUser	उपयोगकर्ता
 macSettings.status	स्थिति
 macSettings.statusSignedIn	साइन इन है
 macSettings.cache	कैश
+macSettings.cachedFiles	कैश की गई फ़ाइलें
 macSettings.support	सहायता और समर्थन…
 macSettings.permission	अनुमति
 macSettings.icon	आइकन

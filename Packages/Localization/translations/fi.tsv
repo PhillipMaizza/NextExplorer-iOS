@@ -1017,6 +1017,7 @@ macSettings.roleUser	Käyttäjä
 macSettings.status	Tila
 macSettings.statusSignedIn	Kirjauduttu sisään
 macSettings.cache	Välimuisti
+macSettings.cachedFiles	Välimuistin tiedostot
 macSettings.support	Ohje ja tuki…
 macSettings.permission	Käyttöoikeus
 macSettings.icon	Kuvake

@@ -81,7 +81,7 @@
                 if columns.showsDate {
                     TableColumn(L10n.Sort.dateModified, value: \.dateModified) { item in
                         secondaryText(isPersonalSpace(item) || !item.hasKnownDate
-                            ? ""
+                            ? L10n.Browse.noValue
                             : dateFormat.tableString(from: item.dateModified, now: .now))
                             .opacity(opacity(for: item))
                     }
@@ -89,9 +89,7 @@
                 }
                 if columns.showsSize {
                     TableColumn(L10n.Sort.size, value: \.size) { item in
-                        secondaryText(isPersonalSpace(item)
-                            ? ""
-                            : FileSizeFormat.string(for: item, folderSize: folderSizes[item.id]))
+                        secondaryText(FileSizeFormat.string(for: item, folderSize: folderSizes[item.id]))
                             .monospacedDigit()
                             .opacity(opacity(for: item))
                     }

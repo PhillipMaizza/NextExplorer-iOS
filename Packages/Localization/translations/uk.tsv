@@ -1039,6 +1039,7 @@ macSettings.roleUser	Користувач
 macSettings.status	Стан
 macSettings.statusSignedIn	Вхід виконано
 macSettings.cache	Кеш
+macSettings.cachedFiles	Кешовані файли
 macSettings.support	Довідка й підтримка…
 macSettings.permission	Дозвіл
 macSettings.icon	Значок

@@ -1006,6 +1006,7 @@ macSettings.roleUser	Pengguna
 macSettings.status	Status
 macSettings.statusSignedIn	Sudah Masuk
 macSettings.cache	Cache
+macSettings.cachedFiles	File dalam cache
 macSettings.support	Bantuan & Dukungan…
 macSettings.permission	Izin
 macSettings.icon	Ikon

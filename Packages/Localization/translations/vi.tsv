@@ -1006,6 +1006,7 @@ macSettings.roleUser	Người dùng
 macSettings.status	Trạng thái
 macSettings.statusSignedIn	Đã đăng nhập
 macSettings.cache	Bộ nhớ đệm
+macSettings.cachedFiles	Tệp đã lưu bộ nhớ đệm
 macSettings.support	Trợ giúp và hỗ trợ…
 macSettings.permission	Quyền
 macSettings.icon	Biểu tượng

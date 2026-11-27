@@ -760,6 +760,7 @@ macSettings.roleUser	使用者
 macSettings.status	狀態
 macSettings.statusSignedIn	已登入
 macSettings.cache	快取
+macSettings.cachedFiles	快取的檔案
 macSettings.support	幫助與支援…
 macSettings.permission	權限
 macSettings.icon	圖示

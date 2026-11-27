@@ -969,6 +969,7 @@ macSettings.roleUser	Usuário
 macSettings.status	Situação
 macSettings.statusSignedIn	Entrou
 macSettings.cache	Cache
+macSettings.cachedFiles	Arquivos em cache
 macSettings.support	Ajuda e suporte…
 macSettings.permission	Permissão
 macSettings.icon	Ícone

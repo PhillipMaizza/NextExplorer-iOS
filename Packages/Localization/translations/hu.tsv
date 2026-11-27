@@ -1017,6 +1017,7 @@ macSettings.roleUser	Felhasználó
 macSettings.status	Állapot
 macSettings.statusSignedIn	Bejelentkezve
 macSettings.cache	Gyorsítótár
+macSettings.cachedFiles	Gyorsítótárazott fájlok
 macSettings.support	Súgó és támogatás…
 macSettings.permission	Engedély
 macSettings.icon	Ikon

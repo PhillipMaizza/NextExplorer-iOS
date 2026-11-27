@@ -123,7 +123,7 @@
                 TableColumn(L10n.Trash.columnOriginalLocation) { item in
                     Text(item.isAvailable ? PathTrail.text(TrashRowText.location(item)) : L10n.Trash.unavailable)
                         .lineLimit(1)
-                        .truncationMode(.head)
+                        .truncationMode(.middle)
                         .foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.locationColumnMinWidth)

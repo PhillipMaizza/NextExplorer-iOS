@@ -1017,6 +1017,7 @@ macSettings.roleUser	Χρήστης
 macSettings.status	Κατάσταση
 macSettings.statusSignedIn	Συνδεδεμένος
 macSettings.cache	Προσωρινή μνήμη
+macSettings.cachedFiles	Αρχεία στην κρυφή μνήμη
 macSettings.support	Βοήθεια και υποστήριξη…
 macSettings.permission	Δικαίωμα
 macSettings.icon	Εικονίδιο

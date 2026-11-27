@@ -1017,6 +1017,7 @@ macSettings.roleUser	Kullanıcı
 macSettings.status	Durum
 macSettings.statusSignedIn	Oturum Açık
 macSettings.cache	Önbellek
+macSettings.cachedFiles	Önbellekteki dosyalar
 macSettings.support	Yardım ve Destek…
 macSettings.permission	İzin
 macSettings.icon	Simge

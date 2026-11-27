@@ -760,6 +760,7 @@ macSettings.roleUser	用户
 macSettings.status	状态
 macSettings.statusSignedIn	已登录
 macSettings.cache	缓存
+macSettings.cachedFiles	缓存的文件
 macSettings.support	帮助与支持…
 macSettings.permission	权限
 macSettings.icon	图标

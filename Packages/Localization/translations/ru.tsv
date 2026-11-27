@@ -793,6 +793,7 @@ macSettings.roleUser	Пользователь
 macSettings.status	Статус
 macSettings.statusSignedIn	Вход выполнен
 macSettings.cache	Кэш
+macSettings.cachedFiles	Кэшированные файлы
 macSettings.support	Помощь и поддержка…
 macSettings.permission	Доступ
 macSettings.icon	Значок
