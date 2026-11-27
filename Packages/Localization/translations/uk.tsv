@@ -351,6 +351,22 @@ createShare.summaryPasswordProtected	Захищено
 createShare.summaryExpires	Спливає
 createShare.summarySpecificPeople	Окремі люди
 createShare.errorPastExpiration	Виберіть дату завершення в майбутньому.
+createShare.peopleCan	Користувачі можуть
+createShare.accessViewOnly	Лише перегляд
+createShare.accessViewOnlyHint	Відкривати й читати. Без копій.
+createShare.accessCanDownload	Завантаження
+createShare.accessCanDownloadHint	Відкривати й завантажувати.
+createShare.accessCanEdit	Редагування
+createShare.accessCanEditHint	Відкривати, змінювати, додавати й видаляти файли.
+createShare.accessCanEditFileHint	Відкривати, завантажувати й змінювати файл.
+createShare.accessCustomHint	Виберіть кожен дозвіл.
+createShare.permissionDelete	Видаляти файли
+createShare.permissionCreateFolders	Створювати папки
+createShare.permissionCreateFiles	Створювати файли
+createShare.permissionUpload	Вивантажувати файли й папки
+createShare.versionsVisible	Показувати версії файлів
+createShare.versionsVisibleHint	Користувачі цього спільного доступу бачать попередні версії його файлів і можуть відновлювати їх, якщо їм дозволено редагувати.
+createShare.versionsDownload	Завантажувати версії
 editShare.title	Змінити посилання для спільного доступу
 editShare.save	Зберегти зміни
 editShare.passwordKeepHint	Залиште порожнім, щоб зберегти поточний пароль

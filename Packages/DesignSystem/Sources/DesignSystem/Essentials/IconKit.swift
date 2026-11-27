@@ -136,6 +136,7 @@ public enum IconKit {
     public static let time = Image(systemName: "clock")
     public static let rename = Image(systemName: "square.and.pencil")
     public static let pencil = Image(systemName: "pencil")
+    public static let sliders = Image(systemName: "slider.horizontal.3")
     public static let pencilCircle = Image(systemName: "pencil.circle")
     public static let haptics = Image(systemName: "waveform")
     /// Copies a file out of the app (Save to Device, Mac Download).

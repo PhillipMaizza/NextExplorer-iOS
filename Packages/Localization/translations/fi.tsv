@@ -329,6 +329,22 @@ createShare.summaryPasswordProtected	Suojattu
 createShare.summaryExpires	Vanhenee
 createShare.summarySpecificPeople	Tietyt henkilöt
 createShare.errorPastExpiration	Valitse vanhenemispäivä tulevaisuudesta.
+createShare.peopleCan	Ihmiset voivat
+createShare.accessViewOnly	Vain katsoa
+createShare.accessViewOnlyHint	Avata ja lukea. Ei kopioita.
+createShare.accessCanDownload	Ladata
+createShare.accessCanDownloadHint	Avata ja ladata.
+createShare.accessCanEdit	Muokata
+createShare.accessCanEditHint	Avata, muuttaa, lisätä ja poistaa tiedostoja.
+createShare.accessCanEditFileHint	Avata, ladata ja muuttaa tiedostoa.
+createShare.accessCustomHint	Valitse jokainen oikeus.
+createShare.permissionDelete	Poistaa tiedostoja
+createShare.permissionCreateFolders	Luoda kansioita
+createShare.permissionCreateFiles	Luoda tiedostoja
+createShare.permissionUpload	Lähettää tiedostoja ja kansioita
+createShare.versionsVisible	Näytä tiedostoversiot
+createShare.versionsVisibleHint	Tämän jaon käyttäjät näkevät sen tiedostojen aiemmat versiot ja voivat palauttaa ne, jos heillä on muokkausoikeus.
+createShare.versionsDownload	Lataa versiot
 editShare.title	Muokkaa jakolinkkiä
 editShare.save	Tallenna muutokset
 editShare.passwordKeepHint	Jätä tyhjäksi säilyttääksesi nykyisen salasanan

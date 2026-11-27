@@ -340,6 +340,22 @@ createShare.summaryPasswordProtected	מוגן
 createShare.summaryExpires	תפוגה
 createShare.summarySpecificPeople	אנשים מסוימים
 createShare.errorPastExpiration	בחרו תאריך תפוגה בעתיד.
+createShare.peopleCan	אנשים יכולים
+createShare.accessViewOnly	צפייה בלבד
+createShare.accessViewOnlyHint	לפתוח ולקרוא. ללא עותקים.
+createShare.accessCanDownload	הורדה
+createShare.accessCanDownloadHint	לפתוח ולהוריד.
+createShare.accessCanEdit	עריכה
+createShare.accessCanEditHint	לפתוח, לשנות, להוסיף ולמחוק קבצים.
+createShare.accessCanEditFileHint	לפתוח, להוריד ולשנות את הקובץ.
+createShare.accessCustomHint	בחרו כל הרשאה בנפרד.
+createShare.permissionDelete	מחיקת קבצים
+createShare.permissionCreateFolders	יצירת תיקיות
+createShare.permissionCreateFiles	יצירת קבצים
+createShare.permissionUpload	העלאת קבצים ותיקיות
+createShare.versionsVisible	הצגת גרסאות קבצים
+createShare.versionsVisibleHint	מי שמשתמש בשיתוף הזה רואה את הגרסאות הקודמות של הקבצים, ויכול לשחזר אותן אם מותר לו לערוך.
+createShare.versionsDownload	הורדת גרסאות
 editShare.title	עריכת קישור שיתוף
 editShare.save	שמירת שינויים
 editShare.passwordKeepHint	השאירו ריק כדי לשמור את הסיסמה הנוכחית

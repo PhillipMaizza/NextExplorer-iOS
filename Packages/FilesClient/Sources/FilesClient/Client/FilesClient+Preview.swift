@@ -257,6 +257,7 @@ public extension FilesClient {
                 accessMode: request.accessMode,
                 sharingType: request.target,
                 hasPassword: request.password?.isEmpty == false,
+                permissions: request.permissions ?? SharePermissions(),
                 expiresAt: request.expiresAt,
                 label: request.label,
                 createdAt: Date(),
@@ -754,7 +755,7 @@ public extension Share {
             id: id, shareToken: shareToken, ownerId: ownerId,
             sourcePath: sourcePath, sourceSpace: sourceSpace, sourceName: sourceName, isDirectory: isDirectory,
             accessMode: request.accessMode, sharingType: request.target, hasPassword: hasPassword,
-            expiresAt: request.expiresAt, label: request.label,
+            permissions: request.permissions ?? permissions, expiresAt: request.expiresAt, label: request.label,
             downloadCount: downloadCount, lastAccessedAt: lastAccessedAt,
             permittedUserIds: request.target == .users ? request.userIds : nil,
             createdAt: createdAt, updatedAt: date

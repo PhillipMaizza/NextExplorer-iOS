@@ -329,6 +329,22 @@ createShare.summaryPasswordProtected	Védett
 createShare.summaryExpires	Lejár
 createShare.summarySpecificPeople	Meghatározott személyek
 createShare.errorPastExpiration	Válasszon lejárati dátumot a jövőben.
+createShare.peopleCan	Az emberek
+createShare.accessViewOnly	Csak megtekintés
+createShare.accessViewOnlyHint	Megnyitás és olvasás. Nincs másolat.
+createShare.accessCanDownload	Letöltés
+createShare.accessCanDownloadHint	Megnyitás és letöltés.
+createShare.accessCanEdit	Szerkesztés
+createShare.accessCanEditHint	Megnyitás, módosítás, hozzáadás és fájlok törlése.
+createShare.accessCanEditFileHint	Megnyitás, letöltés és a fájl módosítása.
+createShare.accessCustomHint	Válassza ki az egyes engedélyeket.
+createShare.permissionDelete	Fájlok törlése
+createShare.permissionCreateFolders	Mappák létrehozása
+createShare.permissionCreateFiles	Fájlok létrehozása
+createShare.permissionUpload	Fájlok és mappák feltöltése
+createShare.versionsVisible	Fájlverziók megjelenítése
+createShare.versionsVisibleHint	A megosztás használói látják a fájlok korábbi verzióit, és visszaállíthatják őket, ha szerkeszthetnek.
+createShare.versionsDownload	Verziók letöltése
 editShare.title	Megosztási hivatkozás szerkesztése
 editShare.save	Módosítások mentése
 editShare.passwordKeepHint	Hagyja üresen a jelenlegi jelszó megtartásához

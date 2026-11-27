@@ -326,6 +326,22 @@ createShare.summaryPasswordProtected	Geschützt
 createShare.summaryExpires	Läuft ab
 createShare.summarySpecificPeople	Bestimmte Personen
 createShare.errorPastExpiration	Wähle ein Ablaufdatum in der Zukunft.
+createShare.peopleCan	Personen können
+createShare.accessViewOnly	Nur ansehen
+createShare.accessViewOnlyHint	Öffnen und lesen. Keine Kopien.
+createShare.accessCanDownload	Herunterladen
+createShare.accessCanDownloadHint	Öffnen und herunterladen.
+createShare.accessCanEdit	Bearbeiten
+createShare.accessCanEditHint	Öffnen, ändern, hinzufügen und Dateien löschen.
+createShare.accessCanEditFileHint	Öffnen, herunterladen und die Datei ändern.
+createShare.accessCustomHint	Jede Berechtigung einzeln wählen.
+createShare.permissionDelete	Dateien löschen
+createShare.permissionCreateFolders	Ordner erstellen
+createShare.permissionCreateFiles	Dateien erstellen
+createShare.permissionUpload	Dateien und Ordner hochladen
+createShare.versionsVisible	Dateiversionen anzeigen
+createShare.versionsVisibleHint	Wer diese Freigabe nutzt, sieht die früheren Versionen ihrer Dateien und kann sie wiederherstellen, wenn Bearbeiten erlaubt ist.
+createShare.versionsDownload	Versionen herunterladen
 editShare.title	Freigabelink bearbeiten
 editShare.save	Änderungen sichern
 editShare.passwordKeepHint	Leer lassen, um das aktuelle Passwort zu behalten

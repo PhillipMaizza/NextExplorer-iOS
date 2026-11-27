@@ -374,6 +374,22 @@ createShare.summaryPasswordProtected	Protected
 createShare.summaryExpires	Expires
 createShare.summarySpecificPeople	Specific people
 createShare.errorPastExpiration	Pick an expiration date in the future.
+createShare.peopleCan	People can
+createShare.accessViewOnly	View only
+createShare.accessViewOnlyHint	Open and read. No copies.
+createShare.accessCanDownload	Can download
+createShare.accessCanDownloadHint	Open and download.
+createShare.accessCanEdit	Can edit
+createShare.accessCanEditHint	Open, change, add and delete files.
+createShare.accessCanEditFileHint	Open, download and change the file.
+createShare.accessCustomHint	Choose each permission.
+createShare.permissionDelete	Delete files
+createShare.permissionCreateFolders	Create folders
+createShare.permissionCreateFiles	Create files
+createShare.permissionUpload	Upload files and folders
+createShare.versionsVisible	Show file versions
+createShare.versionsVisibleHint	People using this share see the earlier versions of its files, and can restore them if they may edit.
+createShare.versionsDownload	Download versions
 
 # ---- edit share ----
 editShare.title	Edit Share Link

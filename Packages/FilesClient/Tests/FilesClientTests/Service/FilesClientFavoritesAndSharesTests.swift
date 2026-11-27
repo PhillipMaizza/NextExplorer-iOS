@@ -98,6 +98,22 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func updateShareLinkSendsEveryPermissionOnlyWhenGiven() async throws {
+            let plain = try await updateBody(UpdateShareRequest())
+            let custom = try await updateBody(UpdateShareRequest(
+                accessMode: .readwrite,
+                permissions: SharePermissions(canDelete: false, showsVersions: true)
+            ))
+
+            #expect(plain["allowDownload"] == nil)
+            #expect(custom["accessMode"] as? String == ShareAccessMode.readwrite.rawValue)
+            #expect(custom["allowDelete"] as? Bool == false)
+            #expect(custom["allowUpload"] as? Bool == true)
+            #expect(custom["versionsVisible"] as? Bool == true)
+            #expect(custom["versionsDownload"] as? Bool == false)
+        }
+
+        @Test
         func updateShareLinkMapsAForbiddenResponseToAServerError() async throws {
             stub(statusCode: 403, body: Data())
             await #expect(throws: FilesClientError.forbidden(message: nil)) {

@@ -318,6 +318,22 @@ createShare.summaryPasswordProtected	ป้องกันแล้ว
 createShare.summaryExpires	หมดอายุ
 createShare.summarySpecificPeople	บุคคลที่ระบุ
 createShare.errorPastExpiration	เลือกวันหมดอายุในอนาคต
+createShare.peopleCan	ผู้คนสามารถ
+createShare.accessViewOnly	ดูอย่างเดียว
+createShare.accessViewOnlyHint	เปิดและอ่าน ไม่มีสำเนา
+createShare.accessCanDownload	ดาวน์โหลดได้
+createShare.accessCanDownloadHint	เปิดและดาวน์โหลด
+createShare.accessCanEdit	แก้ไขได้
+createShare.accessCanEditHint	เปิด เปลี่ยน เพิ่ม และลบไฟล์
+createShare.accessCanEditFileHint	เปิด ดาวน์โหลด และเปลี่ยนไฟล์
+createShare.accessCustomHint	เลือกสิทธิ์แต่ละรายการ
+createShare.permissionDelete	ลบไฟล์
+createShare.permissionCreateFolders	สร้างโฟลเดอร์
+createShare.permissionCreateFiles	สร้างไฟล์
+createShare.permissionUpload	อัปโหลดไฟล์และโฟลเดอร์
+createShare.versionsVisible	แสดงเวอร์ชันของไฟล์
+createShare.versionsVisibleHint	ผู้ที่ใช้การแชร์นี้จะเห็นเวอร์ชันก่อนหน้าของไฟล์ และกู้คืนได้หากมีสิทธิ์แก้ไข
+createShare.versionsDownload	ดาวน์โหลดเวอร์ชัน
 editShare.title	แก้ไขลิงก์แชร์
 editShare.save	บันทึกการเปลี่ยนแปลง
 editShare.passwordKeepHint	เว้นว่างไว้เพื่อใช้รหัสผ่านปัจจุบันต่อ

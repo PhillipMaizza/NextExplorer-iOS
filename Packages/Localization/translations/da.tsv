@@ -329,6 +329,22 @@ createShare.summaryPasswordProtected	Beskyttet
 createShare.summaryExpires	Udløber
 createShare.summarySpecificPeople	Bestemte personer
 createShare.errorPastExpiration	Vælg en udløbsdato i fremtiden.
+createShare.peopleCan	Personer kan
+createShare.accessViewOnly	Kun se
+createShare.accessViewOnlyHint	Åbne og læse. Ingen kopier.
+createShare.accessCanDownload	Downloade
+createShare.accessCanDownloadHint	Åbne og downloade.
+createShare.accessCanEdit	Redigere
+createShare.accessCanEditHint	Åbne, ændre, tilføje og slette filer.
+createShare.accessCanEditFileHint	Åbne, downloade og ændre filen.
+createShare.accessCustomHint	Vælg hver tilladelse.
+createShare.permissionDelete	Slette filer
+createShare.permissionCreateFolders	Oprette mapper
+createShare.permissionCreateFiles	Oprette filer
+createShare.permissionUpload	Uploade filer og mapper
+createShare.versionsVisible	Vis filversioner
+createShare.versionsVisibleHint	De, der bruger denne deling, ser tidligere versioner af dens filer og kan gendanne dem, hvis de må redigere.
+createShare.versionsDownload	Download versioner
 editShare.title	Rediger delingslink
 editShare.save	Gem ændringer
 editShare.passwordKeepHint	Lad feltet stå tomt for at beholde den nuværende adgangskode

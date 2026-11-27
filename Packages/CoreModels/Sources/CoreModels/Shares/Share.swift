@@ -45,7 +45,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     public let accessMode: ShareAccessMode
     public let sharingType: ShareTarget
     public let hasPassword: Bool
-    public let isDownloadAllowed: Bool
+    public let permissions: SharePermissions
     public let expiresAt: Date?
     public let label: String?
     public let downloadCount: Int
@@ -67,7 +67,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         accessMode: ShareAccessMode,
         sharingType: ShareTarget,
         hasPassword: Bool,
-        isDownloadAllowed: Bool = true,
+        permissions: SharePermissions = SharePermissions(),
         expiresAt: Date? = nil,
         label: String? = nil,
         downloadCount: Int = 0,
@@ -86,7 +86,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         self.accessMode = accessMode
         self.sharingType = sharingType
         self.hasPassword = hasPassword
-        self.isDownloadAllowed = isDownloadAllowed
+        self.permissions = permissions
         self.expiresAt = expiresAt
         self.label = label
         self.downloadCount = downloadCount
@@ -100,7 +100,6 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         case id, shareToken, ownerId, sourcePath, sourceSpace, sourceName, isDirectory, accessMode
         case sharingType, hasPassword, expiresAt, label, downloadCount, lastAccessedAt
         case permittedUserIds, createdAt, updatedAt
-        case isDownloadAllowed = "allowDownload"
     }
 
     public init(from decoder: Decoder) throws {
@@ -115,7 +114,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         accessMode = try container.decode(ShareAccessMode.self, forKey: .accessMode)
         sharingType = try container.decode(ShareTarget.self, forKey: .sharingType)
         hasPassword = try container.decode(Bool.self, forKey: .hasPassword)
-        isDownloadAllowed = try container.decodeIfPresent(Bool.self, forKey: .isDownloadAllowed) ?? true
+        permissions = try SharePermissions(from: decoder)
         expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
         label = try container.decodeIfPresent(String.self, forKey: .label)
         downloadCount = try container.decodeIfPresent(Int.self, forKey: .downloadCount) ?? 0
@@ -123,6 +122,28 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         permittedUserIds = try container.decodeIfPresent([String].self, forKey: .permittedUserIds)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(shareToken, forKey: .shareToken)
+        try container.encode(ownerId, forKey: .ownerId)
+        try container.encodeIfPresent(sourcePath, forKey: .sourcePath)
+        try container.encodeIfPresent(sourceSpace, forKey: .sourceSpace)
+        try container.encodeIfPresent(sourceName, forKey: .sourceName)
+        try container.encode(isDirectory, forKey: .isDirectory)
+        try container.encode(accessMode, forKey: .accessMode)
+        try container.encode(sharingType, forKey: .sharingType)
+        try container.encode(hasPassword, forKey: .hasPassword)
+        try container.encodeIfPresent(expiresAt, forKey: .expiresAt)
+        try container.encodeIfPresent(label, forKey: .label)
+        try container.encode(downloadCount, forKey: .downloadCount)
+        try container.encodeIfPresent(lastAccessedAt, forKey: .lastAccessedAt)
+        try container.encodeIfPresent(permittedUserIds, forKey: .permittedUserIds)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(updatedAt, forKey: .updatedAt)
+        try permissions.encode(to: encoder)
     }
 
     /// `owner_id` follows the same unconfirmed int vs string shape as `User.id`.
@@ -149,6 +170,10 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
             return String(leaf)
         }
         return shareToken
+    }
+
+    public var isDownloadAllowed: Bool {
+        permissions.canDownload
     }
 
     public func isExpired(now: Date) -> Bool {
@@ -192,6 +217,7 @@ public struct CreateShareLinkRequest: Equatable, Sendable {
     public var password: String?
     public var userIds: [String]
     public var expiresAt: Date?
+    public var permissions: SharePermissions?
 
     public init(
         sourcePath: String,
@@ -200,7 +226,8 @@ public struct CreateShareLinkRequest: Equatable, Sendable {
         target: ShareTarget = .anyone,
         password: String? = nil,
         userIds: [String] = [],
-        expiresAt: Date? = nil
+        expiresAt: Date? = nil,
+        permissions: SharePermissions? = nil
     ) {
         self.sourcePath = sourcePath
         self.label = label
@@ -209,6 +236,7 @@ public struct CreateShareLinkRequest: Equatable, Sendable {
         self.password = password
         self.userIds = userIds
         self.expiresAt = expiresAt
+        self.permissions = permissions
     }
 }
 
@@ -225,6 +253,7 @@ public struct UpdateShareRequest: Equatable, Sendable {
     /// Only sent when `target == .users`; the server ignores it otherwise.
     public var userIds: [String]
     public var password: PasswordChange
+    public var permissions: SharePermissions?
 
     public enum PasswordChange: Equatable, Sendable {
         /// Don't touch the current password: the `password` key is left out entirely.
@@ -241,7 +270,8 @@ public struct UpdateShareRequest: Equatable, Sendable {
         target: ShareTarget = .anyone,
         expiresAt: Date? = nil,
         userIds: [String] = [],
-        password: PasswordChange = .keep
+        password: PasswordChange = .keep,
+        permissions: SharePermissions? = nil
     ) {
         self.label = label
         self.accessMode = accessMode
@@ -249,5 +279,6 @@ public struct UpdateShareRequest: Equatable, Sendable {
         self.expiresAt = expiresAt
         self.userIds = userIds
         self.password = password
+        self.permissions = permissions
     }
 }

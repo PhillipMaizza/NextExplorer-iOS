@@ -330,6 +330,14 @@ public enum L10n {
         public static var sort: String { tr("common.sort") }  // "Sort"
     }
     public enum CreateShare {
+        public static var accessCanDownload: String { tr("createShare.accessCanDownload") }  // "Can download"
+        public static var accessCanDownloadHint: String { tr("createShare.accessCanDownloadHint") }  // "Open and download."
+        public static var accessCanEdit: String { tr("createShare.accessCanEdit") }  // "Can edit"
+        public static var accessCanEditFileHint: String { tr("createShare.accessCanEditFileHint") }  // "Open, download and change the file."
+        public static var accessCanEditHint: String { tr("createShare.accessCanEditHint") }  // "Open, change, add and delete files."
+        public static var accessCustomHint: String { tr("createShare.accessCustomHint") }  // "Choose each permission."
+        public static var accessViewOnly: String { tr("createShare.accessViewOnly") }  // "View only"
+        public static var accessViewOnlyHint: String { tr("createShare.accessViewOnlyHint") }  // "Open and read. No copies."
         public static var addPeople: String { tr("createShare.addPeople") }  // "Add people"
         public static var createdBanner: String { tr("createShare.createdBanner") }  // "Share link created successfully!"
         public static var directFileLink: String { tr("createShare.directFileLink") }  // "Direct file link"
@@ -340,6 +348,11 @@ public enum L10n {
         public static var fieldExpires: String { tr("createShare.fieldExpires") }  // "Expires"
         public static var loadingUsers: String { tr("createShare.loadingUsers") }  // "Loading users…"
         public static var noOtherUsers: String { tr("createShare.noOtherUsers") }  // "No other users to share with."
+        public static var peopleCan: String { tr("createShare.peopleCan") }  // "People can"
+        public static var permissionCreateFiles: String { tr("createShare.permissionCreateFiles") }  // "Create files"
+        public static var permissionCreateFolders: String { tr("createShare.permissionCreateFolders") }  // "Create folders"
+        public static var permissionDelete: String { tr("createShare.permissionDelete") }  // "Delete files"
+        public static var permissionUpload: String { tr("createShare.permissionUpload") }  // "Upload files and folders"
         public static var sectionAccessMode: String { tr("createShare.sectionAccessMode") }  // "Access Mode"
         public static var sectionLabel: String { tr("createShare.sectionLabel") }  // "Label"
         public static var sectionShareLink: String { tr("createShare.sectionShareLink") }  // "Share Link"
@@ -355,6 +368,9 @@ public enum L10n {
         public static var titleCreated: String { tr("createShare.titleCreated") }  // "Share Created"
         public static var togglePasswordProtect: String { tr("createShare.togglePasswordProtect") }  // "Password protect"
         public static var toggleSetExpiration: String { tr("createShare.toggleSetExpiration") }  // "Set expiration date"
+        public static var versionsDownload: String { tr("createShare.versionsDownload") }  // "Download versions"
+        public static var versionsVisible: String { tr("createShare.versionsVisible") }  // "Show file versions"
+        public static var versionsVisibleHint: String { tr("createShare.versionsVisibleHint") }
         public static var viewInShared: String { tr("createShare.viewInShared") }  // "View in Shared"
     }
     public enum DateFormat {

@@ -326,6 +326,22 @@ createShare.summaryPasswordProtected	सुरक्षित
 createShare.summaryExpires	समाप्त होता है
 createShare.summarySpecificPeople	विशिष्ट लोग
 createShare.errorPastExpiration	भविष्य की समाप्ति तिथि चुनें।
+createShare.peopleCan	लोग कर सकते हैं
+createShare.accessViewOnly	केवल देखें
+createShare.accessViewOnlyHint	खोलें और पढ़ें। कोई प्रति नहीं।
+createShare.accessCanDownload	डाउनलोड करें
+createShare.accessCanDownloadHint	खोलें और डाउनलोड करें।
+createShare.accessCanEdit	संपादित करें
+createShare.accessCanEditHint	फ़ाइलें खोलें, बदलें, जोड़ें और हटाएँ।
+createShare.accessCanEditFileHint	फ़ाइल खोलें, डाउनलोड करें और बदलें।
+createShare.accessCustomHint	हर अनुमति चुनें।
+createShare.permissionDelete	फ़ाइलें हटाएँ
+createShare.permissionCreateFolders	फ़ोल्डर बनाएँ
+createShare.permissionCreateFiles	फ़ाइलें बनाएँ
+createShare.permissionUpload	फ़ाइलें और फ़ोल्डर अपलोड करें
+createShare.versionsVisible	फ़ाइल संस्करण दिखाएँ
+createShare.versionsVisibleHint	इस साझाकरण का उपयोग करने वाले इसकी फ़ाइलों के पिछले संस्करण देखते हैं, और संपादन की अनुमति होने पर उन्हें पुनर्स्थापित कर सकते हैं।
+createShare.versionsDownload	संस्करण डाउनलोड करें
 editShare.title	साझा लिंक संपादित करें
 editShare.save	परिवर्तन सहेजें
 editShare.passwordKeepHint	वर्तमान पासवर्ड रखने के लिए खाली छोड़ें

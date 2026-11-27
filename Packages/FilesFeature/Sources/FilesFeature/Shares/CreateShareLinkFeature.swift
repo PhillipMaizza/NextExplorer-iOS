@@ -29,7 +29,8 @@ public struct CreateShareLinkFeature {
         public var isDirectory: Bool
 
         public var label: String
-        public var accessMode: ShareAccessMode = .readonly
+        public var accessChoice: ShareAccessChoice = .canDownload
+        public var permissions = SharePermissions.defaults(for: .anyone)
         public var target: ShareTarget = .anyone
         public var isPasswordEnabled = false
         public var password = ""
@@ -51,6 +52,10 @@ public struct CreateShareLinkFeature {
         public var usersPhase: DataPhase = .idle
         /// Shared with `SharedFeature`: bumping it makes the Shared tab reload.
         @Shared(.inMemory(SharedFeature.revisionKey)) var shareLinksRevision = 0
+
+        public var accessMode: ShareAccessMode {
+            accessChoice.accessMode
+        }
 
         public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date) {
             self.serverURL = serverURL
@@ -101,6 +106,8 @@ public struct CreateShareLinkFeature {
         case preferencesResponse(UserPreferences)
         case labelChanged(String)
         case accessModeChanged(ShareAccessMode)
+        case accessChoiceChanged(ShareAccessChoice)
+        case permissionsChanged(SharePermissions)
         case targetChanged(ShareTarget)
         case passwordEnabledChanged(Bool)
         case passwordChanged(String)
@@ -147,12 +154,24 @@ public struct CreateShareLinkFeature {
                 return .none
 
             case let .accessModeChanged(mode):
-                state.accessMode = mode
+                state.accessChoice = ShareAccessChoice(accessMode: mode, permissions: state.permissions)
                 state.errorMessage = nil
+                return .none
+
+            case let .accessChoiceChanged(choice):
+                state.accessChoice = choice
+                state.permissions = choice.applied(to: state.permissions)
+                state.errorMessage = nil
+                return .none
+
+            case let .permissionsChanged(permissions):
+                state.permissions = permissions
                 return .none
 
             case let .targetChanged(target):
                 state.target = target
+                state.permissions.showsVersions = target == .users
+                state.permissions.canDownloadVersions = target == .users
                 state.errorMessage = nil
                 guard target == .users, state.usersPhase.shouldLoadOnAppear else { return .none }
                 state.usersPhase = .loading
@@ -232,7 +251,8 @@ public struct CreateShareLinkFeature {
                         ? state.password
                         : nil,
                     userIds: state.target == .users ? Array(state.selectedUserIDs) : [],
-                    expiresAt: state.isExpiryEnabled ? state.expiresAt : nil
+                    expiresAt: state.isExpiryEnabled ? state.expiresAt : nil,
+                    permissions: state.permissions
                 )
                 let serverURL = state.serverURL
                 let filesClient = filesClient

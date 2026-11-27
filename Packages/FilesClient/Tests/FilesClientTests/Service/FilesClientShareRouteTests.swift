@@ -49,6 +49,33 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func createShareLinkSendsThePermissionsBesideTheMinimalBody() async throws {
+            try prepare(statusCode: 201, fixture: .shareCreated)
+
+            _ = try await makeClient().createShareLink(
+                serverURL,
+                CreateShareLinkRequest(
+                    sourcePath: TestPath.docsNote,
+                    permissions: SharePermissions(canDownload: false)
+                )
+            )
+
+            try expectJSONBody([
+                "sourcePath": TestPath.docsNote,
+                "accessMode": Constants.readonlyMode,
+                "sharingType": Constants.anyoneTarget,
+                "userIds": [String](),
+                "allowDownload": false,
+                "allowDelete": true,
+                "allowCreateFolder": true,
+                "allowCreateFile": true,
+                "allowUpload": true,
+                "versionsVisible": false,
+                "versionsDownload": false,
+            ])
+        }
+
+        @Test
         func createShareLinkSendsLabelPasswordAndAWholeSecondExpiry() async throws {
             try prepare(statusCode: 201, fixture: .shareCreated)
 

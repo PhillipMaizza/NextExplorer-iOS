@@ -351,6 +351,22 @@ createShare.summaryPasswordProtected	Chráněno
 createShare.summaryExpires	Vyprší
 createShare.summarySpecificPeople	Konkrétní lidé
 createShare.errorPastExpiration	Vyberte datum vypršení v budoucnosti.
+createShare.peopleCan	Lidé mohou
+createShare.accessViewOnly	Jen zobrazit
+createShare.accessViewOnlyHint	Otevřít a číst. Bez kopií.
+createShare.accessCanDownload	Stahovat
+createShare.accessCanDownloadHint	Otevřít a stáhnout.
+createShare.accessCanEdit	Upravovat
+createShare.accessCanEditHint	Otevírat, měnit, přidávat a mazat soubory.
+createShare.accessCanEditFileHint	Otevřít, stáhnout a změnit soubor.
+createShare.accessCustomHint	Zvolte každé oprávnění.
+createShare.permissionDelete	Mazat soubory
+createShare.permissionCreateFolders	Vytvářet složky
+createShare.permissionCreateFiles	Vytvářet soubory
+createShare.permissionUpload	Nahrávat soubory a složky
+createShare.versionsVisible	Zobrazit verze souborů
+createShare.versionsVisibleHint	Uživatelé tohoto sdílení vidí starší verze jeho souborů a mohou je obnovit, pokud smějí upravovat.
+createShare.versionsDownload	Stahovat verze
 editShare.title	Upravit odkaz ke sdílení
 editShare.save	Uložit změny
 editShare.passwordKeepHint	Nechte prázdné, aby zůstalo stávající heslo
