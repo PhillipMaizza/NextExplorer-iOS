@@ -34,16 +34,16 @@ import TestUtils
             }
         }
 
-        @Test("The submenu waits for the file's history, then lists it")
+        @Test("The submenu lists the loaded history; a file nobody loaded offers only Show All Versions")
         func theSubmenuLoadsThenLists() async {
             let model = model()
             let item = Self.file(TestFile.aText)
             let other = Self.file(TestFile.bText)
 
-            await model.load(item: item, serverURL: serverURL)
+            await model.load(item: item, serverURL: serverURL, account: Constants.account)
 
             #expect(model.menuPhase(for: item) == .loaded(Self.history(for: item.id)))
-            #expect(model.menuPhase(for: other) == .loading)
+            #expect(model.menuPhase(for: other) == .unloaded)
         }
 
         @Test("No submenu when the server keeps no versions, for folders, or when a share hides them")
@@ -59,8 +59,8 @@ import TestUtils
             let off = model(versionsEnabled: false)
             let hidden = model(canSee: false)
 
-            await off.load(item: item, serverURL: serverURL)
-            await hidden.load(item: item, serverURL: serverURL)
+            await off.load(item: item, serverURL: serverURL, account: Constants.account)
+            await hidden.load(item: item, serverURL: serverURL, account: Constants.account)
 
             #expect(off.menuPhase(for: item) == .hidden)
             #expect(off.menuPhase(for: folder) == .hidden)
@@ -72,8 +72,8 @@ import TestUtils
             let model = model()
             let other = Self.file(TestFile.bText)
             let selected = Self.file(TestFile.aText)
-            await model.load(item: other, serverURL: serverURL)
-            await model.load(item: selected, serverURL: serverURL)
+            await model.load(item: other, serverURL: serverURL, account: Constants.account)
+            await model.load(item: selected, serverURL: serverURL, account: Constants.account)
             let version = try #require(model.history(for: other)?.versions.first)
 
             model.beginRestore(version, of: other)
@@ -98,7 +98,7 @@ import TestUtils
             }
             model.onMenuFailure = { reported.setValue($0) }
             let item = Self.file(TestFile.aText)
-            await model.load(item: item, serverURL: serverURL)
+            await model.load(item: item, serverURL: serverURL, account: Constants.account)
             let version = try #require(model.history?.versions.first)
 
             await model.saveCopy(version, of: item)?.value
@@ -107,13 +107,28 @@ import TestUtils
             #expect(model.errorMessage == nil)
         }
 
+        @Test("Another account on the same server starts with no remembered histories")
+        func switchingAccountForgetsHistories() async {
+            let model = model()
+            let item = Self.file(TestFile.aText)
+            await model.load(item: item, serverURL: serverURL, account: Constants.account)
+
+            await model.load(item: Self.file(TestFile.bText), serverURL: serverURL, account: Constants.otherAccount)
+
+            #expect(model.history(for: item) == nil)
+        }
+
         @Test("Another server starts with no remembered histories")
         func switchingServerForgetsHistories() async {
             let model = model()
             let item = Self.file(TestFile.aText)
-            await model.load(item: item, serverURL: serverURL)
+            await model.load(item: item, serverURL: serverURL, account: Constants.account)
 
-            await model.load(item: Self.file(TestFile.bText), serverURL: Constants.otherServer)
+            await model.load(
+                item: Self.file(TestFile.bText),
+                serverURL: Constants.otherServer,
+                account: Constants.account
+            )
 
             #expect(model.history(for: item) == nil)
         }
@@ -122,5 +137,7 @@ import TestUtils
     private enum Constants {
         static let refusal = "Downloading versions is not allowed."
         static let otherServer = URL(string: "https://other.example.com")!
+        static let account = "demo"
+        static let otherAccount = "demo_user"
     }
 #endif

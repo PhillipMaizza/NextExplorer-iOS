@@ -11,6 +11,7 @@ import TestUtils
     @MainActor
     struct MacVersionsModelTests {
         private let serverURL = URL(string: TestHost.exampleURLString)!
+        private static let account = "demo"
 
         /// One version whose id is the file's path, so a history says which file it belongs to.
         private nonisolated static func history(for path: String) -> FileVersionHistory {
@@ -42,10 +43,10 @@ import TestUtils
             let first = Self.file(TestFile.aText)
             let second = Self.file(TestFile.bText)
 
-            await model.load(item: first, serverURL: serverURL)
+            await model.load(item: first, serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
             let restore = model.restoreConfirmed(version)
-            await model.load(item: second, serverURL: serverURL)
+            await model.load(item: second, serverURL: serverURL, account: Self.account)
             release.yield()
             await restore?.value
 
@@ -65,7 +66,7 @@ import TestUtils
             model.onFilesChanged = { didChangeFiles.setValue(true) }
             let item = Self.file(TestFile.aText)
 
-            await model.load(item: item, serverURL: serverURL)
+            await model.load(item: item, serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
             model.versionToRestore = version
             await model.restoreConfirmed(version)?.value
@@ -85,7 +86,7 @@ import TestUtils
             } operation: {
                 MacVersionsModel()
             }
-            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
 
             #expect(model.canViewText)
@@ -106,7 +107,7 @@ import TestUtils
             } operation: {
                 MacVersionsModel()
             }
-            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
 
             await model.viewText(version)?.value
@@ -122,7 +123,7 @@ import TestUtils
             } operation: {
                 MacVersionsModel()
             }
-            await model.load(item: Self.file("photo.jpg"), serverURL: serverURL)
+            await model.load(item: Self.file("photo.jpg"), serverURL: serverURL, account: Self.account)
             #expect(!model.canViewText)
         }
 
@@ -140,7 +141,7 @@ import TestUtils
             }
             model.onFilesChanged = { didChangeFiles.setValue(true) }
             let item = Self.file(TestFile.aText)
-            await model.load(item: item, serverURL: serverURL)
+            await model.load(item: item, serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
 
             model.beginReplace(version)
@@ -166,7 +167,7 @@ import TestUtils
             } operation: {
                 MacVersionsModel()
             }
-            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
 
             model.beginReplace(version)
@@ -189,7 +190,7 @@ import TestUtils
             } operation: {
                 MacVersionsModel()
             }
-            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
 
             await model.replaceConfirmed(VersionReplacement(
@@ -211,7 +212,7 @@ import TestUtils
             } operation: {
                 MacVersionsModel()
             }
-            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
 
             await model.viewText(version)?.value
@@ -234,7 +235,7 @@ import TestUtils
             } operation: {
                 MacVersionsModel()
             }
-            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL)
+            await model.load(item: Self.file(TestFile.aText), serverURL: serverURL, account: Self.account)
             let version = try #require(model.history?.versions.first)
             await model.replaceConfirmed(VersionReplacement(
                 version: version,
