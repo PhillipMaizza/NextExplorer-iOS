@@ -517,6 +517,30 @@ extension FilesClientLiveTests {
         }
 
         @Test
+        func extractZipHereAsksForTheCurrentFolderAndAnswersEveryPlacedItem() async throws {
+            try stub(
+                statusCode: 200,
+                body: FilesClientFixture.itemMutationNdjsonExtractHereDone.data(),
+                headers: [HTTPHeaderField.contentType: "application/x-ndjson"]
+            )
+            StubURLProtocol.capturedRequest = nil
+            let archive = FileItem(
+                name: "photos.zip",
+                path: TestFolder.files,
+                dateModified: MockDate.date,
+                size: 10,
+                kind: "zip"
+            )
+
+            let extracted = try await makeClient().extractZipHere(serverURL, archive)
+
+            #expect(extracted.map(\.name) == ["a.jpg", "b.jpg"])
+            let body = try #require(StubURLProtocol.capturedRequestBody)
+            let bodyJSON = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
+            #expect(bodyJSON == ["path": archive.id, "destination": "current"])
+        }
+
+        @Test
         func extractZipDecodesTheDoneLineOfAnNDJSONProgressStream() async throws {
             try stub(
                 statusCode: 200,

@@ -227,6 +227,9 @@ public extension FilesClient {
             extractZip: { serverURL, item in
                 try await service.extractZip(serverURL: serverURL, item: item)
             },
+            extractZipHere: { serverURL, item in
+                try await service.extractZipHere(serverURL: serverURL, item: item)
+            },
             listArchive: { serverURL, archive, inside in
                 try await service.listArchive(serverURL: serverURL, archive: archive, inside: inside)
             },

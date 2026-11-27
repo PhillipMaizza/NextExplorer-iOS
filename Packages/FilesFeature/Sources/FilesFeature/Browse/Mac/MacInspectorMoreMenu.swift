@@ -118,6 +118,9 @@
                 MacActionMenuButton(L10n.Browse.actionExtract, icon: IconKit.extract) {
                     store.send(.extractTapped(item))
                 }
+                MacActionMenuButton(L10n.Browse.actionExtractHere, icon: IconKit.extract) {
+                    store.send(.extractHereTapped(item))
+                }
             }
             if actions.canCompress {
                 MacActionMenuButton(L10n.Browse.actionCompress, icon: IconKit.archiveDocument) {

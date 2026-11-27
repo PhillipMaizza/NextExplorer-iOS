@@ -70,6 +70,7 @@ browse.actionGetInfo	Információk
 browse.actionPermissions	Engedélyek
 browse.actionRename	Átnevezés
 browse.actionExtract	Kicsomagolás
+browse.actionExtractHere	Kibontás ide
 browse.actionCompress	Tömörítés
 browse.actionDownload	Letöltés
 browse.actionAddToFavorites	Hozzáadás a kedvencekhez

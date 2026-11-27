@@ -39,11 +39,20 @@ extension FilesService {
     }
 
     struct ExtractZipBody: Encodable {
+        enum Destination: String, Encodable {
+            case current
+        }
+
         let path: String
+        var destination: Destination?
     }
 
     struct ExtractZipEnvelope: Decodable {
         let item: FileItem
+    }
+
+    struct ExtractZipHereEnvelope: Decodable {
+        let items: [FileItem]
     }
 
     struct ArchiveExtractBody: Encodable {

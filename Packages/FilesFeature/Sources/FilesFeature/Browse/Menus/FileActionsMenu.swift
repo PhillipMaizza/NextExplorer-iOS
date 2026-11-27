@@ -203,6 +203,12 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.actionExtract) } icon: { IconKit.extract }
             }
             .tint(.primaryDS)
+            Button {
+                store.send(.extractHereTapped(item))
+            } label: {
+                Label { Text(L10n.Browse.actionExtractHere) } icon: { IconKit.extract }
+            }
+            .tint(.primaryDS)
         }
         Button {
             store.send(.compressTapped(item))

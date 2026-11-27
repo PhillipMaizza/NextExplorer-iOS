@@ -67,6 +67,7 @@ browse.actionPermissions	Berechtigungen
 browse.actionRename	Umbenennen
 browse.actionRefreshSize	Größe aktualisieren
 browse.actionExtract	Entpacken
+browse.actionExtractHere	Hier entpacken
 browse.actionCompress	Komprimieren
 browse.actionDownload	Laden
 browse.actionAddToFavorites	Zu Favoriten hinzufügen

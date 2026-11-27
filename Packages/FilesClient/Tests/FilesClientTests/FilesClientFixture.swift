@@ -99,6 +99,7 @@ enum FilesClientFixture: String, FixtureFile {
     case itemMutationFolderUploadReserved = "item-mutation/folder-upload-reserved"
     case itemMutationErrorTransferToRoot = "item-mutation/error-transfer-to-root"
     case itemMutationNdjsonCompressDone = "item-mutation/ndjson-compress-done"
+    case itemMutationNdjsonExtractHereDone = "item-mutation/ndjson-extract-here-done"
     case itemMutationNdjsonCompressError = "item-mutation/ndjson-compress-error"
     case itemMutationNdjsonDeleteDone = "item-mutation/ndjson-delete-done"
     case itemMutationNdjsonExtractDone = "item-mutation/ndjson-extract-done"
@@ -238,7 +239,8 @@ enum FilesClientFixture: String, FixtureFile {
     var fileExtension: String {
         switch self {
         case .itemMutationNdjsonCompressDone, .itemMutationNdjsonCompressError, .itemMutationNdjsonDeleteDone,
-             .itemMutationNdjsonExtractDone, .itemMutationNdjsonMoveDone, .itemMutationNdjsonMoveError,
+             .itemMutationNdjsonExtractDone, .itemMutationNdjsonExtractHereDone, .itemMutationNdjsonMoveDone,
+             .itemMutationNdjsonMoveError,
              .trashRestoreToDone, .trashRestoreToError, .archiveExtractDone:
             "ndjson"
         default:

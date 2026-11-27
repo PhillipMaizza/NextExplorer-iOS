@@ -70,6 +70,7 @@ browse.actionGetInfo	Näytä tiedot
 browse.actionPermissions	Käyttöoikeudet
 browse.actionRename	Nimeä uudelleen
 browse.actionExtract	Pura
+browse.actionExtractHere	Pura tähän
 browse.actionCompress	Pakkaa
 browse.actionDownload	Lataa
 browse.actionAddToFavorites	Lisää suosikkeihin

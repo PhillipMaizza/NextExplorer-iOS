@@ -67,6 +67,7 @@ browse.actionPermissions	권한
 browse.actionRename	이름 변경
 browse.actionRefreshSize	크기 새로 고침
 browse.actionExtract	압축 풀기
+browse.actionExtractHere	여기에 압축 풀기
 browse.actionCompress	압축
 browse.actionDownload	다운로드
 browse.actionAddToFavorites	즐겨찾기에 추가

@@ -362,9 +362,14 @@ extension FilesService {
         return envelope.item
     }
 
-    /// `POST /api/files/zip/compress`, confirmed against `backend/src/routes/zip.js`: zips the
-    /// items (files or directories, all from one folder) into a new archive in that folder,
-    /// auto naming it from the source (`defaultZipNameForItems`) when `name` is omitted.
+    func extractZipHere(serverURL: URL, item: FileItem) async throws -> [FileItem] {
+        let url = serverURL.appendingPathComponent(APIPath.zipExtract)
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
+        request.setJSONContentType()
+        request.httpBody = try Self.encode(ExtractZipBody(path: item.id, destination: .current))
+        return try await sendStreamedOperation(request, decoding: ExtractZipHereEnvelope.self).items
+    }
+
     func reserveFolderUpload(serverURL: URL, destination: String, folderName: String) async throws -> String {
         let url = serverURL.appendingPathComponent(APIPath.uploadFolderSession)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
@@ -377,6 +382,9 @@ extension FilesService {
         return try await send(request, decoding: FolderUploadEnvelope.self).targetRoot
     }
 
+    /// `POST /api/files/zip/compress`, confirmed against `backend/src/routes/zip.js`: zips the
+    /// items (files or directories, all from one folder) into a new archive in that folder,
+    /// auto naming it from the source (`defaultZipNameForItems`) when `name` is omitted.
     func compressItems(serverURL: URL, items: [FileItem]) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.zipCompress)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)

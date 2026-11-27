@@ -70,6 +70,7 @@ browse.actionGetInfo	Vis info
 browse.actionPermissions	Tilladelser
 browse.actionRename	Omdøb
 browse.actionExtract	Udpak
+browse.actionExtractHere	Udpak her
 browse.actionCompress	Komprimér
 browse.actionDownload	Hent
 browse.actionAddToFavorites	Føj til favoritter

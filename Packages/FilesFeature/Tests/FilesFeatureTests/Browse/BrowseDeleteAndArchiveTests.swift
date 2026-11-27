@@ -181,6 +181,28 @@ struct BrowseDeleteAndArchiveTests {
         }
     }
 
+    @Test("Extract here puts every entry of the archive in the folder on screen")
+    func extractHerePlacesEveryEntryInTheFolder() async {
+        let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
+        let notes = BrowseFixtures.file(TestFile.notes)
+        let photo = BrowseFixtures.file(TestFile.aPhoto)
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: BrowseTestSupport.fullAccess)) {
+            $0.filesClient.extractZipHere = { _, _ in [notes, photo] }
+        }
+
+        await store.send(.extractHereTapped(archive)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Extracting…"
+        }
+        await store.receive(\.extractResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.items = [archive, notes, photo]
+            $0.selectedItemIDs = [notes.id, photo.id]
+            $0.scrollTargetID = notes.id
+        }
+    }
+
     @Test("Entries picked inside an archive come out beside it through the archive route")
     func pickedEntriesExtractBesideTheArchive() async {
         let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)

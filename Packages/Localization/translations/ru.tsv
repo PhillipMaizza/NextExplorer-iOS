@@ -67,6 +67,7 @@ browse.actionPermissions	Права доступа
 browse.actionRename	Переименовать
 browse.actionRefreshSize	Обновить размер
 browse.actionExtract	Извлечь
+browse.actionExtractHere	Извлечь сюда
 browse.actionCompress	Сжать
 browse.actionDownload	Загрузить
 browse.actionAddToFavorites	Добавить в избранное

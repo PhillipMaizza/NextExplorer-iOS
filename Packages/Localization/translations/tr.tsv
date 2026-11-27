@@ -70,6 +70,7 @@ browse.actionGetInfo	Bilgi Al
 browse.actionPermissions	İzinler
 browse.actionRename	Yeniden Adlandır
 browse.actionExtract	Arşivden Çıkar
+browse.actionExtractHere	Buraya çıkar
 browse.actionCompress	Sıkıştır
 browse.actionDownload	İndir
 browse.actionAddToFavorites	Favorilere Ekle
