@@ -171,14 +171,12 @@ struct FileActionsMenu: View {
                 }
                 .tint(.primaryDS)
             }
-            #if os(macOS)
-                Button {
-                    store.send(.copyToTapped(item))
-                } label: {
-                    Label { Text(L10n.Browse.actionCopyTo) } icon: { MenuIcon.copyTo.image }
-                }
-                .tint(.primaryDS)
-            #endif
+            Button {
+                store.send(.copyToTapped(item))
+            } label: {
+                Label { Text(L10n.Browse.actionCopyTo) } icon: { MenuIcon.copyTo.image }
+            }
+            .tint(.primaryDS)
         }
     }
 

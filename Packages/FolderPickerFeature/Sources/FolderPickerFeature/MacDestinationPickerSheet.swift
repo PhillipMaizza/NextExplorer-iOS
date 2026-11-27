@@ -177,23 +177,14 @@
             if store.isSearchTermTooShort {
                 return Text(SearchHint.tooShort)
             }
-            if let refusal = store.refusal {
-                return Text(refusalMessage(refusal))
+            if let refusalMessage = store.refusalMessage {
+                return Text(refusalMessage)
             }
             guard store.purpose != .replaceFile, store.phase == .loaded else { return nil }
             guard !store.transferDestination.isEmpty else {
                 return Text(L10n.Browse.destinationPickerChooseFolder)
             }
             return Text(L10n.Browse.destinationPickerInto(store.destinationTrail))
-        }
-
-        private func refusalMessage(_ refusal: FileClipboard.Refusal) -> String {
-            switch refusal {
-            case .noFolder: L10n.Browse.destinationPickerChooseFolder
-            case .noRights: L10n.Browse.destinationPickerNoRights
-            case .intoItself: L10n.Browse.destinationPickerIntoItself
-            case .alreadyThere: L10n.Browse.destinationPickerAlreadyThere(store.destinationName)
-            }
         }
 
         private var parentPath: String {

@@ -111,6 +111,10 @@ public struct DestinationPickerFeature {
             navigationHistory.isEmpty && searchQuery.isEmpty && !displayedRecents.isEmpty
         }
 
+        public var showsLocationsSection: Bool {
+            navigationHistory.isEmpty && searchQuery.isEmpty && !directoryPath.isEmpty && !locations.isEmpty
+        }
+
         /// True once the term is long enough for the server: the folder search replaces the listing.
         public var showsSearchResults: Bool {
             SearchTerm(searchQuery).isSearchable
@@ -392,11 +396,15 @@ public struct DestinationPickerFeature {
             case let .newFolderResponse(.success(folder)):
                 state.newFolder = nil
                 guard folder.path == state.directoryPath else { return .none }
-                state.folders[id: folder.id] = folder
-                state.folders.sort(by: Self.byName)
-                state.searchQuery = ""
-                state.selectedFolderPath = folder.id
-                return .none
+                #if os(iOS)
+                    return drill(&state, into: folder.id)
+                #else
+                    state.folders[id: folder.id] = folder
+                    state.folders.sort(by: Self.byName)
+                    state.searchQuery = ""
+                    state.selectedFolderPath = folder.id
+                    return .none
+                #endif
 
             case let .newFolderResponse(.failure(error)):
                 state.newFolder?.phase = .failed(error.userMessage)

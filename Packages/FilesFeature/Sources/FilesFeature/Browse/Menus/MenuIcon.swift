@@ -86,10 +86,10 @@ enum MenuIcon {
         case .openInBrowser: IconKit.web
         case .refresh: IconKit.retry
         case .copy: IconKit.copy
-        case .duplicate: IconKit.duplicate
+        case .duplicate, .copyTo: IconKit.duplicate
         case .cut: IconKit.cut
         case .move: IconKit.move
-        case .copyTo, .systemShare: IconKit.share
+        case .systemShare: IconKit.share
         case .paste: IconKit.paste
         case .rename: IconKit.rename
         case .extract: IconKit.extract

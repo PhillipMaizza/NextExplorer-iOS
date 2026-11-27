@@ -95,18 +95,60 @@ struct DestinationPickerSidebarTests: DestinationPickerTestHelpers {
                     kind: FileItem.directoryKind
                 )
             }
+            $0.filesClient.browse = { [access = access()] _, path in
+                BrowseResult(items: [], access: access, path: path)
+            }
         }
 
         await store.send(.newFolderTapped) { $0.newFolder = .init() }
         await store.send(.newFolderNameChanged("  Archive ")) { $0.newFolder?.name = "  Archive " }
         await store.send(.newFolderConfirmed) { $0.newFolder?.phase = .loading }
-        await store.receive(\.newFolderResponse.success) {
-            $0.newFolder = nil
-            $0.folders = [folder("Archive", path: TestFolder.documents)]
-            $0.selectedFolderPath = "\(TestFolder.documents)/Archive"
-        }
+        #if os(macOS)
+            await store.receive(\.newFolderResponse.success) {
+                $0.newFolder = nil
+                $0.folders = [folder("Archive", path: TestFolder.documents)]
+                $0.selectedFolderPath = "\(TestFolder.documents)/Archive"
+            }
+        #else
+            await store.receive(\.newFolderResponse.success) {
+                $0.newFolder = nil
+                $0.navigationHistory = [TestFolder.documents]
+                $0.directoryPath = "\(TestFolder.documents)/Archive"
+                $0.phase = .loading
+                $0.currentAccess = nil
+            }
+            await store.receive(\.foldersResponse.success) {
+                $0.phase = .loaded
+                $0.currentAccess = access()
+            }
+        #endif
         #expect(created.value == ["\(TestFolder.documents)/Archive"])
         #expect(store.state.transferDestination == "\(TestFolder.documents)/Archive")
+    }
+
+    @Test(
+        "Locations lead the folder the picker opened on, not a folder drilled into or the root",
+        arguments: [
+            (TestFolder.documents, false, true),
+            (TestFolder.documents, true, false),
+            ("", false, false),
+        ]
+    )
+    func locationsSection(path: String, hasDrilled: Bool, expected: Bool) {
+        var state = moveState(in: path)
+        state.locations = [folder(PersonalSpace.rootPath)]
+        state.navigationHistory = hasDrilled ? [TestFolder.inbox] : []
+        #expect(state.showsLocationsSection == expected)
+    }
+
+    @Test("The reason line says why the folder can't take the items")
+    func refusalMessages() {
+        var state = moveState(in: TestFolder.inbox)
+        #expect(state.refusalMessage == L10n.Browse.destinationPickerAlreadyThere(state.destinationName))
+        state.directoryPath = TestFolder.documents
+        #expect(state.refusalMessage == nil)
+        state.currentAccess = readOnly()
+        #expect(state.refusalMessage == L10n.Browse.destinationPickerNoRights)
     }
 
     @Test("A refused new folder keeps the prompt with the reason, and typing clears it")
