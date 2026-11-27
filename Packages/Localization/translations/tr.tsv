@@ -112,6 +112,7 @@ browse.actionMove	Taşı
 browse.actionPaste	Yapıştır
 browse.actionPasteCount	%lld öğeyi yapıştır
 browse.actionPasteHere	Buraya yapıştır
+browse.actionPasteIntoFolder	Klasöre yapıştır
 browse.actionClearClipboard	Panoyu temizle
 browse.clipboardCopiedOne	%@ kopyalandı
 browse.clipboardCopiedMany	%lld öğe kopyalandı

@@ -108,6 +108,7 @@ browse.actionMove	Sposta
 browse.actionPaste	Incolla
 browse.actionPasteCount	Incolla %lld elementi
 browse.actionPasteHere	Incolla qui
+browse.actionPasteIntoFolder	Incolla nella cartella
 browse.actionClearClipboard	Svuota appunti
 browse.clipboardCopiedOne	%@ copiato
 browse.clipboardCopiedMany	%lld elementi copiati

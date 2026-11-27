@@ -112,6 +112,7 @@ browse.actionMove	Pindahkan
 browse.actionPaste	Tempel
 browse.actionPasteCount	Tempel %lld item
 browse.actionPasteHere	Tempel di sini
+browse.actionPasteIntoFolder	Tempel ke folder
 browse.actionClearClipboard	Kosongkan papan klip
 browse.clipboardCopiedOne	%@ disalin
 browse.clipboardCopiedMany	%lld item disalin

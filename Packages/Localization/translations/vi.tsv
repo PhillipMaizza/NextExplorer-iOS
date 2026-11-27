@@ -112,6 +112,7 @@ browse.actionMove	Di chuyển
 browse.actionPaste	Dán
 browse.actionPasteCount	Dán %lld mục
 browse.actionPasteHere	Dán vào đây
+browse.actionPasteIntoFolder	Dán vào thư mục
 browse.actionClearClipboard	Xóa bộ nhớ tạm
 browse.clipboardCopiedOne	Đã sao chép %@
 browse.clipboardCopiedMany	Đã sao chép %lld mục

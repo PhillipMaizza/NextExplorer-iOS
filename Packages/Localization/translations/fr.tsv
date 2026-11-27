@@ -108,6 +108,7 @@ browse.actionMove	Déplacer
 browse.actionPaste	Coller
 browse.actionPasteCount	Coller %lld éléments
 browse.actionPasteHere	Coller ici
+browse.actionPasteIntoFolder	Coller dans le dossier
 browse.actionClearClipboard	Vider le presse-papiers
 browse.clipboardCopiedOne	%@ copié
 browse.clipboardCopiedMany	%lld éléments copiés

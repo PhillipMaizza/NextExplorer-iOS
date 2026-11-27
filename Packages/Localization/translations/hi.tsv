@@ -108,6 +108,7 @@ browse.actionMove	ले जाएं
 browse.actionPaste	पेस्ट करें
 browse.actionPasteCount	%lld आइटम पेस्ट करें
 browse.actionPasteHere	यहां पेस्ट करें
+browse.actionPasteIntoFolder	फ़ोल्डर में चिपकाएँ
 browse.actionClearClipboard	क्लिपबोर्ड साफ़ करें
 browse.clipboardCopiedOne	%@ कॉपी किया गया
 browse.clipboardCopiedMany	%lld आइटम कॉपी किए गए

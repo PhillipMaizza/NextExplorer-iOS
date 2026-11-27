@@ -108,6 +108,7 @@ browse.actionMove	Mută
 browse.actionPaste	Lipește
 browse.actionPasteCount	Lipește %lld elemente
 browse.actionPasteHere	Lipește aici
+browse.actionPasteIntoFolder	Lipește în dosar
 browse.actionClearClipboard	Golește clipboardul
 browse.clipboardCopiedOne	%@ copiat
 browse.clipboardCopiedMany	%lld elemente copiate

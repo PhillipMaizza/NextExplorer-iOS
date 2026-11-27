@@ -108,6 +108,7 @@ browse.actionMove	Mover
 browse.actionPaste	Colar
 browse.actionPasteCount	Colar %lld itens
 browse.actionPasteHere	Colar aqui
+browse.actionPasteIntoFolder	Colar na pasta
 browse.actionClearClipboard	Limpar área de transferência
 browse.clipboardCopiedOne	%@ copiado
 browse.clipboardCopiedMany	%lld itens copiados

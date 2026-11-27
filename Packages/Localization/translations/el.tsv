@@ -112,6 +112,7 @@ browse.actionMove	Μετακίνηση
 browse.actionPaste	Επικόλληση
 browse.actionPasteCount	Επικόλληση %lld στοιχείων
 browse.actionPasteHere	Επικόλληση εδώ
+browse.actionPasteIntoFolder	Επικόλληση στον φάκελο
 browse.actionClearClipboard	Εκκαθάριση προχείρου
 browse.clipboardCopiedOne	Αντιγράφηκε το %@
 browse.clipboardCopiedMany	Αντιγράφηκαν %lld στοιχεία

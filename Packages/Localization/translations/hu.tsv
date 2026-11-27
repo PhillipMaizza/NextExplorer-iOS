@@ -112,6 +112,7 @@ browse.actionMove	Áthelyezés
 browse.actionPaste	Beillesztés
 browse.actionPasteCount	%lld elem beillesztése
 browse.actionPasteHere	Beillesztés ide
+browse.actionPasteIntoFolder	Beillesztés a mappába
 browse.actionClearClipboard	Vágólap ürítése
 browse.clipboardCopiedOne	%@ másolva
 browse.clipboardCopiedMany	%lld elem másolva

@@ -112,6 +112,7 @@ browse.actionMove	Siirrä
 browse.actionPaste	Liitä
 browse.actionPasteCount	Liitä %lld kohdetta
 browse.actionPasteHere	Liitä tähän
+browse.actionPasteIntoFolder	Liitä kansioon
 browse.actionClearClipboard	Tyhjennä leikepöytä
 browse.clipboardCopiedOne	%@ kopioitu
 browse.clipboardCopiedMany	%lld kohdetta kopioitu

@@ -108,6 +108,7 @@ browse.actionMove	Mover
 browse.actionPaste	Pegar
 browse.actionPasteCount	Pegar %lld elementos
 browse.actionPasteHere	Pegar aquí
+browse.actionPasteIntoFolder	Pegar en la carpeta
 browse.actionClearClipboard	Vaciar portapapeles
 browse.clipboardCopiedOne	%@ copiado
 browse.clipboardCopiedMany	%lld elementos copiados

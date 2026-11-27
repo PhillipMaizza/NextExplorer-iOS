@@ -112,6 +112,7 @@ browse.actionMove	Flyt
 browse.actionPaste	Indsæt
 browse.actionPasteCount	Indsæt %lld emner
 browse.actionPasteHere	Indsæt her
+browse.actionPasteIntoFolder	Indsæt i mappe
 browse.actionClearClipboard	Ryd udklipsholder
 browse.clipboardCopiedOne	%@ kopieret
 browse.clipboardCopiedMany	%lld emner kopieret
