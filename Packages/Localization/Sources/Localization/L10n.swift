@@ -585,6 +585,7 @@ public enum L10n {
         public static var versionTextTruncated: String { tr("fileInfo.versionTextTruncated") }  // "Showing the first part of this version."
         public static var versionUnpin: String { tr("fileInfo.versionUnpin") }  // "Stop Keeping This Version"
         public static var versionViewText: String { tr("fileInfo.versionViewText") }  // "View Text"
+        public static var versionsLoadFailed: String { tr("fileInfo.versionsLoadFailed") }
         public static var versionsNone: String { tr("fileInfo.versionsNone") }  // "No earlier versions"
     }
     public enum Filter {

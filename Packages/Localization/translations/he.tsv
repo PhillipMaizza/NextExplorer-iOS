@@ -1082,6 +1082,7 @@ downloadQueue.notifyDone	ההורדות הסתיימו
 fileInfo.rowSoftware	תוכנה
 fileInfo.sectionVersions	גרסאות
 fileInfo.versionsNone	אין גרסאות קודמות
+fileInfo.versionsLoadFailed	לא ניתן לטעון את הגרסאות. בדקו את החיבור ונסו שוב.
 fileInfo.versionRestore	שחזור…
 fileInfo.restoreTitle	לשחזר את הגרסה הזו?
 fileInfo.restoreMessage	הקובץ חוזר למצבו ב-%@. מה שהוא מכיל עכשיו נשמר כגרסה.

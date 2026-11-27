@@ -11,7 +11,7 @@
         @Binding var toastMessage: DSToastMessage?
         let onOpen: (FileItem) -> Void
 
-        @State private var versions = MacVersionsModel()
+        @State private var versions = VersionsModel()
 
         func body(content: Content) -> some View {
             content

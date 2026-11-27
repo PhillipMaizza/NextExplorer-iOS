@@ -16,6 +16,17 @@ extension BrowseFeature {
         case let .infoTapped(item):
             return loadInfo(&state, item: item)
 
+        #if os(iOS)
+            case let .versionsTapped(item):
+                guard state.isVersionsEnabled, !item.isDirectory else { return .none }
+                state.versionsItem = item
+                return closeInfo(&state)
+
+            case .versionsClosed:
+                state.versionsItem = nil
+                return .none
+        #endif
+
         case let .permissionsTapped(item):
             guard state.actions(for: item).canEditPermissions else { return .none }
             state.permissions = PermissionsFeature.State(serverURL: state.serverURL, item: item)

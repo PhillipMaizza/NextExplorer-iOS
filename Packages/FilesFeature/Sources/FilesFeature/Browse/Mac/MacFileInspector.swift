@@ -39,7 +39,7 @@
         var title: String?
         var folderTitle: String?
         var canSaveVersionCopy = true
-        var versions: MacVersionsModel?
+        var versions: VersionsModel?
         let onClose: () -> Void
         @ViewBuilder let more: () -> More
 
@@ -278,7 +278,7 @@
     /// showing pushes past the third folder deep.
     struct MacBrowseInspector<More: View>: ViewModifier {
         let screen: StoreOf<BrowseFeature>
-        let versions: MacVersionsModel
+        let versions: VersionsModel
         let onOpen: (FileItem) -> Void
         let onShare: (FileItem) -> Void
         @ViewBuilder let more: (FileItem) -> More

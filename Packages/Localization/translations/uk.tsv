@@ -1096,6 +1096,7 @@ downloadQueue.notifyDone	Завантаження завершено
 fileInfo.rowSoftware	Програмне забезпечення
 fileInfo.sectionVersions	Версії
 fileInfo.versionsNone	Немає попередніх версій
+fileInfo.versionsLoadFailed	Не вдалося завантажити версії. Перевірте зʼєднання та спробуйте ще раз.
 fileInfo.versionRestore	Відновити…
 fileInfo.restoreTitle	Відновити цю версію?
 fileInfo.restoreMessage	Файл повернеться до стану на %@. Те, що в ньому зараз, буде збережено як версію.

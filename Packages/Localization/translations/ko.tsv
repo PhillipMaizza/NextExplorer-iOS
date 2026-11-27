@@ -808,6 +808,7 @@ downloadQueue.notifyDone	다운로드 완료
 fileInfo.rowSoftware	소프트웨어
 fileInfo.sectionVersions	버전
 fileInfo.versionsNone	이전 버전 없음
+fileInfo.versionsLoadFailed	버전을 불러올 수 없습니다. 연결을 확인하고 다시 시도하세요.
 fileInfo.versionRestore	복원…
 fileInfo.restoreTitle	이 버전을 복원할까요?
 fileInfo.restoreMessage	파일이 %@의 상태로 돌아갑니다. 현재 내용은 버전으로 보관됩니다.

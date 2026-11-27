@@ -1054,6 +1054,7 @@ downloadQueue.notifyDone	Unduhan selesai
 fileInfo.rowSoftware	Perangkat Lunak
 fileInfo.sectionVersions	Versi
 fileInfo.versionsNone	Tidak ada versi sebelumnya
+fileInfo.versionsLoadFailed	Tidak dapat memuat versi. Periksa koneksi lalu coba lagi.
 fileInfo.versionRestore	Pulihkan…
 fileInfo.restoreTitle	Pulihkan versi ini?
 fileInfo.restoreMessage	File kembali seperti pada %@. Isinya saat ini disimpan sebagai versi.

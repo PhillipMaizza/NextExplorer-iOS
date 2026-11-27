@@ -1259,6 +1259,7 @@ downloadQueue.summary	%1$lld of %2$lld saved
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versions
 fileInfo.versionsNone	No earlier versions
+fileInfo.versionsLoadFailed	Couldn't load the versions. Check your connection and try again.
 fileInfo.versionRestore	Restore…
 fileInfo.restoreTitle	Restore this version?
 fileInfo.restoreMessage	The file goes back to how it was on %@. What it holds now is kept as a version.

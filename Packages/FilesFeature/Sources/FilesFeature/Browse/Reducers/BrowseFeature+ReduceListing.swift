@@ -208,6 +208,7 @@ extension BrowseFeature {
             state.isPersonalSpaceEnabled = features.isPersonalEnabled
             state.isTrashAvailable = features.trash != nil
             state.isUserVolumesEnabled = features.isUserVolumesEnabled
+            state.isVersionsEnabled = features.isVersionsEnabled
             let archiveExtensions = features.archiveExtensions ?? []
             state.archiveExtensions = archiveExtensions
             let modeSaved = rememberFolderSizeMode(&state, features.folderSizeMode)

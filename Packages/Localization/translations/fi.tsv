@@ -1068,6 +1068,7 @@ downloadQueue.notifyDone	Lataukset valmiit
 fileInfo.rowSoftware	Ohjelmisto
 fileInfo.sectionVersions	Versiot
 fileInfo.versionsNone	Ei aiempia versioita
+fileInfo.versionsLoadFailed	Versioita ei voitu ladata. Tarkista yhteys ja yritä uudelleen.
 fileInfo.versionRestore	Palauta…
 fileInfo.restoreTitle	Palautetaanko tämä versio?
 fileInfo.restoreMessage	Tiedosto palautuu sellaiseksi kuin se oli %@. Sen nykyinen sisältö säilytetään versiona.

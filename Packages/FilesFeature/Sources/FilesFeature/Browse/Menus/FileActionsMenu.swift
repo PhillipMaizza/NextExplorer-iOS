@@ -94,6 +94,15 @@ struct FileActionsMenu: View {
             #if os(macOS)
                 MacVersionsMenu(store: store, item: item)
                     .tint(.primaryDS)
+            #else
+                if store.isVersionsEnabled, !item.isDirectory {
+                    Button {
+                        store.send(.versionsTapped(item))
+                    } label: {
+                        Label { Text(L10n.Browse.actionVersions) } icon: { MenuIcon.versions.image }
+                    }
+                    .tint(.primaryDS)
+                }
             #endif
         }
         #if os(macOS)

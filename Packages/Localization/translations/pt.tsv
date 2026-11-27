@@ -822,6 +822,7 @@ downloadQueue.notifyDone	Downloads concluídos
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versões
 fileInfo.versionsNone	Nenhuma versão anterior
+fileInfo.versionsLoadFailed	Não foi possível carregar as versões. Verifique a ligação e tente novamente.
 fileInfo.versionRestore	Restaurar…
 fileInfo.restoreTitle	Restaurar esta versão?
 fileInfo.restoreMessage	O ficheiro volta a ficar como estava em %@. O conteúdo atual é mantido como uma versão.

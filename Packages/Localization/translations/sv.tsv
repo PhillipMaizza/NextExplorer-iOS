@@ -822,6 +822,7 @@ downloadQueue.notifyDone	Hämtningar klara
 fileInfo.rowSoftware	Programvara
 fileInfo.sectionVersions	Versioner
 fileInfo.versionsNone	Inga tidigare versioner
+fileInfo.versionsLoadFailed	Det gick inte att läsa in versionerna. Kontrollera anslutningen och försök igen.
 fileInfo.versionRestore	Återställ…
 fileInfo.restoreTitle	Återställa den här versionen?
 fileInfo.restoreMessage	Filen återgår till hur den var %@. Det nuvarande innehållet sparas som en version.

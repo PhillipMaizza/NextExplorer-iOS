@@ -1068,6 +1068,7 @@ downloadQueue.notifyDone	A letöltések befejeződtek
 fileInfo.rowSoftware	Szoftver
 fileInfo.sectionVersions	Verziók
 fileInfo.versionsNone	Nincsenek korábbi verziók
+fileInfo.versionsLoadFailed	Nem sikerült betölteni a verziókat. Ellenőrizd a kapcsolatot, és próbáld újra.
 fileInfo.versionRestore	Visszaállítás…
 fileInfo.restoreTitle	Visszaállítja ezt a verziót?
 fileInfo.restoreMessage	A fájl visszaáll arra az állapotra, amilyen ekkor volt: %@. Ami most benne van, az verzióként megmarad.

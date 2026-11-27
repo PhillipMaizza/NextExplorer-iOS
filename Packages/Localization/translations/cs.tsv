@@ -1095,6 +1095,7 @@ uploads.uploadMore	Nahrát další soubory
 downloadQueue.notifyDone	Stahování dokončeno
 fileInfo.sectionVersions	Verze
 fileInfo.versionsNone	Žádné dřívější verze
+fileInfo.versionsLoadFailed	Verze se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.
 fileInfo.versionRestore	Obnovit…
 fileInfo.restoreTitle	Obnovit tuto verzi?
 fileInfo.restoreMessage	Soubor se vrátí do stavu z %@. To, co obsahuje nyní, se uchová jako verze.

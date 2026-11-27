@@ -1054,6 +1054,7 @@ downloadQueue.notifyDone	ดาวน์โหลดเสร็จสิ้น
 fileInfo.rowSoftware	ซอฟต์แวร์
 fileInfo.sectionVersions	เวอร์ชัน
 fileInfo.versionsNone	ไม่มีเวอร์ชันก่อนหน้า
+fileInfo.versionsLoadFailed	โหลดเวอร์ชันไม่ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
 fileInfo.versionRestore	กู้คืน…
 fileInfo.restoreTitle	กู้คืนเวอร์ชันนี้หรือไม่
 fileInfo.restoreMessage	ไฟล์จะกลับไปเป็นเหมือนเมื่อ %@ สิ่งที่ไฟล์มีอยู่ตอนนี้จะถูกเก็บไว้เป็นเวอร์ชันหนึ่ง

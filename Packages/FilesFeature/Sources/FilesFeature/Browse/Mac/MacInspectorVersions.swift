@@ -22,7 +22,7 @@
     struct MacInspectorVersionsSection: View {
         static let anchor = "versions"
 
-        let model: MacVersionsModel
+        let model: VersionsModel
         let history: FileVersionHistory
         let current: FileItem
         var canSaveCopy = true
@@ -92,7 +92,7 @@
                 VStack(alignment: .leading, spacing: .zero) {
                     entry(index: 0, isCurrent: true, isLast: history.versions.isEmpty) {
                         HStack(spacing: .space8) {
-                            Text(MacVersionsModel.date(current.dateModified)).type(.body3(.regular))
+                            Text(VersionsModel.date(current.dateModified)).type(.body3(.regular))
                             MacChip(text: L10n.FileInfo.versionCurrent, tone: .amber, size: .small)
                         }
                         Text(FileSizeFormat.string(current.size)).type(.caption(.regular), style: .secondary)
@@ -100,7 +100,7 @@
                     ForEach(Array(shownVersions.enumerated()), id: \.element.id) { offset, version in
                         entry(index: offset + 1, isCurrent: false, isLast: version.id == history.versions.last?.id) {
                             HStack(spacing: .space8) {
-                                Text(version.label ?? MacVersionsModel.date(version.modifiedAt))
+                                Text(version.label ?? VersionsModel.date(version.modifiedAt))
                                     .type(.body3(.regular))
                                     .lineLimit(1)
                                 if version.isPinned {
@@ -225,7 +225,7 @@
         private func subtitle(for version: FileVersion) -> String {
             var parts: [String] = []
             if version.label != nil {
-                parts.append(MacVersionsModel.date(version.modifiedAt))
+                parts.append(VersionsModel.date(version.modifiedAt))
             }
             if let author = version.author?.label {
                 parts.append(author)
@@ -259,7 +259,7 @@
             rights: .init(canSee: true, canDownload: true, canRestore: true, canRemove: true)
         )
         return MacInspectorVersionsSection(
-            model: MacVersionsModel(),
+            model: VersionsModel(),
             history: history,
             current: FileItem(name: "notes.md", path: "Docs", dateModified: Date(), size: 19_000, kind: "md")
         )
@@ -284,7 +284,7 @@
             rights: .init(canSee: true, canDownload: true, canRestore: true, canRemove: true)
         )
         return MacInspectorVersionsSection(
-            model: MacVersionsModel(),
+            model: VersionsModel(),
             history: history,
             current: FileItem(name: "notes.md", path: "Docs", dateModified: Date(), size: 19_000, kind: "md")
         )

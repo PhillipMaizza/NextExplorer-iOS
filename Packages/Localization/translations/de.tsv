@@ -822,6 +822,7 @@ downloadQueue.notifyDone	Downloads abgeschlossen
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versionen
 fileInfo.versionsNone	Keine früheren Versionen
+fileInfo.versionsLoadFailed	Versionen konnten nicht geladen werden. Prüfe die Verbindung und versuche es erneut.
 fileInfo.versionRestore	Wiederherstellen …
 fileInfo.restoreTitle	Diese Version wiederherstellen?
 fileInfo.restoreMessage	Die Datei wird auf den Stand vom %@ zurückgesetzt. Der aktuelle Inhalt bleibt als Version erhalten.

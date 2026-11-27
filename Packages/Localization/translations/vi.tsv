@@ -1054,6 +1054,7 @@ downloadQueue.notifyDone	Tải xuống hoàn tất
 fileInfo.rowSoftware	Phần mềm
 fileInfo.sectionVersions	Phiên bản
 fileInfo.versionsNone	Không có phiên bản trước
+fileInfo.versionsLoadFailed	Không thể tải các phiên bản. Hãy kiểm tra kết nối và thử lại.
 fileInfo.versionRestore	Khôi phục…
 fileInfo.restoreTitle	Khôi phục phiên bản này?
 fileInfo.restoreMessage	Tệp sẽ quay về như lúc %@. Nội dung hiện tại được giữ lại thành một phiên bản.

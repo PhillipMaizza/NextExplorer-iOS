@@ -836,6 +836,7 @@ downloadQueue.notifyDone	Descărcări finalizate
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versiuni
 fileInfo.versionsNone	Nicio versiune anterioară
+fileInfo.versionsLoadFailed	Versiunile nu au putut fi încărcate. Verifică conexiunea și încearcă din nou.
 fileInfo.versionRestore	Restaurează…
 fileInfo.restoreTitle	Restaurezi această versiune?
 fileInfo.restoreMessage	Fișierul revine la starea din %@. Conținutul actual este păstrat ca versiune.

@@ -878,6 +878,7 @@ downloadQueue.notifyDone	اكتمل التنزيل
 fileInfo.rowSoftware	البرنامج
 fileInfo.sectionVersions	الإصدارات
 fileInfo.versionsNone	لا توجد إصدارات سابقة
+fileInfo.versionsLoadFailed	تعذّر تحميل النسخ. تحقق من الاتصال وحاول مرة أخرى.
 fileInfo.versionRestore	استعادة…
 fileInfo.restoreTitle	استعادة هذا الإصدار؟
 fileInfo.restoreMessage	يعود الملف إلى ما كان عليه في %@. يُحفظ محتواه الحالي كإصدار.

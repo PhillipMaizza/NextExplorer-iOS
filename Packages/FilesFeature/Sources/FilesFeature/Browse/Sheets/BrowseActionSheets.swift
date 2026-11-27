@@ -16,6 +16,9 @@ struct BrowseActionSheets: ViewModifier {
     @Binding var shareTarget: FileItem?
     /// From the folder picker appearing until its sheet has fully closed.
     @Binding var isDestinationPickerOnScreen: Bool
+    #if os(iOS)
+        @State private var versions = VersionsModel()
+    #endif
 
     private var isFrontmost: Bool {
         (store.previewItem != nil) == isInPreview
@@ -42,7 +45,16 @@ struct BrowseActionSheets: ViewModifier {
                 }
             }
         #if os(iOS)
-            .dsSheet(item: infoBinding) { BrowseInfoSheetContent(store: store, phase: $0) }
+            .dsSheet(item: infoBinding) { BrowseInfoSheetContent(store: store, phase: $0, versions: versions) }
+            .navigationDestination(item: versionsBinding) { item in
+                VersionsPage(
+                    item: item,
+                    serverURL: store.serverURL,
+                    account: store.cacheScope,
+                    model: versions,
+                    onFilesChanged: { store.send(.refreshButtonTapped) }
+                )
+            }
             .dsSheet(isPresented: bulkDownloadSheetBinding) {
                 BrowseDownloadChoiceSheet(
                     count: store.bulkDownloadChoice?.count ?? 0,
@@ -71,6 +83,19 @@ struct BrowseActionSheets: ViewModifier {
             }
         #endif
     }
+
+    #if os(iOS)
+        private var versionsBinding: Binding<FileItem?> {
+            Binding(
+                get: { isInPreview ? nil : store.versionsItem },
+                set: { item in
+                    if item == nil, store.versionsItem != nil {
+                        store.send(.versionsClosed)
+                    }
+                }
+            )
+        }
+    #endif
 
     private var bulkDownloadSheetBinding: Binding<Bool> {
         Binding(

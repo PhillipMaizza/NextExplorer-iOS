@@ -35,6 +35,7 @@ enum BrowseInfoSheetPhase: Identifiable, Equatable {
 struct BrowseInfoSheetContent: View {
     let store: StoreOf<BrowseFeature>
     let phase: BrowseInfoSheetPhase
+    let versions: VersionsModel
 
     var body: some View {
         switch phase {
@@ -47,7 +48,19 @@ struct BrowseInfoSheetContent: View {
                 usage: store.infoUsage,
                 errorMessage: store.infoErrorMessage,
                 onDismiss: { store.send(.infoDismissed) }
-            )
+            ) {
+                #if os(iOS)
+                    if store.isVersionsEnabled, !item.isDirectory, store.infoErrorMessage == nil {
+                        VersionsInfoSection(
+                            item: item,
+                            serverURL: store.serverURL,
+                            account: store.cacheScope,
+                            model: versions,
+                            onShowAll: { store.send(.versionsTapped(item)) }
+                        )
+                    }
+                #endif
+            }
         }
     }
 }

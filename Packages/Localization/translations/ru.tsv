@@ -850,6 +850,7 @@ downloadQueue.notifyDone	Загрузки завершены
 fileInfo.rowSoftware	Программа
 fileInfo.sectionVersions	Версии
 fileInfo.versionsNone	Нет более ранних версий
+fileInfo.versionsLoadFailed	Не удалось загрузить версии. Проверьте подключение и повторите попытку.
 fileInfo.versionRestore	Восстановить…
 fileInfo.restoreTitle	Восстановить эту версию?
 fileInfo.restoreMessage	Файл вернётся к состоянию на %@. Текущее содержимое сохранится как версия.

@@ -164,7 +164,7 @@ struct BrowseInfoAndPermissionsTests {
 
     private func permissionsState(isAdmin: Bool, in path: String = TestFolder.documents) -> BrowseFeature.State {
         let item = BrowseFixtures.file(TestFile.report, in: path, size: 10)
-        var state = BrowseFixtures.loadedState(path, items: [item])
+        let state = BrowseFixtures.loadedState(path, items: [item])
         state.$isAdmin.withLock { $0 = isAdmin }
         return state
     }

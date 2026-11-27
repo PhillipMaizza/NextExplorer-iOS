@@ -822,6 +822,7 @@ downloadQueue.notifyDone	Downloads voltooid
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versies
 fileInfo.versionsNone	Geen eerdere versies
+fileInfo.versionsLoadFailed	Kan versies niet laden. Controleer de verbinding en probeer het opnieuw.
 fileInfo.versionRestore	Zet terug…
 fileInfo.restoreTitle	Deze versie terugzetten?
 fileInfo.restoreMessage	Het bestand gaat terug naar hoe het was op %@. De huidige inhoud blijft bewaard als versie.

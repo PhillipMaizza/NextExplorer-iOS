@@ -1068,6 +1068,7 @@ downloadQueue.notifyDone	Downloads færdige
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versioner
 fileInfo.versionsNone	Ingen tidligere versioner
+fileInfo.versionsLoadFailed	Versionerne kunne ikke indlæses. Tjek forbindelsen, og prøv igen.
 fileInfo.versionRestore	Gendan…
 fileInfo.restoreTitle	Gendan denne version?
 fileInfo.restoreMessage	Filen vender tilbage til, som den var %@. Det, den indeholder nu, gemmes som en version.

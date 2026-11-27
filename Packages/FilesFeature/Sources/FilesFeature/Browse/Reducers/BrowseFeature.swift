@@ -59,6 +59,10 @@ public struct BrowseFeature {
         /// The server has a trash (any server since mid September 2026): the root offers a Trash row.
         public var isTrashAvailable = false
         public var isUserVolumesEnabled = false
+        var isVersionsEnabled = false
+        #if os(iOS)
+            var versionsItem: FileItem?
+        #endif
         @Shared(.inMemory(AccountRole.isAdminSharedKey)) public var isAdmin = false
         var archiveExtensions: [String] = []
         /// How far the server's folder size index goes, from its last features answer (kept on disk so
@@ -724,6 +728,10 @@ public struct BrowseFeature {
         case transferResponse(Result<TransferOutcome, FilesClientError>)
         case destinationPicker(PresentationAction<DestinationPickerFeature.Action>)
         case infoTapped(FileItem)
+        #if os(iOS)
+            case versionsTapped(FileItem)
+            case versionsClosed
+        #endif
         case permissionsTapped(FileItem)
         case permissions(PresentationAction<PermissionsFeature.Action>)
         case infoDismissed

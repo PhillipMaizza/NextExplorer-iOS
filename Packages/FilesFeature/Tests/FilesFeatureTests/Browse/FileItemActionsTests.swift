@@ -84,7 +84,7 @@ struct FileItemActionsTests {
 
     @Test("A writable share never offers Permissions, even to an admin")
     func shareIsNeverRepermissioned() {
-        var state = screen(access(
+        let state = screen(access(
             write: true, upload: true, delete: true, share: true, download: true, folder: true, file: true
         ))
         state.$isAdmin.withLock { $0 = true }

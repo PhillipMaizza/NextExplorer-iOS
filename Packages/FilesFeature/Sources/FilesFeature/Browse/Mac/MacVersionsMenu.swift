@@ -14,7 +14,7 @@
         let item: FileItem
         @ViewBuilder let label: () -> MenuLabel
         var onPick: () -> Void = {}
-        @Environment(MacVersionsModel.self) private var versions: MacVersionsModel?
+        @Environment(VersionsModel.self) private var versions: VersionsModel?
 
         var body: some View {
             if let versions {
@@ -30,7 +30,7 @@
         }
 
         @ViewBuilder
-        private func entries(_ phase: MacVersionsMenuPhase, versions: MacVersionsModel) -> some View {
+        private func entries(_ phase: VersionsMenuPhase, versions: VersionsModel) -> some View {
             switch phase {
             case .hidden, .unloaded:
                 EmptyView()
@@ -43,7 +43,7 @@
                         .disabled(true)
                 }
                 ForEach(history.versions.prefix(Constants.listedVersions)) { version in
-                    Menu(version.label ?? MacVersionsModel.date(version.modifiedAt)) {
+                    Menu(version.label ?? VersionsModel.date(version.modifiedAt)) {
                         if history.rights.canRestore {
                             Button(L10n.FileInfo.versionRestore) { onPick(); versions.beginRestore(version, of: item) }
                         }
@@ -87,7 +87,7 @@
         let model = withDependencies {
             $0.filesClient.serverFeatures = { _ in ServerFeatures(isVersionsEnabled: true) }
         } operation: {
-            MacVersionsModel()
+            VersionsModel()
         }
         MacVersionsMenu(store: Store(initialState: .preview(items: browsePreviewItems)) { BrowseFeature() }, item: item)
             .environment(model)

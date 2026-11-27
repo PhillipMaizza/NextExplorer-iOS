@@ -18,13 +18,14 @@ private enum Constants {
 /// Deliberately presented only once the fetch has actually resolved (success or failure):
 /// see `BrowseContentView.InfoSheetPhase` and `FileInfoLoadingSheet`, which is shown instead
 /// while the fetch is still in flight.
-struct FileInfoSheet: View {
+struct FileInfoSheet<Footer: View>: View {
     let item: FileItem
     let metadata: FileMetadata?
     /// Server disk figures for a directory, when the server reported them.
     var usage: StorageUsage?
     let errorMessage: String?
     let onDismiss: () -> Void
+    @ViewBuilder var footer: () -> Footer
 
     var body: some View {
         DSDynamicHeightSheet {
@@ -46,10 +47,30 @@ struct FileInfoSheet: View {
             } else if let metadata {
                 FileInfoDetails(metadata: metadata, usage: usage)
             }
+            footer()
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.topPadding)
         .padding(.bottom, Constants.bottomPadding)
+    }
+}
+
+extension FileInfoSheet where Footer == EmptyView {
+    init(
+        item: FileItem,
+        metadata: FileMetadata?,
+        usage: StorageUsage? = nil,
+        errorMessage: String?,
+        onDismiss: @escaping () -> Void
+    ) {
+        self.init(
+            item: item,
+            metadata: metadata,
+            usage: usage,
+            errorMessage: errorMessage,
+            onDismiss: onDismiss,
+            footer: { EmptyView() }
+        )
     }
 }
 

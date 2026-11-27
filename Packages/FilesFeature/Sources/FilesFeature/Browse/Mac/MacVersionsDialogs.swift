@@ -6,7 +6,7 @@
     import SwiftUI
 
     struct MacVersionsDialogs: ViewModifier {
-        @Bindable var model: MacVersionsModel
+        @Bindable var model: VersionsModel
 
         func body(content: Content) -> some View {
             content
@@ -14,7 +14,7 @@
                     let version = model.versionToRestore
                     MacAlertSheet(
                         title: L10n.FileInfo.restoreTitle,
-                        message: version.map { L10n.FileInfo.restoreMessage(MacVersionsModel.date($0.modifiedAt)) },
+                        message: version.map { L10n.FileInfo.restoreMessage(VersionsModel.date($0.modifiedAt)) },
                         confirmTitle: L10n.FileInfo.restoreConfirm,
                         isDestructive: false,
                         onConfirm: {
@@ -75,7 +75,7 @@
                         message: replacement.map {
                             L10n.FileInfo.replaceMessage(
                                 ($0.targetPath as NSString).lastPathComponent,
-                                MacVersionsModel.date($0.version.modifiedAt)
+                                VersionsModel.date($0.version.modifiedAt)
                             )
                         },
                         confirmTitle: L10n.Browse.transferConflictReplace,
@@ -101,7 +101,7 @@
                 }
         }
 
-        private func isPresented(_ keyPath: ReferenceWritableKeyPath<MacVersionsModel, (some Any)?>) -> Binding<Bool> {
+        private func isPresented(_ keyPath: ReferenceWritableKeyPath<VersionsModel, (some Any)?>) -> Binding<Bool> {
             Binding(get: { model[keyPath: keyPath] != nil }, set: {
                 if !$0 {
                     model[keyPath: keyPath] = nil
@@ -111,7 +111,7 @@
     }
 
     #Preview("Delete all confirmation") {
-        let model = MacVersionsModel()
+        let model = VersionsModel()
         model.isConfirmingDeleteAll = true
         return Text(verbatim: "report.pdf")
             .previewCanvas(.inspector)

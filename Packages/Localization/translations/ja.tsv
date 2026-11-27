@@ -808,6 +808,7 @@ downloadQueue.notifyDone	ダウンロード完了
 fileInfo.rowSoftware	ソフトウェア
 fileInfo.sectionVersions	バージョン
 fileInfo.versionsNone	以前のバージョンはありません
+fileInfo.versionsLoadFailed	バージョンを読み込めませんでした。接続を確認してもう一度お試しください。
 fileInfo.versionRestore	復元…
 fileInfo.restoreTitle	このバージョンを復元しますか？
 fileInfo.restoreMessage	ファイルは %@ の状態に戻ります。現在の内容はバージョンとして保持されます。
