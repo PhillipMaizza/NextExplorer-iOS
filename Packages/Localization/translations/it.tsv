@@ -624,6 +624,7 @@ login.passwordField	Password
 login.submit	Accedi
 login.plaintextWarning	Questa connessione non è cifrata. La tua password e la tua sessione vengono inviate in chiaro sulla rete locale.
 error.sessionExpired	La tua sessione è scaduta. Accedi di nuovo.
+error.accountsSignedOut	Disconnesso da %@. Accedi di nuovo con Aggiungi account.
 error.rateLimited	Troppe richieste. Riprova tra poco.
 error.network	Impossibile raggiungere il server.
 error.offline	Impossibile raggiungere il server. Controlla la connessione e riprova.

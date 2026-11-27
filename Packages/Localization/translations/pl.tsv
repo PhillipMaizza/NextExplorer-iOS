@@ -651,6 +651,7 @@ login.passwordField	Hasło
 login.submit	Zaloguj się
 login.plaintextWarning	To połączenie nie jest szyfrowane. Twoje hasło i sesja są wysyłane otwartym tekstem przez sieć lokalną.
 error.sessionExpired	Twoja sesja wygasła. Zaloguj się ponownie.
+error.accountsSignedOut	Wylogowano z %@. Zaloguj się ponownie przez Dodaj konto.
 error.rateLimited	Zbyt wiele żądań. Spróbuj ponownie za chwilę.
 error.network	Nie można połączyć się z serwerem.
 error.offline	Nie można połączyć się z serwerem. Sprawdź połączenie i spróbuj ponownie.

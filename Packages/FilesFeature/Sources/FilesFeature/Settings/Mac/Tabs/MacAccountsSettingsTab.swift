@@ -122,7 +122,7 @@
             } control: {
                 if account.isActive {
                     MacChip(text: L10n.Settings.badgeActive, tone: .green)
-                } else {
+                } else if !isSelected {
                     Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
                         .buttonStyle(.macDS(.secondary, size: .small))
                         .fixedSize()

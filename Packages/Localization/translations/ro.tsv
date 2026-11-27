@@ -638,6 +638,7 @@ login.passwordField	Parolă
 login.submit	Conectează-te
 login.plaintextWarning	Această conexiune nu este criptată. Parola și sesiunea ta sunt trimise în clar prin rețeaua locală.
 error.sessionExpired	Sesiunea ta a expirat. Conectează-te din nou.
+error.accountsSignedOut	Deconectat de la %@. Conectează-te din nou cu Adaugă cont.
 error.rateLimited	Prea multe cereri. Încearcă din nou în scurt timp.
 error.network	Nu s-a putut contacta serverul.
 error.offline	Serverul nu poate fi accesat. Verifică conexiunea și încearcă din nou.

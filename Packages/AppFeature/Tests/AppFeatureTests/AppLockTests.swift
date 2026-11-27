@@ -132,7 +132,9 @@ extension AppSuites {
                 $0.authClient.activeAccountID = { AppFixtures.accountB }
             }
 
-            await store.send(.activateAccount(lockedB))
+            await store.send(.activateAccount(lockedB)) {
+                $0.returnAccountID = AppFixtures.accountA
+            }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
             await store.receive(\.destination.authenticated.mainTab.downloadQueue.accountLeft)
             await store.receive(\.lockShown) {

@@ -947,6 +947,7 @@ login.plaintextWarning	This connection isn't encrypted. Your password and sessio
 
 # ---- errors (FilesClientError.userMessage) ----
 error.sessionExpired	Your session expired. Sign in again.
+error.accountsSignedOut	Signed out of %@. Sign in again with Add Account.
 error.rateLimited	Too many requests. Try again shortly.
 error.network	Couldn't reach the server.
 error.offline	Can't reach the server. Check your connection and try again.

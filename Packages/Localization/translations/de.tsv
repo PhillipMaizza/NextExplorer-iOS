@@ -625,6 +625,7 @@ login.passwordField	Passwort
 login.submit	Anmelden
 login.plaintextWarning	Diese Verbindung ist nicht verschlüsselt. Dein Passwort und deine Sitzung werden im Klartext über das lokale Netzwerk gesendet.
 error.sessionExpired	Deine Sitzung ist abgelaufen. Melde dich erneut an.
+error.accountsSignedOut	Von %@ abgemeldet. Melde dich über „Account hinzufügen“ erneut an.
 error.rateLimited	Zu viele Anfragen. Versuche es in Kürze erneut.
 error.network	Server konnte nicht erreicht werden.
 error.offline	Server nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.

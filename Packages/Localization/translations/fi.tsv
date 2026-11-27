@@ -815,6 +815,7 @@ login.hidePassword	Piilota salasana
 login.submit	Kirjaudu sisään
 login.plaintextWarning	Tämä yhteys ei ole salattu. Salasanasi ja istuntosi lähetetään selkokielisenä paikallisen verkon kautta.
 error.sessionExpired	Istuntosi on vanhentunut. Kirjaudu uudelleen sisään.
+error.accountsSignedOut	Kirjauduttu ulos tililtä %@. Kirjaudu uudelleen kohdasta Lisää tili.
 error.rateLimited	Liian monta pyyntöä. Yritä hetken kuluttua uudelleen.
 error.network	Palvelimeen ei saatu yhteyttä.
 error.offline	Palvelimeen ei saada yhteyttä. Tarkista yhteys ja yritä uudelleen.

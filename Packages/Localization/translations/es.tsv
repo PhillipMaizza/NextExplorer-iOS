@@ -624,6 +624,7 @@ login.passwordField	Contraseña
 login.submit	Iniciar sesión
 login.plaintextWarning	Esta conexión no está cifrada. Tu contraseña y sesión se envían sin protección por la red local.
 error.sessionExpired	Tu sesión ha caducado. Inicia sesión de nuevo.
+error.accountsSignedOut	Se cerró la sesión de %@. Vuelve a iniciar sesión con Añadir cuenta.
 error.rateLimited	Demasiadas solicitudes. Inténtalo de nuevo en breve.
 error.network	No se pudo conectar con el servidor.
 error.offline	No se puede conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.

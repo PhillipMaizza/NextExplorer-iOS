@@ -20,6 +20,7 @@
         @State private var inspectorReserve: CGFloat = .zero
         @State private var windowWidth: CGFloat = .zero
         @State private var isSqueezedToRail = false
+        @Environment(\.controlActiveState) private var controlActiveState
 
         private var isSqueezed: Bool {
             inspectorReserve > .zero && windowWidth - expandedWidth - inspectorReserve < Metrics.contentMinWidth
@@ -51,6 +52,16 @@
                     .overlay(alignment: .trailing) { resizeHandle }
             }
             .macChromeBackground()
+            .onKeyPress(.escape) {
+                guard isAccountPanelShown else { return .ignored }
+                isAccountPanelShown = false
+                return .handled
+            }
+            .onChange(of: controlActiveState) { _, state in
+                if state != .key {
+                    isAccountPanelShown = false
+                }
+            }
             .onGeometryChange(for: CGFloat.self, of: \.size.width) { windowWidth = $0 }
             .onPreferenceChange(MacInspectorReserveKey.self) { inspectorReserve = $0 }
             .onChange(of: isSqueezed) { _, squeezed in

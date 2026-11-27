@@ -815,6 +815,7 @@ login.hidePassword	Parolayı Gizle
 login.submit	Oturum Aç
 login.plaintextWarning	Bu bağlantı şifrelenmemiş. Parolanız ve oturumunuz yerel ağ üzerinden düz metin olarak gönderilir.
 error.sessionExpired	Oturumunuzun süresi doldu. Yeniden oturum açın.
+error.accountsSignedOut	%@ oturumu kapatıldı. Hesap Ekle ile yeniden giriş yapın.
 error.rateLimited	Çok fazla istek. Kısa süre sonra tekrar deneyin.
 error.network	Sunucuya ulaşılamadı.
 error.offline	Sunucuya ulaşılamıyor. Bağlantınızı kontrol edip tekrar deneyin.

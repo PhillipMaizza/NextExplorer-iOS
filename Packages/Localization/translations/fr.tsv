@@ -625,6 +625,7 @@ login.passwordField	Mot de passe
 login.submit	Se connecter
 login.plaintextWarning	Cette connexion n'est pas chiffrée. Votre mot de passe et votre session sont envoyés en clair sur le réseau local.
 error.sessionExpired	Votre session a expiré. Reconnectez-vous.
+error.accountsSignedOut	Déconnecté de %@. Reconnectez-vous avec Ajouter un compte.
 error.rateLimited	Trop de requêtes. Réessayez bientôt.
 error.network	Impossible de joindre le serveur.
 error.offline	Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.

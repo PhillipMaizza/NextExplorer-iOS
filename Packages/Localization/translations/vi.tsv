@@ -802,6 +802,7 @@ login.hidePassword	Ẩn mật khẩu
 login.submit	Đăng nhập
 login.plaintextWarning	Kết nối này không được mã hóa. Mật khẩu và phiên của bạn được gửi dạng văn bản thuần qua mạng nội bộ.
 error.sessionExpired	Phiên của bạn đã hết hạn. Hãy đăng nhập lại.
+error.accountsSignedOut	Đã đăng xuất khỏi %@. Đăng nhập lại bằng Thêm tài khoản.
 error.rateLimited	Quá nhiều yêu cầu. Hãy thử lại sau ít phút.
 error.network	Không thể kết nối đến máy chủ.
 error.offline	Không thể kết nối tới máy chủ. Hãy kiểm tra kết nối và thử lại.

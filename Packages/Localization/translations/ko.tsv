@@ -612,6 +612,7 @@ login.passwordField	비밀번호
 login.submit	로그인
 login.plaintextWarning	이 연결은 암호화되지 않았습니다. 비밀번호와 세션이 로컬 네트워크를 통해 평문으로 전송됩니다.
 error.sessionExpired	세션이 만료되었습니다. 다시 로그인하세요.
+error.accountsSignedOut	%@에서 로그아웃되었습니다. 계정 추가로 다시 로그인하세요.
 error.rateLimited	요청이 너무 많습니다. 잠시 후 다시 시도하세요.
 error.network	서버에 연결할 수 없습니다.
 error.offline	서버에 연결할 수 없습니다. 연결 상태를 확인하고 다시 시도하세요.

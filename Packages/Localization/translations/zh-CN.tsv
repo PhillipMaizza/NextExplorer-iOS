@@ -612,6 +612,7 @@ login.passwordField	密码
 login.submit	登录
 login.plaintextWarning	此连接未加密。您的密码和会话以明文形式通过本地网络发送。
 error.sessionExpired	您的会话已过期。请重新登录。
+error.accountsSignedOut	已退出 %@。请通过添加账户重新登录。
 error.rateLimited	请求过多。请稍后重试。
 error.network	无法连接到服务器。
 error.offline	无法连接服务器。请检查网络连接后重试。

@@ -84847,6 +84847,191 @@
         }
       }
     },
+    "error.accountsSignedOut": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed out of %@. Sign in again with Add Account."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تم تسجيل الخروج من %@. سجّل الدخول مجددًا عبر إضافة حساب."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odhlášeno z účtu %@. Znovu se přihlaste přes Přidat účet."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logget ud af %@. Log ind igen med Tilføj konto."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Von %@ abgemeldet. Melde dich über „Account hinzufügen“ erneut an."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Έγινε αποσύνδεση από %@. Συνδεθείτε ξανά με Προσθήκη λογαριασμού."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se cerró la sesión de %@. Vuelve a iniciar sesión con Añadir cuenta."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kirjauduttu ulos tililtä %@. Kirjaudu uudelleen kohdasta Lisää tili."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déconnecté de %@. Reconnectez-vous avec Ajouter un compte."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "בוצעה התנתקות מ־%@. יש להתחבר שוב דרך הוספת חשבון."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ से साइन आउट हो गया। खाता जोड़ें से फिर से साइन इन करें।"
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kijelentkezve: %@. Jelentkezz be újra a Fiók hozzáadása menüponttal."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keluar dari %@. Masuk lagi dengan Tambah Akun."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnesso da %@. Accedi di nuovo con Aggiungi account."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ からサインアウトしました。アカウントを追加から再度サインインしてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@에서 로그아웃되었습니다. 계정 추가로 다시 로그인하세요."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logget ut av %@. Logg inn igjen med Legg til konto."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afgemeld bij %@. Meld je opnieuw aan met Account toevoegen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wylogowano z %@. Zaloguj się ponownie przez Dodaj konto."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão terminada em %@. Inicie sessão novamente com Adicionar conta."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessão encerrada em %@. Entre novamente com Adicionar conta."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deconectat de la %@. Conectează-te din nou cu Adaugă cont."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выполнен выход из %@. Войдите снова через «Добавить аккаунт»."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utloggad från %@. Logga in igen med Lägg till konto."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ออกจากระบบ %@ แล้ว ลงชื่อเข้าใช้อีกครั้งด้วยเพิ่มบัญชี"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ oturumu kapatıldı. Hesap Ekle ile yeniden giriş yapın."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Виконано вихід з %@. Увійдіть знову через «Додати обліковий запис»."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã đăng xuất khỏi %@. Đăng nhập lại bằng Thêm tài khoản."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已退出 %@。请通过添加账户重新登录。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已登出 %@。請透過新增帳號重新登入。"
+          }
+        }
+      }
+    },
     "error.changedOnServer": {
       "extractionState": "manual",
       "localizations": {

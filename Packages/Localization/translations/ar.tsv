@@ -677,6 +677,7 @@ login.passwordField	كلمة السر
 login.submit	تسجيل الدخول
 login.plaintextWarning	هذا الاتصال غير مشفّر. تُرسل كلمة سرك وجلستك كنص عادي عبر الشبكة المحلية.
 error.sessionExpired	انتهت صلاحية جلستك. سجّل الدخول مرة أخرى.
+error.accountsSignedOut	تم تسجيل الخروج من %@. سجّل الدخول مجددًا عبر إضافة حساب.
 error.rateLimited	طلبات كثيرة جدًا. أعد المحاولة قريبًا.
 error.network	تعذّر الوصول إلى الخادم.
 error.offline	تعذّر الوصول إلى الخادم. تحقق من اتصالك وأعد المحاولة.

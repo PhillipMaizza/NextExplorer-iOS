@@ -828,6 +828,7 @@ login.hidePassword	הסתרת סיסמה
 login.submit	התחברות
 login.plaintextWarning	החיבור הזה אינו מוצפן. הסיסמה והסשן שלכם נשלחים כטקסט גלוי ברשת המקומית.
 error.sessionExpired	תוקף הסשן שלכם פג. התחברו שוב.
+error.accountsSignedOut	בוצעה התנתקות מ־%@. יש להתחבר שוב דרך הוספת חשבון.
 error.rateLimited	יותר מדי בקשות. נסו שוב בעוד רגע.
 error.network	לא ניתן להגיע לשרת.
 error.offline	לא ניתן להגיע לשרת. בדקו את החיבור ונסו שוב.

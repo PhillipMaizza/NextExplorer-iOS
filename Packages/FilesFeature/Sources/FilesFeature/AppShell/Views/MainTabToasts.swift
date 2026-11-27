@@ -12,6 +12,7 @@ struct MainTabToasts: ViewModifier {
 
     @State private var uploadMessage: DSToastMessage?
     @State private var downloadMessage: DSToastMessage?
+    @State private var signedOutMessage: DSToastMessage?
     #if os(macOS)
         @Environment(\.locale) private var locale
         @State private var uploadTransfer: DSToastMessage?
@@ -76,8 +77,27 @@ struct MainTabToasts: ViewModifier {
             .onChange(of: store.uploadToast, initial: true) { _, toast in
                 uploadMessage = toast.map(uploadToastMessage)
             }
+            .dsToast(
+                Binding(
+                    get: { signedOutMessage },
+                    set: {
+                        signedOutMessage = $0
+                        if $0 == nil, store.signedOutNotice != nil {
+                            store.send(.signedOutNoticeDismissed)
+                        }
+                    }
+                ),
+                extraBottomInset: extraBottomInset
+            )
             .onChange(of: store.downloadToast, initial: true) { _, message in
                 downloadMessage = message.map(downloadToastMessage)
+            }
+            .onChange(of: store.signedOutNotice, initial: true) { _, notice in
+                signedOutMessage = notice.map { text in
+                    .failure(text, actionTitle: L10n.MacSettings.addAccount) {
+                        store.send(.signedOutAddAccountTapped)
+                    }
+                }
             }
     }
 

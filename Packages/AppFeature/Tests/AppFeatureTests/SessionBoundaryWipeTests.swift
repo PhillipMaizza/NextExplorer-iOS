@@ -51,6 +51,7 @@ extension AppSuites {
         ) async {
             await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(next)))))
             await store.receive(\.activateAccount) {
+                $0.returnAccountID = leaving
                 $0.destination = AppFixtures.optimistic(serverURL, username: next.username ?? "")
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, leaving)
@@ -59,6 +60,7 @@ extension AppSuites {
             await store.receive(\.accountsRefreshed)
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
+                $0.returnAccountID = nil
                 $0.$downloadScope.withLock { $0 = downloadScope }
                 $0.destination = AppFixtures.confirmed(serverURL, user)
             }

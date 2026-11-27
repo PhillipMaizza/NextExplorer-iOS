@@ -815,6 +815,7 @@ login.hidePassword	Skjul adgangskode
 login.submit	Log ind
 login.plaintextWarning	Denne forbindelse er ikke krypteret. Din adgangskode og session sendes i klartekst over det lokale netværk.
 error.sessionExpired	Din session er udløbet. Log ind igen.
+error.accountsSignedOut	Logget ud af %@. Log ind igen med Tilføj konto.
 error.rateLimited	For mange forespørgsler. Prøv igen om lidt.
 error.network	Serveren kunne ikke nås.
 error.offline	Serveren kan ikke nås. Tjek din forbindelse, og prøv igen.

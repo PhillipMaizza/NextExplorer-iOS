@@ -256,6 +256,7 @@ extension AppSuites {
 
             await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsB)))))
             await store.receive(\.activateAccount) {
+                $0.returnAccountID = AppFixtures.accountA
                 $0.destination = AppFixtures.optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
@@ -264,6 +265,7 @@ extension AppSuites {
             await store.receive(\.accountsRefreshed)
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
+                $0.returnAccountID = nil
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
                 $0.destination = AppFixtures.confirmed(AppFixtures.serverB, AppFixtures.userB)
             }
@@ -449,6 +451,7 @@ extension AppSuites {
             await store.receive(\.sessionExpiryConfirmed)
             await store.receive(\.activeAccountTornDown)
             await store.receive(\.activateAccount) {
+                $0.returnAccountID = AppFixtures.accountA
                 $0.destination = AppFixtures.optimistic(AppFixtures.serverB, username: TestUser.bob)
             }
             await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
@@ -456,6 +459,7 @@ extension AppSuites {
             await store.receive(\.accountsRefreshed)
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
+                $0.returnAccountID = nil
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
                 $0.destination = AppFixtures.confirmed(AppFixtures.serverB, AppFixtures.userB)
             }

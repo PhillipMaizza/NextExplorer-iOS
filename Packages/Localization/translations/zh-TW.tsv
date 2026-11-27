@@ -612,6 +612,7 @@ login.passwordField	密碼
 login.submit	登入
 login.plaintextWarning	此連線未加密。您的密碼和工作階段以明文形式透過本地網路傳送。
 error.sessionExpired	您的工作階段已過期。請重新登入。
+error.accountsSignedOut	已登出 %@。請透過新增帳號重新登入。
 error.rateLimited	請求過多。請稍後重試。
 error.network	無法連線到伺服器。
 error.offline	無法連線到伺服器。請檢查網路連線後重試。

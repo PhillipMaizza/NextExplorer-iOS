@@ -815,6 +815,7 @@ login.hidePassword	Skjul passord
 login.submit	Logg inn
 login.plaintextWarning	Denne tilkoblingen er ikke kryptert. Passordet og økten din sendes i klartekst over det lokale nettverket.
 error.sessionExpired	Økten din har utløpt. Logg inn igjen.
+error.accountsSignedOut	Logget ut av %@. Logg inn igjen med Legg til konto.
 error.rateLimited	For mange forespørsler. Prøv igjen om litt.
 error.network	Fikk ikke kontakt med serveren.
 error.offline	Får ikke kontakt med serveren. Sjekk tilkoblingen og prøv igjen.

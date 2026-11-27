@@ -47,23 +47,13 @@
             .frame(width: Metrics.width)
             .background(
                 RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous)
-                    .fill(Color.macCard)
+                    .fill(Color.macRaisedSurface)
                     .shadow(
                         color: .black.opacity(Metrics.shadowOpacity),
                         radius: Metrics.shadowRadius,
                         y: Metrics.shadowY
                     )
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: Metrics.radius, style: .continuous)
-                    .strokeBorder(Color.macLine)
-            )
-            .background {
-                Button(L10n.Common.close, action: close)
-                    .keyboardShortcut(.cancelAction)
-                    .opacity(.zero)
-                    .accessibilityHidden(true)
-            }
             .accessibilityElement(children: .contain)
             .accessibilityLabel(L10n.Settings.sectionAccounts)
             .task { store.send(.signInStatusRequested) }
@@ -221,7 +211,7 @@
                             .lineLimit(1)
                         if let server = account.serverSubtitle {
                             Text(server)
-                                .type(.caption(.regular))
+                                .type(.body3(.regular))
                                 .foregroundStyle(Color.secondaryDS)
                                 .lineLimit(1)
                                 .truncationMode(.middle)
@@ -264,7 +254,7 @@
                 HStack(spacing: .space12) {
                     Circle()
                         .strokeBorder(
-                            Color.macLine,
+                            Color.macChromeTertiary,
                             style: StrokeStyle(lineWidth: Metrics.addStroke, dash: Metrics.addDash)
                         )
                         .frame(width: Metrics.rowAvatar, height: Metrics.rowAvatar)

@@ -624,6 +624,7 @@ login.passwordField	Palavra-passe
 login.submit	Iniciar sessão
 login.plaintextWarning	Esta ligação não está cifrada. A sua palavra-passe e sessão são enviadas em texto simples pela rede local.
 error.sessionExpired	A sua sessão expirou. Inicie sessão novamente.
+error.accountsSignedOut	Sessão terminada em %@. Inicie sessão novamente com Adicionar conta.
 error.rateLimited	Demasiados pedidos. Tente novamente em breve.
 error.network	Não foi possível contactar o servidor.
 error.offline	Não é possível contactar o servidor. Verifique a ligação e tente novamente.

@@ -612,6 +612,7 @@ login.passwordField	パスワード
 login.submit	ログイン
 login.plaintextWarning	この接続は暗号化されていません。パスワードとセッションはローカルネットワーク上を平文で送信されます。
 error.sessionExpired	セッションの有効期限が切れました。再度サインインしてください。
+error.accountsSignedOut	%@ からサインアウトしました。アカウントを追加から再度サインインしてください。
 error.rateLimited	リクエストが多すぎます。しばらくしてから再試行してください。
 error.network	サーバーに接続できませんでした。
 error.offline	サーバに接続できません。接続を確認して再試行してください。

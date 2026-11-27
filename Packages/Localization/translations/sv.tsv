@@ -625,6 +625,7 @@ login.passwordField	Lösenord
 login.submit	Logga in
 login.plaintextWarning	Den här anslutningen är inte krypterad. Ditt lösenord och din session skickas i klartext över det lokala nätverket.
 error.sessionExpired	Din session har gått ut. Logga in igen.
+error.accountsSignedOut	Utloggad från %@. Logga in igen med Lägg till konto.
 error.rateLimited	För många förfrågningar. Försök igen strax.
 error.network	Det gick inte att nå servern.
 error.offline	Det går inte att nå servern. Kontrollera anslutningen och försök igen.

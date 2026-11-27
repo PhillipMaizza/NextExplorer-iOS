@@ -802,6 +802,7 @@ login.hidePassword	Sembunyikan Kata Sandi
 login.submit	Masuk
 login.plaintextWarning	Koneksi ini tidak terenkripsi. Kata sandi dan sesi Anda dikirim apa adanya melalui jaringan lokal.
 error.sessionExpired	Sesi Anda berakhir. Masuk lagi.
+error.accountsSignedOut	Keluar dari %@. Masuk lagi dengan Tambah Akun.
 error.rateLimited	Terlalu banyak permintaan. Coba lagi sebentar lagi.
 error.network	Tidak dapat menjangkau server.
 error.offline	Tidak dapat menjangkau server. Periksa koneksi Anda dan coba lagi.

@@ -51,6 +51,7 @@ extension AppSuites {
                 $0.destination.modify(\.authenticated) { $0.mainTab.trash.phase = .loading }
             }
             await store.send(.activateAccount(credentialsB)) {
+                $0.returnAccountID = AppFixtures.accountA
                 $0.destination = AppFixtures.optimistic(AppFixtures.serverB, username: TestUser.bob)
                 $0.destination.modify(\.authenticated) { $0.mainTab.settings.$branding.withLock { $0 = Branding() } }
             }
@@ -63,6 +64,7 @@ extension AppSuites {
             trash.open()
             confirmation.open()
             await store.receive(\.sessionValidationResponse) {
+                $0.returnAccountID = nil
                 $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
                 $0.destination = AppFixtures.confirmed(AppFixtures.serverB, AppFixtures.userB)
             }

@@ -815,6 +815,7 @@ login.hidePassword	Jelszó elrejtése
 login.submit	Bejelentkezés
 login.plaintextWarning	Ez a kapcsolat nincs titkosítva. A jelszava és a munkamenete egyszerű szövegként kerül elküldésre a helyi hálózaton.
 error.sessionExpired	A munkamenet lejárt. Jelentkezzen be újra.
+error.accountsSignedOut	Kijelentkezve: %@. Jelentkezz be újra a Fiók hozzáadása menüponttal.
 error.rateLimited	Túl sok kérés. Próbálja újra egy kicsit később.
 error.network	A kiszolgáló nem érhető el.
 error.offline	A szerver nem érhető el. Ellenőrizze a kapcsolatot, és próbálja újra.

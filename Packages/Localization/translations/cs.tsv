@@ -841,6 +841,7 @@ login.hidePassword	Skrýt heslo
 login.submit	Přihlásit se
 login.plaintextWarning	Toto připojení není šifrované. Vaše heslo a relace se přenášejí v čitelné podobě přes místní síť.
 error.sessionExpired	Platnost vaší relace vypršela. Přihlaste se znovu.
+error.accountsSignedOut	Odhlášeno z účtu %@. Znovu se přihlaste přes Přidat účet.
 error.rateLimited	Příliš mnoho požadavků. Zkuste to za chvíli znovu.
 error.network	Server není dostupný.
 error.offline	Server není dostupný. Zkontrolujte připojení a zkuste to znovu.

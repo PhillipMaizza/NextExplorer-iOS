@@ -56,6 +56,7 @@ public struct MainTabFeature {
         public var uploadToast: UploadToast?
         /// The "saved to Downloads" confirmation once the download queue drains.
         public var downloadToast: String?
+        public var signedOutNotice: String?
         /// iPhone and iPad: staged files waiting for the Save to Files panel.
         public var pendingExportURLs: [URL] = []
         var pendingShare: KeptFilesShare?
@@ -164,6 +165,9 @@ public struct MainTabFeature {
         case dismissUploadToast
         case openDownloadsTab
         case dismissDownloadToast
+        case accountsSignedOut([String])
+        case signedOutNoticeDismissed
+        case signedOutAddAccountTapped
         /// The Save to Files panel closed; `didSave` is false when the user cancelled it.
         case deviceExportFinished(didSave: Bool)
         case deviceShareFinished
@@ -438,6 +442,18 @@ public struct MainTabFeature {
                 case .dismissDownloadToast:
                     state.downloadToast = nil
                     return .none
+
+                case let .accountsSignedOut(names):
+                    state.signedOutNotice = L10n.Error.accountsSignedOut(names.formatted(.list(type: .and)))
+                    return .none
+
+                case .signedOutNoticeDismissed:
+                    state.signedOutNotice = nil
+                    return .none
+
+                case .signedOutAddAccountTapped:
+                    state.signedOutNotice = nil
+                    return .send(.delegate(.addAccountRequested))
 
                 case let .uploads(.delegate(.queueFinished(summary))):
                     // Refetch only the folders an upload actually landed in, and only where they

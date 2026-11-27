@@ -54,6 +54,8 @@ public struct AppFeature {
         /// Every signed-in account, for the Settings switcher. Rebuilt after any account change.
         @Shared(.inMemory(AccountSummary.sharedKey)) public var accounts: [AccountSummary] = []
         public var leftAt: Date?
+        public var expiredAccountNames: [String] = []
+        public var returnAccountID: String?
 
         public init(destination: Destination.State = .loading) {
             self.destination = destination
@@ -97,7 +99,7 @@ public struct AppFeature {
         /// The server confirmed the session of this account is rejected, so it is torn down unless
         /// the active account changed in the meantime.
         case sessionExpiryConfirmed(accountID: String)
-        case activeAccountTornDown(SessionCredentials?)
+        case activeAccountTornDown(SessionCredentials?, expiredName: String?)
         case activateAccount(SessionCredentials)
         case accountsRefreshed([AccountSummary])
         case addAccount(PresentationAction<LoginFormFeature.Action>)
@@ -184,12 +186,14 @@ public struct AppFeature {
     /// When the stored accounts can't be read the account stays signed in, since tearing down then
     /// would sign every account out, and the next 401 asks again; its caches still go, because the
     /// server already ended its session.
-    private func tearDownExpired(accountID: String) -> Effect<Action> {
+    private func tearDownExpired(_ state: State, accountID: String) -> Effect<Action> {
+        let expiredName = state.accounts.first { $0.id == accountID }?.displayName
+        let returnAccountID = state.returnAccountID.flatMap { $0 == accountID ? nil : $0 }
         let authClient = authClient
         let accountCacheWipe = accountCacheWipe
         return .run { send in
             accountCacheWipe.markPending(accountID)
-            let next: SessionCredentials?
+            var next: SessionCredentials?
             do {
                 next = try await authClient.clearActiveSession()
             } catch {
@@ -198,8 +202,18 @@ public struct AppFeature {
                 return
             }
             accountCacheWipe.wipe(accountID)
-            await send(.activeAccountTornDown(next))
+            if next != nil, let returnAccountID, let back = try? await authClient.switchAccount(returnAccountID) {
+                next = back
+            }
+            await send(.activeAccountTornDown(next, expiredName: expiredName))
         }
+    }
+
+    private func announceExpiredAccounts(_ state: inout State) -> Effect<Action> {
+        guard !state.expiredAccountNames.isEmpty else { return .none }
+        let names = state.expiredAccountNames
+        state.expiredAccountNames = []
+        return .send(.destination(.authenticated(.mainTab(.accountsSignedOut(names)))))
     }
 
     private static func isSessionRejection(_ error: AuthClientError) -> Bool {
@@ -226,7 +240,7 @@ public struct AppFeature {
             let effect = Scope(state: \State.destination, action: \Action.Cases.destination) {
                 Destination.body
             }
-            .reduce(into: &state, action: action)
+            ._reduce(into: &state, action: action)
             guard let accountID else { return effect }
             return effect.cancellable(id: AccountWork(accountID: accountID))
         }
@@ -304,11 +318,12 @@ public struct AppFeature {
                 // that is.
                 guard credentials.accountID == state.currentAccountID else { return .none }
                 guard credentials.username == nil || credentials.username == user.username else {
-                    return tearDownExpired(accountID: credentials.accountID)
+                    return tearDownExpired(state, accountID: credentials.accountID)
                 }
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
+                state.returnAccountID = nil
                 let recordOwner = beginDownloadScope(
                     &state,
                     accountID: credentials.accountID,
@@ -319,15 +334,23 @@ public struct AppFeature {
                     renameStoredAccount(credentials, to: user.displayName),
                     refreshAccounts
                 )
-                if case let .authenticated(current) = state.destination, current.user == user {
-                    return .merge(accounts, recordOwner)
+                if case var .authenticated(current) = state.destination,
+                   current.accountID == credentials.accountID
+                {
+                    if current.user != user {
+                        current.user = user
+                        current.mainTab.settings.user = user
+                        current.mainTab.browse.root.$isAdmin.withLock { $0 = user.isAdmin }
+                        state.destination = .authenticated(current)
+                    }
+                    return .merge(accounts, recordOwner, announceExpiredAccounts(&state))
                 }
                 withAnimation(DSMotion.contentReveal) {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, user: user)
                     )
                 }
-                return .merge(accounts, recordOwner)
+                return .merge(accounts, recordOwner, announceExpiredAccounts(&state))
 
             case let .sessionValidationResponse(.failure(error), credentials):
                 // Only a real auth rejection tears down the optimistic session; a network
@@ -338,7 +361,7 @@ public struct AppFeature {
                 }
                 // The active account is invalid: drop it and fall through to whatever account
                 // remains (or the login screen when it was the last one).
-                return tearDownExpired(accountID: credentials.accountID)
+                return tearDownExpired(state, accountID: credentials.accountID)
 
             case .sessionExpiryDetected:
                 if state.sessionDidExpire {
@@ -359,11 +382,14 @@ public struct AppFeature {
 
             case let .sessionExpiryConfirmed(accountID):
                 guard accountID == state.currentAccountID else { return .none }
-                return tearDownExpired(accountID: accountID)
+                return tearDownExpired(state, accountID: accountID)
 
-            case let .activeAccountTornDown(next):
+            case let .activeAccountTornDown(next, expiredName):
                 state.clearAccountSharedState()
                 if let next {
+                    if let expiredName {
+                        state.expiredAccountNames.append(expiredName)
+                    }
                     // Another account is still signed in: switch to it rather than dropping the
                     // user out to the login screen.
                     return .send(.activateAccount(next))
@@ -375,6 +401,9 @@ public struct AppFeature {
 
             case let .activateAccount(credentials):
                 let leavingAccountID = state.currentAccountID
+                if state.returnAccountID == nil {
+                    state.returnAccountID = leavingAccountID
+                }
                 if credentials.isLocked {
                     return .concatenate(
                         stopOfflineWork(leaving: leavingAccountID),
@@ -633,6 +662,8 @@ public struct AppFeature {
     /// Full teardown to the login screen: no account left signed in. Clears every cache and
     /// per-session state so nothing leaks into the next sign in.
     func teardownToLogin(_ state: inout State, removesClientCertificates: Bool) -> Effect<Action> {
+        state.expiredAccountNames = []
+        state.returnAccountID = nil
         state.clearAccountSharedState()
         state.$downloadScope.withLock { $0 = "" }
         CacheAccountScope.set("")

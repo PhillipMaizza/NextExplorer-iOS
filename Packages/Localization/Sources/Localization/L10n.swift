@@ -478,6 +478,7 @@ public enum L10n {
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("emptyState.noSearchMatches", a0) }
     }
     public enum Error {
+        public static func accountsSignedOut(_ a0: CVarArg) -> String { tr("error.accountsSignedOut", a0) }
         public static var changedOnServer: String { tr("error.changedOnServer") }  // "This file was changed on the server after you opened it."
         public static var clientCertificateRejected: String { tr("error.clientCertificateRejected") }  // "The server refused your client certificate."
         public static var clientCertificateRequired: String { tr("error.clientCertificateRequired") }  // "This server needs a client certificate. Add one in Settings."

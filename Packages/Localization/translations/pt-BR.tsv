@@ -846,6 +846,7 @@ login.hidePassword	Ocultar senha
 login.submit	Entrar
 login.plaintextWarning	Esta conexão não é criptografada. Sua senha e sua sessão são enviadas em texto simples pela rede local.
 error.sessionExpired	Sua sessão expirou. Entre novamente.
+error.accountsSignedOut	Sessão encerrada em %@. Entre novamente com Adicionar conta.
 error.rateLimited	Muitas solicitações. Tente novamente em breve.
 error.network	Não foi possível conectar ao servidor.
 error.offline	Não foi possível acessar o servidor. Verifique sua conexão e tente novamente.

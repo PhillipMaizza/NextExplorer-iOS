@@ -625,6 +625,7 @@ login.passwordField	Wachtwoord
 login.submit	Inloggen
 login.plaintextWarning	Deze verbinding is niet versleuteld. Je wachtwoord en sessie worden onversleuteld over het lokale netwerk verzonden.
 error.sessionExpired	Je sessie is verlopen. Meld je opnieuw aan.
+error.accountsSignedOut	Afgemeld bij %@. Meld je opnieuw aan met Account toevoegen.
 error.rateLimited	Te veel verzoeken. Probeer het zo dadelijk opnieuw.
 error.network	Kan de server niet bereiken.
 error.offline	Kan de server niet bereiken. Controleer je verbinding en probeer het opnieuw.
