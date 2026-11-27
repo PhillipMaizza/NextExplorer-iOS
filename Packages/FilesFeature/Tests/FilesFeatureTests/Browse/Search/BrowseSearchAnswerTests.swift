@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 @testable import FilesFeature
 import Foundation
@@ -252,6 +253,13 @@ struct BrowseSearchAnswerTests {
             "Docs/rapport.pdf",
             "Docs/vieux-rapport.pdf",
         ])
+    }
+
+    @Test("Searching everywhere from My Files leaves its files out of the instant matches, as the server does")
+    func everywhereFromMyFilesSkipsItsFiles() {
+        let myFiles = reportsState(PersonalSpace.rootPath, scope: .everywhere)
+        #expect(instantIDs(TestSearch.rankTerm, in: myFiles).isEmpty)
+        #expect(instantIDs(TestSearch.rankTerm, in: reportsState(PersonalSpace.rootPath)).count == 3)
     }
 
     @Test("A path below a folder is what follows it, and the whole path below the root")
