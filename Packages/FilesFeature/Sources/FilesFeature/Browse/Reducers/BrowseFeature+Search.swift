@@ -59,16 +59,12 @@ extension BrowseFeature {
 
     func fetchSearchLanes(_ state: inout State, isDebounced: Bool) -> Effect<Action> {
         let myFiles = fetchSearchResults(state, isDebounced: isDebounced)
-        #if os(macOS)
-            guard state.isSearchingMyFilesAndVolumes else {
-                state.volumeSearch = VolumeSearch()
-                return .merge(myFiles, .cancel(id: state.cancelID(.searchVolumes)))
-            }
-            state.volumeSearch.phase = .loading
-            return .merge(myFiles, fetchVolumeResults(state, isDebounced: isDebounced))
-        #elseif os(iOS)
-            return myFiles
-        #endif
+        guard state.isSearchingMyFilesAndVolumes else {
+            state.volumeSearch = VolumeSearch()
+            return .merge(myFiles, .cancel(id: state.cancelID(.searchVolumes)))
+        }
+        state.volumeSearch.phase = .loading
+        return .merge(myFiles, fetchVolumeResults(state, isDebounced: isDebounced))
     }
 
     func fetchVolumeResults(_ state: State, isDebounced: Bool) -> Effect<Action> {

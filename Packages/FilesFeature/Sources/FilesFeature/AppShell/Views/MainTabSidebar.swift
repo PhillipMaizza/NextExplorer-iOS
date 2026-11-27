@@ -42,15 +42,6 @@ private enum Constants {
     #endif
 }
 
-enum MacSidebarWidth {
-    static let min: CGFloat = 220
-    static let ideal: CGFloat = 280
-    static let max: CGFloat = 360
-    static let handle: CGFloat = .space8
-    static let collapseThreshold: CGFloat = (MacSidebarRail.width + min) / 2
-    static let panelAppearScale: CGFloat = 0.96
-}
-
 /// The split view's sidebar on iPad and the Mac: the app's name, the sections, then the tip jar, help
 /// and Settings, and the signed in account at the foot. Compact width uses the bottom tab bar instead.
 struct MainTabSidebar: View {

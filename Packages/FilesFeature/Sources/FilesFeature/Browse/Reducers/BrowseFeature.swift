@@ -102,12 +102,8 @@ public struct BrowseFeature {
         }
 
         public var isSearchingMyFilesAndVolumes: Bool {
-            #if os(macOS)
-                effectiveSearchScope == .everywhere
-                    && directoryPath.split(separator: "/").first.map(String.init) == PersonalSpace.rootPath
-            #else
-                false
-            #endif
+            effectiveSearchScope == .everywhere
+                && directoryPath.split(separator: "/").first.map(String.init) == PersonalSpace.rootPath
         }
 
         /// How far below the root this folder sits: 0 at the root, 1 for a top level location.

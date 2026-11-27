@@ -168,4 +168,13 @@
         })
         .frame(width: 1100, height: 700)
     }
+
+    enum MacSidebarWidth {
+        static let min: CGFloat = 220
+        static let ideal: CGFloat = 280
+        static let max: CGFloat = 360
+        static let handle: CGFloat = .space8
+        static let collapseThreshold: CGFloat = (MacSidebarRail.width + min) / 2
+        static let panelAppearScale: CGFloat = 0.96
+    }
 #endif

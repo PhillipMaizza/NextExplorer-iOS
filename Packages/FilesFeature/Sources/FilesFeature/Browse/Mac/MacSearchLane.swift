@@ -4,28 +4,8 @@
     import Localization
     import SwiftUI
 
-    struct MacSearchLane: Identifiable {
-        let title: String
-        let sections: SearchResultSections
-        var phase: DataPhase = .loaded
-        var onShowMore: (() -> Void)?
-        var onRetry: (() -> Void)?
-
-        var id: String {
-            title
-        }
-
-        var rows: [SearchResultItem] {
-            sections.onDevice + sections.remote
-        }
-
-        var isShown: Bool {
-            !rows.isEmpty || phase != .loaded
-        }
-    }
-
     struct MacSearchLaneHeader: View {
-        let lane: MacSearchLane
+        let lane: SearchLane
 
         var body: some View {
             HStack(spacing: .space8) {
@@ -63,14 +43,14 @@
         MacSearchResultsTable(
             sections: SearchResultSections([], onDeviceIDs: []),
             lanes: [
-                MacSearchLane(
+                SearchLane(
                     title: "My Files",
                     sections: SearchResultSections(
                         [SearchResultItem(name: "Trip plan.txt", path: "personal", kind: "file", isNameMatch: true)],
                         onDeviceIDs: []
                     )
                 ),
-                MacSearchLane(
+                SearchLane(
                     title: "Volumes",
                     sections: SearchResultSections([
                         SearchResultItem(

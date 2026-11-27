@@ -16,7 +16,7 @@
         let sections: SearchResultSections
         var elsewhere: [SearchResultItem] = []
         var elsewhereNote: AttributedString?
-        var lanes: [MacSearchLane] = []
+        var lanes: [SearchLane] = []
         let favoritePaths: Set<String>
         var serverURL: URL?
         let onOpen: (SearchResultItem) -> Void

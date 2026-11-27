@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 
 /// Search hits and browse rows share an `id` scheme (`path/name`), so `searchResultTapped`
@@ -136,5 +137,37 @@ struct BrowseSearchFooter: View {
     /// server to search at all.
     private static func canOfferWiderSearch(_ store: StoreOf<BrowseFeature>) -> Bool {
         store.canWidenSearch && !store.isSearchTermTooShort && store.displayedSearchResults?.isEmpty == false
+    }
+}
+
+struct BrowseSearchLaneHeader: View {
+    let lane: SearchLane
+
+    var body: some View {
+        HStack(spacing: .space8) {
+            DSFieldLabel(lane.title)
+                .accessibilityAddTraits(.isHeader)
+            if !lane.rows.isEmpty {
+                Text(lane.rows.count.formatted())
+                    .type(.body3(.semibold), style: .secondary)
+            }
+            Spacer(minLength: .space8)
+            if let failure = lane.phase.errorMessage {
+                Text(failure)
+                    .type(.caption(.regular), style: .error)
+                    .lineLimit(1)
+                if let onRetry = lane.onRetry {
+                    Button(L10n.Common.retry, action: onRetry)
+                        .type(.body3(.semibold), style: .link)
+                        .buttonStyle(.borderless)
+                }
+            } else if lane.phase == .loading {
+                DSSpinner(size: .small)
+            } else if let onShowMore = lane.onShowMore {
+                Button(L10n.Browse.searchShowMore, action: onShowMore)
+                    .type(.body3(.semibold), style: .link)
+                    .buttonStyle(.borderless)
+            }
+        }
     }
 }

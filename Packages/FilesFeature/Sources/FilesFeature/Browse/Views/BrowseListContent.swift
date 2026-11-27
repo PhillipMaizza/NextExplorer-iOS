@@ -28,7 +28,16 @@ struct BrowseListContent<Menu: View>: View {
                 }
                 if store.isSearching {
                     let sections = store.searchResultSections
-                    if sections.isSplit {
+                    let lanes = store.searchLanes.filter(\.isShown)
+                    if !lanes.isEmpty {
+                        ForEach(lanes) { lane in
+                            Section {
+                                BrowseSearchResultRows(store: store, results: lane.rows, source: source)
+                            } header: {
+                                BrowseSearchLaneHeader(lane: lane)
+                            }
+                        }
+                    } else if sections.isSplit {
                         Section {
                             BrowseSearchResultRows(store: store, results: sections.onDevice, source: source)
                         } header: {
@@ -162,7 +171,17 @@ struct BrowseGridContent<Menu: View>: View {
     @ViewBuilder
     private var searchCells: some View {
         let sections = store.searchResultSections
-        if sections.isSplit {
+        let lanes = store.searchLanes.filter(\.isShown)
+        if !lanes.isEmpty {
+            ForEach(lanes) { lane in
+                VStack(alignment: .leading, spacing: FileGridMetrics.headerSpacing) {
+                    BrowseSearchLaneHeader(lane: lane)
+                    FileGrid {
+                        BrowseSearchResultCells(store: store, results: lane.rows, source: source)
+                    }
+                }
+            }
+        } else if sections.isSplit {
             section(L10n.Search.onDevice) {
                 FileGrid {
                     BrowseSearchResultCells(store: store, results: sections.onDevice, source: source)
