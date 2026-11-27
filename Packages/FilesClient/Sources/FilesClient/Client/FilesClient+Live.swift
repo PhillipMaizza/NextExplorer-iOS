@@ -224,11 +224,11 @@ public extension FilesClient {
             saveTextContent: { serverURL, path, content in
                 try await service.saveTextContent(serverURL: serverURL, path: path, content: content)
             },
-            extractZip: { serverURL, item in
-                try await service.extractZip(serverURL: serverURL, item: item)
+            extractZip: { serverURL, item, password in
+                try await service.extractZip(serverURL: serverURL, item: item, password: password)
             },
-            extractZipHere: { serverURL, item in
-                try await service.extractZipHere(serverURL: serverURL, item: item)
+            extractZipHere: { serverURL, item, password in
+                try await service.extractZipHere(serverURL: serverURL, item: item, password: password)
             },
             listArchive: { serverURL, archive, inside in
                 try await service.listArchive(serverURL: serverURL, archive: archive, inside: inside)

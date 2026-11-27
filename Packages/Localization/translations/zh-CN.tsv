@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	没有“%@”的结果。
 browse.searchEverywhere	在所有位置搜索
 browse.searchFailed	无法搜索。请检查连接后重试。
 browse.progressExtracting	正在解压…
+browse.archivePasswordTitle	需要密码
+browse.archivePasswordMessage	此压缩包受密码保护。请输入密码以解压。
+browse.archivePasswordPlaceholder	压缩包密码
+browse.archivePasswordInvalid	密码不正确，或压缩包已损坏。
 browse.progressCompressing	正在压缩…
 browse.offlineBannerDetail	正在显示来自 %@ 的已保存副本
 browse.actionCopy	拷贝

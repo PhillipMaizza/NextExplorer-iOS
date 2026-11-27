@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	「%@」の結果がありません。
 browse.searchEverywhere	すべての場所を検索
 browse.searchFailed	検索できませんでした。接続を確認して再試行してください。
 browse.progressExtracting	展開中…
+browse.archivePasswordTitle	パスワードが必要です
+browse.archivePasswordMessage	このアーカイブは保護されています。展開するにはパスワードを入力してください。
+browse.archivePasswordPlaceholder	アーカイブのパスワード
+browse.archivePasswordInvalid	パスワードが正しくないか、アーカイブが破損しています。
 browse.progressCompressing	圧縮中…
 browse.offlineBannerDetail	%@ の保存済みコピーを表示中
 browse.actionCopy	コピー

@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	Nincs találat a következőre: „%@”.
 browse.searchEverywhere	Keresés mindenhol
 browse.searchFailed	A keresés nem sikerült. Ellenőrizze a kapcsolatot, és próbálja újra.
 browse.progressExtracting	Kicsomagolás…
+browse.archivePasswordTitle	Jelszó szükséges
+browse.archivePasswordMessage	Ez az archívum védett. Add meg a jelszavát a kibontáshoz.
+browse.archivePasswordPlaceholder	Archívum jelszava
+browse.archivePasswordInvalid	Hibás jelszó, vagy az archívum sérült.
 browse.progressCompressing	Tömörítés…
 browse.offlineBannerDetail	Mentett másolat megjelenítése innen: %@
 browse.actionCopy	Másolás

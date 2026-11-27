@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	Немає збігів для “%@”.
 browse.searchEverywhere	Шукати всюди
 browse.searchFailed	Не вдалося виконати пошук. Перевірте з’єднання й спробуйте ще раз.
 browse.progressExtracting	Розпакування…
+browse.archivePasswordTitle	Потрібен пароль
+browse.archivePasswordMessage	Цей архів захищено. Введіть його пароль, щоб розпакувати.
+browse.archivePasswordPlaceholder	Пароль архіву
+browse.archivePasswordInvalid	Неправильний пароль або архів пошкоджено.
 browse.progressCompressing	Стиснення…
 browse.offlineBannerDetail	Показано збережену копію від %@
 browse.actionCopy	Копіювати

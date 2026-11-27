@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	Tidak ada hasil untuk “%@”.
 browse.searchEverywhere	Cari di mana saja
 browse.searchFailed	Tidak dapat mencari. Periksa koneksi Anda dan coba lagi.
 browse.progressExtracting	Mengekstrak…
+browse.archivePasswordTitle	Kata sandi diperlukan
+browse.archivePasswordMessage	Arsip ini dilindungi. Masukkan kata sandinya untuk mengekstraknya.
+browse.archivePasswordPlaceholder	Kata sandi arsip
+browse.archivePasswordInvalid	Kata sandi salah, atau arsip rusak.
 browse.progressCompressing	Mengompres…
 browse.offlineBannerDetail	Menampilkan salinan tersimpan dari %@
 browse.actionCopy	Salin

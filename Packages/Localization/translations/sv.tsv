@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	Inga träffar för ”%@”.
 browse.searchEverywhere	Sök överallt
 browse.searchFailed	Sökningen misslyckades. Kontrollera anslutningen och försök igen.
 browse.progressExtracting	Extraherar…
+browse.archivePasswordTitle	Lösenord krävs
+browse.archivePasswordMessage	Detta arkiv är skyddat. Ange lösenordet för att extrahera det.
+browse.archivePasswordPlaceholder	Arkivlösenord
+browse.archivePasswordInvalid	Felaktigt lösenord, eller så är arkivet skadat.
 browse.progressCompressing	Komprimerar…
 browse.offlineBannerDetail	Visar en sparad kopia från %@
 browse.actionCopy	Kopiera

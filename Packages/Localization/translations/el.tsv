@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	Κανένα αποτέλεσμα για «%@».
 browse.searchEverywhere	Αναζήτηση παντού
 browse.searchFailed	Η αναζήτηση απέτυχε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.
 browse.progressExtracting	Εξαγωγή…
+browse.archivePasswordTitle	Απαιτείται κωδικός
+browse.archivePasswordMessage	Αυτό το αρχείο συμπίεσης προστατεύεται. Εισαγάγετε τον κωδικό του για να το αποσυμπιέσετε.
+browse.archivePasswordPlaceholder	Κωδικός αρχείου συμπίεσης
+browse.archivePasswordInvalid	Λάθος κωδικός ή το αρχείο συμπίεσης είναι κατεστραμμένο.
 browse.progressCompressing	Συμπίεση…
 browse.offlineBannerDetail	Εμφάνιση αποθηκευμένου αντιγράφου από %@
 browse.actionCopy	Αντιγραφή

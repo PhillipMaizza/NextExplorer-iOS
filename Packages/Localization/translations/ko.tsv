@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	“%@”에 대한 결과가 없습니다.
 browse.searchEverywhere	모든 위치에서 검색
 browse.searchFailed	검색할 수 없습니다. 연결을 확인하고 다시 시도하세요.
 browse.progressExtracting	압축 푸는 중…
+browse.archivePasswordTitle	비밀번호 필요
+browse.archivePasswordMessage	이 압축 파일은 보호되어 있습니다. 압축을 풀려면 비밀번호를 입력하세요.
+browse.archivePasswordPlaceholder	압축 파일 비밀번호
+browse.archivePasswordInvalid	비밀번호가 올바르지 않거나 압축 파일이 손상되었습니다.
 browse.progressCompressing	압축하는 중…
 browse.offlineBannerDetail	%@의 저장된 사본을 표시하는 중
 browse.actionCopy	복사

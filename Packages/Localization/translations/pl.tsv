@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	Brak wyników dla „%@”.
 browse.searchEverywhere	Szukaj wszędzie
 browse.searchFailed	Nie można wyszukać. Sprawdź połączenie i spróbuj ponownie.
 browse.progressExtracting	Wypakowywanie…
+browse.archivePasswordTitle	Wymagane hasło
+browse.archivePasswordMessage	To archiwum jest chronione. Wprowadź hasło, aby je wypakować.
+browse.archivePasswordPlaceholder	Hasło archiwum
+browse.archivePasswordInvalid	Nieprawidłowe hasło lub archiwum jest uszkodzone.
 browse.progressCompressing	Kompresowanie…
 browse.offlineBannerDetail	Wyświetlanie zapisanej kopii z %@
 browse.actionCopy	Kopiuj

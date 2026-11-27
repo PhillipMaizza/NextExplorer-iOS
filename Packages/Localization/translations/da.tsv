@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	Ingen resultater for “%@”.
 browse.searchEverywhere	Søg overalt
 browse.searchFailed	Søgningen mislykkedes. Tjek din forbindelse, og prøv igen.
 browse.progressExtracting	Udpakker…
+browse.archivePasswordTitle	Adgangskode påkrævet
+browse.archivePasswordMessage	Dette arkiv er beskyttet. Angiv adgangskoden for at udpakke det.
+browse.archivePasswordPlaceholder	Arkivets adgangskode
+browse.archivePasswordInvalid	Forkert adgangskode, eller arkivet er beskadiget.
 browse.progressCompressing	Komprimerer…
 browse.offlineBannerDetail	Viser en gemt kopi fra %@
 browse.actionCopy	Kopiér

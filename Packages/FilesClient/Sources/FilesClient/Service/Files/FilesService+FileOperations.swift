@@ -353,20 +353,20 @@ extension FilesService {
     /// the archive into a *new* sibling folder (named after the zip, deduped if taken) and
     /// returns that folder as an item: there's no listing only or peek inside endpoint, and only
     /// `.zip` is supported server side (`.rar`/`.7z`/etc. 415 with "Only .zip archives...").
-    func extractZip(serverURL: URL, item: FileItem) async throws -> FileItem {
+    func extractZip(serverURL: URL, item: FileItem, password: String?) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.zipExtract)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(ExtractZipBody(path: item.id))
+        request.httpBody = try Self.encode(ExtractZipBody(path: item.id, password: password))
         let envelope = try await sendStreamedOperation(request, decoding: ExtractZipEnvelope.self)
         return envelope.item
     }
 
-    func extractZipHere(serverURL: URL, item: FileItem) async throws -> [FileItem] {
+    func extractZipHere(serverURL: URL, item: FileItem, password: String?) async throws -> [FileItem] {
         let url = serverURL.appendingPathComponent(APIPath.zipExtract)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(ExtractZipBody(path: item.id, destination: .current))
+        request.httpBody = try Self.encode(ExtractZipBody(path: item.id, destination: .current, password: password))
         return try await sendStreamedOperation(request, decoding: ExtractZipHereEnvelope.self).items
     }
 

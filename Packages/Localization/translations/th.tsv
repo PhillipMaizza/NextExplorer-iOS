@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	ไม่พบผลลัพธ์สำหร�
 browse.searchEverywhere	ค้นหาทุกที่
 browse.searchFailed	ค้นหาไม่สำเร็จ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
 browse.progressExtracting	กำลังแตกไฟล์…
+browse.archivePasswordTitle	ต้องใช้รหัสผ่าน
+browse.archivePasswordMessage	ไฟล์บีบอัดนี้ได้รับการป้องกัน ป้อนรหัสผ่านเพื่อแตกไฟล์
+browse.archivePasswordPlaceholder	รหัสผ่านไฟล์บีบอัด
+browse.archivePasswordInvalid	รหัสผ่านไม่ถูกต้อง หรือไฟล์บีบอัดเสียหาย
 browse.progressCompressing	กำลังบีบอัด…
 browse.offlineBannerDetail	กำลังแสดงสำเนาที่บันทึกไว้จาก %@
 browse.actionCopy	คัดลอก

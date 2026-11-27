@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	Aucun résultat pour « %@ ».
 browse.searchEverywhere	Rechercher partout
 browse.searchFailed	Recherche impossible. Vérifiez votre connexion et réessayez.
 browse.progressExtracting	Extraction…
+browse.archivePasswordTitle	Mot de passe requis
+browse.archivePasswordMessage	Cette archive est protégée. Saisissez son mot de passe pour l'extraire.
+browse.archivePasswordPlaceholder	Mot de passe de l'archive
+browse.archivePasswordInvalid	Mot de passe incorrect ou archive endommagée.
 browse.progressCompressing	Compression…
 browse.offlineBannerDetail	Affichage d'une copie enregistrée du %@
 browse.actionCopy	Copier

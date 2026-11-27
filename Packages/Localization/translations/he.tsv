@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	אין תוצאות עבור “%@”.
 browse.searchEverywhere	חיפוש בכל מקום
 browse.searchFailed	לא ניתן היה לחפש. בדקו את החיבור ונסו שוב.
 browse.progressExtracting	מחלץ…
+browse.archivePasswordTitle	נדרשת סיסמה
+browse.archivePasswordMessage	הארכיון הזה מוגן. יש להזין את הסיסמה שלו כדי לחלץ אותו.
+browse.archivePasswordPlaceholder	סיסמת הארכיון
+browse.archivePasswordInvalid	הסיסמה שגויה, או שהארכיון פגום.
 browse.progressCompressing	דוחס…
 browse.offlineBannerDetail	מוצג עותק שמור מ-%@
 browse.actionCopy	העתקה

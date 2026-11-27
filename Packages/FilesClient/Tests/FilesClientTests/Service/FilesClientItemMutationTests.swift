@@ -399,7 +399,7 @@ extension FilesClientLiveTests {
                 kind: "zip"
             )
 
-            let extracted = try await makeClient().extractZip(serverURL, item)
+            let extracted = try await makeClient().extractZip(serverURL, item, nil)
 
             #expect(extracted.name == "bundle")
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -415,7 +415,7 @@ extension FilesClientLiveTests {
             stub(statusCode: 415, body: Data())
             let item = FileItem(name: "bundle.rar", path: "", dateModified: MockDate.date, size: 0, kind: "rar")
             await #expect(throws: FilesClientError.server(statusCode: 415)) {
-                _ = try await makeClient().extractZip(serverURL, item)
+                _ = try await makeClient().extractZip(serverURL, item, nil)
             }
         }
 
@@ -532,7 +532,7 @@ extension FilesClientLiveTests {
                 kind: "zip"
             )
 
-            let extracted = try await makeClient().extractZipHere(serverURL, archive)
+            let extracted = try await makeClient().extractZipHere(serverURL, archive, nil)
 
             #expect(extracted.map(\.name) == ["a.jpg", "b.jpg"])
             let body = try #require(StubURLProtocol.capturedRequestBody)
@@ -555,7 +555,7 @@ extension FilesClientLiveTests {
                 kind: "zip"
             )
 
-            let extracted = try await makeClient().extractZip(serverURL, archive)
+            let extracted = try await makeClient().extractZip(serverURL, archive, nil)
 
             #expect(extracted.name == "photos")
             #expect(extracted.isDirectory)

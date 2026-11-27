@@ -16,6 +16,8 @@ extension FilesClientError {
         case let .serverMessage(_, message): message
         case .clientCertificateRequired: L10n.Error.clientCertificateRequired
         case .clientCertificateRejected: L10n.Error.clientCertificateRejected
+        case .archivePasswordRequired: L10n.Browse.archivePasswordMessage
+        case .archiveInvalidPassword: L10n.Browse.archivePasswordInvalid
         }
     }
 }

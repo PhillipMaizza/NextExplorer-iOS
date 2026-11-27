@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	Sin resultados para “%@”.
 browse.searchEverywhere	Buscar en todo
 browse.searchFailed	No se pudo buscar. Comprueba tu conexión e inténtalo de nuevo.
 browse.progressExtracting	Extrayendo…
+browse.archivePasswordTitle	Contraseña requerida
+browse.archivePasswordMessage	Este archivo comprimido está protegido. Introduce su contraseña para extraerlo.
+browse.archivePasswordPlaceholder	Contraseña del archivo comprimido
+browse.archivePasswordInvalid	Contraseña incorrecta o el archivo comprimido está dañado.
 browse.progressCompressing	Comprimiendo…
 browse.offlineBannerDetail	Mostrando una copia guardada de %@
 browse.actionCopy	Copiar

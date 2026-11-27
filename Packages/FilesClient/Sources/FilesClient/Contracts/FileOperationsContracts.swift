@@ -45,6 +45,7 @@ extension FilesService {
 
         let path: String
         var destination: Destination?
+        var password: String?
     }
 
     struct ExtractZipEnvelope: Decodable {
@@ -90,6 +91,7 @@ extension FilesService {
 
         let type: String?
         let message: String?
+        let code: String?
         /// A transfer's progress (`copiedBytes` of `totalBytes`), or an archive's (`percent`).
         let copiedBytes: Int64?
         let totalBytes: Int64?
@@ -103,6 +105,18 @@ extension FilesService {
                 return min(max(Double(copiedBytes) / Double(totalBytes), 0), 1)
             }
             return percent.map { min(max($0 / 100, 0), 1) }
+        }
+    }
+
+    enum ArchivePasswordCode: String {
+        case required = "ARCHIVE_PASSWORD_REQUIRED"
+        case invalid = "ARCHIVE_INVALID_PASSWORD"
+
+        var error: FilesClientError {
+            switch self {
+            case .required: .archivePasswordRequired
+            case .invalid: .archiveInvalidPassword
+            }
         }
     }
 

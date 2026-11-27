@@ -7,13 +7,15 @@
         private let title: String
         @Binding private var text: String
         private let prompt: Text?
+        private let isInvalid: Bool
         @State private var isRevealed = false
         @FocusState private var isFocused: Bool
 
-        public init(_ title: String, text: Binding<String>, prompt: Text? = nil) {
+        public init(_ title: String, text: Binding<String>, prompt: Text? = nil, isInvalid: Bool = false) {
             self.title = title
             _text = text
             self.prompt = prompt
+            self.isInvalid = isInvalid
         }
 
         public var body: some View {
@@ -43,7 +45,7 @@
             }
             .padding(.leading, .space12)
             .padding(.trailing, .space8)
-            .macFieldChrome(isFocused: isFocused)
+            .macFieldChrome(isFocused: isFocused, isInvalid: isInvalid)
             .macAccentCaret(isFocused: isFocused, isRevealed: isRevealed)
         }
 
