@@ -13,6 +13,7 @@
         let store: StoreOf<BrowseFeature>
         let item: FileItem
         @ViewBuilder let label: () -> MenuLabel
+        var onPick: () -> Void = {}
         @Environment(MacVersionsModel.self) private var versions: MacVersionsModel?
 
         var body: some View {
@@ -44,11 +45,13 @@
                 ForEach(history.versions.prefix(Constants.listedVersions)) { version in
                     Menu(version.label ?? MacVersionsModel.date(version.modifiedAt)) {
                         if history.rights.canRestore {
-                            Button(L10n.FileInfo.versionRestore) { versions.beginRestore(version, of: item) }
+                            Button(L10n.FileInfo.versionRestore) { onPick(); versions.beginRestore(version, of: item) }
                         }
                         if history.rights.canDownload {
-                            Button(L10n.FileInfo.versionDownload) { versions.download(version, of: item) }
-                            Button(L10n.FileInfo.versionSaveCopy) { versions.saveCopy(version, of: item) }
+                            Button(L10n.FileInfo.versionDownload) { onPick(); versions.download(version, of: item) }
+                            if store.canCreateFileHere {
+                                Button(L10n.FileInfo.versionSaveCopy) { onPick(); versions.saveCopy(version, of: item) }
+                            }
                         }
                     }
                     .disabled(version.isAvailable == false || !history.rights.canActOnVersion)
@@ -58,6 +61,7 @@
                 Divider()
             }
             Button(L10n.Browse.actionShowAllVersions) {
+                onPick()
                 versions.revealRequest = item.id
                 store.send(.infoTapped(item))
             }
@@ -73,7 +77,7 @@
     extension MacVersionsMenu where MenuLabel == Label<Text, Image> {
         init(store: StoreOf<BrowseFeature>, item: FileItem) {
             self.init(store: store, item: item) {
-                Label { Text(L10n.Browse.actionVersions) } icon: { IconKit.time }
+                Label { Text(L10n.Browse.actionVersions) } icon: { MenuIcon.versions.image }
             }
         }
     }

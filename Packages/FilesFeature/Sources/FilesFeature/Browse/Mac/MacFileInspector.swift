@@ -38,6 +38,7 @@
         var showsMore = false
         var title: String?
         var folderTitle: String?
+        var canSaveVersionCopy = true
         var versions: MacVersionsModel?
         let onClose: () -> Void
         @ViewBuilder let more: () -> More
@@ -85,7 +86,12 @@
                         if let versions, let history = versions.history(for: item),
                            history.isEnabled || !history.versions.isEmpty
                         {
-                            MacInspectorVersionsSection(model: versions, history: history, current: item) {
+                            MacInspectorVersionsSection(
+                                model: versions,
+                                history: history,
+                                current: item,
+                                canSaveCopy: canSaveVersionCopy
+                            ) {
                                 withAnimation(DSMotion.contentReveal) {
                                     proxy.scrollTo(MacInspectorVersionsSection.anchor, anchor: .top)
                                 }
@@ -240,7 +246,7 @@
                     VStack(alignment: .leading, spacing: .space8) {
                         MacProgressBar(value: usage.fraction)
                         Text(L10n.FileInfo.diskFreeOf(Self.bytes(usage.free), Self.bytes(usage.capacity)))
-                            .type(.caption(.regular), style: .secondary)
+                            .type(.body3(.regular), style: .secondary)
                     }
                     .padding(.space16)
                     .macGroupedRows()
@@ -324,6 +330,7 @@
                     && !screen.state.inspectorMoreRows(for: item).isEmpty,
                 title: item.id == screen.directoryPath ? screen.title : nil,
                 folderTitle: MacInspectorLocation.folderTitle(of: item, on: screen.state),
+                canSaveVersionCopy: screen.canCreateFileHere,
                 versions: versions,
                 onClose: { screen.send(.infoDismissed) },
                 more: { more(item) }
@@ -350,10 +357,9 @@
             }
         }
 
-        /// Each item shows its own links; the server stores paths without outer slashes.
         static func links(_ all: [Share]?, for item: FileItem) -> [Share]? {
             let path = item.id.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-            return all?.filter { $0.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == path }
+            return all?.filter { $0.browsePath == path }
         }
     }
 

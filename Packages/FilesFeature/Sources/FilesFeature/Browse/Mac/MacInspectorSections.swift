@@ -10,6 +10,7 @@
         static let tileGlyph: CGFloat = .iconSmall
         static let tileFillOpacity: Double = .opacityWash
         static let headerSpacing: CGFloat = .space8
+        static let markSize: CGFloat = .size16
     }
 
     struct MacInspectorTile: View {
@@ -52,7 +53,7 @@
                         Spacer(minLength: .zero)
                         if let onShare {
                             Button(L10n.FileInfo.createLink, action: onShare)
-                                .buttonStyle(.macDS(.primary, size: .small))
+                                .buttonStyle(.macDS(.secondary, size: .small))
                         }
                     }
                     .padding(.horizontal, .space16)
@@ -71,11 +72,12 @@
                             Text(subtitle(for: share)).type(.caption(.regular), style: .secondary).lineLimit(1)
                         }
                         Spacer(minLength: .zero)
-                        Button { PlatformPasteboard.copy(share.shareLink(serverURL: serverURL)) } label: {
-                            IconKit.copy.foregroundStyle(Color.secondaryDS)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabelWithTooltip(L10n.Shared.copyLink)
+                        MacIconButton(
+                            IconKit.macCopy,
+                            label: L10n.Shared.copyLink,
+                            size: .compact,
+                            tint: .secondaryDS
+                        ) { PlatformPasteboard.copy(share.shareLink(serverURL: serverURL)) }
                     }
                     .padding(.horizontal, .space16)
                     .padding(.vertical, .space12)
@@ -110,54 +112,81 @@
                 MacInspectorGroup {
                     MacInspectorRow(L10n.Permissions.fieldOwner, permissions.owner)
                     MacInspectorRow(L10n.Permissions.fieldGroup, permissions.group)
-                }
-                Grid(horizontalSpacing: .space8, verticalSpacing: .space8) {
-                    GridRow {
+                    VStack(alignment: .trailing, spacing: .space12) {
+                        permissionsGrid
                         Text(modeText)
                             .type(.caption(.semibold), style: .secondary)
                             .monospaced()
                             .lineLimit(1)
-                            .fixedSize()
-                            .gridColumnAlignment(.leading)
-                        ForEach(PermissionRight.allCases, id: \.self) { right in
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, .space12)
+                }
+            }
+        }
+
+        private var permissionsGrid: some View {
+            Grid(horizontalSpacing: .zero, verticalSpacing: .zero) {
+                GridRow {
+                    Color.clear
+                        .gridCellUnsizedAxes([.horizontal, .vertical])
+                        .gridColumnAlignment(.leading)
+                    ForEach(PermissionRight.allCases, id: \.self) { right in
+                        gridCell {
                             Text(right.macTitle(isDirectory: isDirectory)).type(.caption(.semibold), style: .secondary)
                         }
                     }
-                    ForEach(PermissionScope.allCases, id: \.self) { scope in
-                        GridRow {
-                            Text(scope.macTitle).type(.body3(.regular))
-                            ForEach(PermissionRight.allCases, id: \.self) { right in
+                }
+                ForEach(PermissionScope.allCases, id: \.self) { scope in
+                    Rectangle()
+                        .fill(Color.macLine)
+                        .frame(height: .borderWidthHairline)
+                        .gridCellUnsizedAxes(.horizontal)
+                    GridRow {
+                        Text(scope.macTitle)
+                            .type(.body3(.regular))
+                            .padding(.trailing, .space8)
+                        ForEach(PermissionRight.allCases, id: \.self) { right in
+                            gridCell {
                                 mark(permissions.can(scope, right))
-                                    .frame(maxWidth: .infinity)
-                                    .accessibilityLabel(L10n.Common.pair(
-                                        scope.macTitle,
-                                        right.macTitle(isDirectory: isDirectory)
-                                    ))
-                                    .accessibilityHidden(!permissions.can(scope, right))
                             }
+                            .accessibilityLabel(L10n.Common.pair(
+                                scope.macTitle,
+                                right.macTitle(isDirectory: isDirectory)
+                            ))
+                            .accessibilityHidden(!permissions.can(scope, right))
                         }
                     }
                 }
-                .padding(.horizontal, .space16)
-                .padding(.vertical, .space12)
-                .macGroupedRows()
             }
+        }
+
+        private func gridCell(@ViewBuilder _ content: () -> some View) -> some View {
+            content()
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, .space8)
+                .overlay(alignment: .leading) {
+                    Rectangle()
+                        .fill(Color.macLine)
+                        .frame(width: .borderWidthHairline)
+                }
         }
 
         private var modeText: String {
             "\(FilePermissions.symbolicString(from: permissions.grid)) \u{00B7} \(permissions.octalString)"
         }
 
-        @ViewBuilder
         private func mark(_ isAllowed: Bool) -> some View {
-            if isAllowed {
-                IconKit.checkmark
-                    .fontWeight(.bold)
-                    .foregroundStyle(Color.accentText)
-            } else {
-                IconKit.minus
-                    .foregroundStyle(Color.macLine)
+            Group {
+                if isAllowed {
+                    IconKit.checkmarkCircleFill
+                        .foregroundStyle(Color.accentText)
+                } else {
+                    IconKit.minus
+                        .foregroundStyle(Color.macLine)
+                }
             }
+            .frame(width: Metrics.markSize, height: Metrics.markSize)
         }
     }
 

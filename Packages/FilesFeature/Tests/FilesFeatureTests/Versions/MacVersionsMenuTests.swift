@@ -11,9 +11,13 @@ import TestUtils
     struct MacVersionsMenuTests {
         private let serverURL = URL(string: TestHost.exampleURLString)!
 
-        private nonisolated static func history(for path: String, canSee: Bool = true) -> FileVersionHistory {
+        private nonisolated static func history(
+            for path: String,
+            canSee: Bool = true,
+            isEnabled: Bool = true
+        ) -> FileVersionHistory {
             FileVersionHistory(
-                isEnabled: true,
+                isEnabled: isEnabled,
                 versions: [FileVersion(id: path, size: 1, modifiedAt: MockDate.date, capturedAt: MockDate.date)],
                 totalBytes: 1,
                 rights: .init(canSee: canSee, canDownload: true, canRestore: true, canRemove: true)
@@ -27,7 +31,9 @@ import TestUtils
         private func model(versionsEnabled: Bool = true, canSee: Bool = true) -> MacVersionsModel {
             withDependencies {
                 $0.filesClient.serverFeatures = { _ in ServerFeatures(isVersionsEnabled: versionsEnabled) }
-                $0.filesClient.fetchVersions = { _, path in Self.history(for: path, canSee: canSee) }
+                $0.filesClient.fetchVersions = { _, path in
+                    Self.history(for: path, canSee: canSee, isEnabled: versionsEnabled)
+                }
                 $0.filesClient.restoreVersion = { _, _, _ in }
             } operation: {
                 MacVersionsModel()
@@ -65,6 +71,28 @@ import TestUtils
             #expect(off.menuPhase(for: item) == .hidden)
             #expect(off.menuPhase(for: folder) == .hidden)
             #expect(hidden.menuPhase(for: item) == .hidden)
+        }
+
+        @Test("Versions switched off or on while the app runs show on the next file loaded")
+        func theSubmenuFollowsTheServerSwitch() async {
+            let isEnabled = LockIsolated(true)
+            let model = withDependencies {
+                $0.filesClient.serverFeatures = { _ in ServerFeatures(isVersionsEnabled: true) }
+                $0.filesClient.fetchVersions = { _, path in Self.history(for: path, isEnabled: isEnabled.value) }
+            } operation: {
+                MacVersionsModel()
+            }
+            let first = Self.file(TestFile.aText)
+            let second = Self.file(TestFile.bText)
+
+            await model.load(item: first, serverURL: serverURL, account: Constants.account)
+            isEnabled.setValue(false)
+            await model.load(item: second, serverURL: serverURL, account: Constants.account)
+            #expect(model.menuPhase(for: second) == .hidden)
+
+            isEnabled.setValue(true)
+            await model.load(item: first, serverURL: serverURL, account: Constants.account)
+            #expect(model.menuPhase(for: first) != .hidden)
         }
 
         @Test("A restore from the menu for another row refreshes that row's history and leaves the selection's")

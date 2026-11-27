@@ -72,6 +72,7 @@
             }
             guard !Task.isCancelled, let loaded = try? await filesClient.fetchVersions(serverURL, item.id),
                   self.serverURL == serverURL, self.account == account else { return }
+            isServerEnabled = loaded.isEnabled
             histories[item.id] = loaded
         }
 
