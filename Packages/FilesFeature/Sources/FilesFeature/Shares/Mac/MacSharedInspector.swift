@@ -41,7 +41,7 @@
         }
 
         private var subtitle: String {
-            let label = share?.trimmedLabel.flatMap { $0 == item.name ? nil : L10n.Shared.quotedLabel($0) }
+            let label = share?.trimmedLabel.flatMap { $0 == item.title ? nil : L10n.Shared.quotedLabel($0) }
             let place = isByMe
                 ? MacInspectorLocation.trail(parent: item.location ?? "")
                 : L10n.Shared.fromSharer(store.state.sharedByLabel(for: share ?? item.shares[0]))
@@ -131,7 +131,7 @@
 
         private var titles: some View {
             VStack(alignment: .leading, spacing: .space4) {
-                MacShareTitle(store: store, name: item.name, share: share, isEditable: isByMe && !isExpiredShare)
+                MacShareTitle(store: store, name: item.title, share: share, isEditable: isByMe && !isExpiredShare)
                 Text(subtitle)
                     .type(.body3(.regular), style: .secondary)
                     .lineLimit(2)

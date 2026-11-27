@@ -120,13 +120,17 @@ struct SharedFeatureItemsTests {
         #expect(items.allSatisfy { $0.location == nil })
     }
 
-    @Test("A received share is named by the label its owner gave it, as the web names it")
-    func withMeNamesAShareByItsLabel() {
-        let labelled = withMe("w1", owner: "u1", name: "QA Night", label: "Night notes")
-        let plain = withMe("w2", owner: "u1", name: "Report.pdf")
+    @Test("A received share is titled by its owner's label, as the web names it, and keeps its file name")
+    func withMeTitlesAShareByItsLabel() throws {
+        let labelled = withMe("w1", owner: "u1", name: "Report.pdf", label: "Night notes")
+        let plain = withMe("w2", owner: "u1", name: "Notes.txt")
 
-        let names = state(withMe: [labelled, plain]).items(for: .withMe).map(\.name)
-        #expect(Set(names) == ["Night notes", "Report.pdf"])
+        let items = state(withMe: [labelled, plain]).items(for: .withMe)
+        let titled = try #require(items.first { $0.id == "w1" })
+        let untitled = try #require(items.first { $0.id == "w2" })
+        #expect(titled.title == "Night notes")
+        #expect(titled.name == "Report.pdf")
+        #expect(untitled.title == "Notes.txt")
     }
 
     @Test("Searching With me finds a labelled share by its file or folder name too, as the web does")

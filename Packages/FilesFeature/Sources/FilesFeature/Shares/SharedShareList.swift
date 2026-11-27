@@ -29,7 +29,7 @@ struct SharedShareList: View {
                 SharedDetailHero(
                     share: item.shares[0],
                     iconName: item.name,
-                    title: item.name,
+                    title: item.title,
                     subtitle: subtitle,
                     serverURL: store.serverURL,
                     isByMe: true,

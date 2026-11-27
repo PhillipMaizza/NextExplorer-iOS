@@ -40,7 +40,7 @@
                     }
                 } else {
                     icon
-                    Text(row.item.name)
+                    Text(row.item.title)
                         .fontWeight(.semibold)
                         .lineLimit(1)
                         .truncationMode(.middle)

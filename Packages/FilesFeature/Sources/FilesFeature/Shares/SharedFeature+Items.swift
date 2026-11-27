@@ -64,12 +64,31 @@ public extension SharedFeature {
     struct Item: Equatable, Identifiable, Sendable {
         public let id: String
         public let name: String
+        public let title: String
         /// Parent folder path, nil at the root and for With me.
         public let location: String?
         public let shares: [Share]
         public let badges: [ShareBadge]
         /// Every share on it has expired.
         public let isExpired: Bool
+
+        init(
+            id: String,
+            name: String,
+            title: String? = nil,
+            location: String?,
+            shares: [Share],
+            badges: [ShareBadge],
+            isExpired: Bool
+        ) {
+            self.id = id
+            self.name = name
+            self.title = title ?? name
+            self.location = location
+            self.shares = shares
+            self.badges = badges
+            self.isExpired = isExpired
+        }
     }
 
     /// The open detail sheet: which item, and the share pushed over its list when it has several.
@@ -296,7 +315,8 @@ public extension SharedFeature.State {
         let parent = first.itemLocation
         return SharedFeature.Item(
             id: id,
-            name: segment == .withMe ? first.displayName : first.itemName,
+            name: first.itemName,
+            title: segment == .withMe ? first.displayName : nil,
             location: segment == .byMe && !parent.isEmpty ? parent : nil,
             shares: ordered,
             badges: ordered.map { badge(for: $0, segment: segment) },

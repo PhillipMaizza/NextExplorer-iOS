@@ -55,7 +55,7 @@ struct MacSharedRow: Identifiable {
     // The sort keys, one per column.
 
     var name: String {
-        item.name
+        item.title
     }
 
     /// How many people its shares reach; a public link adds none.
