@@ -29,6 +29,34 @@ struct MainTabTrashTests: MainTabTestSupport {
         await fresh.send(.tabSelected(.trash)) { $0.selectedTab = .trash }
     }
 
+    @Test("Returning to Shared already shown fetches its segment again; one never opened waits for its screen")
+    func returningRevalidatesALoadedShared() async {
+        let share = Share(
+            id: "s1",
+            shareToken: "tok",
+            ownerId: "u1",
+            isDirectory: true,
+            accessMode: .readonly,
+            sharingType: .anyone,
+            hasPassword: false,
+            createdAt: MockDate.date,
+            updatedAt: MockDate.date
+        )
+        let store = makeStore(makeState { $0.shared.phases[.byMe] = .loaded }) {
+            $0.filesClient.mySharedLinks = { _ in [share] }
+        }
+
+        await store.send(.tabSelected(.shared)) { $0.selectedTab = .shared }
+        await store.receive(\.shared.segmentChanged)
+        await store.receive(\.shared.sharesResponse) {
+            $0.shared.dataSources[.byMe] = .live
+            $0.shared.byMe = [share]
+        }
+
+        let fresh = makeStore()
+        await fresh.send(.tabSelected(.shared)) { $0.selectedTab = .shared }
+    }
+
     @Test("Go to Shared from the empty Browse root opens Shared on the links shared with me")
     func sharedWithMeRequestedOpensSharedWithMe() async {
         let store = makeStore {

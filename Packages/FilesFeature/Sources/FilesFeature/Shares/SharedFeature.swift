@@ -292,8 +292,11 @@ public struct SharedFeature {
 
             case let .segmentChanged(segment):
                 state.segment = segment
-                guard (state.phases[segment] ?? .idle).shouldLoadOnAppear else { return .none }
-                return load(&state, segment: segment)
+                switch state.phase(for: segment) {
+                case .loading: return .none
+                case .loaded: return fetch(state, segment: segment)
+                case .idle, .failed: return load(&state, segment: segment)
+                }
 
             case let .searchQueryChanged(query):
                 state.searchQuery = query
@@ -571,18 +574,19 @@ public struct SharedFeature {
             paint = .none
         }
         state.phases[segment] = .loading
+        return .merge(paint, fetch(state, segment: segment))
+    }
+
+    private func fetch(_ state: State, segment: Segment) -> Effect<Action> {
         let serverURL = state.serverURL
         let filesClient = filesClient
-        return .merge(
-            paint,
-            .run { send in
-                try await send(.sharesResponse(segment, apiResult {
-                    try segment == .byMe
-                        ? await filesClient.mySharedLinks(serverURL)
-                        : await filesClient.sharedWithMeLinks(serverURL)
-                }))
-            }
-        )
+        return .run { send in
+            try await send(.sharesResponse(segment, apiResult {
+                try segment == .byMe
+                    ? await filesClient.mySharedLinks(serverURL)
+                    : await filesClient.sharedWithMeLinks(serverURL)
+            }))
+        }
         .cancellable(id: CancelID.load(segment), cancelInFlight: true)
     }
 

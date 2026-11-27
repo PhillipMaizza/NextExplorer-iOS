@@ -143,14 +143,16 @@ struct SharedFeatureTests {
         #expect(completions.value == 1)
     }
 
-    @Test
-    func switchingToWithMeLoadsItThenSwitchingBackDoesNotReload() async {
+    @Test("Switching to With me loads it; coming back to a loaded segment fetches again without the skeleton")
+    func switchingSegmentsRevalidatesLoadedOnesSilently() async {
         let byMeShare = makeShare(id: "1")
         let withMeShare = makeShare(id: "2", byMe: false)
+        let newShare = makeShare(id: "3")
+        let byMeAnswers = LockIsolated([[byMeShare], [byMeShare, newShare]])
         let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
             SharedFeature()
         } withDependencies: {
-            $0.filesClient.mySharedLinks = { _ in [byMeShare] }
+            $0.filesClient.mySharedLinks = { _ in byMeAnswers.withValue { $0.removeFirst() } }
             $0.filesClient.sharedWithMeLinks = { _ in [withMeShare] }
             $0.filesClient.shareableUsers = { _ in [] }
         }
@@ -173,8 +175,10 @@ struct SharedFeatureTests {
             $0.withMe = [withMeShare]
         }
 
-        // Already loaded: TestStore would flag any unexpected reload effect/action here.
         await store.send(.segmentChanged(.byMe)) { $0.segment = .byMe }
+        await store.receive(\.sharesResponse) {
+            $0.byMe = [byMeShare, newShare]
+        }
     }
 
     @Test

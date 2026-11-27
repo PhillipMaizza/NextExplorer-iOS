@@ -251,7 +251,12 @@ public struct MainTabFeature {
                 switch action {
                 case let .tabSelected(tab):
                     state.selectedTab = tab
-                    return tab == .trash ? Self.refreshTrashIfLoaded(state) : .none
+                    switch tab {
+                    case .trash: return Self.refreshTrashIfLoaded(state)
+                    case .shared where state.shared.phase.hasLoaded:
+                        return .send(.shared(.segmentChanged(state.shared.segment)))
+                    default: return .none
+                    }
 
                 case .sharedWithMeRequested:
                     state.selectedTab = .shared
