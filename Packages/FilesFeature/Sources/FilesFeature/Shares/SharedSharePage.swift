@@ -59,9 +59,9 @@ struct SharedSharePage: View {
                 SharedDetailHero(
                     share: share,
                     iconName: item.name,
-                    title: isPushed ? share.trimmedLabel ?? item.name : item.name,
+                    title: isPushed ? share.trimmedLabel ?? item.title : item.title,
                     subtitle: isByMe
-                        ? SharedDetailHero.fullPath(of: share) ?? item.name
+                        ? SharedDetailHero.fullPath(of: share) ?? item.title
                         : L10n.Shared.fromSharer(sharerName),
                     serverURL: store.serverURL,
                     isByMe: isByMe,
@@ -138,7 +138,7 @@ struct SharedSharePage: View {
         .sharedSheetList()
         .opacity(isDeleting ? SharedRowMetrics.deletingOpacity : 1)
         .disabled(isDeleting)
-        .navigationTitle(isPushed ? item.name : "")
+        .navigationTitle(isPushed ? item.title : "")
         .navigationBarTitleDisplayMode(.inline)
         #if os(iOS)
             .navigationDestination(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in

@@ -40,7 +40,7 @@ struct SharedItemRow: View {
 
                 VStack(alignment: .leading, spacing: .space4) {
                     HStack(alignment: .top, spacing: .space8) {
-                        Text(item.name)
+                        Text(item.title)
                             .type(.body2(.semibold), style: .primaryOnSurface)
                             .lineLimit(2)
                             .opacity(item.isExpired ? Constants.expiredOpacity : 1)
