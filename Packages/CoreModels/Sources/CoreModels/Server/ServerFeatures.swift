@@ -24,6 +24,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
     /// older than the trash, which has no trash to show.
     public let trash: TrashAvailability?
     public let archiveExtensions: [String]?
+    public let isVersionsEnabled: Bool
 
     public init(
         isUserVolumesEnabled: Bool = false,
@@ -36,7 +37,8 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         folderSizeMode: FolderSizeMode = .off,
         folderSizeLockedBy: String? = nil,
         trash: TrashAvailability? = nil,
-        archiveExtensions: [String]? = nil
+        archiveExtensions: [String]? = nil,
+        isVersionsEnabled: Bool = false
     ) {
         self.isUserVolumesEnabled = isUserVolumesEnabled
         self.isVolumeUsageEnabled = isVolumeUsageEnabled
@@ -49,6 +51,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         self.folderSizeLockedBy = folderSizeLockedBy
         self.trash = trash
         self.archiveExtensions = archiveExtensions
+        self.isVersionsEnabled = isVersionsEnabled
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -61,6 +64,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         case folderSize
         case trash
         case archives
+        case versions
     }
 
     private struct FlagSection: Decodable {
@@ -122,6 +126,7 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         trash = try? container.decodeIfPresent(TrashAvailability.self, forKey: .trash)
         archiveExtensions = (try? container.decodeIfPresent(ArchivesSection.self, forKey: .archives))?
             .extensions?.map { $0.lowercased() }
+        isVersionsEnabled = (try? container.decodeIfPresent(FlagSection.self, forKey: .versions))?.isEnabled ?? false
     }
 }
 

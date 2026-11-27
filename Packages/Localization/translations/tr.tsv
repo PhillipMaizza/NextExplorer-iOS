@@ -71,6 +71,8 @@ browse.actionPermissions	İzinler
 browse.actionRename	Yeniden Adlandır
 browse.actionExtract	Arşivden Çıkar
 browse.actionExtractHere	Buraya çıkar
+browse.actionVersions	Sürümler
+browse.actionShowAllVersions	Tüm Sürümleri Göster…
 browse.actionCompress	Sıkıştır
 browse.actionDownload	İndir
 browse.actionAddToFavorites	Favorilere Ekle

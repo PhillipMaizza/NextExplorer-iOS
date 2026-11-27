@@ -11,10 +11,13 @@
         @Binding var toastMessage: DSToastMessage?
         let onOpen: (FileItem) -> Void
 
+        @State private var versions = MacVersionsModel()
+
         func body(content: Content) -> some View {
             content
                 .modifier(MacBrowseInspector(
                     screen: store,
+                    versions: versions,
                     onOpen: onOpen,
                     onShare: { shareTarget = $0 },
                     more: moreMenu
@@ -26,6 +29,23 @@
                     onShare: { shareTarget = $0 },
                     more: moreMenu
                 ))
+                .modifier(MacVersionsDialogs(model: versions))
+                .environment(versions)
+                .task(id: versionsTarget?.id) {
+                    guard let item = versionsTarget else { return }
+                    versions.onFilesChanged = { store.send(.refreshButtonTapped) }
+                    versions.onMenuFailure = { toastMessage = .failure($0) }
+                    await versions.load(item: item, serverURL: store.serverURL, settle: MacInspectorMetrics.followDelay)
+                }
+        }
+
+        private var versionsTarget: FileItem? {
+            if let item = store.infoItem {
+                return item.isDirectory ? nil : item
+            }
+            let selected = store.state.selectedItems
+            guard selected.count == 1, let item = selected.first, !item.isDirectory else { return nil }
+            return item
         }
 
         private func moreMenu(for item: FileItem) -> some View {

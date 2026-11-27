@@ -71,6 +71,8 @@ browse.actionPermissions	Tilladelser
 browse.actionRename	Omdøb
 browse.actionExtract	Udpak
 browse.actionExtractHere	Udpak her
+browse.actionVersions	Versioner
+browse.actionShowAllVersions	Vis alle versioner…
 browse.actionCompress	Komprimér
 browse.actionDownload	Hent
 browse.actionAddToFavorites	Føj til favoritter

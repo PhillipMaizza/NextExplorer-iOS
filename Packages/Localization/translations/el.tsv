@@ -71,6 +71,8 @@ browse.actionPermissions	Δικαιώματα
 browse.actionRename	Μετονομασία
 browse.actionExtract	Εξαγωγή
 browse.actionExtractHere	Αποσυμπίεση εδώ
+browse.actionVersions	Εκδόσεις
+browse.actionShowAllVersions	Εμφάνιση όλων των εκδόσεων…
 browse.actionCompress	Συμπίεση
 browse.actionDownload	Λήψη
 browse.actionAddToFavorites	Προσθήκη στα Αγαπημένα

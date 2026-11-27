@@ -15,11 +15,14 @@
     @MainActor
     @Observable
     final class MacVersionsModel {
-        private(set) var history: FileVersionHistory?
+        private(set) var histories: [FileItem.ID: FileVersionHistory] = [:]
+        private(set) var isServerEnabled = false
         var errorMessage: String?
         /// What the last change did, shown under the versions until the next one.
         var statusMessage: String?
         var versionToRestore: FileVersion?
+        var restoreTarget: FileItem?
+        var revealRequest: FileItem.ID?
         var versionToDelete: FileVersion?
         var versionToRename: FileVersion?
         var renameDraft = ""
@@ -33,16 +36,26 @@
 
         @ObservationIgnored @Dependency(\.filesClient) private var filesClient
         @ObservationIgnored private var serverURL: URL?
-        @ObservationIgnored private var item: FileItem?
+        @ObservationIgnored private var featuresServerURL: URL?
+        private var item: FileItem?
         /// After a change that touches the file or its folder, so the listing refreshes.
         @ObservationIgnored var onFilesChanged: () -> Void = {}
+        @ObservationIgnored var onMenuFailure: (String) -> Void = { _ in }
 
-        /// Older servers have no versions route; `history` stays nil and the section hidden. The
-        /// previous file's history clears at once, so nothing acts on it during `settle`.
+        var history: FileVersionHistory? {
+            item.flatMap { histories[$0.id] }
+        }
+
+        func history(for item: FileItem) -> FileVersionHistory? {
+            histories[item.id]
+        }
+
         func load(item: FileItem, serverURL: URL, settle: Duration = .zero) async {
+            if self.serverURL != serverURL {
+                histories = [:]
+            }
             self.item = item
             self.serverURL = serverURL
-            history = nil
             errorMessage = nil
             statusMessage = nil
             guard !item.isDirectory else { return }
@@ -50,9 +63,24 @@
                 try? await Task.sleep(for: settle)
                 guard !Task.isCancelled else { return }
             }
-            let loaded = try? await filesClient.fetchVersions(serverURL, item.id)
-            guard !Task.isCancelled, self.item?.id == item.id else { return }
-            history = loaded
+            if featuresServerURL != serverURL, let features = try? await filesClient.serverFeatures(serverURL) {
+                featuresServerURL = serverURL
+                isServerEnabled = features.isVersionsEnabled
+            }
+            guard !Task.isCancelled, let loaded = try? await filesClient.fetchVersions(serverURL, item.id),
+                  self.serverURL == serverURL else { return }
+            histories[item.id] = loaded
+        }
+
+        func menuPhase(for item: FileItem) -> MacVersionsMenuPhase {
+            guard !item.isDirectory, isServerEnabled else { return .hidden }
+            guard let history = histories[item.id] else { return .loading }
+            return history.rights.canSee ? .loaded(history) : .hidden
+        }
+
+        func beginRestore(_ version: FileVersion, of item: FileItem) {
+            restoreTarget = item
+            versionToRestore = version
         }
 
         private static let textCharacterLimit = 200_000
@@ -124,14 +152,17 @@
         @discardableResult
         func restoreConfirmed(_ version: FileVersion) -> Task<Void, Never>? {
             versionToRestore = nil
-            return perform(changesFiles: true) { client, serverURL, path in
+            let target = restoreTarget
+            restoreTarget = nil
+            return perform(on: target, changesFiles: true) { client, serverURL, path in
                 try await client.restoreVersion(serverURL, path, version.id)
             }
         }
 
-        func saveCopy(_ version: FileVersion) {
-            guard let folder = item?.path else { return }
-            perform(changesFiles: true) { client, serverURL, path in
+        @discardableResult
+        func saveCopy(_ version: FileVersion, of target: FileItem? = nil) -> Task<Void, Never>? {
+            guard let folder = (target ?? item)?.path else { return nil }
+            return perform(on: target, changesFiles: true) { client, serverURL, path in
                 _ = try await client.copyVersion(serverURL, path, version.id, folder)
             }
         }
@@ -171,12 +202,12 @@
         }
 
         /// Asks where to save, named like the server names a copy, then downloads the version there.
-        func download(_ version: FileVersion) {
-            guard let item else { return }
+        func download(_ version: FileVersion, of target: FileItem? = nil) {
+            guard let file = target ?? item else { return }
             let panel = NSSavePanel()
-            panel.nameFieldStringValue = Self.copyName(for: item.name, version: version)
+            panel.nameFieldStringValue = Self.copyName(for: file.name, version: version)
             guard panel.runModal() == .OK, let destination = panel.url else { return }
-            perform { client, serverURL, path in
+            perform(on: target) { client, serverURL, path in
                 try await client.downloadVersion(serverURL, path, version.id, destination)
             }
         }
@@ -184,31 +215,38 @@
         /// Runs one change, then reloads the history. The task is handed back for tests to await.
         @discardableResult
         private func perform(
+            on target: FileItem? = nil,
             changesFiles: Bool = false,
             success: String? = nil,
             _ operation: @escaping @Sendable (FilesClient, URL, String) async throws -> Void
         ) -> Task<Void, Never>? {
-            guard let serverURL, let item else { return nil }
+            guard let serverURL, let file = target ?? item else { return nil }
+            let isFromMenu = target != nil
             let client = filesClient
             let onFilesChanged = onFilesChanged
             statusMessage = nil
             return Task {
                 do {
-                    try await operation(client, serverURL, item.id)
+                    try await operation(client, serverURL, file.id)
                     if changesFiles {
                         onFilesChanged()
                     }
-                    let refreshed = try? await client.fetchVersions(serverURL, item.id)
-                    // The selection may have moved on while this ran; never paint this file's
-                    // history over the next one's.
-                    guard self.item?.id == item.id else { return }
+                    let refreshed = try? await client.fetchVersions(serverURL, file.id)
+                    guard self.serverURL == serverURL else { return }
+                    if let refreshed {
+                        histories[file.id] = refreshed
+                    }
+                    guard self.item?.id == file.id else { return }
                     errorMessage = nil
                     statusMessage = success
-                    history = refreshed
                 } catch {
                     noteSessionExpiry(error)
-                    guard self.item?.id == item.id else { return }
-                    errorMessage = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
+                    let message = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
+                    if isFromMenu {
+                        onMenuFailure(message)
+                    } else if self.item?.id == file.id {
+                        errorMessage = message
+                    }
                 }
             }
         }
@@ -225,6 +263,12 @@
             let name = "\(base) (\(stamp))"
             return ext.isEmpty ? name : "\(name).\(ext)"
         }
+    }
+
+    enum MacVersionsMenuPhase: Equatable {
+        case hidden
+        case loading
+        case loaded(FileVersionHistory)
     }
 
     /// A version going into another file, ready to confirm.

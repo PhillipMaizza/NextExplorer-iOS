@@ -71,6 +71,8 @@ browse.actionPermissions	הרשאות
 browse.actionRename	שינוי שם
 browse.actionExtract	חילוץ
 browse.actionExtractHere	חלץ לכאן
+browse.actionVersions	גרסאות
+browse.actionShowAllVersions	הצגת כל הגרסאות…
 browse.actionCompress	דחיסה
 browse.actionDownload	הורדה
 browse.actionAddToFavorites	הוספה למועדפים

@@ -68,6 +68,8 @@ browse.actionRename	Redenumește
 browse.actionRefreshSize	Reîmprospătează dimensiunea
 browse.actionExtract	Extrage
 browse.actionExtractHere	Extrage aici
+browse.actionVersions	Versiuni
+browse.actionShowAllVersions	Afișează toate versiunile…
 browse.actionCompress	Comprimă
 browse.actionDownload	Descarcă
 browse.actionAddToFavorites	Adaugă la favorite

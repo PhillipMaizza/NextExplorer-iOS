@@ -68,6 +68,8 @@ browse.actionRename	Naam wijzigen
 browse.actionRefreshSize	Grootte vernieuwen
 browse.actionExtract	Uitpakken
 browse.actionExtractHere	Hier uitpakken
+browse.actionVersions	Versies
+browse.actionShowAllVersions	Alle versies tonen…
 browse.actionCompress	Comprimeren
 browse.actionDownload	Downloaden
 browse.actionAddToFavorites	Aan favorieten toevoegen

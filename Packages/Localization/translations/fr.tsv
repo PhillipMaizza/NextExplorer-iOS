@@ -68,6 +68,8 @@ browse.actionRename	Renommer
 browse.actionRefreshSize	Actualiser la taille
 browse.actionExtract	Extraire
 browse.actionExtractHere	Extraire ici
+browse.actionVersions	Versions
+browse.actionShowAllVersions	Afficher toutes les versions…
 browse.actionCompress	Compresser
 browse.actionDownload	Télécharger
 browse.actionAddToFavorites	Ajouter aux favoris

@@ -68,6 +68,8 @@ browse.actionRename	名称変更
 browse.actionRefreshSize	サイズを更新
 browse.actionExtract	展開
 browse.actionExtractHere	ここに展開
+browse.actionVersions	バージョン
+browse.actionShowAllVersions	すべてのバージョンを表示…
 browse.actionCompress	圧縮
 browse.actionDownload	ダウンロード
 browse.actionAddToFavorites	お気に入りに追加

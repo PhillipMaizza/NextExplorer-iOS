@@ -71,6 +71,8 @@ browse.actionPermissions	Quyền
 browse.actionRename	Đổi tên
 browse.actionExtract	Giải nén
 browse.actionExtractHere	Giải nén tại đây
+browse.actionVersions	Phiên bản
+browse.actionShowAllVersions	Hiển thị tất cả phiên bản…
 browse.actionCompress	Nén
 browse.actionDownload	Tải xuống
 browse.actionAddToFavorites	Thêm vào Yêu thích

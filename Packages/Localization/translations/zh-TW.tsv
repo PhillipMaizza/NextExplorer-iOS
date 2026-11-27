@@ -68,6 +68,8 @@ browse.actionRename	重新命名
 browse.actionRefreshSize	重新整理大小
 browse.actionExtract	解壓縮
 browse.actionExtractHere	解壓縮至此處
+browse.actionVersions	版本
+browse.actionShowAllVersions	顯示所有版本…
 browse.actionCompress	壓縮
 browse.actionDownload	下載
 browse.actionAddToFavorites	加入喜好項目

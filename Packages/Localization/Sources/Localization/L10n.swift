@@ -161,6 +161,8 @@ public enum L10n {
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
         public static var actionSaveToDevice: String { tr("browse.actionSaveToDevice") }  // "Save to Device"
         public static var actionShare: String { tr("browse.actionShare") }  // "Create share link"
+        public static var actionShowAllVersions: String { tr("browse.actionShowAllVersions") }  // "Show All Versions…"
+        public static var actionVersions: String { tr("browse.actionVersions") }  // "Versions"
         public static var archivePasswordInvalid: String { tr("browse.archivePasswordInvalid") }  // "Incorrect password, or the archive is damaged."
         public static var archivePasswordMessage: String { tr("browse.archivePasswordMessage") }  // "This archive is protected. Enter its password to extract it."
         public static var archivePasswordPlaceholder: String { tr("browse.archivePasswordPlaceholder") }  // "Archive password"
