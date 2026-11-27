@@ -56,6 +56,7 @@ public extension AuthClient {
         ) async throws {
             let username = signedIn.user.username
             let email = signedIn.user.email
+            let displayName = signedIn.user.displayName
             let sessionCookies = signedIn.sessionCookies
             try await onCookieQueue {
                 cookieStore.adopt(sessionCookies, serverURL: serverURL)
@@ -64,7 +65,8 @@ public extension AuthClient {
                     authMode: authMode,
                     cookieName: cookieName,
                     username: username,
-                    email: email
+                    email: email,
+                    displayName: displayName
                 ) else {
                     throw AuthClientError.sessionCookieMissing
                 }

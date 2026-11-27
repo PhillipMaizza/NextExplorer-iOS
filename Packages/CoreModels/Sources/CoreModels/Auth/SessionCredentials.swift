@@ -16,12 +16,14 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
     public var username: String?
     /// Shown for the account when the server has no username for it, as with some single sign on users.
     public var email: String?
+    public var displayName: String?
     public var requireSignIn: RequireSignIn?
     public var isLocked: Bool
 
     /// The Keychain blob keeps the names earlier releases wrote, so stored sessions still read.
     private enum CodingKeys: String, CodingKey {
         case serverBaseURL, authMode, cookieName, cookieValue, cookieDomain, cookiePath, expiresAt, username, email
+        case displayName
         case requireSignIn, isLocked
         case isCookieSecure = "cookieIsSecure"
     }
@@ -37,6 +39,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         expiresAt: Date?,
         username: String?,
         email: String? = nil,
+        displayName: String? = nil,
         requireSignIn: RequireSignIn? = nil,
         isLocked: Bool = false
     ) {
@@ -50,6 +53,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         self.expiresAt = expiresAt
         self.username = username
         self.email = email
+        self.displayName = displayName
         self.requireSignIn = requireSignIn
         self.isLocked = isLocked
     }
@@ -66,6 +70,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
         username = try container.decodeIfPresent(String.self, forKey: .username)
         email = try container.decodeIfPresent(String.self, forKey: .email)
+        displayName = try? container.decodeIfPresent(String.self, forKey: .displayName)
         requireSignIn = try? container.decodeIfPresent(RequireSignIn.self, forKey: .requireSignIn)
         isLocked = (try? container.decodeIfPresent(Bool.self, forKey: .isLocked)) ?? false
     }
