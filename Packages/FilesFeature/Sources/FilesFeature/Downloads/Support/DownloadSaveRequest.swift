@@ -3,15 +3,19 @@ import FilesClient
 import Foundation
 import NetworkClient
 
-/// A Mac download the user placed in Finder: the item and where it goes. It runs in the app
-/// wide download queue, so it keeps going when the folder it started from closes, can be
-/// cancelled, and shows in the toolbar activity. iOS never makes one.
+/// A download with a chosen place: on the Mac where the user put it in Finder, on iPhone and iPad
+/// the Save to Files panel or the share sheet. It runs in the app wide download queue, so it keeps
+/// going when the folder it started from closes, can be cancelled, and shows in the activity.
 public struct DownloadSaveRequest: Equatable, Sendable {
     public enum Target: Equatable, Sendable {
-        /// The save panel's exact choice; the panel already confirmed replacing anything there.
-        case replacing(URL)
-        /// A folder picked for several items; each lands under a name nothing there uses yet.
-        case into(URL)
+        #if os(macOS)
+            /// The save panel's exact choice; the panel already confirmed replacing anything there.
+            case replacing(URL)
+            /// A folder picked for several items; each lands under a name nothing there uses yet.
+            case into(URL)
+        #else
+            case device(DeviceSaveDestination)
+        #endif
     }
 
     public let item: FileItem

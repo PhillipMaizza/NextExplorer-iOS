@@ -73,6 +73,10 @@ browse.actionShowAllVersions	Показать все версии…
 browse.downloadAsTitle	Скачать объекты (%lld) как
 browse.downloadOneArchive	Один архив
 browse.downloadSeparateFiles	Отдельные файлы
+browse.downloadSeparateFilesHint	Каждая папка придёт отдельным ZIP.
+browse.downloadSaveTo	Сохранить в
+browse.downloadToFilesApp	Файлы
+browse.downloadToShareSheet	Поделиться…
 browse.actionCompress	Сжать
 browse.actionDownload	Загрузить
 browse.actionAddToFavorites	Добавить в избранное

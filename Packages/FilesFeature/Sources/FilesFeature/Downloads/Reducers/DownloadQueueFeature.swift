@@ -70,13 +70,26 @@ public struct DownloadQueueFeature {
 
         /// iPhone and iPad: where Save to Device puts this item.
         public var deviceDestination: DeviceSaveDestination {
-            DeviceSaveDestination.destination(forKind: item.kind)
+            #if os(iOS)
+                if case let .device(destination)? = saveTarget {
+                    return destination
+                }
+            #endif
+            return DeviceSaveDestination.destination(forKind: item.kind)
         }
 
         /// What the saved file is called: folders arrive as `<name>.zip`, except a Mac save,
         /// which recreates the folder itself.
         public var fileName: String {
-            item.isDirectory && saveTarget == nil ? "\(item.name).\(Constants.folderArchiveExtension)" : item.name
+            item.isDirectory && !isFolderTreeSave ? "\(item.name).\(Constants.folderArchiveExtension)" : item.name
+        }
+
+        private var isFolderTreeSave: Bool {
+            #if os(macOS)
+                saveTarget != nil
+            #else
+                false
+            #endif
         }
     }
 
@@ -90,6 +103,7 @@ public struct DownloadQueueFeature {
         public var photosCount = 0
         /// iPhone and iPad: staged files waiting for the Save to Files panel.
         public var exportURLs: [URL] = []
+        public var shareURLs: [URL] = []
     }
 
     @ObservableState
@@ -256,7 +270,7 @@ public struct DownloadQueueFeature {
                             state.jobs[id: id]?.savedURL = url
                         }
                     #else
-                        if state.jobs[id: id]?.deviceDestination == .files {
+                        if state.jobs[id: id]?.deviceDestination.shouldKeepStagedCopy == true {
                             state.jobs[id: id]?.savedURL = url
                         }
                     #endif
@@ -348,6 +362,9 @@ public struct DownloadQueueFeature {
         // A file kept on the device is copied rather than downloaded again, so it saves with no network.
         let fetch: @Sendable (FileItem, @escaping @Sendable (TransferProgress) -> Void) async throws -> URL = {
             item, onProgress in
+            if !job.archiveOf.isEmpty {
+                return try await filesClient.downloadArchive(serverURL, job.archiveOf, item.path, onProgress)
+            }
             if let kept = keptCopies.localURL(item), let copy = Self.temporaryCopy(of: kept) {
                 return copy
             }
@@ -395,10 +412,9 @@ public struct DownloadQueueFeature {
                                 throw FilesClientError.decoding(error.localizedDescription)
                             }
                         #else
-                            return try await Self
-                                .saveToDevice(job.item, fetch: fetch, deviceSaver: deviceSaver) { update in
-                                    continuation.yield(update)
-                                }
+                            return try await Self.saveToDevice(job, fetch: fetch, deviceSaver: deviceSaver) { update in
+                                continuation.yield(update)
+                            }
                         #endif
                     }
                 } catch {
@@ -411,7 +427,7 @@ public struct DownloadQueueFeature {
             guard let result, !Task.isCancelled else {
                 #if os(iOS)
                     // A cancel that landed after the file was staged must not leave it in tmp.
-                    if case let .success(url)? = result, job.deviceDestination == .files {
+                    if case let .success(url)? = result, job.deviceDestination.shouldKeepStagedCopy {
                         deviceSaver.discard([url])
                     }
                 #endif
@@ -430,24 +446,24 @@ public struct DownloadQueueFeature {
         /// Pictures and videos go to Photos and the staged copy is dropped; anything else stays staged
         /// for the Save to Files panel. Returns the staged URL.
         private static func saveToDevice(
-            _ item: FileItem,
+            _ job: DownloadJob,
             fetch: @Sendable (FileItem, @escaping @Sendable (TransferProgress) -> Void) async throws -> URL,
             deviceSaver: DeviceSaver,
             onProgress: @escaping @Sendable (TransferProgress) -> Void
         ) async throws -> URL {
-            let temporaryURL = try await fetch(item, onProgress)
+            let temporaryURL = try await fetch(job.item, onProgress)
             guard !Task.isCancelled else {
                 try? FileManager.default.removeItem(at: temporaryURL)
                 throw CancellationError()
             }
             let staged: URL
             do {
-                staged = try deviceSaver.stage(temporaryURL, item.name)
+                staged = try deviceSaver.stage(temporaryURL, job.fileName)
             } catch {
                 try? FileManager.default.removeItem(at: temporaryURL)
                 throw FilesClientError.decoding(error.localizedDescription)
             }
-            guard case let .photos(isVideo) = DeviceSaveDestination.destination(forKind: item.kind) else {
+            guard case let .photos(isVideo) = job.deviceDestination else {
                 return staged
             }
             defer { deviceSaver.discard([staged]) }
@@ -480,7 +496,7 @@ public struct DownloadQueueFeature {
 
     private func discardStaged(_ jobs: [DownloadJob]) {
         #if os(iOS)
-            let staged = jobs.compactMap { $0.deviceDestination == .files ? $0.savedURL : nil }
+            let staged = jobs.compactMap { $0.deviceDestination.shouldKeepStagedCopy ? $0.savedURL : nil }
             if !staged.isEmpty {
                 deviceSaver.discard(staged)
             }
@@ -515,8 +531,9 @@ private extension DownloadQueueFeature.State {
         #if os(macOS)
             summary.lastSavedURL = lastSavedURL
         #else
-            summary.photosCount = completed.filter { $0.deviceDestination != .files }.count
+            summary.photosCount = completed.filter { !$0.deviceDestination.shouldKeepStagedCopy }.count
             summary.exportURLs = completed.compactMap { $0.deviceDestination == .files ? $0.savedURL : nil }
+            summary.shareURLs = completed.compactMap { $0.deviceDestination == .share ? $0.savedURL : nil }
         #endif
         return summary
     }

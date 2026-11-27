@@ -58,6 +58,7 @@ public struct MainTabFeature {
         public var downloadToast: String?
         /// iPhone and iPad: staged files waiting for the Save to Files panel.
         public var pendingExportURLs: [URL] = []
+        var pendingShare: KeptFilesShare?
         #if os(macOS)
             /// Where the last Mac save landed, revealed by the confirmation's Show in Finder.
             public var lastSavedDownloadURL: URL?
@@ -165,6 +166,7 @@ public struct MainTabFeature {
         case dismissDownloadToast
         /// The Save to Files panel closed; `didSave` is false when the user cancelled it.
         case deviceExportFinished(didSave: Bool)
+        case deviceShareFinished
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -637,7 +639,7 @@ public struct MainTabFeature {
 
                 case .browse, .sharedBrowse, .favorites, .shared, .downloads, .settings, .trash, .uploads,
                      .downloadQueue, .offline, .offlineManage, .delegate,
-                     .deviceExportFinished:
+                     .deviceExportFinished, .deviceShareFinished:
                     return .none
                 }
             }
@@ -671,6 +673,10 @@ public struct MainTabFeature {
                     if didSave {
                         state.downloadToast = L10n.DownloadQueue.savedToDevice
                     }
+                    return .none
+                case .deviceShareFinished:
+                    deviceSaver.discard(state.pendingShare?.urls ?? [])
+                    state.pendingShare = nil
                     return .none
                 case let .browse(.delegate(.offlinePinRequested(items))),
                      let .sharedBrowse(.delegate(.offlinePinRequested(items))),
@@ -724,9 +730,12 @@ public struct MainTabFeature {
         #if os(macOS)
             return .none
         #else
+            if !summary.shareURLs.isEmpty {
+                state.pendingShare = KeptFilesShare(urls: (state.pendingShare?.urls ?? []) + summary.shareURLs)
+            }
             if !summary.exportURLs.isEmpty {
                 state.pendingExportURLs += summary.exportURLs
-            } else if summary.failedCount == 0, summary.photosCount > 0 {
+            } else if summary.shareURLs.isEmpty, summary.failedCount == 0, summary.photosCount > 0 {
                 state.downloadToast = L10n.DownloadQueue.savedToPhotos
             }
             return .none

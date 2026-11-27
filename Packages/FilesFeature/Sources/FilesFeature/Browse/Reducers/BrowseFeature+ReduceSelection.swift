@@ -109,9 +109,19 @@ extension BrowseFeature {
                 }
                 return startBulkDownload(&state, targets: Array(targets))
             #else
-                // Save to Device takes files only; folders in the selection are left out.
-                let files = targets.filter { !$0.isDirectory }
-                return files.isEmpty ? .none : .send(.delegate(.downloadRequested(Array(files))))
+                if targets.contains(where: \.isDirectory), targets.contains(where: { !$0.isDirectory }) {
+                    state.bulkDownloadChoice = Array(targets)
+                    return .none
+                }
+                if targets.allSatisfy(\.isDirectory) {
+                    return startDeviceDownload(
+                        state,
+                        targets: Array(targets),
+                        choice: .separateFiles,
+                        destination: .files
+                    )
+                }
+                return .send(.delegate(.downloadRequested(Array(targets))))
             #endif
 
         case let .bulkDownloadChoiceMade(choice):
@@ -126,6 +136,13 @@ extension BrowseFeature {
             #else
                 return .none
             #endif
+
+        #if os(iOS)
+            case let .bulkDownloadSaved(choice, destination):
+                guard let targets = state.bulkDownloadChoice else { return .none }
+                state.bulkDownloadChoice = nil
+                return startDeviceDownload(state, targets: targets, choice: choice, destination: destination)
+        #endif
 
         case .bulkOfflineTapped:
             let targets = state.selectedItems

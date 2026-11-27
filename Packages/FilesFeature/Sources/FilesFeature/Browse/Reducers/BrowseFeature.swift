@@ -671,6 +671,9 @@ public struct BrowseFeature {
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped
         case bulkDownloadChoiceMade(BulkDownloadChoice?)
+        #if os(iOS)
+            case bulkDownloadSaved(BulkDownloadChoice, to: DeviceSaveDestination)
+        #endif
         /// Share on device content: the kept copies of these files go to the system share sheet.
         case keptShareTapped([FileItem])
         case keptShareResolved([URL])

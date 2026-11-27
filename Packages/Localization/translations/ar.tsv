@@ -73,6 +73,10 @@ browse.actionShowAllVersions	عرض كل الإصدارات…
 browse.downloadAsTitle	تنزيل %lld عناصر بصيغة
 browse.downloadOneArchive	أرشيف واحد
 browse.downloadSeparateFiles	ملفات منفصلة
+browse.downloadSeparateFilesHint	يصل كل مجلد كملف ZIP خاص به.
+browse.downloadSaveTo	حفظ في
+browse.downloadToFilesApp	الملفات
+browse.downloadToShareSheet	مشاركة…
 browse.actionCompress	ضغط
 browse.actionDownload	تنزيل
 browse.actionAddToFavorites	إضافة إلى المفضلة

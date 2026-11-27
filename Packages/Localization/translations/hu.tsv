@@ -76,6 +76,10 @@ browse.actionShowAllVersions	Összes verzió megjelenítése…
 browse.downloadAsTitle	%lld elem letöltése így
 browse.downloadOneArchive	Egy archívum
 browse.downloadSeparateFiles	Külön fájlok
+browse.downloadSeparateFilesHint	Minden mappa külön ZIP-ként érkezik.
+browse.downloadSaveTo	Mentés ide
+browse.downloadToFilesApp	Fájlok
+browse.downloadToShareSheet	Megosztás…
 browse.actionCompress	Tömörítés
 browse.actionDownload	Letöltés
 browse.actionAddToFavorites	Hozzáadás a kedvencekhez

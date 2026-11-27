@@ -73,6 +73,10 @@ browse.actionShowAllVersions	모든 버전 보기…
 browse.downloadAsTitle	%lld개 항목 다운로드 방식
 browse.downloadOneArchive	하나의 압축 파일
 browse.downloadSeparateFiles	개별 파일
+browse.downloadSeparateFilesHint	각 폴더는 개별 ZIP으로 받아집니다.
+browse.downloadSaveTo	저장 위치
+browse.downloadToFilesApp	파일
+browse.downloadToShareSheet	공유…
 browse.actionCompress	압축
 browse.actionDownload	다운로드
 browse.actionAddToFavorites	즐겨찾기에 추가

@@ -76,6 +76,10 @@ browse.actionShowAllVersions	Hiển thị tất cả phiên bản…
 browse.downloadAsTitle	Tải xuống %lld mục dưới dạng
 browse.downloadOneArchive	Một tệp nén
 browse.downloadSeparateFiles	Các tệp riêng
+browse.downloadSeparateFilesHint	Mỗi thư mục đến dưới dạng một tệp ZIP riêng.
+browse.downloadSaveTo	Lưu vào
+browse.downloadToFilesApp	Tệp
+browse.downloadToShareSheet	Chia sẻ…
 browse.actionCompress	Nén
 browse.actionDownload	Tải xuống
 browse.actionAddToFavorites	Thêm vào Yêu thích

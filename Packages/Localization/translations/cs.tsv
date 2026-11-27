@@ -76,6 +76,10 @@ browse.actionShowAllVersions	Zobrazit všechny verze…
 browse.downloadAsTitle	Stáhnout položky (%lld) jako
 browse.downloadOneArchive	Jeden archiv
 browse.downloadSeparateFiles	Samostatné soubory
+browse.downloadSeparateFilesHint	Každá složka přijde jako vlastní ZIP.
+browse.downloadSaveTo	Uložit do
+browse.downloadToFilesApp	Soubory
+browse.downloadToShareSheet	Sdílet…
 browse.actionCompress	Komprimovat
 browse.actionDownload	Stáhnout
 browse.actionAddToFavorites	Přidat do oblíbených

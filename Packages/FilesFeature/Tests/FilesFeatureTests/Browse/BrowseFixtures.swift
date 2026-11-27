@@ -41,7 +41,11 @@ enum BrowseFixtures {
         size: 1,
         kind: TestKind.text
     )
-    static let saveRequest = DownloadSaveRequest(item: textFile, target: .into(URL(fileURLWithPath: "/tmp")))
+    #if os(macOS)
+        static let saveRequest = DownloadSaveRequest(item: textFile, target: .into(URL(fileURLWithPath: "/tmp")))
+    #else
+        static let saveRequest = DownloadSaveRequest(item: textFile, target: .device(.files))
+    #endif
 
     /// Can write and delete but not share: what the transfer tests need from a folder.
     static let writableAccess = FileAccess(

@@ -76,6 +76,10 @@ browse.actionShowAllVersions	Näytä kaikki versiot…
 browse.downloadAsTitle	Lataa %lld kohdetta muodossa
 browse.downloadOneArchive	Yksi arkisto
 browse.downloadSeparateFiles	Erilliset tiedostot
+browse.downloadSeparateFilesHint	Jokainen kansio tulee omana ZIP-tiedostonaan.
+browse.downloadSaveTo	Tallenna kohteeseen
+browse.downloadToFilesApp	Tiedostot
+browse.downloadToShareSheet	Jaa…
 browse.actionCompress	Pakkaa
 browse.actionDownload	Lataa
 browse.actionAddToFavorites	Lisää suosikkeihin

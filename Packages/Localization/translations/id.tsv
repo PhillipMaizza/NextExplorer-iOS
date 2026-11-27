@@ -76,6 +76,10 @@ browse.actionShowAllVersions	Tampilkan Semua Versi…
 browse.downloadAsTitle	Unduh %lld item sebagai
 browse.downloadOneArchive	Satu Arsip
 browse.downloadSeparateFiles	File Terpisah
+browse.downloadSeparateFilesHint	Setiap folder datang sebagai ZIP tersendiri.
+browse.downloadSaveTo	Simpan ke
+browse.downloadToFilesApp	File
+browse.downloadToShareSheet	Bagikan…
 browse.actionCompress	Kompres
 browse.actionDownload	Unduh
 browse.actionAddToFavorites	Tambahkan ke Favorit

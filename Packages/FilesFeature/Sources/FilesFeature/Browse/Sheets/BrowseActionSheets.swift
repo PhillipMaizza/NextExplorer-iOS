@@ -43,6 +43,14 @@ struct BrowseActionSheets: ViewModifier {
             }
         #if os(iOS)
             .dsSheet(item: infoBinding) { BrowseInfoSheetContent(store: store, phase: $0) }
+            .dsSheet(isPresented: bulkDownloadSheetBinding) {
+                BrowseDownloadChoiceSheet(
+                    count: store.bulkDownloadChoice?.count ?? 0,
+                    archiveName: store.bulkArchiveName,
+                    onSave: { store.send(.bulkDownloadSaved($0, to: $1)) },
+                    onCancel: { store.send(.bulkDownloadChoiceMade(nil)) }
+                )
+            }
         #else
             .sheet(isPresented: archivePasswordBinding) {
                 if let prompt = store.archivePasswordPrompt {
@@ -62,6 +70,17 @@ struct BrowseActionSheets: ViewModifier {
                 )
             }
         #endif
+    }
+
+    private var bulkDownloadSheetBinding: Binding<Bool> {
+        Binding(
+            get: { store.bulkDownloadChoice != nil && isFrontmost },
+            set: { isPresented in
+                if !isPresented, store.bulkDownloadChoice != nil {
+                    store.send(.bulkDownloadChoiceMade(nil))
+                }
+            }
+        )
     }
 
     private var bulkDownloadBinding: Binding<Bool> {

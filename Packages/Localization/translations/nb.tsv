@@ -76,6 +76,10 @@ browse.actionShowAllVersions	Vis alle versjoner…
 browse.downloadAsTitle	Last ned %lld elementer som
 browse.downloadOneArchive	Ett arkiv
 browse.downloadSeparateFiles	Separate filer
+browse.downloadSeparateFilesHint	Hver mappe kommer som sin egen ZIP.
+browse.downloadSaveTo	Lagre i
+browse.downloadToFilesApp	Filer
+browse.downloadToShareSheet	Del…
 browse.actionCompress	Komprimer
 browse.actionDownload	Last ned
 browse.actionAddToFavorites	Legg til i favoritter

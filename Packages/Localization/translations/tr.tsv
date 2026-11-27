@@ -76,6 +76,10 @@ browse.actionShowAllVersions	Tüm Sürümleri Göster…
 browse.downloadAsTitle	%lld öğeyi şöyle indir
 browse.downloadOneArchive	Tek Arşiv
 browse.downloadSeparateFiles	Ayrı Dosyalar
+browse.downloadSeparateFilesHint	Her klasör kendi ZIP dosyası olarak gelir.
+browse.downloadSaveTo	Şuraya kaydet
+browse.downloadToFilesApp	Dosyalar
+browse.downloadToShareSheet	Paylaş…
 browse.actionCompress	Sıkıştır
 browse.actionDownload	İndir
 browse.actionAddToFavorites	Favorilere Ekle

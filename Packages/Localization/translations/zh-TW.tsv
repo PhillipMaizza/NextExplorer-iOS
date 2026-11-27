@@ -73,6 +73,10 @@ browse.actionShowAllVersions	顯示所有版本…
 browse.downloadAsTitle	將 %lld 個項目下載為
 browse.downloadOneArchive	一個壓縮檔
 browse.downloadSeparateFiles	個別檔案
+browse.downloadSeparateFilesHint	每個資料夾各自成為一個 ZIP。
+browse.downloadSaveTo	儲存到
+browse.downloadToFilesApp	檔案
+browse.downloadToShareSheet	分享…
 browse.actionCompress	壓縮
 browse.actionDownload	下載
 browse.actionAddToFavorites	加入喜好項目

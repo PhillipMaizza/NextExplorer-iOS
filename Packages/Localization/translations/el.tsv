@@ -76,6 +76,10 @@ browse.actionShowAllVersions	Εμφάνιση όλων των εκδόσεων�
 browse.downloadAsTitle	Λήψη %lld στοιχείων ως
 browse.downloadOneArchive	Ένα αρχείο συμπίεσης
 browse.downloadSeparateFiles	Ξεχωριστά αρχεία
+browse.downloadSeparateFilesHint	Κάθε φάκελος έρχεται ως ξεχωριστό ZIP.
+browse.downloadSaveTo	Αποθήκευση σε
+browse.downloadToFilesApp	Αρχεία
+browse.downloadToShareSheet	Κοινοποίηση…
 browse.actionCompress	Συμπίεση
 browse.actionDownload	Λήψη
 browse.actionAddToFavorites	Προσθήκη στα Αγαπημένα

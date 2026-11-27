@@ -73,6 +73,10 @@ browse.actionShowAllVersions	सभी संस्करण दिखाएँ�
 browse.downloadAsTitle	%lld आइटम इस रूप में डाउनलोड करें
 browse.downloadOneArchive	एक संग्रह
 browse.downloadSeparateFiles	अलग फ़ाइलें
+browse.downloadSeparateFilesHint	हर फ़ोल्डर अपनी अलग ZIP के रूप में आता है।
+browse.downloadSaveTo	यहाँ सहेजें
+browse.downloadToFilesApp	फ़ाइलें
+browse.downloadToShareSheet	साझा करें…
 browse.actionCompress	संपीड़ित करें
 browse.actionDownload	डाउनलोड करें
 browse.actionAddToFavorites	पसंदीदा में जोड़ें

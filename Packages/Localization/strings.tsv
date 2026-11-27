@@ -97,6 +97,10 @@ browse.actionShowAllVersions	Show All Versions…
 browse.downloadAsTitle	Download %lld items as
 browse.downloadOneArchive	One Archive
 browse.downloadSeparateFiles	Separate Files
+browse.downloadSeparateFilesHint	Each folder comes as its own zip.
+browse.downloadSaveTo	Save to
+browse.downloadToFilesApp	Files
+browse.downloadToShareSheet	Share…
 browse.actionCompress	Compress
 browse.actionDownload	Download
 browse.actionAvailableOffline	Available Offline

@@ -187,5 +187,24 @@ struct MainTabDeviceSaveTests: MainTabTestSupport {
             }
             #expect(discarded.value == [staged])
         }
+
+        @Test
+        func stagedFilesForTheShareSheetOpenItAndAreDroppedWhenItCloses() async {
+            let staged = URL(fileURLWithPath: Constants.stagedPath)
+            let discarded = LockIsolated<[URL]>([])
+            let store = makeStore {
+                $0.deviceSaver.discard = { urls in discarded.withValue { $0 += urls } }
+            }
+            var summary = DownloadQueueFeature.FinishSummary(savedCount: 1, failedCount: 0)
+            summary.shareURLs = [staged]
+
+            await store.send(.downloadQueue(.delegate(.queueFinished(summary)))) {
+                $0.pendingShare = KeptFilesShare(urls: [staged])
+            }
+            await store.send(.deviceShareFinished) {
+                $0.pendingShare = nil
+            }
+            #expect(discarded.value == [staged])
+        }
     #endif
 }

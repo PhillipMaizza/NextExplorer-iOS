@@ -139,6 +139,9 @@ public struct MainTabView: View {
             },
             onCancellation: { store.send(.deviceExportFinished(didSave: false)) }
         )
+        .keptFilesShareSheet(store.pendingExportURLs.isEmpty ? store.pendingShare : nil) {
+            store.send(.deviceShareFinished)
+        }
         #endif
         #if os(macOS)
             .modifier(MainTabToasts(

@@ -76,6 +76,10 @@ browse.actionShowAllVersions	แสดงทุกเวอร์ชัน…
 browse.downloadAsTitle	ดาวน์โหลด %lld รายการเป็น
 browse.downloadOneArchive	ไฟล์บีบอัดเดียว
 browse.downloadSeparateFiles	แยกเป็นไฟล์
+browse.downloadSeparateFilesHint	แต่ละโฟลเดอร์จะมาเป็น ZIP แยกกัน
+browse.downloadSaveTo	บันทึกไปที่
+browse.downloadToFilesApp	ไฟล์
+browse.downloadToShareSheet	แชร์…
 browse.actionCompress	บีบอัด
 browse.actionDownload	ดาวน์โหลด
 browse.actionAddToFavorites	เพิ่มในรายการโปรด

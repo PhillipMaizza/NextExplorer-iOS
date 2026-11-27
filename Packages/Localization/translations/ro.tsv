@@ -73,6 +73,10 @@ browse.actionShowAllVersions	Afișează toate versiunile…
 browse.downloadAsTitle	Descarcă %lld elemente ca
 browse.downloadOneArchive	O arhivă
 browse.downloadSeparateFiles	Fișiere separate
+browse.downloadSeparateFilesHint	Fiecare dosar vine ca ZIP separat.
+browse.downloadSaveTo	Salvează în
+browse.downloadToFilesApp	Fișiere
+browse.downloadToShareSheet	Partajează…
 browse.actionCompress	Comprimă
 browse.actionDownload	Descarcă
 browse.actionAddToFavorites	Adaugă la favorite

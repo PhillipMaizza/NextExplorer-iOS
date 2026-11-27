@@ -9,6 +9,15 @@ import Photos
 public enum DeviceSaveDestination: Equatable, Sendable {
     case photos(isVideo: Bool)
     case files
+    case share
+
+    public var shouldKeepStagedCopy: Bool {
+        if case .photos = self {
+            false
+        } else {
+            true
+        }
+    }
 
     private static let photoKinds: Set<String> = ["jpg", "jpeg", "png", "heic", "heif", "gif", "tif", "tiff", "dng"]
     private static let videoKinds: Set<String> = ["mov", "mp4", "m4v"]
