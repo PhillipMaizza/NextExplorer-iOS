@@ -23,13 +23,13 @@ struct TrashItemMenu: View {
                 }
             }
             Divider()
-            Button(role: .destructive) { store.send(.deletePermanentlyTapped([item])) } label: {
-                Label { Text(L10n.Trash.deletePermanently) } icon: { IconKit.delete }
+            RemovableMenuButton(title: L10n.Trash.deletePermanently, icon: IconKit.delete, isRemoval: true) {
+                store.send(.deletePermanentlyTapped([item]))
             }
         } else {
             // Its volume is gone: an administrator may drop the record; the server refuses anyone else.
-            Button(role: .destructive) { store.send(.forgetTapped(item)) } label: {
-                Label { Text(L10n.Trash.forget) } icon: { IconKit.delete }
+            RemovableMenuButton(title: L10n.Trash.forget, icon: IconKit.delete, isRemoval: true) {
+                store.send(.forgetTapped(item))
             }
         }
     }

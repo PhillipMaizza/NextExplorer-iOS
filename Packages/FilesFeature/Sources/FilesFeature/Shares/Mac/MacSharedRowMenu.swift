@@ -46,10 +46,9 @@
                 .tint(.primaryDS)
             }
             Section {
-                Button(role: .destructive) { store.send(.deleteTapped(share)) } label: {
-                    Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
+                RemovableMenuButton(title: L10n.Common.delete, icon: IconKit.delete, isRemoval: true) {
+                    store.send(.deleteTapped(share))
                 }
-                .tint(.negative)
             }
         }
 
