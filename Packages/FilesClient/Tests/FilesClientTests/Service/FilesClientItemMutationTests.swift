@@ -432,7 +432,7 @@ extension FilesClientLiveTests {
                 kind: FileItem.directoryKind
             )
 
-            let compressed = try await makeClient().compressItem(serverURL, item)
+            let compressed = try await makeClient().compressItems(serverURL, [item])
 
             #expect(compressed.name == Constants.documentsArchive)
             let request = try #require(StubURLProtocol.capturedRequest)
@@ -456,7 +456,7 @@ extension FilesClientLiveTests {
                 kind: FileItem.directoryKind
             )
             await #expect(throws: FilesClientError.forbidden(message: nil)) {
-                _ = try await makeClient().compressItem(serverURL, item)
+                _ = try await makeClient().compressItems(serverURL, [item])
             }
         }
 
@@ -475,7 +475,7 @@ extension FilesClientLiveTests {
                 kind: FileItem.directoryKind
             )
 
-            let compressed = try await makeClient().compressItem(serverURL, item)
+            let compressed = try await makeClient().compressItems(serverURL, [item])
 
             #expect(compressed.name == Constants.documentsArchive)
             #expect(compressed.size == 157)
@@ -496,7 +496,7 @@ extension FilesClientLiveTests {
                 kind: FileItem.directoryKind
             )
             await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Disk full")) {
-                _ = try await makeClient().compressItem(serverURL, item)
+                _ = try await makeClient().compressItems(serverURL, [item])
             }
         }
 

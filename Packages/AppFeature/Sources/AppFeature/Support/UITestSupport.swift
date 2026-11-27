@@ -373,7 +373,7 @@
                     try await Task.sleep(for: .seconds(heldSeconds))
                     return store.transfer(items, to: destination, operation: operation)
                 }
-                client.compressItem = { _, item in store.compress(item) }
+                client.compressItems = { _, items in store.compress(items) }
                 // Sizes and counts come from the tree; a per file "download" completes at once, so the
                 // offline flow runs without a backend or disk writes.
                 client.fetchUsage = { _, path in

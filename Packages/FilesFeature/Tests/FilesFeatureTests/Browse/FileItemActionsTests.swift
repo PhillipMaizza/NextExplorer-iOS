@@ -57,12 +57,38 @@ struct FileItemActionsTests {
 
     @Test("A folder of my own offers every action the server grants, extract included")
     func ownFolder() {
-        let state = screen(access(
+        var state = screen(access(
             write: true, upload: true, delete: true, share: true, download: true, folder: true, file: true
         ))
-        let onArchive = state.actions(for: Self.archive)
+        state.directoryPath = "personal/Docs"
+        state.items = [
+            BrowseFixtures.file("bundle.zip", in: state.directoryPath),
+            BrowseFixtures.folder("Sub", in: state.directoryPath),
+        ]
+        state.$isAdmin.withLock { $0 = true }
+        let onArchive = state.actions(for: state.items[0])
         #expect(onArchive.canExtract && onArchive.canShare && onArchive.canEditPermissions)
-        #expect(state.actions(for: Self.subfolder).canDuplicate)
+        #expect(state.actions(for: state.items[1]).canDuplicate)
+    }
+
+    @Test("The volumes at the root are only read: the server refuses to copy, move, rename or delete them")
+    func rootVolumes() {
+        var state = screen(access(
+            write: true, upload: true, delete: true, share: true, download: true, folder: true, file: true
+        ))
+        state.directoryPath = ""
+        state.items = [BrowseFixtures.folder("Files", in: ""), BrowseFixtures.folder("Media", in: "")]
+        let actions = state.actions(for: state.items[0])
+        #expect(actions == FileItemActions(canDownload: true, canKeepOffline: true, canExport: true, canEditText: true))
+    }
+
+    @Test("A writable share never offers Permissions, even to an admin")
+    func shareIsNeverRepermissioned() {
+        var state = screen(access(
+            write: true, upload: true, delete: true, share: true, download: true, folder: true, file: true
+        ))
+        state.$isAdmin.withLock { $0 = true }
+        #expect(!state.actions(for: Self.archive).canEditPermissions)
     }
 
     @Test("A screen of kept files offers no server actions")
@@ -80,14 +106,15 @@ struct FileItemActionsTests {
         #expect(state.actions(for: elsewhere) == FileItemActions())
     }
 
-    @Test("Several picks keep what works on many and drop what works on one: rename, compress, extract")
+    @Test("Several picks keep what works on many, compress included, and drop what works on one: rename, extract")
     func severalPicks() {
         let state = screen(access(
             write: true, upload: true, delete: true, share: true, download: true, folder: true, file: true
         ))
         let actions = state.actions(for: [Self.file, Self.archive])
-        #expect(actions.canMove && actions.canDelete && actions.canCopy && actions.canDuplicate && actions.canDownload)
-        #expect(!actions.canRename && !actions.canCompress && !actions.canExtract && !actions.canEditPermissions)
+        #expect(actions.canMove && actions.canDelete && actions.canCopy && actions.canDuplicate && actions
+            .canCompress && actions.canDownload)
+        #expect(!actions.canRename && !actions.canExtract && !actions.canEditPermissions)
         #expect(state.actions(for: []) == FileItemActions())
     }
 

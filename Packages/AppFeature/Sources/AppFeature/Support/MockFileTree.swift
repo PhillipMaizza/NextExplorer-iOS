@@ -13,6 +13,7 @@
             static let untitledFolder = "Untitled Folder"
             static let archiveKind = "zip"
             static let archiveExtension = "zip"
+            static let multiItemArchiveName = "Archive"
             static let trashIDPrefix = "trash-"
             static let day: TimeInterval = 86400
         }
@@ -326,16 +327,18 @@
             }
         }
 
-        func compress(_ item: FileItem) -> FileItem {
+        func compress(_ items: [FileItem]) -> FileItem {
             locked {
+                let folder = items.first?.path ?? ""
+                let base = items.count == 1 ? items[0].name : Constants.multiItemArchiveName
                 let archive = FileItem(
-                    name: freeName("\(item.name).\(Constants.archiveExtension)", in: item.path),
-                    path: item.path,
+                    name: freeName("\(base).\(Constants.archiveExtension)", in: folder),
+                    path: folder,
                     dateModified: Date(),
                     size: 0,
                     kind: Constants.archiveKind
                 )
-                folders[item.path, default: []].append(archive)
+                folders[folder, default: []].append(archive)
                 return archive
             }
         }

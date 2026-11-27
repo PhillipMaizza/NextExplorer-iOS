@@ -22,7 +22,7 @@ public struct BrowseTabFeature {
 
         public init(serverURL: URL, isAdmin: Bool = false, showsRoot: Bool = true) {
             root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
-            root.isAdmin = isAdmin
+            root.$isAdmin.withLock { $0 = isAdmin }
             self.showsRoot = showsRoot
         }
 

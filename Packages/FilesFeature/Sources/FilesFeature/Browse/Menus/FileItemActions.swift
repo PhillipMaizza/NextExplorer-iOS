@@ -31,22 +31,23 @@ extension BrowseFeature.State {
         }
         let isOnServer = !shouldShowDeviceContent
         let isListed = picked.allSatisfy { items[id: $0.id] != nil }
-        let isSoleRootLocation = directoryPath.isEmpty && items.count <= 1
+        let isRoot = directoryPath.isEmpty
         let isSingle = picked.count == 1
         return FileItemActions(
             canDownload: access.canDownload,
             canKeepOffline: access.canDownload && isOnServer,
             canExport: access.canDownload,
-            canRename: isSingle && access.canWrite,
+            canRename: isSingle && access.canWrite && !isRoot,
             canEditText: isSingle && access.canWrite,
-            canEditPermissions: isSingle && access.canWrite && isOnServer,
-            canCopy: isOnServer && !isSoleRootLocation,
-            canDuplicate: isOnServer && isListed && !directoryPath.isEmpty && access.canReceive(picked),
-            canMove: access.canMove && !isSoleRootLocation,
-            canCompress: isSingle && access.canCompress,
+            canEditPermissions: isSingle && isAdmin && access.canWrite && isOnServer
+                && ReceivedShareSpace.shareRoot(of: directoryPath) == nil,
+            canCopy: isOnServer && !isRoot,
+            canDuplicate: isOnServer && isListed && !isRoot && access.canReceive(picked),
+            canMove: access.canMove && !isRoot,
+            canCompress: access.canCompress && !isRoot,
             canExtract: isSingle && canExtract(first) && access.canExtract,
-            canShare: access.canShare && isOnServer,
-            canDelete: access.canDelete
+            canShare: access.canShare && isOnServer && !isRoot,
+            canDelete: access.canDelete && !isRoot
         )
     }
 }

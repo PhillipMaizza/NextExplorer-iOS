@@ -235,8 +235,8 @@ public extension FilesClient {
         },
         flushDownloadConnections: {},
         uploadFile: { _, _, _, _, onProgress in onProgress(1) },
-        compressItem: { _, item in
-            FileItem(name: "\(item.name).zip", path: item.path, dateModified: Date(), size: 0, kind: "zip")
+        compressItems: { _, items in
+            FileItem(name: "\(items[0].name).zip", path: items[0].path, dateModified: Date(), size: 0, kind: "zip")
         },
         createShareLink: { _, request in
             let token = "PREVIEW1234"

@@ -9,14 +9,17 @@ import TestUtils
 @Suite(.isolatedDependencies)
 @MainActor
 struct BrowseDeleteAndArchiveTests {
-    private let photo = BrowseFixtures.file(TestFile.vacationPhoto)
+    private let photo = BrowseFixtures.file(TestFile.vacationPhoto, in: TestFolder.documents)
 
     // MARK: Share impact of a delete
 
     @Test("Asking to delete shows the confirmation and checks how many shares the delete would remove")
     func deleteTappedSetsTheDeleteConfirmationItemAndChecksShareImpact() async {
         let checked = LockIsolated<[[String]]>([])
-        let store = BrowseFixtures.store(BrowseFixtures.state(access: BrowseTestSupport.fullAccess)) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(
+            TestFolder.documents,
+            access: BrowseTestSupport.fullAccess
+        )) {
             $0.filesClient.deleteImpact = { _, items in
                 checked.withValue { $0.append(items.map(\.name)) }
                 return DeleteImpact(shareCount: 2)
@@ -35,7 +38,10 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("A failed share impact check is shown as unavailable and does not block the delete")
     func deleteTappedTreatsAFailedShareImpactCheckAsUnavailable() async {
-        let store = BrowseFixtures.store(BrowseFixtures.state(access: BrowseTestSupport.fullAccess)) {
+        let store = BrowseFixtures.store(BrowseFixtures.state(
+            TestFolder.documents,
+            access: BrowseTestSupport.fullAccess
+        )) {
             $0.filesClient.deleteImpact = { _, _ in throw FilesClientError.network(TestFailure.offline) }
         }
 
@@ -65,7 +71,7 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("A confirmed delete removes the item and its favorite, and tells the Favorites tab")
     func deleteConfirmedRemovesTheItemAndItsFavoriteOnSuccess() async {
-        var state = BrowseFixtures.state(items: [photo])
+        var state = BrowseFixtures.state(TestFolder.documents, items: [photo])
         state.favoritePaths = [photo.id]
         state.deleteConfirmationItem = photo
         let deleted = LockIsolated<[[String]]>([])
@@ -86,12 +92,12 @@ struct BrowseDeleteAndArchiveTests {
             $0.favoritePaths = []
         }
         await store.receive(.delegate(.favoritesChanged))
-        #expect(deleted.value == [[TestFile.vacationPhoto]])
+        #expect(deleted.value == [[photo.id]])
     }
 
     @Test("Deleting an item that is not a favorite does not tell the Favorites tab to refresh")
     func deleteConfirmedOfANonFavoritedItemDoesNotSignalTheFavoritesTabToRefresh() async {
-        var state = BrowseFixtures.state(items: [photo])
+        var state = BrowseFixtures.state(TestFolder.documents, items: [photo])
         state.deleteConfirmationItem = photo
         let store = BrowseFixtures.store(state) {
             $0.filesClient.deleteItems = { _, _, _, _ in DeleteOutcome() }
@@ -109,7 +115,7 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("A failed delete shows a readable message and keeps the item")
     func deleteConfirmedFailureSurfacesAReadableErrorMessageAndKeepsTheItem() async {
-        var state = BrowseFixtures.state(items: [photo])
+        var state = BrowseFixtures.state(TestFolder.documents, items: [photo])
         state.deleteConfirmationItem = photo
         let store = BrowseFixtures.store(state) {
             $0.filesClient.deleteItems = { _, _, _, _ in throw FilesClientError.server(statusCode: 403) }
@@ -127,7 +133,7 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("Deleting from the preview closes the cover at once and deletes after the settle delay")
     func deleteConfirmedFromPreviewDismissesTheCoverThenDeletesAfterASettle() async {
-        var state = BrowseFixtures.state(items: [photo])
+        var state = BrowseFixtures.state(TestFolder.documents, items: [photo])
         state.previewItem = photo
         state.deleteConfirmationItem = photo
         let clock = TestClock()
@@ -220,11 +226,12 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("Compressing adds the new archive, then reloads the listing so it carries the server's metadata")
     func compressTappedAddsTheNewArchiveOnSuccess() async {
-        let folder = BrowseFixtures.folder(TestFolder.documents)
-        let archive = BrowseFixtures.file("Documents.zip")
+        let folder = BrowseFixtures.folder(TestFolder.photos, in: TestFolder.documents)
+        let archive = BrowseFixtures.file("Photos.zip", in: TestFolder.documents)
         let favorites = AsyncGate()
-        let store = BrowseFixtures.store(BrowseFixtures.state(items: [folder], access: BrowseTestSupport.fullAccess)) {
-            $0.filesClient.compressItem = { _, _ in archive }
+        let state = BrowseFixtures.state(TestFolder.documents, items: [folder], access: BrowseTestSupport.fullAccess)
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.compressItems = { _, _ in archive }
             $0.serveEmptyFolders()
             $0.serveListing([folder, archive], access: BrowseTestSupport.fullAccess)
             $0.holdFavorites(favorites)
@@ -253,6 +260,34 @@ struct BrowseDeleteAndArchiveTests {
         await store.finish()
     }
 
+    @Test("Compressing a selection sends every selected item in one request, as the web does")
+    func compressSelectionSendsEverySelectedItem() async {
+        let picked = [
+            BrowseFixtures.folder(TestFolder.photos, in: TestFolder.documents),
+            BrowseFixtures.file(TestFile.notes, in: TestFolder.documents),
+        ]
+        let sent = LockIsolated<[String]>([])
+        var state = BrowseFixtures.state(TestFolder.documents, items: picked, access: BrowseTestSupport.fullAccess)
+        state.selectedItemIDs = Set(picked.map(\.id))
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.compressItems = { _, items in
+                sent.setValue(items.map(\.id))
+                throw FilesClientError.server(statusCode: 403)
+            }
+        }
+
+        await store.send(.compressSelectionTapped) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Compressing…"
+        }
+        await store.receive(\.compressResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
+        }
+        #expect(Set(sent.value) == Set(picked.map(\.id)))
+    }
+
     @Test("Compress and Extract do nothing where the server refuses new files or folders")
     func archiveActionsFollowTheCreateFlags() async {
         let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
@@ -275,11 +310,14 @@ struct BrowseDeleteAndArchiveTests {
 
     @Test("A failed compression shows a readable message")
     func compressTappedFailureSurfacesAReadableErrorMessage() async {
-        let store = BrowseFixtures.store(BrowseFixtures.state(access: BrowseTestSupport.fullAccess)) {
-            $0.filesClient.compressItem = { _, _ in throw FilesClientError.server(statusCode: 403) }
+        let store = BrowseFixtures.store(BrowseFixtures.state(
+            TestFolder.documents,
+            access: BrowseTestSupport.fullAccess
+        )) {
+            $0.filesClient.compressItems = { _, _ in throw FilesClientError.server(statusCode: 403) }
         }
 
-        await store.send(.compressTapped(BrowseFixtures.folder(TestFolder.documents))) {
+        await store.send(.compressTapped(BrowseFixtures.folder(TestFolder.photos, in: TestFolder.documents))) {
             $0.isPerformingFileAction = true
             $0.fileActionProgressMessage = "Compressing…"
         }

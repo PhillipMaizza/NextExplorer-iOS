@@ -160,10 +160,19 @@ struct BrowseInfoAndPermissionsTests {
 
     // MARK: Permissions
 
+    private static let report = BrowseFixtures.file(TestFile.report, in: TestFolder.documents, size: 10)
+
+    private func permissionsState(isAdmin: Bool, in path: String = TestFolder.documents) -> BrowseFeature.State {
+        let item = BrowseFixtures.file(TestFile.report, in: path, size: 10)
+        var state = BrowseFixtures.loadedState(path, items: [item])
+        state.$isAdmin.withLock { $0 = isAdmin }
+        return state
+    }
+
     @Test("Permissions presents the sheet for the item, and dismissing it clears it")
     func permissionsTappedPresentsTheSheetSeededFromTheItemAndDismissClearsIt() async {
-        let report = BrowseFixtures.file(TestFile.report, in: TestFolder.documents, size: 10)
-        let store = BrowseFixtures.store()
+        let report = Self.report
+        let store = BrowseFixtures.store(permissionsState(isAdmin: true))
 
         await store.send(.permissionsTapped(report)) {
             $0.permissions = PermissionsFeature.State(serverURL: BrowseTestSupport.serverURL, item: report)
@@ -171,5 +180,16 @@ struct BrowseInfoAndPermissionsTests {
         await store.send(.permissions(.dismiss)) {
             $0.permissions = nil
         }
+    }
+
+    @Test("Only an admin changes permissions, as the server allows, and never through a share")
+    func permissionsNeedAnAdminOutsideShares() async {
+        #expect(permissionsState(isAdmin: true).actions(for: Self.report).canEditPermissions)
+        #expect(!permissionsState(isAdmin: false).actions(for: Self.report).canEditPermissions)
+        let shared = permissionsState(isAdmin: true, in: "share/tok")
+        #expect(!shared.actions(for: shared.items[0]).canEditPermissions)
+
+        let store = BrowseFixtures.store(permissionsState(isAdmin: false))
+        await store.send(.permissionsTapped(Self.report))
     }
 }

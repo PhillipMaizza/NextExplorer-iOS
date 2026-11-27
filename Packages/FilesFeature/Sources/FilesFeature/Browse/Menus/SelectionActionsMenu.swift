@@ -21,6 +21,7 @@ struct SelectionActionsMenu: View {
         /// files, instead of creating a link for one.
         var canShareKept = false
         var canTransfer = false
+        var canCompress = false
         /// A move deletes the original, so it also needs the right to delete.
         var canMove = false
         var canDelete = false

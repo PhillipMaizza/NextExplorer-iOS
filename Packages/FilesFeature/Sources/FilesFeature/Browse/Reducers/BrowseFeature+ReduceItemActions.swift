@@ -266,15 +266,10 @@ extension BrowseFeature {
             return refetchAfterAmbiguousFailure(&state, error)
 
         case let .compressTapped(item):
-            guard !state.isPerformingFileAction, state.actions(for: item).canCompress else { return .none }
-            state.isPerformingFileAction = true
-            state.fileActionProgressMessage = L10n.Browse.progressCompressing
-            let serverURL = state.serverURL
-            let filesClient = filesClient
-            return .run { send in
-                try await send(.compressResponse(apiResult { try await filesClient.compressItem(serverURL, item)
-                }))
-            }
+            return compress(&state, items: [item])
+
+        case .compressSelectionTapped:
+            return compress(&state, items: state.selectedItems)
 
         case let .compressResponse(.success(compressed)):
             state.isPerformingFileAction = false
@@ -334,6 +329,17 @@ extension BrowseFeature {
 
         default:
             return .none
+        }
+    }
+
+    private func compress(_ state: inout State, items: [FileItem]) -> Effect<Action> {
+        guard !state.isPerformingFileAction, state.actions(for: items).canCompress else { return .none }
+        state.isPerformingFileAction = true
+        state.fileActionProgressMessage = L10n.Browse.progressCompressing
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            try await send(.compressResponse(apiResult { try await filesClient.compressItems(serverURL, items) }))
         }
     }
 }

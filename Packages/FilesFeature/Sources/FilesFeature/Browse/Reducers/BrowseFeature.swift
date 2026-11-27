@@ -59,7 +59,7 @@ public struct BrowseFeature {
         /// The server has a trash (any server since mid September 2026): the root offers a Trash row.
         public var isTrashAvailable = false
         public var isUserVolumesEnabled = false
-        public var isAdmin = false
+        @Shared(.inMemory(AccountRole.isAdminSharedKey)) public var isAdmin = false
         var archiveExtensions: [String] = []
         /// How far the server's folder size index goes, from its last features answer (kept on disk so
         /// a pushed folder knows without asking). Folder rows show a size only while this is not `.off`.
@@ -595,6 +595,7 @@ public struct BrowseFeature {
         case extractTapped(FileItem, entryPaths: [String]? = nil)
         case extractResponse(Result<[FileItem], FilesClientError>)
         case compressTapped(FileItem)
+        case compressSelectionTapped
         case compressResponse(Result<FileItem, FilesClientError>)
         case downloadTapped(FileItem)
         /// Files staged without the review sheet: a Mac drop or pick, or files shared from another
@@ -646,6 +647,7 @@ public struct BrowseFeature {
         case bulkMoveTapped
         case clipboardCleared
         case pasteTapped(keepItemsAfterCopy: Bool)
+        case pasteIntoTapped(FileItem, keepItemsAfterCopy: Bool)
         /// Keyboard driven actions for the Mac file table, acting on whatever rows are selected
         /// there (tracked in `selectedItemIDs` without entering select mode).
         case tableSelectionChanged(Set<FileItem.ID>)

@@ -30,6 +30,7 @@ extension BrowseFeature.State {
             canShare: actions.canShare,
             canShareKept: isDevice && isAllKept && Self.canShareKeptFiles && picked.contains { !$0.isDirectory },
             canTransfer: actions.canCopy,
+            canCompress: actions.canCompress,
             canMove: actions.canMove,
             canDelete: actions.canDelete,
             canSave: isSaveActionVisible && (!isDevice || isAllKept),
