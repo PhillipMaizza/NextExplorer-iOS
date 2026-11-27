@@ -35,7 +35,12 @@
                     guard let item = versionsTarget else { return }
                     versions.onFilesChanged = { store.send(.refreshButtonTapped) }
                     versions.onMenuFailure = { toastMessage = .failure($0) }
-                    await versions.load(item: item, serverURL: store.serverURL, settle: MacInspectorMetrics.followDelay)
+                    await versions.load(
+                        item: item,
+                        serverURL: store.serverURL,
+                        account: store.cacheScope,
+                        settle: MacInspectorMetrics.followDelay
+                    )
                 }
         }
 

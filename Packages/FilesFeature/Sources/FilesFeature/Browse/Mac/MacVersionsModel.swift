@@ -36,6 +36,7 @@
 
         @ObservationIgnored @Dependency(\.filesClient) private var filesClient
         @ObservationIgnored private var serverURL: URL?
+        @ObservationIgnored private var account: String?
         @ObservationIgnored private var featuresServerURL: URL?
         private var item: FileItem?
         /// After a change that touches the file or its folder, so the listing refreshes.
@@ -50,12 +51,14 @@
             histories[item.id]
         }
 
-        func load(item: FileItem, serverURL: URL, settle: Duration = .zero) async {
-            if self.serverURL != serverURL {
+        func load(item: FileItem, serverURL: URL, account: String, settle: Duration = .zero) async {
+            if self.serverURL != serverURL || self.account != account {
                 histories = [:]
+                featuresServerURL = nil
             }
             self.item = item
             self.serverURL = serverURL
+            self.account = account
             errorMessage = nil
             statusMessage = nil
             guard !item.isDirectory else { return }
@@ -68,13 +71,13 @@
                 isServerEnabled = features.isVersionsEnabled
             }
             guard !Task.isCancelled, let loaded = try? await filesClient.fetchVersions(serverURL, item.id),
-                  self.serverURL == serverURL else { return }
+                  self.serverURL == serverURL, self.account == account else { return }
             histories[item.id] = loaded
         }
 
         func menuPhase(for item: FileItem) -> MacVersionsMenuPhase {
             guard !item.isDirectory, isServerEnabled else { return .hidden }
-            guard let history = histories[item.id] else { return .loading }
+            guard let history = histories[item.id] else { return item.id == self.item?.id ? .loading : .unloaded }
             return history.rights.canSee ? .loaded(history) : .hidden
         }
 
@@ -221,6 +224,7 @@
             _ operation: @escaping @Sendable (FilesClient, URL, String) async throws -> Void
         ) -> Task<Void, Never>? {
             guard let serverURL, let file = target ?? item else { return nil }
+            let account = account
             let isFromMenu = target != nil
             let client = filesClient
             let onFilesChanged = onFilesChanged
@@ -232,7 +236,7 @@
                         onFilesChanged()
                     }
                     let refreshed = try? await client.fetchVersions(serverURL, file.id)
-                    guard self.serverURL == serverURL else { return }
+                    guard self.serverURL == serverURL, self.account == account else { return }
                     if let refreshed {
                         histories[file.id] = refreshed
                     }
@@ -267,6 +271,7 @@
 
     enum MacVersionsMenuPhase: Equatable {
         case hidden
+        case unloaded
         case loading
         case loaded(FileVersionHistory)
     }

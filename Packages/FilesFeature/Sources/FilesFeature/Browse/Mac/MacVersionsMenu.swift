@@ -31,7 +31,7 @@
         @ViewBuilder
         private func entries(_ phase: MacVersionsMenuPhase, versions: MacVersionsModel) -> some View {
             switch phase {
-            case .hidden:
+            case .hidden, .unloaded:
                 EmptyView()
             case .loading:
                 Button(L10n.Common.loading) {}
@@ -54,7 +54,9 @@
                     .disabled(version.isAvailable == false || !history.rights.canActOnVersion)
                 }
             }
-            Divider()
+            if phase != .unloaded {
+                Divider()
+            }
             Button(L10n.Browse.actionShowAllVersions) {
                 versions.revealRequest = item.id
                 store.send(.infoTapped(item))
@@ -85,7 +87,7 @@
         }
         MacVersionsMenu(store: Store(initialState: .preview(items: browsePreviewItems)) { BrowseFeature() }, item: item)
             .environment(model)
-            .task { await model.load(item: item, serverURL: URL(fileURLWithPath: "/")) }
+            .task { await model.load(item: item, serverURL: URL(fileURLWithPath: "/"), account: "") }
             .padding()
     }
 #endif
