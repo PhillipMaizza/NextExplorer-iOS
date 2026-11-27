@@ -43,19 +43,19 @@
                 Divider()
                 if model.canViewAsText {
                     Button { model.viewAsText() } label: {
-                        Label { Text(L10n.OpenWith.viewAsText) } icon: { IconKit.document }
+                        Label { Text(L10n.OpenWith.viewAsText) } icon: { MenuIcon.viewAsText.image }
                     }
                 }
                 if model.printKind != nil {
                     Button { model.print() } label: {
-                        Label { Text(L10n.OpenWith.print) } icon: { IconKit.print }
+                        Label { Text(L10n.OpenWith.print) } icon: { MenuIcon.print.image }
                     }
                 }
             } label: {
                 if model.isWorking {
                     DSSpinner()
                 } else {
-                    IconKit.openInApp
+                    MenuIcon.openWith.image
                 }
             }
             .menuStyle(.borderlessButton)
@@ -91,7 +91,7 @@
                         }
                     }
                 } label: {
-                    Label { Text(L10n.OpenWith.openWith) } icon: { IconKit.openInApp }
+                    Label { Text(L10n.OpenWith.openWith) } icon: { MenuIcon.openWith.image }
                 }
                 .tint(.primaryDS)
             }

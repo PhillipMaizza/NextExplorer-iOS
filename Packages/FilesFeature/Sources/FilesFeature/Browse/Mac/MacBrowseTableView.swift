@@ -217,7 +217,7 @@
             .focusedValue(\.browseKeyboardActions, renamingItemID == nil ? keyboardActions : nil)
             .focusedSceneValue(
                 \.duplicateBrowseSelection,
-                renamingItemID == nil && !selection.isEmpty
+                renamingItemID == nil && !selection.isEmpty && keyboardActions.canDuplicate
                     ? FocusedMenuAction(perform: keyboardActions.duplicate)
                     : nil
             )

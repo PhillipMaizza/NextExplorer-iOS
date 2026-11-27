@@ -119,10 +119,14 @@
                     MacIconButton(IconKit.link, label: L10n.Common.share, action: onShare)
                 }
                 if showsMore {
-                    MacIconButton(IconKit.ellipsis, label: L10n.Common.more) { isMoreOpen.toggle() }
-                        .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
-                            MacActionMenuPanel(content: more)
-                        }
+                    MacActionMenuSoleItem(content: more) { item in
+                        MacIconButton(item.icon, label: item.title, action: item.action)
+                    } many: {
+                        MacIconButton(IconKit.ellipsis, label: L10n.Common.more) { isMoreOpen.toggle() }
+                            .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
+                                MacActionMenuPanel(content: more)
+                            }
+                    }
                 }
                 MacIconButton(IconKit.close, label: L10n.Common.close, action: onClose)
             }

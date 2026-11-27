@@ -25,21 +25,21 @@
                 }
                 if !store.directoryPath.isEmpty, store.canCreateFolderHere {
                     Button { store.send(.newFolderTapped) } label: {
-                        Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                        Label { Text(L10n.Browse.actionNewFolder) } icon: { MenuIcon.newFolder.image }
                     }
                     .tint(.primaryDS)
                     .keyboardShortcut(BrowseShortcut.newFolder)
                 }
                 if !store.directoryPath.isEmpty, store.canCreateFileHere {
                     Button { store.send(.newFileTapped) } label: {
-                        Label { Text(L10n.Browse.actionNewFile) } icon: { IconKit.newFile }
+                        Label { Text(L10n.Browse.actionNewFile) } icon: { MenuIcon.newFile.image }
                     }
                     .tint(.primaryDS)
                     .keyboardShortcut(BrowseShortcut.newFile)
                 }
                 if store.canUploadHere {
                     Button { isFilesPickerPresented = true } label: {
-                        Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.upload }
+                        Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { MenuIcon.upload.image }
                     }
                     .tint(.primaryDS)
                 }
@@ -52,7 +52,7 @@
                             animation: DSMotion.listDiff
                         )
                     } label: {
-                        Label { Text(L10n.Browse.actionPasteIntoFolder) } icon: { IconKit.paste }
+                        Label { Text(L10n.Browse.actionPasteIntoFolder) } icon: { MenuIcon.paste.image }
                     }
                     .tint(.primaryDS)
                 }
@@ -63,7 +63,7 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.copySelectionTapped, animation: DSMotion.listDiff)
                         } label: {
-                            Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
+                            Label { Text(L10n.Browse.actionCopy) } icon: { MenuIcon.copy.image }
                         }
                         .tint(.primaryDS)
                         .keyboardShortcut("c")
@@ -73,7 +73,7 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
                         } label: {
-                            Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
+                            Label { Text(L10n.Browse.actionDuplicate) } icon: { MenuIcon.duplicate.image }
                         }
                         .tint(.primaryDS)
                         .keyboardShortcut("d")
@@ -83,7 +83,7 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.cutSelectionTapped, animation: DSMotion.listDiff)
                         } label: {
-                            Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                            Label { Text(L10n.Browse.actionCut) } icon: { MenuIcon.cut.image }
                         }
                         .tint(.primaryDS)
                         .keyboardShortcut("x")
@@ -93,7 +93,7 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.bulkMoveTapped, animation: DSMotion.listDiff)
                         } label: {
-                            Label { Text(L10n.Browse.actionMoveTo) } icon: { IconKit.move }
+                            Label { Text(L10n.Browse.actionMoveTo) } icon: { MenuIcon.move.image }
                         }
                         .tint(.primaryDS)
                     }
@@ -102,7 +102,7 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.copySelectionToTapped)
                         } label: {
-                            Label { Text(L10n.Browse.actionCopyTo) } icon: { IconKit.share }
+                            Label { Text(L10n.Browse.actionCopyTo) } icon: { MenuIcon.copyTo.image }
                         }
                         .tint(.primaryDS)
                     }
@@ -111,7 +111,7 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.compressSelectionTapped)
                         } label: {
-                            Label { Text(L10n.Browse.actionCompress) } icon: { IconKit.archiveDocument }
+                            Label { Text(L10n.Browse.actionCompress) } icon: { MenuIcon.compress.image }
                         }
                         .tint(.primaryDS)
                     }
@@ -123,7 +123,7 @@
                             store.send(.tableSelectionChanged(ids))
                             store.send(.bulkDownloadTapped)
                         } label: {
-                            Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
+                            Label { Text(L10n.Browse.actionDownload) } icon: { MenuIcon.download.image }
                         }
                         .tint(.primaryDS)
                     }
@@ -134,7 +134,11 @@
                     offlineAction(items, removals: true)
                     favoriteAction(items, removals: true)
                     if actions(items).canDelete {
-                        RemovableMenuButton(title: L10n.Browse.actionDelete, icon: IconKit.delete, isRemoval: true) {
+                        RemovableMenuButton(
+                            title: L10n.Browse.actionDelete,
+                            icon: MenuIcon.delete.image,
+                            isRemoval: true
+                        ) {
                             store.send(.tableSelectionChanged(ids))
                             store.send(.deleteSelectionTapped)
                         }
@@ -153,7 +157,7 @@
         private func folderActions(_ folder: FileItem) -> some View {
             Section {
                 Button { store.send(.infoTapped(folder)) } label: {
-                    Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
+                    Label { Text(L10n.Browse.actionGetInfo) } icon: { MenuIcon.getInfo.image }
                 }
                 .tint(.primaryDS)
             }
@@ -161,7 +165,7 @@
                 let isFavorite = store.favoritePaths.contains(folder.id)
                 RemovableMenuButton(
                     title: isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,
-                    icon: isFavorite ? IconKit.starFill : IconKit.star,
+                    icon: MenuIcon.favorite(isOn: isFavorite).image,
                     isRemoval: isFavorite
                 ) {
                     store.send(.favoriteToggleButtonTapped(folder))
@@ -180,7 +184,7 @@
             if action == .remove || actions(items).canKeepOffline, (action == .remove) == removals {
                 RemovableMenuButton(
                     title: action?.title ?? L10n.Browse.actionAvailableOffline,
-                    icon: action?.icon ?? IconKit.availableOffline,
+                    icon: action?.icon ?? MenuIcon.keepOffline.image,
                     isRemoval: removals
                 ) {
                     store.send(.tableSelectionChanged(ids))
@@ -196,7 +200,7 @@
             if items.allSatisfy(\.isDirectory), isAllFavorite == removals {
                 RemovableMenuButton(
                     title: removals ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,
-                    icon: removals ? IconKit.starFill : IconKit.star,
+                    icon: MenuIcon.favorite(isOn: removals).image,
                     isRemoval: removals
                 ) {
                     store.send(.tableSelectionChanged(ids))
@@ -212,6 +216,7 @@
         /// The Edit and File menu actions for the table's selection in `store`.
         init(store: StoreOf<BrowseFeature>, shouldKeepClipboard: Bool, open: @escaping (FileItem) -> Void) {
             let canPaste = store.clipboard != nil && !store.directoryPath.isEmpty
+            let selected = store.state.actions(for: store.selectedItems)
             self.init(
                 cut: { store.send(.cutSelectionTapped) },
                 copy: { store.send(.copySelectionTapped) },
@@ -235,7 +240,10 @@
                     guard !paths.isEmpty else { return }
                     PlatformPasteboard.copy(paths.joined(separator: "\n"))
                 },
-                redo: { store.send(.redoTapped, animation: DSMotion.listDiff) }
+                redo: { store.send(.redoTapped, animation: DSMotion.listDiff) },
+                canCut: selected.canMove,
+                canDelete: selected.canDelete,
+                canDuplicate: selected.canDuplicate
             )
         }
     }

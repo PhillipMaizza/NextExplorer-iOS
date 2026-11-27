@@ -33,7 +33,7 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.rowTapped(item))
             } label: {
-                Label { Text(L10n.Browse.open) } icon: { item.isDirectory ? IconKit.folder : IconKit.document }
+                Label { Text(L10n.Browse.open) } icon: { MenuIcon.open(isDirectory: item.isDirectory).image }
             }
             .tint(.primaryDS)
             .keyboardShortcut("o")
@@ -41,7 +41,7 @@ struct FileActionsMenu: View {
                 Button {
                     openWindow(value: FolderWindowRoute(path: item.id, title: item.name))
                 } label: {
-                    Label { Text(L10n.Browse.actionOpenInNewWindow) } icon: { IconKit.newWindow }
+                    Label { Text(L10n.Browse.actionOpenInNewWindow) } icon: { MenuIcon.newWindow.image }
                 }
                 .tint(.primaryDS)
                 Divider()
@@ -73,7 +73,7 @@ struct FileActionsMenu: View {
         Section {
             keepActions(removals: true)
             if actions.canDelete {
-                RemovableMenuButton(title: L10n.Browse.actionDelete, icon: IconKit.delete, isRemoval: true) {
+                RemovableMenuButton(title: L10n.Browse.actionDelete, icon: MenuIcon.delete.image, isRemoval: true) {
                     store.send(.deleteTapped(item))
                 }
                 .macMenuShortcut(.delete)
@@ -87,7 +87,7 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.infoTapped(item))
             } label: {
-                Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
+                Label { Text(L10n.Browse.actionGetInfo) } icon: { MenuIcon.getInfo.image }
             }
             .tint(.primaryDS)
             .macMenuShortcut("i")
@@ -103,7 +103,7 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.permissionsTapped(item))
             } label: {
-                Label { Text(L10n.Browse.actionPermissions) } icon: { IconKit.lock }
+                Label { Text(L10n.Browse.actionPermissions) } icon: { MenuIcon.permissions.image }
             }
             .tint(.primaryDS)
         }
@@ -111,7 +111,7 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.openInBrowserTapped(item))
             } label: {
-                Label { Text(L10n.Browse.actionOpenInBrowser) } icon: { IconKit.web }
+                Label { Text(L10n.Browse.actionOpenInBrowser) } icon: { MenuIcon.openInBrowser.image }
             }
             .tint(.primaryDS)
         }
@@ -123,7 +123,7 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.folderSizeRefreshTapped(item.id))
             } label: {
-                Label { Text(L10n.Browse.actionRefreshSize) } icon: { IconKit.retry }
+                Label { Text(L10n.Browse.actionRefreshSize) } icon: { MenuIcon.refresh.image }
             }
             .tint(.primaryDS)
         }
@@ -137,7 +137,7 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.copyTapped(item), animation: DSMotion.listDiff)
             } label: {
-                Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
+                Label { Text(L10n.Browse.actionCopy) } icon: { MenuIcon.copy.image }
             }
             .tint(.primaryDS)
             .macMenuShortcut("c")
@@ -147,7 +147,7 @@ struct FileActionsMenu: View {
                         store.send(.tableSelectionChanged([item.id]))
                         store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
                     } label: {
-                        Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
+                        Label { Text(L10n.Browse.actionDuplicate) } icon: { MenuIcon.duplicate.image }
                     }
                     .tint(.primaryDS)
                     .keyboardShortcut("d")
@@ -157,7 +157,7 @@ struct FileActionsMenu: View {
                         store.send(.tableSelectionChanged([item.id]))
                         store.send(.cutSelectionTapped, animation: DSMotion.listDiff)
                     } label: {
-                        Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                        Label { Text(L10n.Browse.actionCut) } icon: { MenuIcon.cut.image }
                     }
                     .tint(.primaryDS)
                     .keyboardShortcut("x")
@@ -167,7 +167,7 @@ struct FileActionsMenu: View {
                 Button {
                     store.send(.moveTapped(item), animation: DSMotion.listDiff)
                 } label: {
-                    Label { Text(MoveActionStyle.title) } icon: { IconKit.move }
+                    Label { Text(MoveActionStyle.title) } icon: { MenuIcon.move.image }
                 }
                 .tint(.primaryDS)
             }
@@ -175,7 +175,7 @@ struct FileActionsMenu: View {
                 Button {
                     store.send(.copyToTapped(item))
                 } label: {
-                    Label { Text(L10n.Browse.actionCopyTo) } icon: { IconKit.share }
+                    Label { Text(L10n.Browse.actionCopyTo) } icon: { MenuIcon.copyTo.image }
                 }
                 .tint(.primaryDS)
             #endif
@@ -188,7 +188,7 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.renameTapped(item))
             } label: {
-                Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
+                Label { Text(L10n.Browse.actionRename) } icon: { MenuIcon.rename.image }
             }
             .tint(.primaryDS)
         }
@@ -200,20 +200,20 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.extractTapped(item))
             } label: {
-                Label { Text(L10n.Browse.actionExtract) } icon: { IconKit.extract }
+                Label { Text(L10n.Browse.actionExtract) } icon: { MenuIcon.extract.image }
             }
             .tint(.primaryDS)
             Button {
                 store.send(.extractHereTapped(item))
             } label: {
-                Label { Text(L10n.Browse.actionExtractHere) } icon: { IconKit.extract }
+                Label { Text(L10n.Browse.actionExtractHere) } icon: { MenuIcon.extract.image }
             }
             .tint(.primaryDS)
         }
         Button {
             store.send(.compressTapped(item))
         } label: {
-            Label { Text(L10n.Browse.actionCompress) } icon: { IconKit.archiveDocument }
+            Label { Text(L10n.Browse.actionCompress) } icon: { MenuIcon.compress.image }
         }
         .tint(.primaryDS)
     }
@@ -246,7 +246,7 @@ struct FileActionsMenu: View {
             Button {
                 store.send(.downloadTapped(item))
             } label: {
-                Label { Text(SaveActionStyle.title) } icon: { SaveActionStyle.icon }
+                Label { Text(SaveActionStyle.title) } icon: { MenuIcon.download.image }
             }
             .tint(.primaryDS)
         }
@@ -255,7 +255,7 @@ struct FileActionsMenu: View {
                 Button {
                     store.send(.keptShareTapped([item]))
                 } label: {
-                    Label { Text(L10n.PreviewToolbar.share) } icon: { IconKit.share }
+                    Label { Text(L10n.PreviewToolbar.share) } icon: { MenuIcon.systemShare.image }
                 }
                 .tint(.primaryDS)
             }
@@ -263,7 +263,7 @@ struct FileActionsMenu: View {
             Button {
                 onShare(item)
             } label: {
-                Label { Text(L10n.Browse.actionShare) } icon: { IconKit.shareLink }
+                Label { Text(L10n.Browse.actionShare) } icon: { MenuIcon.shareLink.image }
             }
             .tint(.primaryDS)
         }
@@ -276,7 +276,7 @@ struct FileActionsMenu: View {
             // A file kept through a pinned folder removes that folder, after a confirmation naming it.
             RemovableMenuButton(
                 title: isKept ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
-                icon: IconKit.availableOffline,
+                icon: MenuIcon.keepOffline.image,
                 isRemoval: isKept
             ) {
                 store.send(.offlineToggleTapped(item))
@@ -287,7 +287,7 @@ struct FileActionsMenu: View {
             let isFavorite = removals
             RemovableMenuButton(
                 title: isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites,
-                icon: isFavorite ? IconKit.starFill : IconKit.star,
+                icon: MenuIcon.favorite(isOn: isFavorite).image,
                 isRemoval: isFavorite
             ) {
                 store.send(.favoriteToggleButtonTapped(item))

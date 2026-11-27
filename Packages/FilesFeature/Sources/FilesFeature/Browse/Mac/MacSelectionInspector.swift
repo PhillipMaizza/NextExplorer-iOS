@@ -89,13 +89,13 @@
             var actions: [MacInspectorQuickAction] = []
             if availability.canSave {
                 actions.append(MacInspectorQuickAction(
-                    icon: IconKit.menuDownload,
+                    icon: MenuIcon.download.panelImage,
                     title: SaveActionStyle.title
                 ) { store.send(.bulkDownloadTapped) })
             }
             if availability.canFavorite {
                 actions.append(MacInspectorQuickAction(
-                    icon: availability.isAllFavorite ? IconKit.starFill : IconKit.star,
+                    icon: MenuIcon.favorite(isOn: availability.isAllFavorite).panelImage,
                     title: L10n.FileInfo.quickFavorite,
                     isOn: availability.isAllFavorite,
                     isEnabled: availability.hasLoadedFavorites
@@ -202,7 +202,7 @@
             let hasOrganize = Self.hasOrganizeActions(availability, directoryPath: store.directoryPath)
             let offlineAction = Self.hasOfflineAction(availability) ? availability.offlineAction : nil
             if offlineAction == .add {
-                MacActionMenuButton(L10n.Browse.actionKeepOffline, icon: IconKit.menuKeepOffline) {
+                MacActionMenuButton(L10n.Browse.actionKeepOffline, icon: MenuIcon.keepOffline.panelImage) {
                     store.send(.bulkOfflineTapped)
                 }
                 if hasOrganize || availability.canDelete {
@@ -212,24 +212,24 @@
             if availability.canDuplicate {
                 MacActionMenuButton(
                     L10n.Browse.actionDuplicate,
-                    icon: IconKit.menuDuplicate,
+                    icon: MenuIcon.duplicate.panelImage,
                     accessory: .shortcut(MacMenuShortcut.duplicate)
                 ) {
                     store.send(.duplicateSelectionTapped, animation: DSMotion.listDiff)
                 }
             }
             if availability.canMove {
-                MacActionMenuButton(L10n.Browse.actionMoveTo, icon: IconKit.menuMoveTo) {
+                MacActionMenuButton(L10n.Browse.actionMoveTo, icon: MenuIcon.move.panelImage) {
                     store.send(.bulkMoveTapped)
                 }
             }
             if availability.canTransfer {
-                MacActionMenuButton(L10n.Browse.actionCopyTo, icon: IconKit.share) {
+                MacActionMenuButton(L10n.Browse.actionCopyTo, icon: MenuIcon.copyTo.panelImage) {
                     store.send(.copySelectionToTapped)
                 }
             }
             if availability.canCompress {
-                MacActionMenuButton(L10n.Browse.actionCompress, icon: IconKit.archiveDocument) {
+                MacActionMenuButton(L10n.Browse.actionCompress, icon: MenuIcon.compress.panelImage) {
                     store.send(.compressSelectionTapped)
                 }
             }
@@ -239,7 +239,7 @@
                 }
                 MacActionMenuButton(
                     L10n.Browse.actionRemoveFromOffline,
-                    icon: IconKit.menuKeepOffline,
+                    icon: MenuIcon.keepOffline.panelImage,
                     isDestructive: true
                 ) {
                     store.send(.bulkOfflineTapped)

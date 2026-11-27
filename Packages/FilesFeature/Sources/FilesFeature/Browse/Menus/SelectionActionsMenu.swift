@@ -62,27 +62,27 @@ struct SelectionActionsMenu: View {
             Section {
                 if let single = availability.single {
                     if availability.canGetInfo {
-                        item(L10n.Browse.actionGetInfo, IconKit.info) { onInfo(single) }
+                        item(L10n.Browse.actionGetInfo, MenuIcon.getInfo.image) { onInfo(single) }
                     }
                     if availability.canWrite {
-                        item(L10n.Browse.actionRename, IconKit.rename) { onRename(single) }
+                        item(L10n.Browse.actionRename, MenuIcon.rename.image) { onRename(single) }
                     }
                 }
                 if availability.canTransfer {
-                    item(L10n.Browse.actionCopy, IconKit.copy, action: onCopy)
+                    item(L10n.Browse.actionCopy, MenuIcon.copy.image, action: onCopy)
                     if availability.canMove {
-                        item(L10n.Browse.actionMove, IconKit.move, action: onMove)
+                        item(L10n.Browse.actionMove, MenuIcon.move.image, action: onMove)
                     }
                 }
             }
             Section {
                 if availability.canShareKept {
-                    item(L10n.PreviewToolbar.share, IconKit.share, action: onShareKept)
+                    item(L10n.PreviewToolbar.share, MenuIcon.systemShare.image, action: onShareKept)
                 } else if let single = availability.single, availability.canShare {
-                    item(L10n.Browse.actionShare, IconKit.shareLink) { onShareLink(single) }
+                    item(L10n.Browse.actionShare, MenuIcon.shareLink.image) { onShareLink(single) }
                 }
                 if availability.canSave {
-                    item(SaveActionStyle.title, SaveActionStyle.icon, action: onSave)
+                    item(SaveActionStyle.title, MenuIcon.download.image, action: onSave)
                 }
             }
             Section {
@@ -90,7 +90,7 @@ struct SelectionActionsMenu: View {
                     let action = availability.offlineAction
                     RemovableMenuButton(
                         title: action?.title ?? L10n.Browse.actionAvailableOffline,
-                        icon: action?.icon ?? IconKit.availableOffline,
+                        icon: action?.icon ?? MenuIcon.keepOffline.image,
                         isRemoval: action == .remove,
                         action: onOffline
                     )
@@ -101,7 +101,7 @@ struct SelectionActionsMenu: View {
                         title: availability.isAllFavorite
                             ? L10n.Browse.actionRemoveFromFavorites
                             : L10n.Browse.actionAddToFavorites,
-                        icon: availability.isAllFavorite ? IconKit.starFill : IconKit.star,
+                        icon: MenuIcon.favorite(isOn: availability.isAllFavorite).image,
                         isRemoval: availability.isAllFavorite,
                         action: onFavorite
                     )
@@ -111,7 +111,7 @@ struct SelectionActionsMenu: View {
             if availability.canDelete {
                 Section {
                     Button(role: .destructive, action: onDelete) {
-                        Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                        Label { Text(L10n.Browse.actionDelete) } icon: { MenuIcon.delete.image }
                     }
                     .tint(.red)
                 }

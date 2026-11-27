@@ -38,7 +38,7 @@
                             bottom: MacPaneInset.listGap
                         ) {
                             Button(role: .destructive) { store.send(.emptyTrashTapped) } label: {
-                                Label { Text(L10n.Trash.emptyTrash) } icon: { IconKit.delete }
+                                Label { Text(L10n.Trash.emptyTrash) } icon: { MenuIcon.delete.image }
                             }
                             .buttonStyle(.macDS(.secondary))
                             .disabled(store.items.isEmpty || store.isBusy)
@@ -84,7 +84,7 @@
             if store.isEnabled {
                 Color.clear.macEmptyGuide(.trash(retentionDays: store.retentionDays))
             } else {
-                EmptyStateView(icon: IconKit.delete, message: L10n.Trash.emptyState)
+                EmptyStateView(icon: MenuIcon.delete.image, message: L10n.Trash.emptyState)
             }
         }
 
@@ -109,7 +109,7 @@
                         MacFileNameText(name: item.name, isDirectory: item.isDirectory)
                         if item.shareCount > 0 {
                             MacTableFolderIcon(
-                                image: IconKit.shareLink,
+                                image: MenuIcon.shareLink.image,
                                 tint: .accent,
                                 size: MacBrowseTableMetrics.badgeSize
                             )
@@ -197,13 +197,13 @@
                 TrashItemMenu(item: item, store: store)
             } else if !picked.isEmpty {
                 Button { store.send(.restoreTapped(picked)) } label: {
-                    Label { Text(L10n.Trash.restore) } icon: { IconKit.restore }
+                    Label { Text(L10n.Trash.restore) } icon: { MenuIcon.restore.image }
                 }
                 Button { store.send(.restoreToTapped(picked)) } label: {
-                    Label { Text(L10n.Trash.restoreTo) } icon: { IconKit.restoreTo }
+                    Label { Text(L10n.Trash.restoreTo) } icon: { MenuIcon.restoreTo.image }
                 }
                 Divider()
-                RemovableMenuButton(title: L10n.Trash.deletePermanently, icon: IconKit.delete, isRemoval: true) {
+                RemovableMenuButton(title: L10n.Trash.deletePermanently, icon: MenuIcon.delete.image, isRemoval: true) {
                     store.send(.deletePermanentlyTapped(picked))
                 }
             }

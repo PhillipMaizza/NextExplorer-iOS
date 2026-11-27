@@ -25,11 +25,11 @@
                 HStack(spacing: .space8) {
                     if canCreateFolder {
                         Button(action: onCreateFolder) {
-                            Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.macNewFolder }
+                            Label { Text(L10n.Browse.actionNewFolder) } icon: { MenuIcon.newFolder.image }
                         }
                     }
                     Button(action: onUpload) {
-                        Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.macUpload }
+                        Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { MenuIcon.upload.image }
                     }
                 }
                 .buttonStyle(.macDS(.secondary))
