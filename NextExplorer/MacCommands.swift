@@ -124,6 +124,7 @@
                     )
                 }
                 .keyboardShortcut(BrowseShortcut.paste)
+                .disabled(fileActions.map { !$0.canPaste } ?? false)
                 Button(L10n.Common.delete) { perform(fileActions?.delete, fallback: #selector(NSText.delete(_:))) }
                     .keyboardShortcut(.delete)
                 Button(L10n.Select.selectAll) { perform(

@@ -782,6 +782,7 @@ macSettings.roleUser	Utilizator
 macSettings.status	Stare
 macSettings.statusSignedIn	Conectat
 macSettings.cache	Cache
+macSettings.cachedFiles	Fișiere din cache
 macSettings.support	Ajutor și asistență…
 macSettings.permission	Permisiune
 macSettings.icon	Pictogramă

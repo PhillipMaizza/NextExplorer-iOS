@@ -1017,6 +1017,7 @@ macSettings.roleUser	Bruger
 macSettings.status	Status
 macSettings.statusSignedIn	Logget ind
 macSettings.cache	Cache
+macSettings.cachedFiles	Cachelagrede filer
 macSettings.support	Hjælp og support…
 macSettings.permission	Tilladelse
 macSettings.icon	Symbol

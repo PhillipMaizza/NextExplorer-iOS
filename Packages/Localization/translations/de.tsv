@@ -771,6 +771,7 @@ macSettings.roleUser	Benutzer
 macSettings.status	Status
 macSettings.statusSignedIn	Angemeldet
 macSettings.cache	Cache
+macSettings.cachedFiles	Zwischengespeicherte Dateien
 macSettings.support	Hilfe & Support …
 macSettings.permission	Berechtigung
 macSettings.icon	Symbol

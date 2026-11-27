@@ -141,6 +141,11 @@
             .accessibilityLabel(account.isActive
                 ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
                 : L10n.Common.pair(account.displayName, account.serverHost))
+                .accessibilityActions {
+                    if !account.isActive {
+                        Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
+                    }
+                }
                 .contextMenu {
                     if !account.isActive {
                         Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }

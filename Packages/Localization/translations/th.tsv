@@ -1006,6 +1006,7 @@ macSettings.roleUser	ผู้ใช้
 macSettings.status	สถานะ
 macSettings.statusSignedIn	เข้าสู่ระบบแล้ว
 macSettings.cache	แคช
+macSettings.cachedFiles	ไฟล์ในแคช
 macSettings.support	ความช่วยเหลือและการสนับสนุน…
 macSettings.permission	สิทธิ์
 macSettings.icon	ไอคอน

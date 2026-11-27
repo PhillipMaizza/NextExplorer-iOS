@@ -1039,6 +1039,7 @@ macSettings.roleUser	Uživatel
 macSettings.status	Stav
 macSettings.statusSignedIn	Přihlášeno
 macSettings.cache	Mezipaměť
+macSettings.cachedFiles	Soubory v mezipaměti
 macSettings.support	Nápověda a podpora…
 macSettings.permission	Oprávnění
 macSettings.icon	Ikona

@@ -100,6 +100,14 @@ struct ImageGalleryPage: View {
         return false
     }
 
+    private static func isShownAtPixelSize(_ image: PlatformImage) -> Bool {
+        #if os(macOS)
+            true
+        #elseif os(iOS)
+            ThumbnailImage.isIconSized(image)
+        #endif
+    }
+
     var body: some View {
         ZStack {
             if showsPlaceholder {
@@ -129,9 +137,9 @@ struct ImageGalleryPage: View {
                 }
             case let .streaming(uiImage), let .loaded(uiImage):
                 ZoomableScrollView(onZoomChange: onZoomChange) {
-                    // An icon sized picture shows one point per pixel, as Quick Look does,
-                    // instead of blown up to the screen; pinch still zooms it.
-                    let iconSide = ThumbnailImage.isIconSized(uiImage) ? uiImage.cgImage : nil
+                    // A picture smaller than the space shows one point per pixel, as Quick Look does,
+                    // instead of blown up; pinch still zooms it.
+                    let iconSide = Self.isShownAtPixelSize(uiImage) ? uiImage.cgImage : nil
                     Image(platformImage: uiImage).resizable().scaledToFit()
                         .frame(
                             maxWidth: iconSide.map { CGFloat($0.width) },

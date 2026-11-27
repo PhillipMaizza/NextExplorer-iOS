@@ -76,7 +76,7 @@
         private var cacheGroup: some View {
             MacFormGroup(L10n.MacSettings.cache) {
                 MacFormRow {
-                    MacFormRowTitle(title: L10n.MacSettings.cache, subtitle: L10n.Settings.storageFootnoteMac)
+                    MacFormRowTitle(title: L10n.MacSettings.cachedFiles, subtitle: L10n.Settings.storageFootnoteMac)
                 } control: {
                     sizeValue(store.cacheSize)
                 }

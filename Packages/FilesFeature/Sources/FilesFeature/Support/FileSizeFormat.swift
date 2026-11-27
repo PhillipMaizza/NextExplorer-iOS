@@ -9,6 +9,7 @@ enum FileSizeFormat {
     private static let formatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
         formatter.countStyle = .file
+        formatter.allowsNonnumericFormatting = false
         return formatter
     }()
 

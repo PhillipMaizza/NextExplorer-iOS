@@ -1206,6 +1206,7 @@ macSettings.roleUser	User
 macSettings.status	Status
 macSettings.statusSignedIn	Signed In
 macSettings.cache	Cache
+macSettings.cachedFiles	Cached Files
 macSettings.support	Help & Support…
 macSettings.permission	Permission
 macSettings.icon	Icon

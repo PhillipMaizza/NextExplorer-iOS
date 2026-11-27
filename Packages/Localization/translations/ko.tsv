@@ -760,6 +760,7 @@ macSettings.roleUser	사용자
 macSettings.status	상태
 macSettings.statusSignedIn	로그인됨
 macSettings.cache	캐시
+macSettings.cachedFiles	캐시된 파일
 macSettings.support	도움말 및 지원…
 macSettings.permission	권한
 macSettings.icon	아이콘

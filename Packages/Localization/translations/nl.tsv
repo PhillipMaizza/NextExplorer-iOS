@@ -771,6 +771,7 @@ macSettings.roleUser	Gebruiker
 macSettings.status	Status
 macSettings.statusSignedIn	Aangemeld
 macSettings.cache	Cache
+macSettings.cachedFiles	Bestanden in cache
 macSettings.support	Hulp en ondersteuning…
 macSettings.permission	Toegang
 macSettings.icon	Symbool

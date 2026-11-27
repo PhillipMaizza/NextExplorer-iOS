@@ -760,6 +760,7 @@ macSettings.roleUser	ユーザー
 macSettings.status	状態
 macSettings.statusSignedIn	サインイン済み
 macSettings.cache	キャッシュ
+macSettings.cachedFiles	キャッシュ済みファイル
 macSettings.support	ヘルプとサポート…
 macSettings.permission	アクセス権
 macSettings.icon	アイコン
