@@ -12,23 +12,23 @@ struct TrashItemMenu: View {
     var body: some View {
         if item.isAvailable {
             Button { store.send(.restoreTapped([item])) } label: {
-                Label { Text(L10n.Trash.restore) } icon: { IconKit.restore }
+                Label { Text(L10n.Trash.restore) } icon: { MenuIcon.restore.image }
             }
             Button { store.send(.restoreToTapped([item])) } label: {
-                Label { Text(L10n.Trash.restoreTo) } icon: { IconKit.restoreTo }
+                Label { Text(L10n.Trash.restoreTo) } icon: { MenuIcon.restoreTo.image }
             }
             if item.openPath != nil {
                 Button { store.send(.openLocationTapped(item)) } label: {
-                    Label { Text(L10n.Trash.openLocation) } icon: { IconKit.folder }
+                    Label { Text(L10n.Trash.openLocation) } icon: { MenuIcon.openLocation.image }
                 }
             }
             Divider()
-            RemovableMenuButton(title: L10n.Trash.deletePermanently, icon: IconKit.delete, isRemoval: true) {
+            RemovableMenuButton(title: L10n.Trash.deletePermanently, icon: MenuIcon.delete.image, isRemoval: true) {
                 store.send(.deletePermanentlyTapped([item]))
             }
         } else {
             // Its volume is gone: an administrator may drop the record; the server refuses anyone else.
-            RemovableMenuButton(title: L10n.Trash.forget, icon: IconKit.delete, isRemoval: true) {
+            RemovableMenuButton(title: L10n.Trash.forget, icon: MenuIcon.delete.image, isRemoval: true) {
                 store.send(.forgetTapped(item))
             }
         }
@@ -44,14 +44,14 @@ extension BrowseQuickAction {
         return [
             BrowseQuickAction(
                 title: L10n.Trash.deletePermanently,
-                icon: IconKit.delete,
+                icon: MenuIcon.delete.image,
                 tint: .negative,
                 isEnabled: !store.isBusy,
                 perform: { store.send(.deletePermanentlyTapped([item])) }
             ),
             BrowseQuickAction(
                 title: L10n.Trash.restore,
-                icon: IconKit.restore,
+                icon: MenuIcon.restore.image,
                 tint: .accent,
                 isEnabled: !store.isBusy,
                 perform: { store.send(.restoreTapped([item])) }
@@ -70,7 +70,7 @@ struct TrashSelectionToolbar: ToolbarContent {
     var body: some ToolbarContent {
         ToolbarItem(placement: .bottomBar) {
             SelectionToolbarButton(
-                icon: IconKit.restore,
+                icon: MenuIcon.restore.image,
                 accessibilityLabel: L10n.Trash.restore,
                 isDisabled: isDisabled,
                 action: onRestore
@@ -81,7 +81,7 @@ struct TrashSelectionToolbar: ToolbarContent {
         }
         ToolbarItem(placement: .bottomBar) {
             SelectionToolbarButton(
-                icon: IconKit.restoreTo,
+                icon: MenuIcon.restoreTo.image,
                 accessibilityLabel: L10n.Trash.restoreTo,
                 isDisabled: isDisabled,
                 action: onRestoreTo
@@ -93,7 +93,7 @@ struct TrashSelectionToolbar: ToolbarContent {
             }
             ToolbarItem(placement: .bottomBar) {
                 SelectionToolbarButton(
-                    icon: IconKit.delete,
+                    icon: MenuIcon.delete.image,
                     role: .destructive,
                     tint: .negative,
                     accessibilityLabel: L10n.Trash.deletePermanently,
@@ -121,7 +121,7 @@ enum TrashConfirmation {
             0
         }
         return DSAlertSheet(
-            icon: IconKit.delete,
+            icon: MenuIcon.delete.image,
             title: isEmpty ? L10n.Trash.confirmEmptyTitle : L10n.Trash.confirmDeleteTitle,
             message: isEmpty ? L10n.Trash.confirmEmptyMessage : L10n.Trash.confirmDeleteMessage(count),
             confirmTitle: isEmpty ? L10n.Trash.emptyTrash : L10n.Trash.deletePermanently,

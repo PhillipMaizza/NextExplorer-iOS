@@ -115,7 +115,7 @@
                         MacFileNameText(name: row.sortName, isDirectory: row.pinned?.root.isDirectory == true)
                         if row.pinned != nil {
                             MacTableFolderIcon(
-                                image: IconKit.availableOffline,
+                                image: MenuIcon.keepOffline.image,
                                 tint: Color.accent,
                                 size: MacBrowseTableMetrics.badgeSize
                             )
@@ -188,12 +188,12 @@
                     }
                 }
                 Button(role: .destructive) { remove(ids) } label: {
-                    Label { Text(L10n.Common.remove) } icon: { IconKit.delete }
+                    Label { Text(L10n.Common.remove) } icon: { MenuIcon.delete.image }
                 }
                 .tint(.negative)
             } else if !selected.isEmpty, selected.allSatisfy({ $0.saved != nil }) {
                 Button(role: .destructive) { remove(ids) } label: {
-                    Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
+                    Label { Text(L10n.Common.delete) } icon: { MenuIcon.delete.image }
                 }
                 .tint(.negative)
             }

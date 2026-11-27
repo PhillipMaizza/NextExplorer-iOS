@@ -18,6 +18,7 @@
         let onOpenWithFailed: (String) -> Void
 
         @Dependency(\.offlineFileStore) private var offlineFileStore
+        @Environment(\.dismiss) private var dismiss
 
         private var rows: InspectorMoreRows {
             store.state.inspectorMoreRows(for: item)
@@ -30,7 +31,7 @@
             } else {
                 downloadAction(rows)
                 if rows.actions.canCopy {
-                    MacActionMenuButton(L10n.Browse.actionCopyTo, icon: IconKit.share) {
+                    MacActionMenuButton(L10n.Browse.actionCopyTo, icon: MenuIcon.copyTo.panelImage) {
                         store.send(.copyToTapped(item))
                     }
                 }
@@ -40,7 +41,7 @@
         @ViewBuilder
         private func downloadAction(_ rows: InspectorMoreRows) -> some View {
             if rows.showsDownload {
-                MacActionMenuButton(SaveActionStyle.title, icon: IconKit.menuDownload) {
+                MacActionMenuButton(SaveActionStyle.title, icon: MenuIcon.download.panelImage) {
                     store.send(.downloadTapped(item))
                 }
             }
@@ -54,15 +55,15 @@
             if rows.showsKeptCopy {
                 MacLocalFilePanelRows(resolve: offlineFileStore.pinned(to: store.cacheScope).keptCopy(of: item))
             }
-            MacVersionsMenu(store: store, item: item) {
-                MacActionMenuRow(L10n.Browse.actionVersions, icon: IconKit.time, accessory: .submenu)
-            }
-            .menuStyle(.button)
-            .buttonStyle(.plain)
-            .menuIndicator(.hidden)
+            MacVersionsMenu(store: store, item: item, label: {
+                MacActionMenuRow(L10n.Browse.actionVersions, icon: MenuIcon.versions.panelImage, accessory: .submenu)
+            }, onPick: { dismiss() })
+                .menuStyle(.button)
+                .buttonStyle(.plain)
+                .menuIndicator(.hidden)
             downloadAction(rows)
             if rows.showsKeepOffline {
-                MacActionMenuButton(L10n.Browse.actionKeepOffline, icon: IconKit.menuKeepOffline) {
+                MacActionMenuButton(L10n.Browse.actionKeepOffline, icon: MenuIcon.keepOffline.panelImage) {
                     store.send(.offlineToggleTapped(item))
                 }
             }
@@ -76,7 +77,7 @@
             if rows.showsRemoveFromOffline {
                 MacActionMenuButton(
                     L10n.Browse.actionRemoveFromOffline,
-                    icon: IconKit.menuKeepOffline,
+                    icon: MenuIcon.keepOffline.panelImage,
                     isDestructive: true
                 ) {
                     store.send(.offlineToggleTapped(item))
@@ -94,7 +95,7 @@
             if actions.canRename {
                 MacActionMenuButton(
                     L10n.ellipsized(L10n.Browse.actionRename),
-                    icon: IconKit.pencil,
+                    icon: MenuIcon.rename.panelImage,
                     accessory: .shortcut(MacMenuShortcut.rename)
                 ) {
                     store.send(.renameTapped(item))
@@ -103,7 +104,7 @@
             if actions.canDuplicate {
                 MacActionMenuButton(
                     L10n.Browse.actionDuplicate,
-                    icon: IconKit.menuDuplicate,
+                    icon: MenuIcon.duplicate.panelImage,
                     accessory: .shortcut(MacMenuShortcut.duplicate)
                 ) {
                     store.send(.tableSelectionChanged([item.id]))
@@ -111,25 +112,25 @@
                 }
             }
             if actions.canMove {
-                MacActionMenuButton(L10n.Browse.actionMoveTo, icon: IconKit.menuMoveTo) {
+                MacActionMenuButton(L10n.Browse.actionMoveTo, icon: MenuIcon.move.panelImage) {
                     store.send(.moveTapped(item))
                 }
             }
             if actions.canCopy {
-                MacActionMenuButton(L10n.Browse.actionCopyTo, icon: IconKit.share) {
+                MacActionMenuButton(L10n.Browse.actionCopyTo, icon: MenuIcon.copyTo.panelImage) {
                     store.send(.copyToTapped(item))
                 }
             }
             if actions.canExtract {
-                MacActionMenuButton(L10n.Browse.actionExtract, icon: IconKit.extract) {
+                MacActionMenuButton(L10n.Browse.actionExtract, icon: MenuIcon.extract.panelImage) {
                     store.send(.extractTapped(item))
                 }
-                MacActionMenuButton(L10n.Browse.actionExtractHere, icon: IconKit.extract) {
+                MacActionMenuButton(L10n.Browse.actionExtractHere, icon: MenuIcon.extract.panelImage) {
                     store.send(.extractHereTapped(item))
                 }
             }
             if actions.canCompress {
-                MacActionMenuButton(L10n.Browse.actionCompress, icon: IconKit.archiveDocument) {
+                MacActionMenuButton(L10n.Browse.actionCompress, icon: MenuIcon.compress.panelImage) {
                     store.send(.compressTapped(item))
                 }
             }
@@ -174,6 +175,7 @@
         let item: FileItem
         let serverURL: URL
         let onFailure: (String) -> Void
+        @Environment(\.dismiss) private var dismiss
 
         var body: some View {
             let apps = MacOpenWithApp.apps(forFileNamed: item.name).all
@@ -184,7 +186,7 @@
                     }
                 }
             } label: {
-                MacActionMenuRow(L10n.OpenWith.openWith, icon: IconKit.menuOpenWith, accessory: .submenu)
+                MacActionMenuRow(L10n.OpenWith.openWith, icon: MenuIcon.openWith.panelImage, accessory: .submenu)
             }
             .menuStyle(.button)
             .buttonStyle(.plain)
@@ -193,6 +195,7 @@
         }
 
         private func open(with app: MacOpenWithApp) {
+            dismiss()
             MacOpenWithModel(source: .remote(item, serverURL: serverURL), onFailure: onFailure).open(with: app)
         }
     }
@@ -204,7 +207,7 @@
         var body: some View {
             MacActionMenuButton(
                 isTrashAvailable ? L10n.Trash.moveToTrash : L10n.Browse.actionDelete,
-                icon: IconKit.delete,
+                icon: MenuIcon.delete.panelImage,
                 accessory: .shortcut(MacMenuShortcut.delete),
                 isDestructive: true,
                 action: action

@@ -34,7 +34,6 @@ struct TextFilePreviewView: View {
     @State private var savedToast: DSToastMessage?
     /// Closing with edits not yet saved: asking first, then (Save) closing once the save lands.
     @State private var closeFlow = CloseFlow.idle
-    @State private var isMoreOpen = false
 
     private enum CloseFlow: Equatable {
         case idle
@@ -176,12 +175,7 @@ struct TextFilePreviewView: View {
         @ViewBuilder
         private var macMoreButton: some View {
             if isHTML, let url = FilesClient.rawFileURL(serverURL: serverURL, item: item) {
-                MacIconButton(IconKit.ellipsis, label: L10n.Common.more, isFilled: false) { isMoreOpen.toggle() }
-                    .popover(isPresented: $isMoreOpen, arrowEdge: .bottom) {
-                        MacActionMenuPanel {
-                            MacActionMenuButton(L10n.Browse.actionOpenInBrowser, icon: IconKit.web) { openURL(url) }
-                        }
-                    }
+                MacIconButton(IconKit.web, label: L10n.Browse.actionOpenInBrowser, isFilled: false) { openURL(url) }
             }
         }
     #else

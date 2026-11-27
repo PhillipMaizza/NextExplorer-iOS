@@ -22,7 +22,7 @@ struct FavoriteRowContextMenu: View {
                     Button {
                         store.send(.infoTapped(favorite))
                     } label: {
-                        Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
+                        Label { Text(L10n.Browse.actionGetInfo) } icon: { MenuIcon.getInfo.image }
                     }
                     .tint(.primaryDS)
                     .keyboardShortcut("i", modifiers: .command)
@@ -30,7 +30,7 @@ struct FavoriteRowContextMenu: View {
                 Button {
                     store.send(.editTapped(favorite))
                 } label: {
-                    Label { Text(L10n.Favorites.actionEdit) } icon: { IconKit.rename }
+                    Label { Text(L10n.Favorites.actionEdit) } icon: { MenuIcon.rename.image }
                 }
                 .tint(.primaryDS)
             }
@@ -42,7 +42,7 @@ struct FavoriteRowContextMenu: View {
             if !isOffline || isKept {
                 RemovableMenuButton(
                     title: isKept ? L10n.Browse.actionRemoveFromOffline : L10n.Browse.actionAvailableOffline,
-                    icon: IconKit.availableOffline,
+                    icon: MenuIcon.keepOffline.image,
                     isRemoval: isKept
                 ) {
                     store.send(.offlineToggleTapped(favorite))
@@ -51,7 +51,7 @@ struct FavoriteRowContextMenu: View {
             if !isOffline {
                 RemovableMenuButton(
                     title: L10n.Favorites.actionRemoveFromFavorites,
-                    icon: IconKit.unfavorite,
+                    icon: MenuIcon.unfavorite.image,
                     isRemoval: true
                 ) {
                     store.send(.removeTapped(favorite))

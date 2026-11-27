@@ -30,17 +30,17 @@
 
         var menuIcon: Image {
             switch self {
-            case .share: IconKit.share
-            case .copy: IconKit.copy
-            case .save: SaveActionStyle.icon
+            case .share: MenuIcon.systemShare.image
+            case .copy: MenuIcon.copy.image
+            case .save: MenuIcon.download.image
             }
         }
 
         var panelIcon: Image {
             switch self {
-            case .share: IconKit.share
-            case .copy: IconKit.menuDuplicate
-            case .save: IconKit.menuDownload
+            case .share: MenuIcon.systemShare.panelImage
+            case .copy: MenuIcon.duplicate.panelImage
+            case .save: MenuIcon.download.panelImage
             }
         }
 

@@ -20,6 +20,9 @@
         public var copyPath: () -> Void = {}
         /// Does the last undone operation again; does nothing when none is waiting.
         public var redo: () -> Void = {}
+        public var canCut = true
+        public var canDelete = true
+        public var canDuplicate = true
     }
 
     /// The visible Browse screen's sort, for the View menu's Sort By.

@@ -16,21 +16,21 @@ struct DownloadRowContextMenu: View {
             MacLocalFileMenuItems { url }
         #elseif os(iOS)
             ShareLink(item: download.url) {
-                Label { Text(L10n.Common.share) } icon: { IconKit.share }
+                Label { Text(L10n.Common.share) } icon: { MenuIcon.systemShare.image }
             }
             .tint(.primaryDS)
         #endif
         Button {
             store.send(.renameTapped(download))
         } label: {
-            Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
+            Label { Text(L10n.Browse.actionRename) } icon: { MenuIcon.rename.image }
         }
         .tint(.primaryDS)
         Divider()
         Button(role: .destructive) {
             store.send(.deleteTapped(download))
         } label: {
-            Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
+            Label { Text(L10n.Common.delete) } icon: { MenuIcon.delete.image }
         }
         .tint(.negative)
     }
