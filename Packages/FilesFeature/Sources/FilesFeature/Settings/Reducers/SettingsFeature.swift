@@ -98,6 +98,7 @@ public struct SettingsFeature {
         /// One shot signal: set when a tip completes so the view can raise the thank you toast,
         /// cleared by `tipToastShown`.
         public var tipToast: String?
+        public var savedToast: String?
         /// Server branding, fetched on appear and shared with `ServerDetailsFeature` so an
         /// admin's edit there is reflected in the server row the moment it saves.
         @Shared(.inMemory(Branding.sharedKey)) public var branding = Branding()
@@ -173,7 +174,8 @@ public struct SettingsFeature {
             case .ffmpeg: ffmpegSettings?.isDirty == true
             case .activity: activityLog?.isSettingsDirty == true
             case .trash: trashSettings?.isDirty == true
-            case .users, .versions, .serverTools: false
+            case .users: userManagement?.isProfileDirty == true
+            case .versions, .serverTools: false
             }
         }
 
@@ -261,6 +263,7 @@ public struct SettingsFeature {
         case clientCertificate(PresentationAction<ClientCertificateFeature.Action>)
         case uploadDefaults(UploadDefaultsFeature.Action)
         case tipToastShown
+        case savedToastShown
         case brandingResponse(Result<Branding, FilesClientError>)
         case serverFeaturesResponse(ServerFeatures)
         case volumesResponse([Volume])
@@ -454,6 +457,21 @@ public struct SettingsFeature {
             return .none
 
         case .serverDetails:
+            return .none
+
+        case .thumbnailSettings(.presented(.delegate(.saved))),
+             .accessRules(.presented(.delegate(.saved))),
+             .uploadSettings(.presented(.delegate(.saved))),
+             .ffmpegSettings(.presented(.delegate(.saved))),
+             .searchIndexSettings(.presented(.delegate(.saved))),
+             .folderSizeSettings(.presented(.delegate(.saved))),
+             .activityLog(.presented(.saveSettingsResponse(.success))),
+             .trashSettings(.presented(.saveResponse(.success))):
+            state.savedToast = L10n.Settings.changesSaved
+            return .none
+
+        case .savedToastShown:
+            state.savedToast = nil
             return .none
 
         case .thumbnailSettingsButtonTapped:

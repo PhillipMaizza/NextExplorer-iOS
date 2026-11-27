@@ -393,6 +393,7 @@ accessRules.permissionHidden	Masqué
 accessRules.remove	Retirer
 accessRules.unavailable	Les règles d'accès sont réservées aux administrateurs.
 accessRules.saveButton	Enregistrer les modifications
+settings.changesSaved	Modifications enregistrées
 settings.rowThumbnails	Miniatures
 settings.rowAccessRules	Règles d'accès aux dossiers
 settings.navigationTitle	Réglages

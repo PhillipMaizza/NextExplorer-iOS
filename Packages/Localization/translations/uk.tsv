@@ -608,6 +608,7 @@ accessRules.permissionHidden	Приховано
 accessRules.remove	Вилучити
 accessRules.unavailable	Правила доступу доступні лише адміністраторам.
 accessRules.saveButton	Зберегти зміни
+settings.changesSaved	Зміни збережено
 settings.rowThumbnails	Мініатюри
 settings.rowAccessRules	Правила доступу до папок
 settings.navigationTitle	Налаштування

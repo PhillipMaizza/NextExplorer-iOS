@@ -595,6 +595,7 @@ accessRules.permissionHidden	מוסתר
 accessRules.remove	הסרה
 accessRules.unavailable	כללי הגישה זמינים למנהלי מערכת בלבד.
 accessRules.saveButton	שמירת שינויים
+settings.changesSaved	השינויים נשמרו
 settings.rowThumbnails	תמונות ממוזערות
 settings.rowAccessRules	כללי גישה לתיקיות
 settings.navigationTitle	הגדרות

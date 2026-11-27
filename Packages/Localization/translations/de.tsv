@@ -393,6 +393,7 @@ accessRules.permissionHidden	Ausgeblendet
 accessRules.remove	Entfernen
 accessRules.unavailable	Zugriffsregeln sind nur für Administratoren verfügbar.
 accessRules.saveButton	Änderungen sichern
+settings.changesSaved	Änderungen gesichert
 settings.rowThumbnails	Miniaturen
 settings.rowAccessRules	Ordnerzugriffsregeln
 settings.navigationTitle	Einstellungen

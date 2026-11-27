@@ -192,7 +192,17 @@ public struct TrashSettingsFeature {
         let filesClient = filesClient
         return .api(
             cancelID: CancelID.zones,
-            operation: { try await filesClient.fetchTrashZones(serverURL) },
+            operation: {
+                async let zones = filesClient.fetchTrashZones(serverURL)
+                let names = await ZoneOwners.names(filesClient, serverURL)
+                return try await zones.map { zone in
+                    var zone = zone
+                    if zone.kind == .personal {
+                        zone.ownerName = names[zone.name]
+                    }
+                    return zone
+                }
+            },
             response: { .zonesResponse($0) }
         )
     }

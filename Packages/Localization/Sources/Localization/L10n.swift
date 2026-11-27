@@ -931,6 +931,7 @@ public enum L10n {
         public static var addAccount: String { tr("settings.addAccount") }  // "Add Account"
         public static func appVersion(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.appVersion", a0, a1) }
         public static var badgeActive: String { tr("settings.badgeActive") }  // "Active"
+        public static var changesSaved: String { tr("settings.changesSaved") }  // "Changes saved"
         public static var clearCacheConfirm: String { tr("settings.clearCacheConfirm") }  // "Clear"
         public static var clearCacheMessage: String { tr("settings.clearCacheMessage") }
         public static var clearCacheTitle: String { tr("settings.clearCacheTitle") }  // "Clear Cache?"

@@ -60,6 +60,7 @@ extension VersionedFilesTestSupport {
         return TestStore(initialState: state ?? State(serverURL: serverURL)) {
             VersionedFilesFeature()
         } withDependencies: {
+            $0.filesClient.listUsers = { _ in [] }
             $0.filesClient.fetchVersionedFiles = { _, filter, offset, limit in
                 pageCalls.withValue { $0.append(VersionedFilesPageCall(filter: filter, offset: offset, limit: limit)) }
                 return try await page(filter, offset)

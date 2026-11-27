@@ -21,6 +21,7 @@ public struct VersionedZone: Equatable, Sendable, Decodable, Identifiable, Hasha
     public let id: String
     public let kind: TrashZone.Kind
     public let name: String
+    public var ownerName: String?
 
     public init(id: String, kind: TrashZone.Kind = .volume, name: String) {
         self.id = id
@@ -53,7 +54,7 @@ public struct VersionedFile: Equatable, Sendable, Decodable, Identifiable {
     public let versions: Int
     public let bytes: Int
     public let newest: String?
-    public let zone: VersionedZone?
+    public var zone: VersionedZone?
 
     public init(
         id: String,
@@ -101,13 +102,13 @@ public struct VersionedFile: Equatable, Sendable, Decodable, Identifiable {
 
 /// A page of `GET /api/versions/admin/files`, with what the whole filter holds.
 public struct VersionedFilesPage: Equatable, Sendable, Decodable {
-    public let files: [VersionedFile]
+    public var files: [VersionedFile]
     public let total: Int
     public let totalBytes: Int
     public let totalVersions: Int
     public let limit: Int
     public let offset: Int
-    public let zones: [VersionedZone]
+    public var zones: [VersionedZone]
 
     public init(
         files: [VersionedFile] = [],

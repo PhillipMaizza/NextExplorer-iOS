@@ -98,12 +98,23 @@ public struct VersionedFilesFeature {
         let filesClient = filesClient
         return .api(
             cancelID: CancelID.page,
-            operation: { try await filesClient.fetchVersionedFiles(
-                serverURL,
-                filter,
-                offset,
-                VersionedFilesPage.defaultPageSize
-            ) },
+            operation: {
+                async let fetched = filesClient.fetchVersionedFiles(
+                    serverURL,
+                    filter,
+                    offset,
+                    VersionedFilesPage.defaultPageSize
+                )
+                let names = await ZoneOwners.names(filesClient, serverURL)
+                var page = try await fetched
+                page.zones = page.zones.compactMap { ZoneOwners.named($0, names) }
+                page.files = page.files.map { file in
+                    var file = file
+                    file.zone = ZoneOwners.named(file.zone, names)
+                    return file
+                }
+                return page
+            },
             response: { .pageResponse($0) }
         )
     }

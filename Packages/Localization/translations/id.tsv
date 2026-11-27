@@ -569,6 +569,7 @@ accessRules.permissionHidden	Tersembunyi
 accessRules.remove	Hapus
 accessRules.unavailable	Aturan akses hanya tersedia untuk administrator.
 accessRules.saveButton	Simpan Perubahan
+settings.changesSaved	Perubahan disimpan
 settings.rowThumbnails	Gambar Mini
 settings.rowAccessRules	Aturan Akses Folder
 settings.navigationTitle	Pengaturan

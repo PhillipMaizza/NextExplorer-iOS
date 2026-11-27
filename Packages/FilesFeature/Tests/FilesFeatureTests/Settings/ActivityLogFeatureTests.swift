@@ -22,6 +22,7 @@ struct ActivityLogFeatureTests {
     private let enabledSettings = ActivitySettings(isEnabled: true, retentionDays: 30)
     private let pageGate = AsyncGate()
     private let pageCalls = LockIsolated<[PageCall]>([])
+    private let clock = TestClock()
     private let patches = LockIsolated<[SystemSettingsPatch]>([])
     private let settingsFetches = LockIsolated(0)
     private let clearCalls = LockIsolated(0)
@@ -55,6 +56,7 @@ struct ActivityLogFeatureTests {
         return TestStore(initialState: state ?? State(serverURL: serverURL)) {
             ActivityLogFeature()
         } withDependencies: {
+            $0.continuousClock = clock
             $0.filesClient.fetchSystemSettings = { _ in
                 settingsFetches.withValue { $0 += 1 }
                 return try await settings()
@@ -282,11 +284,11 @@ struct ActivityLogFeatureTests {
         var state = loadedState()
         state.nextBefore = "cursor"
         state.events = [event("1")]
+        state.filter.query = "typed but not submitted"
         let second = ActivityEvent(id: "2", at: "2026-11-10T07:00:00.000Z", action: "sign-in")
         let page = ActivityPage(events: [second], isEnabled: true)
         let store = makeStore(state, page: { _, _ in page })
 
-        await store.send(.queryChanged("typed but not submitted")) { $0.filter.query = "typed but not submitted" }
         await store.send(.loadMoreTapped) { $0.morePhase = .loading }
         await store.receive(.pageResponse(.success(page), isMore: true)) {
             $0.morePhase = .idle
@@ -346,12 +348,19 @@ struct ActivityLogFeatureTests {
     }
 
     @Test
-    func typingASearchWaitsForSubmitBeforeAskingTheServer() async {
-        let store = makeStore(loadedState())
+    func typingASearchAsksTheServerOnceTheTypingPauses() async {
+        let page = ActivityPage(isEnabled: true)
+        let store = makeStore(loadedState(), page: { _, _ in page })
 
+        await store.send(.queryChanged("rep")) { $0.filter.query = "rep" }
+        await clock.advance(by: FilesClient.searchDebounce / 2)
         await store.send(.queryChanged("report")) { $0.filter.query = "report" }
-        #expect(store.state.submittedFilter.query.isEmpty)
+        await clock.advance(by: FilesClient.searchDebounce / 2)
         #expect(pageCalls.value.isEmpty)
+        await clock.advance(by: FilesClient.searchDebounce)
+        await store.receive(\.searchSubmitted) { $0.submittedFilter.query = "report" }
+        await store.receive(.pageResponse(.success(page), isMore: false)) { $0.isLogEnabled = true }
+        #expect(pageCalls.value == [PageCall(filter: ActivityFilter(query: "report"), before: nil)])
     }
 
     @Test

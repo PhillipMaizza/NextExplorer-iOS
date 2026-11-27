@@ -569,6 +569,7 @@ accessRules.permissionHidden	ซ่อน
 accessRules.remove	นำออก
 accessRules.unavailable	กฎการเข้าถึงใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
 accessRules.saveButton	บันทึกการเปลี่ยนแปลง
+settings.changesSaved	บันทึกการเปลี่ยนแปลงแล้ว
 settings.rowThumbnails	ภาพขนาดย่อ
 settings.rowAccessRules	กฎการเข้าถึงโฟลเดอร์
 settings.navigationTitle	การตั้งค่า

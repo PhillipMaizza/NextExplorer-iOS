@@ -210,6 +210,7 @@ public struct TrashZone: Equatable, Sendable, Decodable, Identifiable {
     public let freeBytes: Int?
     public let lastPass: TrashPass?
     public let events: [TrashEvent]
+    public var ownerName: String?
 
     public init(
         id: String,

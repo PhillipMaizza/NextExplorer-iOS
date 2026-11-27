@@ -582,6 +582,7 @@ accessRules.permissionHidden	Piilotettu
 accessRules.remove	Poista
 accessRules.unavailable	Käyttösäännöt ovat vain ylläpitäjien käytettävissä.
 accessRules.saveButton	Tallenna muutokset
+settings.changesSaved	Muutokset tallennettu
 settings.rowThumbnails	Pikkukuvat
 settings.rowAccessRules	Kansioiden käyttösäännöt
 settings.navigationTitle	Asetukset

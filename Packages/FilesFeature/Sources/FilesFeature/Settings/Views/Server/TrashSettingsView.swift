@@ -219,7 +219,7 @@ struct TrashSettingsView: View {
 
     static func label(for zone: TrashZone) -> String {
         switch zone.kind {
-        case .personal: L10n.TrashSettings.zoneKindPersonal(zone.name)
+        case .personal: L10n.TrashSettings.zoneKindPersonal(zone.ownerName ?? zone.name)
         case .userVolume: L10n.TrashSettings.zoneKindUserVolume(zone.name)
         case .volume: zone.name
         }

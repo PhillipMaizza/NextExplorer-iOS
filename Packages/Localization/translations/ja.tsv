@@ -380,6 +380,7 @@ accessRules.permissionHidden	非表示
 accessRules.remove	取り除く
 accessRules.unavailable	アクセスルールは管理者のみが利用できます。
 accessRules.saveButton	変更を保存
+settings.changesSaved	変更を保存しました
 settings.rowThumbnails	サムネール
 settings.rowAccessRules	フォルダアクセスルール
 settings.navigationTitle	設定

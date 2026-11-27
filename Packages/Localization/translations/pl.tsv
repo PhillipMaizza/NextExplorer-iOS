@@ -419,6 +419,7 @@ accessRules.permissionHidden	Ukryte
 accessRules.remove	Usuń
 accessRules.unavailable	Reguły dostępu są dostępne tylko dla administratorów.
 accessRules.saveButton	Zapisz zmiany
+settings.changesSaved	Zapisano zmiany
 settings.rowThumbnails	Miniatury
 settings.rowAccessRules	Reguły dostępu do folderów
 settings.navigationTitle	Ustawienia

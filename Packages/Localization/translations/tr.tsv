@@ -582,6 +582,7 @@ accessRules.permissionHidden	Gizli
 accessRules.remove	Kaldır
 accessRules.unavailable	Erişim kuralları yalnızca yöneticiler tarafından kullanılabilir.
 accessRules.saveButton	Değişiklikleri Kaydet
+settings.changesSaved	Değişiklikler kaydedildi
 settings.rowThumbnails	Küçük Resimler
 settings.rowAccessRules	Klasör Erişim Kuralları
 settings.navigationTitle	Ayarlar

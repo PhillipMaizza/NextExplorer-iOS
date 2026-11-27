@@ -268,6 +268,7 @@ struct SettingsView: View {
                 )
             }
             .modifier(TipJarPresentation(store: store))
+            .modifier(SettingsSavedToast(store: store))
             // Here rather than on its section: a sheet attached inside a `List` section may not present.
             .sheet(item: $store.scope(
                 state: \.uploadDefaults.folderPicker,

@@ -145,7 +145,8 @@
                 HStack(spacing: .space8) {
                     Button(L10n.ActivityLog.clear, role: .destructive) { store.send(.clearTapped) }
                         .buttonStyle(.macDS(.secondary))
-                        .disabled(store.clearPhase.isRunning || store.events.isEmpty)
+                        .disabled(store.clearPhase.isRunning || store.events.isEmpty && store
+                            .submittedFilter == ActivityFilter())
                     MacPaneSaveButton(
                         title: L10n.ActivityLog.saveButton,
                         isSaving: store.isSavingSettings,

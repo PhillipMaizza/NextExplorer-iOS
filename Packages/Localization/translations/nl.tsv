@@ -393,6 +393,7 @@ accessRules.permissionHidden	Verborgen
 accessRules.remove	Verwijderen
 accessRules.unavailable	Toegangsregels zijn alleen beschikbaar voor beheerders.
 accessRules.saveButton	Wijzigingen bewaren
+settings.changesSaved	Wijzigingen bewaard
 settings.rowThumbnails	Miniaturen
 settings.rowAccessRules	Toegangsregels voor mappen
 settings.navigationTitle	Instellingen

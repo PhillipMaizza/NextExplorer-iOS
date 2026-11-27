@@ -393,6 +393,7 @@ accessRules.permissionHidden	Dold
 accessRules.remove	Ta bort
 accessRules.unavailable	Åtkomstregler är endast tillgängliga för administratörer.
 accessRules.saveButton	Spara ändringar
+settings.changesSaved	Ändringar sparade
 settings.rowThumbnails	Miniatyrer
 settings.rowAccessRules	Åtkomstregler för mappar
 settings.navigationTitle	Inställningar

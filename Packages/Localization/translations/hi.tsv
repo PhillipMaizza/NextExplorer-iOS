@@ -393,6 +393,7 @@ accessRules.permissionHidden	छिपा हुआ
 accessRules.remove	निकालें
 accessRules.unavailable	एक्सेस नियम केवल व्यवस्थापकों के लिए उपलब्ध हैं।
 accessRules.saveButton	परिवर्तन सहेजें
+settings.changesSaved	बदलाव सहेजे गए
 settings.rowThumbnails	थंबनेल
 settings.rowAccessRules	फ़ोल्डर एक्सेस नियम
 settings.navigationTitle	सेटिंग्स

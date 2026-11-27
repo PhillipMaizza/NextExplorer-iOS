@@ -582,6 +582,7 @@ accessRules.permissionHidden	Skjult
 accessRules.remove	Fjern
 accessRules.unavailable	Tilgangsregler er bare tilgjengelige for administratorer.
 accessRules.saveButton	Lagre endringer
+settings.changesSaved	Endringer lagret
 settings.rowThumbnails	Miniatyrbilder
 settings.rowAccessRules	Tilgangsregler for mapper
 settings.navigationTitle	Innstillinger

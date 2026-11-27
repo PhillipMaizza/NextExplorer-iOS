@@ -5,7 +5,7 @@ enum VersionedFileWords {
     static func zone(_ zone: VersionedZone?) -> String {
         guard let zone else { return L10n.VersionedFiles.zoneUnknown }
         switch zone.kind {
-        case .personal: return L10n.VersionedFiles.zoneKindPersonal(zone.name)
+        case .personal: return L10n.VersionedFiles.zoneKindPersonal(zone.ownerName ?? zone.name)
         case .userVolume: return L10n.VersionedFiles.zoneKindUserVolume(zone.name)
         case .volume: return zone.name
         }

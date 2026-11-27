@@ -593,6 +593,7 @@ accessRules.permissionHidden	Oculto
 accessRules.remove	Remover
 accessRules.unavailable	As regras de acesso só estão disponíveis para administradores.
 accessRules.saveButton	Salvar as alterações
+settings.changesSaved	Alterações salvas
 settings.rowThumbnails	Miniaturas
 settings.rowAccessRules	Regras de acesso a pastas
 settings.navigationTitle	Configurações

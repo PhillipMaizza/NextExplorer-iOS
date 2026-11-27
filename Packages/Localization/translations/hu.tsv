@@ -582,6 +582,7 @@ accessRules.permissionHidden	Rejtett
 accessRules.remove	Eltávolítás
 accessRules.unavailable	A hozzáférési szabályok csak rendszergazdák számára érhetők el.
 accessRules.saveButton	Módosítások mentése
+settings.changesSaved	Változások mentve
 settings.rowThumbnails	Miniatűrök
 settings.rowAccessRules	Mappahozzáférési szabályok
 settings.navigationTitle	Beállítások

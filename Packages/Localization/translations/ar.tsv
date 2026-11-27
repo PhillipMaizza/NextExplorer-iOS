@@ -445,6 +445,7 @@ accessRules.permissionHidden	مخفي
 accessRules.remove	إزالة
 accessRules.unavailable	قواعد الوصول متاحة للمسؤولين فقط.
 accessRules.saveButton	حفظ التغييرات
+settings.changesSaved	تم حفظ التغييرات
 settings.rowThumbnails	الصور المصغّرة
 settings.rowAccessRules	قواعد الوصول إلى المجلدات
 settings.navigationTitle	الإعدادات

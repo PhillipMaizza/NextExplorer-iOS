@@ -406,6 +406,7 @@ accessRules.permissionHidden	Ascuns
 accessRules.remove	Elimină
 accessRules.unavailable	Regulile de acces sunt disponibile doar administratorilor.
 accessRules.saveButton	Salvează modificările
+settings.changesSaved	Modificări salvate
 settings.rowThumbnails	Miniaturi
 settings.rowAccessRules	Reguli de acces la dosare
 settings.navigationTitle	Setări

@@ -380,6 +380,7 @@ accessRules.permissionHidden	隐藏
 accessRules.remove	移除
 accessRules.unavailable	访问规则仅对管理员可用。
 accessRules.saveButton	保存更改
+settings.changesSaved	已保存更改
 settings.rowThumbnails	缩略图
 settings.rowAccessRules	文件夹访问规则
 settings.navigationTitle	设置

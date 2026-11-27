@@ -393,6 +393,7 @@ accessRules.permissionHidden	Oculto
 accessRules.remove	Quitar
 accessRules.unavailable	Las reglas de acceso solo están disponibles para administradores.
 accessRules.saveButton	Guardar cambios
+settings.changesSaved	Cambios guardados
 settings.rowThumbnails	Miniaturas
 settings.rowAccessRules	Reglas de acceso a carpetas
 settings.navigationTitle	Ajustes

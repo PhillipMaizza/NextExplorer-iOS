@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 @testable import FilesFeature
 import Testing
+import TestUtils
 
 @MainActor
 struct SettingsUnsavedChangesTests: SettingsFeatureTestSupport {
@@ -39,5 +40,23 @@ struct SettingsUnsavedChangesTests: SettingsFeatureTestSupport {
         await store.send(.switchAccountTapped("other")) { $0.accountPendingSwitch = "other" }
         await store.send(.switchDiscardingChangesConfirmed) { $0.accountPendingSwitch = nil }
         await store.receive(\.delegate, .switchAccount("other"))
+    }
+
+    @Test("A half edited user profile counts as unsaved, so switching account asks first")
+    func userProfileEditIsUnsaved() async {
+        var users = UserManagementFeature.State(serverURL: serverURL, currentUserID: "1")
+        users.users = [User(id: "2", username: TestUser.jdoe, email: "jane@example.com", displayName: "Jane")]
+        users.detailUserID = "2"
+        users.editDisplayName = "Jane"
+        users.editUsername = TestUser.jdoe
+        users.editEmail = "jane@example.com"
+        var state = makeState()
+        state.userManagement = users
+        #expect(!state.hasUnsavedChanges(in: .users))
+
+        state.userManagement?.editDisplayName = "Jane Dirty"
+        #expect(state.hasUnsavedChanges(in: .users))
+        let store = makeStore(state: state)
+        await store.send(.switchAccountTapped("other")) { $0.accountPendingSwitch = "other" }
     }
 }

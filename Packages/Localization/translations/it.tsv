@@ -393,6 +393,7 @@ accessRules.permissionHidden	Nascosto
 accessRules.remove	Rimuovi
 accessRules.unavailable	Le regole di accesso sono disponibili solo per gli amministratori.
 accessRules.saveButton	Salva modifiche
+settings.changesSaved	Modifiche salvate
 settings.rowThumbnails	Miniature
 settings.rowAccessRules	Regole di accesso alle cartelle
 settings.navigationTitle	Impostazioni

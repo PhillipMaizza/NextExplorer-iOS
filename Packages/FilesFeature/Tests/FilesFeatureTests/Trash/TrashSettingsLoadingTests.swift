@@ -100,6 +100,33 @@ struct TrashSettingsLoadingTests: TrashSettingsTestSupport {
     }
 
     @Test
+    func aPersonalVolumeIsNamedAfterItsOwner() async {
+        let personal = TrashZone(id: "p", kind: .personal, name: "u1")
+        let shared = TrashZone(id: "v", name: "Files")
+        let store = store(
+            settings: { throw FilesClientError.server(statusCode: 500) },
+            zones: {
+                try await zonesGate.wait()
+                return [personal, shared]
+            },
+            users: [User(id: "u1", username: TestUser.jdoe, email: nil, displayName: "Jane")]
+        )
+        var named = personal
+        named.ownerName = "Jane"
+
+        await store.send(.onAppear) {
+            $0.phase = .loading
+            $0.zonesPhase = .loading
+        }
+        await store.receive(\.settingsResponse.failure) { $0.phase = .failed(L10n.Error.server(500)) }
+        zonesGate.open()
+        await store.receive(\.zonesResponse.success) {
+            $0.zonesPhase = .loaded
+            $0.zones = [named, shared]
+        }
+    }
+
+    @Test
     func aSettingsFailureIsTheFailedPhase() async {
         let store = store(settings: { throw FilesClientError.server(statusCode: 500) }, zones: {
             try await zonesGate.wait()

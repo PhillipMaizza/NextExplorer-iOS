@@ -39,6 +39,7 @@ extension TrashSettingsTestSupport {
             versions: VersionsSettings()
         ) },
         zones: @escaping @Sendable () async throws -> [TrashZone] = { [] },
+        users: [User] = [],
         update: @escaping @Sendable (SystemSettingsPatch) throws -> SystemSettings = { _ in SystemSettings() },
         verify: @escaping @Sendable () throws -> [TrashVerification] = { [] },
         maintain: @escaping @Sendable () throws -> Void = {}
@@ -55,6 +56,7 @@ extension TrashSettingsTestSupport {
                 settingsFetches.withValue { $0 += 1 }
                 return try await settings()
             }
+            $0.filesClient.listUsers = { _ in users }
             $0.filesClient.fetchTrashZones = { _ in
                 zoneFetches.withValue { $0 += 1 }
                 return try await zones()

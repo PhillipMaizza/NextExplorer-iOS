@@ -582,6 +582,7 @@ accessRules.permissionHidden	Κρυφό
 accessRules.remove	Αφαίρεση
 accessRules.unavailable	Οι κανόνες πρόσβασης είναι διαθέσιμοι μόνο στους διαχειριστές.
 accessRules.saveButton	Αποθήκευση αλλαγών
+settings.changesSaved	Οι αλλαγές αποθηκεύτηκαν
 settings.rowThumbnails	Μικρογραφίες
 settings.rowAccessRules	Κανόνες πρόσβασης φακέλων
 settings.navigationTitle	Ρυθμίσεις

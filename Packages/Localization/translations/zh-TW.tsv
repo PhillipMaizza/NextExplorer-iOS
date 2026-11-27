@@ -380,6 +380,7 @@ accessRules.permissionHidden	隱藏
 accessRules.remove	移除
 accessRules.unavailable	取用規則僅對管理員可用。
 accessRules.saveButton	儲存更改
+settings.changesSaved	已儲存變更
 settings.rowThumbnails	縮覽圖
 settings.rowAccessRules	檔案夾取用規則
 settings.navigationTitle	設定

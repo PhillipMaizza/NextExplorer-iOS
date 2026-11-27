@@ -92,8 +92,9 @@ public struct ActivityLogFeature {
     }
 
     @Dependency(\.filesClient) var filesClient
+    @Dependency(\.continuousClock) var clock
 
-    private enum CancelID { case settings, page, save, clear }
+    private enum CancelID { case settings, page, save, clear, query }
 
     public init() {}
 
@@ -222,10 +223,15 @@ public struct ActivityLogFeature {
 
             case let .queryChanged(query):
                 state.filter.query = query
-                return .none
+                let clock = clock
+                return .run { send in
+                    try await clock.sleep(for: FilesClient.searchDebounce)
+                    await send(.searchSubmitted)
+                }
+                .cancellable(id: CancelID.query, cancelInFlight: true)
 
             case .searchSubmitted, .refreshTapped:
-                return loadPage(&state, more: false)
+                return .merge(.cancel(id: CancelID.query), loadPage(&state, more: false))
 
             case .loadMoreTapped:
                 return loadPage(&state, more: true)

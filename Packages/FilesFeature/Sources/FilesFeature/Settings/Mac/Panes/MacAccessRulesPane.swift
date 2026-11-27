@@ -12,6 +12,7 @@
 
     struct MacAccessRulesPane: View {
         let store: StoreOf<AccessRulesFeature>
+        @FocusState private var focusedRuleID: AccessRule.ID?
 
         private var errorMessage: String? {
             store.errorMessage ?? store.phase.errorMessage
@@ -49,6 +50,11 @@
             }
             .disabled(store.isSaving)
             .onAppear { store.send(.onAppear) }
+            .onChange(of: store.drafts.last?.id) { _, id in
+                if let id, store.drafts[id: id]?.path.isEmpty == true {
+                    focusedRuleID = id
+                }
+            }
         }
 
         private var emptyGuide: some View {
@@ -81,6 +87,7 @@
                     prompt: L10n.AccessRules.pathPlaceholder
                 )
                 .autocorrectionDisabled()
+                .focused($focusedRuleID, equals: rule.id)
             } control: {
                 HStack(spacing: .space12) {
                     MacPopup(
