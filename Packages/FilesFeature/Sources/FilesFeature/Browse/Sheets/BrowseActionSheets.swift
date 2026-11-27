@@ -38,7 +38,17 @@ struct BrowseActionSheets: ViewModifier {
             }
         #if os(iOS)
             .dsSheet(item: infoBinding) { BrowseInfoSheetContent(store: store, phase: $0) }
+        #else
+            .sheet(isPresented: archivePasswordBinding) {
+                if let prompt = store.archivePasswordPrompt {
+                    MacArchivePasswordAlert(store: store, prompt: prompt)
+                }
+            }
         #endif
+    }
+
+    private var archivePasswordBinding: Binding<Bool> {
+        Binding(get: { store.archivePasswordPrompt != nil && isFrontmost }, set: { _ in })
     }
 
     /// The folder picker over whichever surface is frontmost.

@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	Žádné shody pro „%@“.
 browse.searchEverywhere	Hledat všude
 browse.searchFailed	Hledání se nezdařilo. Zkontrolujte připojení a zkuste to znovu.
 browse.progressExtracting	Rozbalování…
+browse.archivePasswordTitle	Vyžadováno heslo
+browse.archivePasswordMessage	Tento archiv je chráněný. Zadejte jeho heslo a rozbalte ho.
+browse.archivePasswordPlaceholder	Heslo archivu
+browse.archivePasswordInvalid	Nesprávné heslo, nebo je archiv poškozený.
 browse.progressCompressing	Komprimace…
 browse.offlineBannerDetail	Zobrazuje se uložená kopie z %@
 browse.actionCopy	Kopírovat

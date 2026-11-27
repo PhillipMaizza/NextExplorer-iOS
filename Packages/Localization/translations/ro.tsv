@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	Niciun rezultat pentru „%@”.
 browse.searchEverywhere	Caută peste tot
 browse.searchFailed	Căutarea a eșuat. Verifică conexiunea și încearcă din nou.
 browse.progressExtracting	Se extrage…
+browse.archivePasswordTitle	Parolă necesară
+browse.archivePasswordMessage	Această arhivă este protejată. Introdu parola pentru a o extrage.
+browse.archivePasswordPlaceholder	Parola arhivei
+browse.archivePasswordInvalid	Parolă incorectă sau arhivă deteriorată.
 browse.progressCompressing	Se comprimă…
 browse.offlineBannerDetail	Se afișează o copie salvată din %@
 browse.actionCopy	Copiază

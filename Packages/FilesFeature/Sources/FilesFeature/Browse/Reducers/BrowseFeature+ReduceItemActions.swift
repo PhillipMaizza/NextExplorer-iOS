@@ -234,19 +234,39 @@ extension BrowseFeature {
             return refetchAfterAmbiguousFailure(&state, error)
 
         case let .extractTapped(item, entryPaths):
+            guard let entryPaths else {
+                return extractZip(&state, ArchivePasswordPrompt(item: item, destination: .newFolder), password: nil)
+            }
             return extract(&state, item) { filesClient, serverURL in
-                guard let entryPaths else { return try await [filesClient.extractZip(serverURL, item)] }
-                return try await filesClient.extractArchiveEntries(serverURL, item, entryPaths)
+                try await filesClient.extractArchiveEntries(serverURL, item, entryPaths)
             }
 
         case let .extractHereTapped(item):
-            return extract(&state, item) { filesClient, serverURL in
-                try await filesClient.extractZipHere(serverURL, item)
+            return extractZip(&state, ArchivePasswordPrompt(item: item, destination: .currentFolder), password: nil)
+
+        case .archivePasswordRequired(var prompt, let invalid):
+            state.isPerformingFileAction = false
+            state.fileActionProgressMessage = nil
+            prompt = state.archivePasswordPrompt ?? prompt
+            if invalid {
+                prompt.invalidAttempts += 1
             }
+            state.archivePasswordPrompt = prompt
+            return .none
+
+        case let .archivePasswordSubmitted(password):
+            guard let prompt = state.archivePasswordPrompt, !password.isEmpty else { return .none }
+            return extractZip(&state, prompt, password: password)
+
+        case .archivePasswordCancelled:
+            guard !state.isPerformingFileAction else { return .none }
+            state.archivePasswordPrompt = nil
+            return .none
 
         case let .extractResponse(.success(extracted)):
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
+            state.archivePasswordPrompt = nil
             let here = extracted.filter { $0.path == state.directoryPath }
             guard !here.isEmpty else { return refreshSearch(&state) }
             for item in here where state.items[id: item.id] == nil {
@@ -260,6 +280,7 @@ extension BrowseFeature {
         case let .extractResponse(.failure(error)):
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
+            state.archivePasswordPrompt = nil
             state.fileActionErrorMessage = error.userMessage
             return refetchAfterAmbiguousFailure(&state, error)
 
@@ -342,6 +363,37 @@ extension BrowseFeature {
         let filesClient = filesClient
         return .run { send in
             try await send(.extractResponse(apiResult { try await operation(filesClient, serverURL) }))
+        }
+    }
+
+    private func extractZip(
+        _ state: inout State,
+        _ prompt: ArchivePasswordPrompt,
+        password: String?
+    ) -> Effect<Action> {
+        guard !state.isPerformingFileAction, state.actions(for: prompt.item).canExtract else { return .none }
+        state.isPerformingFileAction = true
+        state.fileActionProgressMessage = L10n.Browse.progressExtracting
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            let result = try await apiResult {
+                switch prompt.destination {
+                case .newFolder: try await [filesClient.extractZip(serverURL, prompt.item, password)]
+                case .currentFolder: try await filesClient.extractZipHere(serverURL, prompt.item, password)
+                }
+            }
+            #if os(macOS)
+                switch result {
+                case .failure(.archivePasswordRequired):
+                    return await send(.archivePasswordRequired(prompt, invalid: false))
+                case .failure(.archiveInvalidPassword):
+                    return await send(.archivePasswordRequired(prompt, invalid: true))
+                default:
+                    break
+                }
+            #endif
+            await send(.extractResponse(result))
         }
     }
 

@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	Geen resultaten voor “%@”.
 browse.searchEverywhere	Overal zoeken
 browse.searchFailed	Zoeken mislukt. Controleer je verbinding en probeer het opnieuw.
 browse.progressExtracting	Uitpakken…
+browse.archivePasswordTitle	Wachtwoord vereist
+browse.archivePasswordMessage	Dit archief is beveiligd. Voer het wachtwoord in om het uit te pakken.
+browse.archivePasswordPlaceholder	Wachtwoord van het archief
+browse.archivePasswordInvalid	Onjuist wachtwoord, of het archief is beschadigd.
 browse.progressCompressing	Comprimeren…
 browse.offlineBannerDetail	Bewaarde kopie van %@ wordt getoond
 browse.actionCopy	Kopiëren

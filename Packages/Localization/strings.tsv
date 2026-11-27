@@ -124,6 +124,10 @@ browse.searchNoMatchesInFolder	No matches for “%@”.
 browse.searchEverywhere	Search everywhere
 browse.searchFailed	Couldn't search. Check your connection and try again.
 browse.progressExtracting	Extracting…
+browse.archivePasswordTitle	Password required
+browse.archivePasswordMessage	This archive is protected. Enter its password to extract it.
+browse.archivePasswordPlaceholder	Archive password
+browse.archivePasswordInvalid	Incorrect password, or the archive is damaged.
 browse.progressCompressing	Compressing…
 browse.offlineBannerDetail	Showing a saved copy from %@
 

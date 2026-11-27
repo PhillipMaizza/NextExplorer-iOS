@@ -25,6 +25,8 @@ public enum FilesClientError: Error, Equatable, Sendable {
     case clientCertificateRequired
     /// The installed client certificate was refused by the server.
     case clientCertificateRejected
+    case archivePasswordRequired
+    case archiveInvalidPassword
 }
 
 /// The server is still making a thumbnail (it answered 202 with `pending`), so there is neither a

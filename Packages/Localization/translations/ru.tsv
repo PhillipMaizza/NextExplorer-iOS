@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	Нет результатов для «%@».
 browse.searchEverywhere	Искать везде
 browse.searchFailed	Не удалось выполнить поиск. Проверьте соединение и повторите попытку.
 browse.progressExtracting	Извлечение…
+browse.archivePasswordTitle	Требуется пароль
+browse.archivePasswordMessage	Этот архив защищен. Введите пароль, чтобы его извлечь.
+browse.archivePasswordPlaceholder	Пароль архива
+browse.archivePasswordInvalid	Неверный пароль или архив поврежден.
 browse.progressCompressing	Сжатие…
 browse.offlineBannerDetail	Показана сохранённая копия от %@
 browse.actionCopy	Скопировать

@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	Ei tuloksia haulle “%@”.
 browse.searchEverywhere	Hae kaikkialta
 browse.searchFailed	Hakua ei voitu tehdä. Tarkista yhteytesi ja yritä uudelleen.
 browse.progressExtracting	Puretaan…
+browse.archivePasswordTitle	Salasana vaaditaan
+browse.archivePasswordMessage	Tämä arkisto on suojattu. Pura se antamalla sen salasana.
+browse.archivePasswordPlaceholder	Arkiston salasana
+browse.archivePasswordInvalid	Väärä salasana, tai arkisto on vioittunut.
 browse.progressCompressing	Pakataan…
 browse.offlineBannerDetail	Näytetään tallennettu kopio ajalta %@
 browse.actionCopy	Kopioi

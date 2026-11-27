@@ -200,7 +200,7 @@ public extension FilesClient {
         },
         fetchTextContent: { _, _ in "" },
         saveTextContent: { _, _, _ in },
-        extractZip: { _, item in
+        extractZip: { _, item, _ in
             FileItem(
                 name: item.name.replacingOccurrences(of: ".zip", with: ""),
                 path: item.path,
@@ -209,7 +209,7 @@ public extension FilesClient {
                 kind: "directory"
             )
         },
-        extractZipHere: { _, _ in [] },
+        extractZipHere: { _, _, _ in [] },
         listArchive: { _, _, inside in
             ArchiveListing(inside: inside, entries: [])
         },

@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	“%@” के लिए कोई परिण�
 browse.searchEverywhere	हर जगह खोजें
 browse.searchFailed	खोज नहीं सके। अपना कनेक्शन जांचें और पुनः प्रयास करें।
 browse.progressExtracting	निकाला जा रहा है…
+browse.archivePasswordTitle	पासवर्ड आवश्यक है
+browse.archivePasswordMessage	यह संग्रह सुरक्षित है। इसे निकालने के लिए इसका पासवर्ड दर्ज करें।
+browse.archivePasswordPlaceholder	संग्रह का पासवर्ड
+browse.archivePasswordInvalid	पासवर्ड गलत है, या संग्रह क्षतिग्रस्त है।
 browse.progressCompressing	संपीड़ित किया जा रहा है…
 browse.offlineBannerDetail	%@ से सहेजी गई प्रति दिखाई जा रही है
 browse.actionCopy	कॉपी करें

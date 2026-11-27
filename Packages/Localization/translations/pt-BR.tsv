@@ -100,6 +100,10 @@ browse.searchNoMatchesInFolder	Sem resultados para “%@”.
 browse.searchEverywhere	Pesquisar em todo lugar
 browse.searchFailed	Não foi possível pesquisar. Verifique a conexão e tente novamente.
 browse.progressExtracting	Extraindo…
+browse.archivePasswordTitle	Senha necessária
+browse.archivePasswordMessage	Este arquivo está protegido. Digite a senha para extraí-lo.
+browse.archivePasswordPlaceholder	Senha do arquivo
+browse.archivePasswordInvalid	Senha incorreta, ou o arquivo está danificado.
 browse.progressCompressing	Comprimindo…
 browse.offlineBannerDetail	Mostrando uma cópia salva de %@
 browse.actionCopy	Copiar

@@ -136,6 +136,21 @@ public extension BrowseFeature {
         }
     }
 
+    enum ArchiveExtractDestination: Equatable, Sendable {
+        case newFolder
+        case currentFolder
+    }
+
+    struct ArchivePasswordPrompt: Equatable, Sendable {
+        public let item: FileItem
+        public let destination: ArchiveExtractDestination
+        public var invalidAttempts = 0
+
+        public var isInvalid: Bool {
+            invalidAttempts > 0
+        }
+    }
+
     /// An item the trash would not take, left where it was.
     struct KeptDelete: Equatable, Sendable, Identifiable {
         public let item: FileItem

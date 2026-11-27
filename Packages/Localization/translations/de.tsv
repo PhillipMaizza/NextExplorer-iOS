@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	Keine Treffer für „%@“.
 browse.searchEverywhere	Überall suchen
 browse.searchFailed	Suche fehlgeschlagen. Prüfe deine Verbindung und versuche es erneut.
 browse.progressExtracting	Wird entpackt…
+browse.archivePasswordTitle	Passwort erforderlich
+browse.archivePasswordMessage	Dieses Archiv ist geschützt. Geben Sie sein Passwort ein, um es zu entpacken.
+browse.archivePasswordPlaceholder	Archiv-Passwort
+browse.archivePasswordInvalid	Falsches Passwort oder das Archiv ist beschädigt.
 browse.progressCompressing	Wird komprimiert…
 browse.offlineBannerDetail	Gesicherte Kopie von %@ wird angezeigt
 browse.actionCopy	Kopieren

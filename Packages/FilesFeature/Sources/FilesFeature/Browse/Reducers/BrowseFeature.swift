@@ -241,6 +241,7 @@ public struct BrowseFeature {
         /// Items the trash refused during the last delete, still on disk. Non empty puts up the
         /// prompt that offers to delete them for good.
         public var keptDeletes: [KeptDelete] = []
+        public var archivePasswordPrompt: ArchivePasswordPrompt?
         /// Set after a delete sent anything to the trash; becomes a toast that opens the trash.
         public var trashNotice: MovedToTrashNotice?
         /// Drives a persistent progress toast: `nil` when no extract/compress/download is
@@ -595,6 +596,9 @@ public struct BrowseFeature {
         case extractTapped(FileItem, entryPaths: [String]? = nil)
         case extractHereTapped(FileItem)
         case extractResponse(Result<[FileItem], FilesClientError>)
+        case archivePasswordRequired(ArchivePasswordPrompt, invalid: Bool)
+        case archivePasswordSubmitted(String)
+        case archivePasswordCancelled
         case compressTapped(FileItem)
         case compressSelectionTapped
         case compressResponse(Result<FileItem, FilesClientError>)

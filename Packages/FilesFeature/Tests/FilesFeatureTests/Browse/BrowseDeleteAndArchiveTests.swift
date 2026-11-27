@@ -165,7 +165,7 @@ struct BrowseDeleteAndArchiveTests {
         let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
         let extracted = BrowseFixtures.folder("bundle")
         let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: BrowseTestSupport.fullAccess)) {
-            $0.filesClient.extractZip = { _, _ in extracted }
+            $0.filesClient.extractZip = { _, _, _ in extracted }
         }
 
         await store.send(.extractTapped(archive)) {
@@ -187,7 +187,7 @@ struct BrowseDeleteAndArchiveTests {
         let notes = BrowseFixtures.file(TestFile.notes)
         let photo = BrowseFixtures.file(TestFile.aPhoto)
         let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: BrowseTestSupport.fullAccess)) {
-            $0.filesClient.extractZipHere = { _, _ in [notes, photo] }
+            $0.filesClient.extractZipHere = { _, _, _ in [notes, photo] }
         }
 
         await store.send(.extractHereTapped(archive)) {
@@ -232,7 +232,7 @@ struct BrowseDeleteAndArchiveTests {
     @Test("A failed extraction shows a readable message")
     func extractFailureSurfacesAReadableErrorMessage() async {
         let store = BrowseFixtures.store(BrowseFixtures.state(access: BrowseTestSupport.fullAccess)) {
-            $0.filesClient.extractZip = { _, _ in throw FilesClientError.server(statusCode: 415) }
+            $0.filesClient.extractZip = { _, _, _ in throw FilesClientError.server(statusCode: 415) }
         }
 
         await store.send(.extractTapped(BrowseFixtures.file(FilesFeatureTestValue.bundleName))) {
@@ -243,6 +243,78 @@ struct BrowseDeleteAndArchiveTests {
             $0.isPerformingFileAction = false
             $0.fileActionProgressMessage = nil
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 415).userMessage
+        }
+    }
+
+    @Test("A protected zip asks for its password, says when it is wrong, and extracts with the right one")
+    func protectedZipAsksForItsPasswordUntilItIsRight() async {
+        let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
+        let extracted = BrowseFixtures.folder("bundle")
+        let sent = LockIsolated<[String?]>([])
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: BrowseTestSupport.fullAccess)) {
+            $0.filesClient.extractZip = { _, _, password in
+                sent.withValue { $0.append(password) }
+                switch password {
+                case nil: throw FilesClientError.archivePasswordRequired
+                case Constants.rightPassword: return extracted
+                default: throw FilesClientError.archiveInvalidPassword
+                }
+            }
+        }
+        let prompt = BrowseFeature.ArchivePasswordPrompt(item: archive, destination: .newFolder)
+
+        await store.send(.extractTapped(archive)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Extracting…"
+        }
+        await store.receive(\.archivePasswordRequired) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.archivePasswordPrompt = prompt
+        }
+        await store.send(.archivePasswordSubmitted(""))
+        await store.send(.archivePasswordSubmitted(Constants.wrongPassword)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Extracting…"
+        }
+        await store.receive(\.archivePasswordRequired) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.archivePasswordPrompt?.invalidAttempts = 1
+        }
+        await store.send(.archivePasswordSubmitted(Constants.rightPassword)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Extracting…"
+        }
+        await store.receive(\.extractResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.archivePasswordPrompt = nil
+            $0.items = [archive, extracted]
+            $0.selectedItemIDs = [extracted.id]
+            $0.scrollTargetID = extracted.id
+        }
+        #expect(sent.value == [nil, Constants.wrongPassword, Constants.rightPassword])
+    }
+
+    @Test("Cancelling the password prompt leaves the archive alone")
+    func cancellingThePasswordPromptClosesIt() async {
+        let archive = BrowseFixtures.file(FilesFeatureTestValue.bundleName)
+        let store = BrowseFixtures.store(BrowseFixtures.state(items: [archive], access: BrowseTestSupport.fullAccess)) {
+            $0.filesClient.extractZipHere = { _, _, _ in throw FilesClientError.archivePasswordRequired }
+        }
+
+        await store.send(.extractHereTapped(archive)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Extracting…"
+        }
+        await store.receive(\.archivePasswordRequired) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.archivePasswordPrompt = BrowseFeature.ArchivePasswordPrompt(item: archive, destination: .currentFolder)
+        }
+        await store.send(.archivePasswordCancelled) {
+            $0.archivePasswordPrompt = nil
         }
     }
 
@@ -349,4 +421,9 @@ struct BrowseDeleteAndArchiveTests {
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
         }
     }
+}
+
+private enum Constants {
+    static let rightPassword = "open sesame"
+    static let wrongPassword = "guess"
 }

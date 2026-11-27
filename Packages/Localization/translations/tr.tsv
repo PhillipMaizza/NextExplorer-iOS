@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	“%@” için eşleşme yok.
 browse.searchEverywhere	Her yerde ara
 browse.searchFailed	Arama yapılamadı. Bağlantınızı kontrol edip tekrar deneyin.
 browse.progressExtracting	Arşivden çıkarılıyor…
+browse.archivePasswordTitle	Parola gerekli
+browse.archivePasswordMessage	Bu arşiv korumalı. Ayıklamak için parolasını girin.
+browse.archivePasswordPlaceholder	Arşiv parolası
+browse.archivePasswordInvalid	Parola yanlış ya da arşiv hasarlı.
 browse.progressCompressing	Sıkıştırılıyor…
 browse.offlineBannerDetail	%@ tarihli kayıtlı bir kopya gösteriliyor
 browse.actionCopy	Kopyala

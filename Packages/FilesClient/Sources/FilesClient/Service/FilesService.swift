@@ -123,6 +123,9 @@ struct FilesService: Sendable {
             }
         }
         if let (failure, _) = events.last(where: { $0.0.type == OperationStreamEvent.errorType }) {
+            if let error = failure.code.flatMap(ArchivePasswordCode.init)?.error {
+                throw error
+            }
             guard let message = failure.message, !message.isEmpty else {
                 throw FilesClientError.server(statusCode: HTTPStatus.internalServerError.rawValue)
             }

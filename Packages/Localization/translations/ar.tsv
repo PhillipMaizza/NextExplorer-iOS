@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	لا نتائج لـ ‏«%@».
 browse.searchEverywhere	البحث في كل مكان
 browse.searchFailed	تعذّر البحث. تحقق من اتصالك وأعد المحاولة.
 browse.progressExtracting	جارٍ الاستخراج…
+browse.archivePasswordTitle	كلمة المرور مطلوبة
+browse.archivePasswordMessage	هذا الأرشيف محمي. أدخل كلمة المرور لاستخراجه.
+browse.archivePasswordPlaceholder	كلمة مرور الأرشيف
+browse.archivePasswordInvalid	كلمة المرور غير صحيحة، أو الأرشيف تالف.
 browse.progressCompressing	جارٍ الضغط…
 browse.offlineBannerDetail	يتم عرض نسخة محفوظة من %@
 browse.actionCopy	نسخ

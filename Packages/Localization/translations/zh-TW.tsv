@@ -92,6 +92,10 @@ browse.searchNoMatchesInFolder	沒有「%@」的結果。
 browse.searchEverywhere	在所有位置搜尋
 browse.searchFailed	無法搜尋。請檢查連線後重試。
 browse.progressExtracting	正在解壓縮…
+browse.archivePasswordTitle	需要密碼
+browse.archivePasswordMessage	此壓縮檔受密碼保護。請輸入密碼以解壓縮。
+browse.archivePasswordPlaceholder	壓縮檔密碼
+browse.archivePasswordInvalid	密碼不正確，或壓縮檔已損毀。
 browse.progressCompressing	正在壓縮…
 browse.offlineBannerDetail	正在顯示來自 %@ 的已儲存副本
 browse.actionCopy	拷貝

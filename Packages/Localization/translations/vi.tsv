@@ -98,6 +98,10 @@ browse.searchNoMatchesInFolder	Không có kết quả cho “%@”.
 browse.searchEverywhere	Tìm kiếm ở mọi nơi
 browse.searchFailed	Không thể tìm kiếm. Hãy kiểm tra kết nối và thử lại.
 browse.progressExtracting	Đang giải nén…
+browse.archivePasswordTitle	Cần mật khẩu
+browse.archivePasswordMessage	Tệp nén này được bảo vệ. Nhập mật khẩu để giải nén.
+browse.archivePasswordPlaceholder	Mật khẩu tệp nén
+browse.archivePasswordInvalid	Mật khẩu không đúng, hoặc tệp nén bị hỏng.
 browse.progressCompressing	Đang nén…
 browse.offlineBannerDetail	Đang hiển thị bản sao đã lưu từ %@
 browse.actionCopy	Sao chép
