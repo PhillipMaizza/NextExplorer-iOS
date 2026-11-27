@@ -247,7 +247,9 @@ extension BrowseFeature {
         case var .archivePasswordRequired(prompt):
             state.isPerformingFileAction = false
             state.fileActionProgressMessage = nil
-            if let shown = state.archivePasswordPrompt {
+            if let shown = state.archivePasswordPrompt, shown.item == prompt.item,
+               shown.destination == prompt.destination
+            {
                 prompt = shown
                 prompt.invalidAttempts += 1
             }
