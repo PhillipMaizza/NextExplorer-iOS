@@ -237,3 +237,16 @@ public extension BrowseFeature {
         case cached(fetchedAt: Date)
     }
 }
+
+extension BrowseFeature {
+    struct ScreenCancelID: Hashable {
+        let directoryPath: String
+        let id: CancelID
+    }
+}
+
+extension BrowseFeature.State {
+    func cancelID(_ id: BrowseFeature.CancelID) -> BrowseFeature.ScreenCancelID {
+        BrowseFeature.ScreenCancelID(directoryPath: directoryPath, id: id)
+    }
+}

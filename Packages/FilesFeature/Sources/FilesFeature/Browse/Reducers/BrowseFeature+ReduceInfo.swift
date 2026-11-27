@@ -56,7 +56,7 @@ extension BrowseFeature {
             state.textSaveError = nil
             state.textSaveConflict = nil
             state.isPreviewEditing = false
-            return .merge(.cancel(id: CancelID.preview), .cancel(id: CancelID.googleDocsPointer))
+            return .merge(.cancel(id: state.cancelID(.preview)), .cancel(id: state.cancelID(.googleDocsPointer)))
 
         case let .previewEditTapped(item):
             // The gallery swiped to this file, so it becomes the preview; a fresh read so the

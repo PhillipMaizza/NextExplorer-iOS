@@ -373,6 +373,46 @@ struct BrowseTabFeatureTests {
         await finishPathLoad(store, id: ids[1], listing: gates["Photos/Old"] ?? AsyncGate())
     }
 
+    @Test("A root refresh that starts after a pushed folder's leaves that folder's listing running")
+    func rootRefreshLeavesAPushedListingRunning() async throws {
+        let state = makeState(pushing: [TestFolder.photos])
+        let id = state.path.ids[0]
+        let listings = NumberedCalls(capacity: 2)
+        let store = makeStore(state) {
+            $0.filesClient.browse = { _, path in
+                try await listings.park()
+                return BrowseResult(items: [], access: BrowseTestSupport.readOnlyAccess, path: path)
+            }
+            $0.filesClient.favorites = { _ in [] }
+            $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
+        }
+
+        await store.send(.path(.element(id: id, action: .refreshButtonTapped))) {
+            $0.path[id: id]?.phase = .loading
+        }
+        try await listings.arrival(0)
+        await store.send(.root(.refreshButtonTapped)) {
+            $0.root.phase = .loading
+        }
+        try await listings.arrival(1)
+        listings.release(0)
+        await store.receive(\.path[id: id].itemsResponse.success) {
+            $0.path[id: id]?.phase = .loaded
+            $0.path[id: id]?.access = readOnlyAccess
+        }
+        await store.receive(\.path[id: id].favoritesResponse) {
+            $0.path[id: id]?.hasLoadedFavorites = true
+        }
+        listings.release(1)
+        await store.receive(\.root.itemsResponse.success) {
+            $0.root.phase = .loaded
+            $0.root.access = readOnlyAccess
+        }
+        await store.receive(\.root.favoritesResponse) {
+            $0.root.hasLoadedFavorites = true
+        }
+    }
+
     @Test("A change reported by a pushed screen resyncs the whole stack")
     func directoryContentsChangedFromAPushedScreenReSyncsTheWholeStack() async {
         let state = makeState(pushing: [TestFolder.photos])

@@ -17,7 +17,7 @@ extension BrowseFeature {
         preferred: Set<String> = [],
         shouldIncludePinnedRoots: Bool = false,
         limit: Int,
-        cancelID: CancelID
+        cancelID: ScreenCancelID
     ) -> Effect<Action> {
         guard !connectivity.isMetered() else { return .none }
         let paths = paths.filter { !$0.isEmpty }
@@ -81,7 +81,7 @@ extension BrowseFeature {
             }.value
             await send(.offlineAvailabilityComputed(all: all, pinned: pinned))
         }
-        .cancellable(id: CancelID.offlineAvailability, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.offlineAvailability), cancelInFlight: true)
     }
 
     /// A mutation that timed out, that a gateway answered for, or whose success answer could not be
@@ -137,7 +137,7 @@ extension BrowseFeature {
                 let roots = offlineFileStore.pinnedRoots()
                 await send(.keptListingResolved(offlineFileStore.listing(directoryPath)?.keeping(roots.keeps)))
             }
-            .cancellable(id: CancelID.load, cancelInFlight: true)
+            .cancellable(id: state.cancelID(.load), cancelInFlight: true)
         }
         let hadLoaded = state.phase.hasLoaded
         state.phase = .loading
@@ -180,7 +180,7 @@ extension BrowseFeature {
             ),
             features
         )
-        .cancellable(id: CancelID.load, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.load), cancelInFlight: true)
     }
 
     /// A mutation that edits this folder in place (rename/create/delete/extract/compress) updates

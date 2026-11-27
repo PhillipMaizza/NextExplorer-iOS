@@ -13,7 +13,7 @@ extension BrowseFeature {
         state.infoUsage = nil
         state.infoPhase = .idle
         state.isInfoShowingSelection = false
-        return .cancel(id: CancelID.info)
+        return .cancel(id: state.cancelID(.info))
     }
 
     func showSelectionInfo(_ state: inout State) -> Effect<Action> {
@@ -49,7 +49,7 @@ extension BrowseFeature {
             metadata: Action.infoMetadataResponse,
             usage: Action.infoUsageResponse
         )
-        .cancellable(id: CancelID.info, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.info), cancelInFlight: true)
     }
 
     /// Only reached for non streamable items: `rowTapped` already set `state.previewItem`
@@ -62,7 +62,7 @@ extension BrowseFeature {
         return .run { send in
             try await send(.previewFileResponse(apiResult { try await filesClient.previewDocument(serverURL, item) }))
         }
-        .cancellable(id: CancelID.preview, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.preview), cancelInFlight: true)
     }
 
     func loadTextContent(_ state: inout State, item: FileItem) -> Effect<Action> {
@@ -76,13 +76,14 @@ extension BrowseFeature {
         return .run { send in
             try await send(.textContentResponse(apiResult { try await filesClient.fetchTextContent(serverURL, path) }))
         }
-        .cancellable(id: CancelID.preview, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.preview), cancelInFlight: true)
     }
 
     /// Fetches a Google Drive stub file, reads the link out of its JSON, and hands it to the
     /// system to open (the Google app or the browser). No preview state is touched unless the
     /// fetch fails, in which case `googleDocsPointerResponse` falls back to the text viewer.
-    func openGoogleDocsPointer(serverURL: URL, item: FileItem) -> Effect<Action> {
+    func openGoogleDocsPointer(_ state: State, item: FileItem) -> Effect<Action> {
+        let serverURL = state.serverURL
         let filesClient = filesClient
         let path = item.id
         return .run { send in
@@ -94,7 +95,7 @@ extension BrowseFeature {
                 return url
             }))
         }
-        .cancellable(id: CancelID.googleDocsPointer, cancelInFlight: true)
+        .cancellable(id: state.cancelID(.googleDocsPointer), cancelInFlight: true)
     }
 
     func confirmTextSave(_ state: inout State, newContent: String) -> Effect<Action> {

@@ -32,3 +32,4 @@ refactor. Number it after the last one and keep it short. A record that stops ho
 | [0021](0021-mac-space-peek-card.md) | Space opens an in app peek card instead of the system Quick Look panel |
 | [0022](0022-mac-archive-peek-card.md) | Archives open in a peek card read through the server's archive routes |
 | [0023](0023-session-preferences-reset-after-sign-out.md) | Session preferences reset after the sign out screen change |
+| [0024](0024-browse-cancel-ids-per-folder.md) | Browse cancel ids are keyed by the screen's folder |

@@ -57,7 +57,7 @@ extension BrowseFeature {
                     try await clock.sleep(for: Constants.previewActionSettleDelay)
                     await send(.delegate(.openDownloadsTapped))
                 }
-                .cancellable(id: CancelID.previewDeferredAction, cancelInFlight: true)
+                .cancellable(id: state.cancelID(.previewDeferredAction), cancelInFlight: true)
             )
 
         case .goToSharedTabFromPreview:
@@ -68,7 +68,7 @@ extension BrowseFeature {
                     try await clock.sleep(for: Constants.previewActionSettleDelay)
                     await send(.delegate(.goToSharedTab))
                 }
-                .cancellable(id: CancelID.previewDeferredAction, cancelInFlight: true)
+                .cancellable(id: state.cancelID(.previewDeferredAction), cancelInFlight: true)
             )
 
         case let .renameResponse(.success(result)):
@@ -151,11 +151,11 @@ extension BrowseFeature {
                     await send(.newFileExtensionsLoaded(extensions))
                 }
             }
-            .cancellable(id: CancelID.newFileExtensions, cancelInFlight: true)
+            .cancellable(id: state.cancelID(.newFileExtensions), cancelInFlight: true)
 
         case .newFileCancelled:
             state.isNewFileSheetPresented = false
-            return .cancel(id: CancelID.newFileExtensions)
+            return .cancel(id: state.cancelID(.newFileExtensions))
 
         case let .newFileExtensionsLoaded(extensions):
             state.newFileServerExtensions = extensions
@@ -180,7 +180,7 @@ extension BrowseFeature {
                 try await clock.sleep(for: Constants.previewActionSettleDelay)
                 await send(.rowTapped(file))
             }
-            .cancellable(id: CancelID.previewDeferredAction, cancelInFlight: true)
+            .cancellable(id: state.cancelID(.previewDeferredAction), cancelInFlight: true)
 
         case let .newFileResponse(.failure(error)):
             state.isPerformingFileAction = false
@@ -191,7 +191,7 @@ extension BrowseFeature {
         case .deleteCancelled:
             state.deleteConfirmationItem = nil
             state.deleteImpactCheck = .idle
-            return .cancel(id: CancelID.deleteImpact)
+            return .cancel(id: state.cancelID(.deleteImpact))
 
         case let .deleteImpactResponse(.success(impact)):
             state.deleteImpactCheck = .loaded(impact)
