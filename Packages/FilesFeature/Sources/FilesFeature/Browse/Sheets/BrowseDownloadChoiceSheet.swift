@@ -42,10 +42,18 @@
                         DSFieldLabel(L10n.Browse.downloadSaveTo)
                             .accessibilityAddTraits(.isHeader)
                         VStack(spacing: 0) {
-                            DSNavigationRow(title: L10n.Browse.downloadToFilesApp, icon: IconKit.folder) {
+                            DSNavigationRow(
+                                title: L10n.Browse.downloadToFilesApp,
+                                icon: IconKit.folder,
+                                accessory: .none
+                            ) {
                                 onSave(choice, .files)
                             }
-                            DSNavigationRow(title: L10n.Browse.downloadToShareSheet, icon: IconKit.share) {
+                            DSNavigationRow(
+                                title: L10n.Browse.downloadToShareSheet,
+                                icon: IconKit.share,
+                                accessory: .none
+                            ) {
                                 onSave(choice, .share)
                             }
                         }
