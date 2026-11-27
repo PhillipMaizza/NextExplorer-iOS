@@ -110,14 +110,26 @@ browse.archivePasswordInvalid	הסיסמה שגויה, או שהארכיון פ�
 browse.progressCompressing	דוחס…
 browse.offlineBannerDetail	מוצג עותק שמור מ-%@
 browse.actionCopy	העתקה
-browse.destinationPickerMoveTitle	העברה אל…
+browse.destinationPickerMoveTitle	העברה אל
 browse.destinationPickerConfirmMove	העבר לכאן
-browse.destinationPickerCopyTitle	העתקה אל…
+browse.destinationPickerCopyTitle	העתקה אל
 browse.destinationPickerConfirmCopy	העתק לכאן
 browse.actionMoveTo	העברה אל…
 browse.actionCopyTo	העתקה אל…
 browse.destinationPickerNoFolders	אין כאן תיקיות
 browse.destinationPickerLoadFailed	לא ניתן היה לטעון את התיקיות.
+browse.destinationPickerMoveItems#one	העבר פריט %lld
+browse.destinationPickerMoveItems#two	העבר %lld פריטים
+browse.destinationPickerMoveItems#other	העבר %lld פריטים
+browse.destinationPickerCopyItems#one	העתק פריט %lld
+browse.destinationPickerCopyItems#two	העתק %lld פריטים
+browse.destinationPickerCopyItems#other	העתק %lld פריטים
+browse.destinationPickerLocations	מיקומים
+browse.destinationPickerInto	אל %@
+browse.destinationPickerAlreadyThere	כבר נמצא ב%@
+browse.destinationPickerIntoItself	תיקייה לא יכולה להיכנס לתוך עצמה
+browse.destinationPickerNoRights	אין לך אפשרות להוסיף את הפריטים האלה כאן
+browse.destinationPickerChooseFolder	בחר תיקייה
 browse.actionMove	העברה
 browse.actionPaste	הדבקה
 browse.actionPasteCount	הדבקת %lld פריטים
@@ -192,7 +204,7 @@ uploads.actionUploadFromPhotos	העלאה מהגלריה
 uploads.actionTakePhoto	צילום תמונה או וידאו
 uploads.cameraDeniedTitle	נדרשת גישה למצלמה
 uploads.cameraDeniedMessage	אפשרו גישה למצלמה בהגדרות כדי לצלם תמונה או וידאו.
-uploads.destinationTitle	העלאה אל…
+uploads.destinationTitle	העלאה אל
 uploads.destinationConfirm	העלאה לכאן
 uploads.reviewTitleOne	העלאת קובץ אחד
 uploads.reviewTitleMany	העלאת %lld קבצים
@@ -356,6 +368,7 @@ createShare.permissionUpload	העלאת קבצים ותיקיות
 createShare.versionsVisible	הצגת גרסאות קבצים
 createShare.versionsVisibleHint	מי שמשתמש בשיתוף הזה רואה את הגרסאות הקודמות של הקבצים, ויכול לשחזר אותן אם מותר לו לערוך.
 createShare.versionsDownload	הורדת גרסאות
+createShare.passwordAnyoneOnly	רק עבור „כל מי שיש לו את הקישור”. האנשים שבחרת מתחברים במקום זאת.
 editShare.title	עריכת קישור שיתוף
 editShare.save	שמירת שינויים
 editShare.passwordKeepHint	השאירו ריק כדי לשמור את הסיסמה הנוכחית
@@ -1316,6 +1329,7 @@ trash.deletedByUnknown	לא ידוע
 trash.deletedBy	נמחק על ידי %@
 trash.restore	שחזור
 trash.restoreTo	שחזור אל…
+trash.restoreToTitle	שחזור אל
 trash.restoreHere	שחזור לכאן
 trash.restoreFolder	שחזור התיקייה כולה
 trash.openLocation	פתיחת המיקום המקורי

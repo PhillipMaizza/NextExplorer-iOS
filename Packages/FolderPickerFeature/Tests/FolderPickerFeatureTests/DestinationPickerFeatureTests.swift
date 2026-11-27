@@ -27,8 +27,12 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
         }
 
         await store.send(.onAppear) { $0.phase = .loading }
-        await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.documents)]) }
+        await store.receive(\.foldersResponse.success) {
+            finishLoad(&$0, folders: [folder(TestFolder.documents)])
+            $0.files = [file("readme.txt")]
+        }
         await store.receive(\.recentsResponse)
+        await store.receive(\.locationsResponse) { $0.locations = [folder(TestFolder.documents)] }
     }
 
     @Test
@@ -105,6 +109,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.foldersResponse.success) { finishLoad(&$0, folders: [folder(TestFolder.documents)]) }
         await store.receive(\.recentsResponse)
+        await store.receive(\.locationsResponse) { $0.locations = [folder(TestFolder.documents)] }
         await store.send(.folderTapped(folder(TestFolder.documents))) {
             $0.directoryPath = TestFolder.documents
             $0.navigationHistory = [TestFolder.inbox]
@@ -239,6 +244,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
             $0.phase = .failed(L10n.Browse.destinationPickerLoadFailed)
         }
         await store.receive(\.recentsResponse)
+        await store.receive(\.locationsResponse)
         await store.send(.retryTapped) { $0.phase = .loading }
         await store.receive(\.foldersResponse.failure) {
             $0.phase = .failed(L10n.Browse.destinationPickerLoadFailed)
@@ -351,6 +357,7 @@ struct DestinationPickerFeatureTests: DestinationPickerTestHelpers {
             folders: [folder(TestFolder.photos, path: TestFolder.media)]
         ) }
         await store.receive(\.recentsResponse)
+        await store.receive(\.locationsResponse) { $0.locations = [folder(TestFolder.photos, path: TestFolder.media)] }
 
         await store.send(.searchQueryChanged("sum")) {
             $0.searchQuery = "sum"

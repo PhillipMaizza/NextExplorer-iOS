@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	पासवर्ड गलत है, या स
 browse.progressCompressing	संपीड़ित किया जा रहा है…
 browse.offlineBannerDetail	%@ से सहेजी गई प्रति दिखाई जा रही है
 browse.actionCopy	कॉपी करें
-browse.destinationPickerMoveTitle	यहां ले जाएं…
+browse.destinationPickerMoveTitle	यहां ले जाएं
 browse.destinationPickerConfirmMove	यहां ले जाएं
-browse.destinationPickerCopyTitle	यहां कॉपी करें…
+browse.destinationPickerCopyTitle	यहां कॉपी करें
 browse.destinationPickerConfirmCopy	यहां कॉपी करें
 browse.actionMoveTo	यहां ले जाएं…
 browse.actionCopyTo	यहां कॉपी करें…
@@ -114,6 +114,16 @@ browse.destinationPickerNoFolders	यहां कोई फ़ोल्डर �
 browse.destinationPickerLoadFailed	फ़ोल्डर लोड नहीं कर सके।
 browse.destinationPickerRecent	हाल के
 browse.destinationPickerReplaceTitle	कौन सी फ़ाइल बदलनी है?
+browse.destinationPickerMoveItems#one	%lld आइटम ले जाएं
+browse.destinationPickerMoveItems#other	%lld आइटम ले जाएं
+browse.destinationPickerCopyItems#one	%lld आइटम कॉपी करें
+browse.destinationPickerCopyItems#other	%lld आइटम कॉपी करें
+browse.destinationPickerLocations	स्थान
+browse.destinationPickerInto	%@ में
+browse.destinationPickerAlreadyThere	पहले से %@ में है
+browse.destinationPickerIntoItself	फ़ोल्डर खुद के अंदर नहीं जा सकता
+browse.destinationPickerNoRights	आप ये आइटम यहां नहीं जोड़ सकते
+browse.destinationPickerChooseFolder	फ़ोल्डर चुनें
 browse.actionMove	ले जाएं
 browse.actionPaste	पेस्ट करें
 browse.actionPasteCount	%lld आइटम पेस्ट करें
@@ -183,7 +193,7 @@ uploads.actionUploadFromPhotos	गैलरी से अपलोड करे�
 uploads.actionTakePhoto	फ़ोटो या वीडियो लें
 uploads.cameraDeniedTitle	कैमरा एक्सेस आवश्यक
 uploads.cameraDeniedMessage	फ़ोटो या वीडियो लेने के लिए सेटिंग्स में कैमरा एक्सेस की अनुमति दें।
-uploads.destinationTitle	यहां अपलोड करें…
+uploads.destinationTitle	यहां अपलोड करें
 uploads.destinationConfirm	यहां अपलोड करें
 uploads.reviewTitleOne	1 फ़ाइल अपलोड करें
 uploads.reviewTitleMany	%lld फ़ाइलें अपलोड करें
@@ -342,6 +352,7 @@ createShare.permissionUpload	फ़ाइलें और फ़ोल्डर 
 createShare.versionsVisible	फ़ाइल संस्करण दिखाएँ
 createShare.versionsVisibleHint	इस साझाकरण का उपयोग करने वाले इसकी फ़ाइलों के पिछले संस्करण देखते हैं, और संपादन की अनुमति होने पर उन्हें पुनर्स्थापित कर सकते हैं।
 createShare.versionsDownload	संस्करण डाउनलोड करें
+createShare.passwordAnyoneOnly	केवल "लिंक वाला कोई भी व्यक्ति" के लिए। आपके चुने हुए लोग इसके बजाय साइन इन करते हैं।
 editShare.title	साझा लिंक संपादित करें
 editShare.save	परिवर्तन सहेजें
 editShare.passwordKeepHint	वर्तमान पासवर्ड रखने के लिए खाली छोड़ें
@@ -1344,6 +1355,7 @@ trash.deletedByUnknown	अज्ञात
 trash.deletedBy	%@ द्वारा हटाया गया
 trash.restore	पुनर्स्थापित करें
 trash.restoreTo	कहीं और पुनर्स्थापित करें…
+trash.restoreToTitle	कहीं और पुनर्स्थापित करें
 trash.restoreHere	यहाँ पुनर्स्थापित करें
 trash.restoreFolder	पूरा फ़ोल्डर पुनर्स्थापित करें
 trash.openLocation	मूल स्थान खोलें

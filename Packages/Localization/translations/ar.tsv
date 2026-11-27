@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	كلمة المرور غير صحيحة، أو ا�
 browse.progressCompressing	جارٍ الضغط…
 browse.offlineBannerDetail	يتم عرض نسخة محفوظة من %@
 browse.actionCopy	نسخ
-browse.destinationPickerMoveTitle	نقل إلى…
+browse.destinationPickerMoveTitle	نقل إلى
 browse.destinationPickerConfirmMove	النقل إلى هنا
-browse.destinationPickerCopyTitle	نسخ إلى…
+browse.destinationPickerCopyTitle	نسخ إلى
 browse.destinationPickerConfirmCopy	النسخ إلى هنا
 browse.actionMoveTo	نقل إلى…
 browse.actionCopyTo	نسخ إلى…
@@ -114,6 +114,24 @@ browse.destinationPickerNoFolders	لا مجلدات هنا
 browse.destinationPickerLoadFailed	تعذّر تحميل المجلدات.
 browse.destinationPickerRecent	الأخيرة
 browse.destinationPickerReplaceTitle	أي ملف تريد استبداله؟
+browse.destinationPickerMoveItems#zero	نقل %lld عنصر
+browse.destinationPickerMoveItems#one	نقل %lld عنصر
+browse.destinationPickerMoveItems#two	نقل %lld عنصرين
+browse.destinationPickerMoveItems#few	نقل %lld عناصر
+browse.destinationPickerMoveItems#many	نقل %lld عنصرًا
+browse.destinationPickerMoveItems#other	نقل %lld عنصر
+browse.destinationPickerCopyItems#zero	نسخ %lld عنصر
+browse.destinationPickerCopyItems#one	نسخ %lld عنصر
+browse.destinationPickerCopyItems#two	نسخ %lld عنصرين
+browse.destinationPickerCopyItems#few	نسخ %lld عناصر
+browse.destinationPickerCopyItems#many	نسخ %lld عنصرًا
+browse.destinationPickerCopyItems#other	نسخ %lld عنصر
+browse.destinationPickerLocations	المواقع
+browse.destinationPickerInto	إلى %@
+browse.destinationPickerAlreadyThere	موجود بالفعل في %@
+browse.destinationPickerIntoItself	لا يمكن وضع مجلد داخل نفسه
+browse.destinationPickerNoRights	لا يمكنك إضافة هذه العناصر هنا
+browse.destinationPickerChooseFolder	اختر مجلدًا
 browse.actionMove	نقل
 browse.actionPaste	لصق
 browse.actionPasteCount	لصق %lld عنصر
@@ -203,7 +221,7 @@ uploads.actionUploadFromPhotos	الرفع من المعرض
 uploads.actionTakePhoto	التقاط صورة أو فيديو
 uploads.cameraDeniedTitle	الوصول إلى الكاميرا مطلوب
 uploads.cameraDeniedMessage	اسمح بالوصول إلى الكاميرا في الإعدادات لالتقاط صورة أو فيديو.
-uploads.destinationTitle	الرفع إلى…
+uploads.destinationTitle	الرفع إلى
 uploads.destinationConfirm	الرفع إلى هنا
 uploads.reviewTitleOne	رفع ملف واحد
 uploads.reviewTitleMany	رفع %lld ملف
@@ -386,6 +404,7 @@ createShare.permissionUpload	رفع الملفات والمجلدات
 createShare.versionsVisible	إظهار إصدارات الملفات
 createShare.versionsVisibleHint	يرى مستخدمو هذه المشاركة الإصدارات السابقة لملفاتها، ويمكنهم استعادتها إذا كان مسموحًا لهم بالتعديل.
 createShare.versionsDownload	تنزيل الإصدارات
+createShare.passwordAnyoneOnly	فقط لـ «أي شخص لديه الرابط». الأشخاص الذين تختارهم يسجلون الدخول بدلاً من ذلك.
 editShare.title	تحرير رابط المشاركة
 editShare.save	حفظ التغييرات
 editShare.passwordKeepHint	اتركه فارغًا للاحتفاظ بكلمة السر الحالية
@@ -1440,6 +1459,7 @@ trash.deletedByUnknown	غير معروف
 trash.deletedBy	حذفه: %@
 trash.restore	استعادة
 trash.restoreTo	استعادة إلى…
+trash.restoreToTitle	استعادة إلى
 trash.restoreHere	استعادة هنا
 trash.restoreFolder	استعادة المجلد كاملًا
 trash.openLocation	فتح الموقع الأصلي

@@ -110,14 +110,24 @@ browse.archivePasswordInvalid	Väärä salasana, tai arkisto on vioittunut.
 browse.progressCompressing	Pakataan…
 browse.offlineBannerDetail	Näytetään tallennettu kopio ajalta %@
 browse.actionCopy	Kopioi
-browse.destinationPickerMoveTitle	Siirrä kohteeseen…
+browse.destinationPickerMoveTitle	Siirrä kohteeseen
 browse.destinationPickerConfirmMove	Siirrä tänne
-browse.destinationPickerCopyTitle	Kopioi kohteeseen…
+browse.destinationPickerCopyTitle	Kopioi kohteeseen
 browse.destinationPickerConfirmCopy	Kopioi tänne
 browse.actionMoveTo	Siirrä kohteeseen…
 browse.actionCopyTo	Kopioi kohteeseen…
 browse.destinationPickerNoFolders	Ei kansioita täällä
 browse.destinationPickerLoadFailed	Kansioita ei voitu ladata.
+browse.destinationPickerMoveItems#one	Siirrä %lld kohde
+browse.destinationPickerMoveItems#other	Siirrä %lld kohdetta
+browse.destinationPickerCopyItems#one	Kopioi %lld kohde
+browse.destinationPickerCopyItems#other	Kopioi %lld kohdetta
+browse.destinationPickerLocations	Sijainnit
+browse.destinationPickerInto	Kohteeseen %@
+browse.destinationPickerAlreadyThere	Jo kansiossa %@
+browse.destinationPickerIntoItself	Kansiota ei voi siirtää itsensä sisään
+browse.destinationPickerNoRights	Et voi lisätä näitä kohteita tähän
+browse.destinationPickerChooseFolder	Valitse kansio
 browse.actionMove	Siirrä
 browse.actionPaste	Liitä
 browse.actionPasteCount	Liitä %lld kohdetta
@@ -187,7 +197,7 @@ uploads.actionUploadFromPhotos	Lähetä Galleriasta
 uploads.actionTakePhoto	Ota kuva tai video
 uploads.cameraDeniedTitle	Kameran käyttöoikeus vaaditaan
 uploads.cameraDeniedMessage	Salli kameran käyttö Asetuksissa ottaaksesi kuvan tai videon.
-uploads.destinationTitle	Lähetä kohteeseen…
+uploads.destinationTitle	Lähetä kohteeseen
 uploads.destinationConfirm	Lähetä tänne
 uploads.reviewTitleOne	Lähetä 1 tiedosto
 uploads.reviewTitleMany	Lähetä %lld tiedostoa
@@ -345,6 +355,7 @@ createShare.permissionUpload	Lähettää tiedostoja ja kansioita
 createShare.versionsVisible	Näytä tiedostoversiot
 createShare.versionsVisibleHint	Tämän jaon käyttäjät näkevät sen tiedostojen aiemmat versiot ja voivat palauttaa ne, jos heillä on muokkausoikeus.
 createShare.versionsDownload	Lataa versiot
+createShare.passwordAnyoneOnly	Vain kohteelle Kuka tahansa, jolla on linkki. Valitsemasi henkilöt kirjautuvat sisään.
 editShare.title	Muokkaa jakolinkkiä
 editShare.save	Tallenna muutokset
 editShare.passwordKeepHint	Jätä tyhjäksi säilyttääksesi nykyisen salasanan
@@ -1292,6 +1303,7 @@ trash.deletedByUnknown	Tuntematon
 trash.deletedBy	Poistaja: %@
 trash.restore	Palauta
 trash.restoreTo	Palauta kohteeseen…
+trash.restoreToTitle	Palauta kohteeseen
 trash.restoreHere	Palauta tähän
 trash.restoreFolder	Palauta koko kansio
 trash.openLocation	Avaa alkuperäinen sijainti

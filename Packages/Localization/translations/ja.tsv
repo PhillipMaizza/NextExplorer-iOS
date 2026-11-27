@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	パスワードが正しくないか、アーカ�
 browse.progressCompressing	圧縮中…
 browse.offlineBannerDetail	%@ の保存済みコピーを表示中
 browse.actionCopy	コピー
-browse.destinationPickerMoveTitle	移動先…
+browse.destinationPickerMoveTitle	移動先
 browse.destinationPickerConfirmMove	ここに移動
-browse.destinationPickerCopyTitle	コピー先…
+browse.destinationPickerCopyTitle	コピー先
 browse.destinationPickerConfirmCopy	ここにコピー
 browse.actionMoveTo	移動先…
 browse.actionCopyTo	コピー先…
@@ -114,6 +114,14 @@ browse.destinationPickerNoFolders	ここにフォルダはありません
 browse.destinationPickerLoadFailed	フォルダを読み込めませんでした。
 browse.destinationPickerRecent	最近使った項目
 browse.destinationPickerReplaceTitle	どのファイルを置き換えますか?
+browse.destinationPickerMoveItems#other	%lld 項目を移動
+browse.destinationPickerCopyItems#other	%lld 項目をコピー
+browse.destinationPickerLocations	場所
+browse.destinationPickerInto	%@ へ
+browse.destinationPickerAlreadyThere	すでに %@ にあります
+browse.destinationPickerIntoItself	フォルダをそれ自体の中に入れることはできません
+browse.destinationPickerNoRights	ここにはこれらの項目を追加できません
+browse.destinationPickerChooseFolder	フォルダを選択
 browse.actionMove	移動
 browse.actionPaste	ペースト
 browse.actionPasteCount	%lld 項目をペースト
@@ -178,7 +186,7 @@ uploads.actionUploadFromPhotos	ギャラリーからアップロード
 uploads.actionTakePhoto	写真またはビデオを撮る
 uploads.cameraDeniedTitle	カメラへのアクセスが必要です
 uploads.cameraDeniedMessage	写真やビデオを撮るには、設定でカメラへのアクセスを許可してください。
-uploads.destinationTitle	アップロード先…
+uploads.destinationTitle	アップロード先
 uploads.destinationConfirm	ここにアップロード
 uploads.reviewTitleOne	1 個のファイルをアップロード
 uploads.reviewTitleMany	%lld 個のファイルをアップロード
@@ -331,6 +339,7 @@ createShare.permissionUpload	ファイルとフォルダのアップロード
 createShare.versionsVisible	ファイルのバージョンを表示
 createShare.versionsVisibleHint	この共有を使う人はファイルの以前のバージョンを見ることができ、編集が許可されていれば復元できます。
 createShare.versionsDownload	バージョンのダウンロード
+createShare.passwordAnyoneOnly	「リンクを知っている全員」の場合のみ。選んだユーザーは代わりにサインインします。
 editShare.title	共有リンクを編集
 editShare.save	変更を保存
 editShare.passwordKeepHint	現在のパスワードを保持するには空のままにします
@@ -1320,6 +1329,7 @@ trash.deletedByUnknown	不明
 trash.deletedBy	削除したユーザ：%@
 trash.restore	復元
 trash.restoreTo	復元先を選択…
+trash.restoreToTitle	復元先を選択
 trash.restoreHere	ここに復元
 trash.restoreFolder	フォルダ全体を復元
 trash.openLocation	元の場所を開く

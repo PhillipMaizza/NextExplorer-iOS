@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	密码不正确，或压缩包已损坏。
 browse.progressCompressing	正在压缩…
 browse.offlineBannerDetail	正在显示来自 %@ 的已保存副本
 browse.actionCopy	拷贝
-browse.destinationPickerMoveTitle	移动到…
+browse.destinationPickerMoveTitle	移动到
 browse.destinationPickerConfirmMove	移动到此处
-browse.destinationPickerCopyTitle	拷贝到…
+browse.destinationPickerCopyTitle	拷贝到
 browse.destinationPickerConfirmCopy	拷贝到此处
 browse.actionMoveTo	移动到…
 browse.actionCopyTo	拷贝到…
@@ -114,6 +114,14 @@ browse.destinationPickerNoFolders	此处没有文件夹
 browse.destinationPickerLoadFailed	无法加载文件夹。
 browse.destinationPickerRecent	最近使用
 browse.destinationPickerReplaceTitle	要替换哪个文件？
+browse.destinationPickerMoveItems#other	移动 %lld 个项目
+browse.destinationPickerCopyItems#other	拷贝 %lld 个项目
+browse.destinationPickerLocations	位置
+browse.destinationPickerInto	到 %@
+browse.destinationPickerAlreadyThere	已在 %@ 中
+browse.destinationPickerIntoItself	文件夹不能放入其自身
+browse.destinationPickerNoRights	你无法在此处添加这些项目
+browse.destinationPickerChooseFolder	选择文件夹
 browse.actionMove	移动
 browse.actionPaste	粘贴
 browse.actionPasteCount	粘贴 %lld 项
@@ -178,7 +186,7 @@ uploads.actionUploadFromPhotos	从相册上传
 uploads.actionTakePhoto	拍照或录像
 uploads.cameraDeniedTitle	需要相机访问权限
 uploads.cameraDeniedMessage	请在“设置”中允许相机访问，以便拍照或录像。
-uploads.destinationTitle	上传到…
+uploads.destinationTitle	上传到
 uploads.destinationConfirm	上传到此处
 uploads.reviewTitleOne	上传 1 个文件
 uploads.reviewTitleMany	上传 %lld 个文件
@@ -331,6 +339,7 @@ createShare.permissionUpload	上传文件和文件夹
 createShare.versionsVisible	显示文件版本
 createShare.versionsVisibleHint	使用此共享的人可以看到其文件的历史版本，若有编辑权限还可以恢复。
 createShare.versionsDownload	下载版本
+createShare.passwordAnyoneOnly	仅适用于“任何拥有链接的人”。你选择的人改为登录访问。
 editShare.title	编辑共享链接
 editShare.save	保存更改
 editShare.passwordKeepHint	留空以保留当前密码
@@ -1320,6 +1329,7 @@ trash.deletedByUnknown	未知
 trash.deletedBy	删除者：%@
 trash.restore	还原
 trash.restoreTo	还原到…
+trash.restoreToTitle	还原到
 trash.restoreHere	恢复到此处
 trash.restoreFolder	还原整个文件夹
 trash.openLocation	打开原位置

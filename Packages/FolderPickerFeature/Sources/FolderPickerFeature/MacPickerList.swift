@@ -3,11 +3,12 @@
     import Localization
     import SwiftUI
 
-    struct MacPickerList<Row: Identifiable, RowLabel: View>: View {
+    struct MacPickerList<Row: Identifiable, RowLabel: View, Footer: View>: View {
         let rows: [Row]
         @Binding var selection: Row.ID?
         let onOpen: (Row) -> Void
         @ViewBuilder let label: (Row) -> RowLabel
+        @ViewBuilder var footer: () -> Footer
         @FocusState private var isFocused: Bool
 
         var body: some View {
@@ -17,6 +18,7 @@
                         ForEach(rows) { row in
                             rowView(row)
                         }
+                        footer()
                     }
                 }
                 .focusable()
@@ -50,6 +52,17 @@
             selection = ids[index]
             proxy.scrollTo(ids[index])
             return .handled
+        }
+    }
+
+    extension MacPickerList where Footer == EmptyView {
+        init(
+            rows: [Row],
+            selection: Binding<Row.ID?>,
+            onOpen: @escaping (Row) -> Void,
+            @ViewBuilder label: @escaping (Row) -> RowLabel
+        ) {
+            self.init(rows: rows, selection: selection, onOpen: onOpen, label: label) { EmptyView() }
         }
     }
 

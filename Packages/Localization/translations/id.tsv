@@ -110,14 +110,22 @@ browse.archivePasswordInvalid	Kata sandi salah, atau arsip rusak.
 browse.progressCompressing	Mengompres…
 browse.offlineBannerDetail	Menampilkan salinan tersimpan dari %@
 browse.actionCopy	Salin
-browse.destinationPickerMoveTitle	Pindahkan ke…
+browse.destinationPickerMoveTitle	Pindahkan ke
 browse.destinationPickerConfirmMove	Pindahkan ke Sini
-browse.destinationPickerCopyTitle	Salin ke…
+browse.destinationPickerCopyTitle	Salin ke
 browse.destinationPickerConfirmCopy	Salin ke Sini
 browse.actionMoveTo	Pindahkan ke…
 browse.actionCopyTo	Salin ke…
 browse.destinationPickerNoFolders	Tidak ada folder di sini
 browse.destinationPickerLoadFailed	Tidak dapat memuat folder.
+browse.destinationPickerMoveItems#other	Pindahkan %lld Item
+browse.destinationPickerCopyItems#other	Salin %lld Item
+browse.destinationPickerLocations	Lokasi
+browse.destinationPickerInto	Ke %@
+browse.destinationPickerAlreadyThere	Sudah di %@
+browse.destinationPickerIntoItself	Folder tidak bisa masuk ke dalam dirinya sendiri
+browse.destinationPickerNoRights	Anda tidak dapat menambahkan item ini di sini
+browse.destinationPickerChooseFolder	Pilih folder
 browse.actionMove	Pindahkan
 browse.actionPaste	Tempel
 browse.actionPasteCount	Tempel %lld item
@@ -182,7 +190,7 @@ uploads.actionUploadFromPhotos	Unggah dari Galeri
 uploads.actionTakePhoto	Ambil Foto atau Video
 uploads.cameraDeniedTitle	Akses kamera diperlukan
 uploads.cameraDeniedMessage	Izinkan akses kamera di Pengaturan untuk mengambil foto atau video.
-uploads.destinationTitle	Unggah ke…
+uploads.destinationTitle	Unggah ke
 uploads.destinationConfirm	Unggah di sini
 uploads.reviewTitleOne	Unggah 1 file
 uploads.reviewTitleMany	Unggah %lld file
@@ -334,6 +342,7 @@ createShare.permissionUpload	Mengunggah file dan folder
 createShare.versionsVisible	Tampilkan versi file
 createShare.versionsVisibleHint	Orang yang memakai berbagi ini melihat versi lama filenya, dan dapat memulihkannya jika boleh mengedit.
 createShare.versionsDownload	Mengunduh versi
+createShare.passwordAnyoneOnly	Hanya untuk Siapa saja dengan tautan. Orang yang Anda pilih masuk sebagai gantinya.
 editShare.title	Ubah Tautan Berbagi
 editShare.save	Simpan Perubahan
 editShare.passwordKeepHint	Biarkan kosong untuk mempertahankan kata sandi saat ini
@@ -1268,6 +1277,7 @@ trash.deletedByUnknown	Tidak diketahui
 trash.deletedBy	Dihapus oleh %@
 trash.restore	Pulihkan
 trash.restoreTo	Pulihkan ke…
+trash.restoreToTitle	Pulihkan ke
 trash.restoreHere	Pulihkan di Sini
 trash.restoreFolder	Pulihkan Seluruh Folder
 trash.openLocation	Buka Lokasi Asli

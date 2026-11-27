@@ -19,6 +19,8 @@ public struct DestinationPickerFeature {
 
     @ObservableState
     public struct State: Equatable, Sendable {
+        public static let sidebarRecentLimit = 5
+
         public var serverURL: URL
         public var purpose: Purpose
         /// The items being moved (empty for `.upload`). Held so their current parents / own
@@ -50,6 +52,53 @@ public struct DestinationPickerFeature {
         /// Folders this user last moved or copied into, newest first. Best effort: empty until the
         /// server answers, and left empty when it can't.
         public var recents: [String] = []
+        public var locations: [FileItem] = []
+        public var files: [FileItem] = []
+        public var shareName: String?
+        public var newFolder: NewFolderDraft?
+
+        public var crumbs: [PathCrumb] {
+            PathCrumb.trail(for: directoryPath, shareName: shareName)
+        }
+
+        public var destinationTrail: String {
+            PathTrail.text(destinationCrumbs.map(\.title).joined(separator: "/"))
+        }
+
+        public var destinationName: String {
+            destinationCrumbs.last?.title ?? ""
+        }
+
+        private var destinationCrumbs: [PathCrumb] {
+            PathCrumb.trail(for: transferDestination, shareName: shareName)
+        }
+
+        public var sidebarRecents: [String] {
+            Array(recents.prefix(Self.sidebarRecentLimit))
+        }
+
+        public var activeLocation: String? {
+            guard !sidebarRecents.contains(directoryPath) else { return nil }
+            return locations.map(\.id).first { $0 == directoryPath || directoryPath.hasPrefix("\($0)/") }
+        }
+
+        public var canCreateFolder: Bool {
+            purpose != .replaceFile && !directoryPath.isEmpty && !showsSearchResults
+                && (currentAccess?.canCreateFolder ?? false)
+        }
+
+        public var refusal: FileClipboard.Refusal? {
+            guard phase == .loaded else { return nil }
+            switch purpose {
+            case .move, .copy: return transferRefusal
+            case .upload, .restore, .replaceFile: return nil
+            }
+        }
+
+        private var transferRefusal: FileClipboard.Refusal? {
+            FileClipboard(items: items, operation: purpose == .copy ? .copy : .move)
+                .refusal(into: transferDestination, canReceive: currentAccess?.canReceive(items) ?? false)
+        }
 
         /// The recents worth offering from here: the folder already on screen is not a shortcut.
         public var displayedRecents: [String] {
@@ -137,12 +186,8 @@ public struct DestinationPickerFeature {
         /// folder nested in a staged item). Upload: any non-root folder the user can upload to.
         public var canConfirm: Bool {
             switch purpose {
-            case .move:
-                FileClipboard(items: items, operation: .move)
-                    .canPaste(into: transferDestination, canReceive: currentAccess?.canReceive(items) ?? false)
-            case .copy:
-                FileClipboard(items: items, operation: .copy)
-                    .canPaste(into: transferDestination, canReceive: currentAccess?.canReceive(items) ?? false)
+            case .move, .copy:
+                transferRefusal == nil
             case .upload:
                 // `nil` while the folder's listing is still loading: confirm stays disabled
                 // until the server says uploads are allowed here.
@@ -156,9 +201,33 @@ public struct DestinationPickerFeature {
         }
     }
 
+    public struct NewFolderDraft: Equatable, Sendable {
+        public var name = ""
+        public var phase: DataPhase = .idle
+
+        public var trimmedName: String {
+            name.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        public var problem: String? {
+            FileNameRule.problem(forTrimmed: trimmedName)?.message
+        }
+
+        public var canCreate: Bool {
+            FileNameRule.isAcceptable(trimmed: trimmedName) && phase != .loading
+        }
+    }
+
     public enum Action: Equatable, Sendable {
         case onAppear
         case foldersResponse(Result<BrowseResult, FilesClientError>)
+        case locationsResponse([FileItem])
+        case locationTapped(String)
+        case newFolderTapped
+        case newFolderNameChanged(String)
+        case newFolderConfirmed
+        case newFolderCancelled
+        case newFolderResponse(Result<FileItem, FilesClientError>)
         case personalSpaceAvailable
         case searchQueryChanged(String)
         case searchResultsResponse(Result<[SearchResultItem], FilesClientError>, term: String)
@@ -186,7 +255,7 @@ public struct DestinationPickerFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.continuousClock) var clock
-    private enum CancelID { case load, search, recents }
+    private enum CancelID { case load, search, recents, locations, newFolder }
 
     public init() {}
 
@@ -198,7 +267,7 @@ public struct DestinationPickerFeature {
                       state.phase != .loading else { return .none }
                 // One after the other: the folders are what the user is waiting for, and a fixed order
                 // keeps the two answers from racing each other.
-                return .concatenate(load(&state), loadRecents(state))
+                return .concatenate(load(&state), loadRecents(state), loadLocations(state))
 
             case .retryTapped:
                 return load(&state)
@@ -206,7 +275,11 @@ public struct DestinationPickerFeature {
             case let .foldersResponse(.success(result)):
                 state.phase = .loaded
                 state.currentAccess = result.access
+                state.shareName = result.shareInfo?.name
                 state.folders = IdentifiedArray(uniqueElements: Self.choices(from: result.items, for: state))
+                state.files = state.purpose == .replaceFile || state.directoryPath.isEmpty
+                    ? []
+                    : result.items.filter { !$0.isDirectory }.sorted(by: Self.byName)
                 state.selectedFilePath = state.pendingFileSelection.flatMap { state.folders[id: $0] }
                     .flatMap { $0.isDirectory ? nil : $0.id }
                 state.pendingFileSelection = nil
@@ -274,6 +347,59 @@ public struct DestinationPickerFeature {
                         result.append(path)
                     }
                 }
+                return .none
+
+            case let .locationsResponse(locations):
+                state.locations = locations
+                return .none
+
+            case let .locationTapped(path):
+                guard path != state.directoryPath else { return .none }
+                return drill(&state, into: path)
+
+            case .newFolderTapped:
+                guard state.canCreateFolder else { return .none }
+                state.newFolder = NewFolderDraft()
+                return .none
+
+            case let .newFolderNameChanged(name):
+                state.newFolder?.name = name
+                if state.newFolder?.phase.errorMessage != nil {
+                    state.newFolder?.phase = .idle
+                }
+                return .none
+
+            case .newFolderCancelled:
+                state.newFolder = nil
+                return .cancel(id: CancelID.newFolder)
+
+            case .newFolderConfirmed:
+                guard let draft = state.newFolder, draft.canCreate else { return .none }
+                state.newFolder?.phase = .loading
+                let serverURL = state.serverURL
+                let path = state.directoryPath
+                let name = draft.trimmedName
+                let filesClient = filesClient
+                return .run { send in
+                    try await send(.newFolderResponse(apiResult { try await filesClient.createFolder(
+                        serverURL,
+                        path,
+                        name
+                    ) }))
+                }
+                .cancellable(id: CancelID.newFolder, cancelInFlight: true)
+
+            case let .newFolderResponse(.success(folder)):
+                state.newFolder = nil
+                guard folder.path == state.directoryPath else { return .none }
+                state.folders[id: folder.id] = folder
+                state.folders.sort(by: Self.byName)
+                state.searchQuery = ""
+                state.selectedFolderPath = folder.id
+                return .none
+
+            case let .newFolderResponse(.failure(error)):
+                state.newFolder?.phase = .failed(error.userMessage)
                 return .none
 
             case let .recentTapped(path):
@@ -353,6 +479,19 @@ public struct DestinationPickerFeature {
         .cancellable(id: CancelID.recents, cancelInFlight: true)
     }
 
+    private func loadLocations(_ state: State) -> Effect<Action> {
+        guard state.purpose != .replaceFile else { return .none }
+        let serverURL = state.serverURL
+        let filesClient = filesClient
+        return .run { send in
+            let volumes = await (try? filesClient.browse(serverURL, ""))?.items.filter(\.isDirectory) ?? []
+            let hasPersonal = await (try? filesClient.serverFeatures(serverURL))?.isPersonalEnabled == true
+            let personal = hasPersonal ? [Self.personalSpaceFolder] : []
+            await send(.locationsResponse(personal + volumes.sorted(by: Self.byName)))
+        }
+        .cancellable(id: CancelID.locations, cancelInFlight: true)
+    }
+
     /// A breadcrumb jump lands on an ancestor of the current folder, so the drill path is
     /// trimmed to the folders that still sit above the tapped one.
     private func truncateHistory(_ state: inout State, to path: String) {
@@ -391,6 +530,8 @@ public struct DestinationPickerFeature {
         state.currentAccess = nil
         state.selectedFilePath = nil
         state.selectedFolderPath = nil
+        state.files = []
+        state.newFolder = nil
         let serverURL = state.serverURL
         let directoryPath = state.directoryPath
         let filesClient = filesClient

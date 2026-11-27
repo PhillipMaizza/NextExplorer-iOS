@@ -1,7 +1,7 @@
 import FilesClient
 import Localization
 
-extension FilesClientError {
+public extension FilesClientError {
     var userMessage: String {
         switch self {
         case .sessionExpired: L10n.Error.sessionExpired

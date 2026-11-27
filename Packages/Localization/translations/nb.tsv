@@ -110,14 +110,24 @@ browse.archivePasswordInvalid	Feil passord, eller arkivet er skadet.
 browse.progressCompressing	Komprimerer…
 browse.offlineBannerDetail	Viser en lagret kopi fra %@
 browse.actionCopy	Kopier
-browse.destinationPickerMoveTitle	Flytt til…
+browse.destinationPickerMoveTitle	Flytt til
 browse.destinationPickerConfirmMove	Flytt hit
-browse.destinationPickerCopyTitle	Kopier til…
+browse.destinationPickerCopyTitle	Kopier til
 browse.destinationPickerConfirmCopy	Kopier hit
 browse.actionMoveTo	Flytt til…
 browse.actionCopyTo	Kopier til…
 browse.destinationPickerNoFolders	Ingen mapper her
 browse.destinationPickerLoadFailed	Kunne ikke laste mappene.
+browse.destinationPickerMoveItems#one	Flytt %lld element
+browse.destinationPickerMoveItems#other	Flytt %lld elementer
+browse.destinationPickerCopyItems#one	Kopier %lld element
+browse.destinationPickerCopyItems#other	Kopier %lld elementer
+browse.destinationPickerLocations	Steder
+browse.destinationPickerInto	Til %@
+browse.destinationPickerAlreadyThere	Allerede i %@
+browse.destinationPickerIntoItself	En mappe kan ikke ligge i seg selv
+browse.destinationPickerNoRights	Du kan ikke legge til disse elementene her
+browse.destinationPickerChooseFolder	Velg en mappe
 browse.actionMove	Flytt
 browse.actionPaste	Lim inn
 browse.actionPasteCount	Lim inn %lld elementer
@@ -187,7 +197,7 @@ uploads.actionUploadFromPhotos	Last opp fra Galleri
 uploads.actionTakePhoto	Ta bilde eller video
 uploads.cameraDeniedTitle	Kameratilgang kreves
 uploads.cameraDeniedMessage	Gi tilgang til kameraet i Innstillinger for å ta et bilde eller en video.
-uploads.destinationTitle	Last opp til…
+uploads.destinationTitle	Last opp til
 uploads.destinationConfirm	Last opp hit
 uploads.reviewTitleOne	Last opp 1 fil
 uploads.reviewTitleMany	Last opp %lld filer
@@ -345,6 +355,7 @@ createShare.permissionUpload	Laste opp filer og mapper
 createShare.versionsVisible	Vis filversjoner
 createShare.versionsVisibleHint	De som bruker denne delingen, ser tidligere versjoner av filene og kan gjenopprette dem hvis de får redigere.
 createShare.versionsDownload	Last ned versjoner
+createShare.passwordAnyoneOnly	Bare for Alle med lenken. Personene du velger, logger på i stedet.
 editShare.title	Rediger delingslenke
 editShare.save	Lagre endringer
 editShare.passwordKeepHint	La feltet stå tomt for å beholde gjeldende passord
@@ -1292,6 +1303,7 @@ trash.deletedByUnknown	Ukjent
 trash.deletedBy	Slettet av %@
 trash.restore	Gjenopprett
 trash.restoreTo	Gjenopprett til…
+trash.restoreToTitle	Gjenopprett til
 trash.restoreHere	Gjenopprett her
 trash.restoreFolder	Gjenopprett hele mappen
 trash.openLocation	Åpne opprinnelig plassering

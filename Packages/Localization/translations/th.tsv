@@ -110,14 +110,22 @@ browse.archivePasswordInvalid	รหัสผ่านไม่ถูกต้�
 browse.progressCompressing	กำลังบีบอัด…
 browse.offlineBannerDetail	กำลังแสดงสำเนาที่บันทึกไว้จาก %@
 browse.actionCopy	คัดลอก
-browse.destinationPickerMoveTitle	ย้ายไปที่…
+browse.destinationPickerMoveTitle	ย้ายไปที่
 browse.destinationPickerConfirmMove	ย้ายมาที่นี่
-browse.destinationPickerCopyTitle	คัดลอกไปที่…
+browse.destinationPickerCopyTitle	คัดลอกไปที่
 browse.destinationPickerConfirmCopy	คัดลอกมาที่นี่
 browse.actionMoveTo	ย้ายไปที่…
 browse.actionCopyTo	คัดลอกไปที่…
 browse.destinationPickerNoFolders	ไม่มีโฟลเดอร์ที่นี่
 browse.destinationPickerLoadFailed	ไม่สามารถโหลดโฟลเดอร์ได้
+browse.destinationPickerMoveItems#other	ย้าย %lld รายการ
+browse.destinationPickerCopyItems#other	คัดลอก %lld รายการ
+browse.destinationPickerLocations	ตำแหน่งที่ตั้ง
+browse.destinationPickerInto	ไปที่ %@
+browse.destinationPickerAlreadyThere	อยู่ใน %@ แล้ว
+browse.destinationPickerIntoItself	ไม่สามารถวางโฟลเดอร์ไว้ในตัวเองได้
+browse.destinationPickerNoRights	คุณไม่สามารถเพิ่มรายการเหล่านี้ที่นี่ได้
+browse.destinationPickerChooseFolder	เลือกโฟลเดอร์
 browse.actionMove	ย้าย
 browse.actionPaste	วาง
 browse.actionPasteCount	วาง %lld รายการ
@@ -182,7 +190,7 @@ uploads.actionUploadFromPhotos	อัปโหลดจากคลังภา�
 uploads.actionTakePhoto	ถ่ายภาพหรือวิดีโอ
 uploads.cameraDeniedTitle	ต้องใช้สิทธิ์เข้าถึงกล้อง
 uploads.cameraDeniedMessage	อนุญาตการเข้าถึงกล้องในการตั้งค่าเพื่อถ่ายภาพหรือวิดีโอ
-uploads.destinationTitle	อัปโหลดไปที่…
+uploads.destinationTitle	อัปโหลดไปที่
 uploads.destinationConfirm	อัปโหลดที่นี่
 uploads.reviewTitleOne	อัปโหลด 1 ไฟล์
 uploads.reviewTitleMany	อัปโหลด %lld ไฟล์
@@ -334,6 +342,7 @@ createShare.permissionUpload	อัปโหลดไฟล์และโฟล
 createShare.versionsVisible	แสดงเวอร์ชันของไฟล์
 createShare.versionsVisibleHint	ผู้ที่ใช้การแชร์นี้จะเห็นเวอร์ชันก่อนหน้าของไฟล์ และกู้คืนได้หากมีสิทธิ์แก้ไข
 createShare.versionsDownload	ดาวน์โหลดเวอร์ชัน
+createShare.passwordAnyoneOnly	สำหรับ "ทุกคนที่มีลิงก์" เท่านั้น ผู้ที่คุณเลือกจะลงชื่อเข้าใช้แทน
 editShare.title	แก้ไขลิงก์แชร์
 editShare.save	บันทึกการเปลี่ยนแปลง
 editShare.passwordKeepHint	เว้นว่างไว้เพื่อใช้รหัสผ่านปัจจุบันต่อ
@@ -1268,6 +1277,7 @@ trash.deletedByUnknown	ไม่ทราบ
 trash.deletedBy	ลบโดย %@
 trash.restore	กู้คืน
 trash.restoreTo	กู้คืนไปที่…
+trash.restoreToTitle	กู้คืนไปที่
 trash.restoreHere	กู้คืนที่นี่
 trash.restoreFolder	กู้คืนทั้งโฟลเดอร์
 trash.openLocation	เปิดตำแหน่งเดิม

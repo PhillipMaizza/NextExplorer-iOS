@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Falsches Passwort oder das Archiv ist beschädigt.
 browse.progressCompressing	Wird komprimiert…
 browse.offlineBannerDetail	Gesicherte Kopie von %@ wird angezeigt
 browse.actionCopy	Kopieren
-browse.destinationPickerMoveTitle	Bewegen nach…
+browse.destinationPickerMoveTitle	Bewegen nach
 browse.destinationPickerConfirmMove	Hierher bewegen
-browse.destinationPickerCopyTitle	Kopieren nach…
+browse.destinationPickerCopyTitle	Kopieren nach
 browse.destinationPickerConfirmCopy	Hierher kopieren
 browse.actionMoveTo	Bewegen nach…
 browse.actionCopyTo	Kopieren nach…
@@ -114,6 +114,16 @@ browse.destinationPickerNoFolders	Keine Ordner hier
 browse.destinationPickerLoadFailed	Ordner konnten nicht geladen werden.
 browse.destinationPickerRecent	Zuletzt
 browse.destinationPickerReplaceTitle	Welche Datei ersetzen?
+browse.destinationPickerMoveItems#one	%lld Objekt bewegen
+browse.destinationPickerMoveItems#other	%lld Objekte bewegen
+browse.destinationPickerCopyItems#one	%lld Objekt kopieren
+browse.destinationPickerCopyItems#other	%lld Objekte kopieren
+browse.destinationPickerLocations	Orte
+browse.destinationPickerInto	Nach %@
+browse.destinationPickerAlreadyThere	Bereits in %@
+browse.destinationPickerIntoItself	Ein Ordner kann nicht in sich selbst liegen
+browse.destinationPickerNoRights	Du kannst diese Objekte hier nicht hinzufügen
+browse.destinationPickerChooseFolder	Wähle einen Ordner
 browse.actionMove	Bewegen
 browse.actionPaste	Einsetzen
 browse.actionPasteCount	%lld Objekte einsetzen
@@ -183,7 +193,7 @@ uploads.actionUploadFromPhotos	Aus Galerie hochladen
 uploads.actionTakePhoto	Foto oder Video aufnehmen
 uploads.cameraDeniedTitle	Kamerazugriff erforderlich
 uploads.cameraDeniedMessage	Erlaube den Kamerazugriff in den Einstellungen, um ein Foto oder Video aufzunehmen.
-uploads.destinationTitle	Hochladen nach…
+uploads.destinationTitle	Hochladen nach
 uploads.destinationConfirm	Hierher hochladen
 uploads.reviewTitleOne	1 Datei hochladen
 uploads.reviewTitleMany	%lld Dateien hochladen
@@ -342,6 +352,7 @@ createShare.permissionUpload	Dateien und Ordner hochladen
 createShare.versionsVisible	Dateiversionen anzeigen
 createShare.versionsVisibleHint	Wer diese Freigabe nutzt, sieht die früheren Versionen ihrer Dateien und kann sie wiederherstellen, wenn Bearbeiten erlaubt ist.
 createShare.versionsDownload	Versionen herunterladen
+createShare.passwordAnyoneOnly	Nur für „Jeder mit dem Link“. Ausgewählte Personen melden sich stattdessen an.
 editShare.title	Freigabelink bearbeiten
 editShare.save	Änderungen sichern
 editShare.passwordKeepHint	Leer lassen, um das aktuelle Passwort zu behalten
@@ -1344,6 +1355,7 @@ trash.deletedByUnknown	Unbekannt
 trash.deletedBy	Gelöscht von %@
 trash.restore	Wiederherstellen
 trash.restoreTo	Wiederherstellen nach…
+trash.restoreToTitle	Wiederherstellen nach
 trash.restoreHere	Hier wiederherstellen
 trash.restoreFolder	Ganzen Ordner wiederherstellen
 trash.openLocation	Ursprünglichen Ort öffnen

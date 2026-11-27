@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Parolă incorectă sau arhivă deteriorată.
 browse.progressCompressing	Se comprimă…
 browse.offlineBannerDetail	Se afișează o copie salvată din %@
 browse.actionCopy	Copiază
-browse.destinationPickerMoveTitle	Mută în…
+browse.destinationPickerMoveTitle	Mută în
 browse.destinationPickerConfirmMove	Mută aici
-browse.destinationPickerCopyTitle	Copiază în…
+browse.destinationPickerCopyTitle	Copiază în
 browse.destinationPickerConfirmCopy	Copiază aici
 browse.actionMoveTo	Mută în…
 browse.actionCopyTo	Copiază în…
@@ -114,6 +114,18 @@ browse.destinationPickerNoFolders	Niciun dosar aici
 browse.destinationPickerLoadFailed	Nu s-au putut încărca dosarele.
 browse.destinationPickerRecent	Recente
 browse.destinationPickerReplaceTitle	Ce fișier înlocuiești?
+browse.destinationPickerMoveItems#one	Mută %lld element
+browse.destinationPickerMoveItems#few	Mută %lld elemente
+browse.destinationPickerMoveItems#other	Mută %lld de elemente
+browse.destinationPickerCopyItems#one	Copiază %lld element
+browse.destinationPickerCopyItems#few	Copiază %lld elemente
+browse.destinationPickerCopyItems#other	Copiază %lld de elemente
+browse.destinationPickerLocations	Locații
+browse.destinationPickerInto	În %@
+browse.destinationPickerAlreadyThere	Deja în %@
+browse.destinationPickerIntoItself	Un dosar nu poate fi pus în el însuși
+browse.destinationPickerNoRights	Nu poți adăuga aceste elemente aici
+browse.destinationPickerChooseFolder	Alege un dosar
 browse.actionMove	Mută
 browse.actionPaste	Lipește
 browse.actionPasteCount	Lipește %lld elemente
@@ -188,7 +200,7 @@ uploads.actionUploadFromPhotos	Încarcă din galerie
 uploads.actionTakePhoto	Fă o fotografie sau un videoclip
 uploads.cameraDeniedTitle	Este necesar accesul la cameră
 uploads.cameraDeniedMessage	Permite accesul la cameră în Setări pentru a face o fotografie sau un videoclip.
-uploads.destinationTitle	Încarcă în…
+uploads.destinationTitle	Încarcă în
 uploads.destinationConfirm	Încarcă aici
 uploads.reviewTitleOne	Încarcă 1 fișier
 uploads.reviewTitleMany	Încarcă %lld fișiere
@@ -353,6 +365,7 @@ createShare.permissionUpload	Încărcare fișiere și dosare
 createShare.versionsVisible	Afișați versiunile fișierelor
 createShare.versionsVisibleHint	Cei care folosesc această partajare văd versiunile anterioare ale fișierelor și le pot restaura dacă au dreptul de editare.
 createShare.versionsDownload	Descărcare versiuni
+createShare.passwordAnyoneOnly	Doar pentru Oricine are linkul. Persoanele alese se conectează în schimb.
 editShare.title	Editează linkul de partajare
 editShare.save	Salvează modificările
 editShare.passwordKeepHint	Lasă gol pentru a păstra parola actuală
@@ -1368,6 +1381,7 @@ trash.deletedByUnknown	Necunoscut
 trash.deletedBy	Șters de %@
 trash.restore	Restaurează
 trash.restoreTo	Restaurează în…
+trash.restoreToTitle	Restaurează în
 trash.restoreHere	Restaurează aici
 trash.restoreFolder	Restaurează tot dosarul
 trash.openLocation	Deschide locația originală

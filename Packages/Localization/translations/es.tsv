@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Contraseña incorrecta o el archivo comprimido est
 browse.progressCompressing	Comprimiendo…
 browse.offlineBannerDetail	Mostrando una copia guardada de %@
 browse.actionCopy	Copiar
-browse.destinationPickerMoveTitle	Mover a…
+browse.destinationPickerMoveTitle	Mover a
 browse.destinationPickerConfirmMove	Mover aquí
-browse.destinationPickerCopyTitle	Copiar a…
+browse.destinationPickerCopyTitle	Copiar a
 browse.destinationPickerConfirmCopy	Copiar aquí
 browse.actionMoveTo	Mover a…
 browse.actionCopyTo	Copiar a…
@@ -114,6 +114,16 @@ browse.destinationPickerNoFolders	No hay carpetas aquí
 browse.destinationPickerLoadFailed	No se pudieron cargar las carpetas.
 browse.destinationPickerRecent	Recientes
 browse.destinationPickerReplaceTitle	¿Qué archivo reemplazar?
+browse.destinationPickerMoveItems#one	Mover %lld elemento
+browse.destinationPickerMoveItems#other	Mover %lld elementos
+browse.destinationPickerCopyItems#one	Copiar %lld elemento
+browse.destinationPickerCopyItems#other	Copiar %lld elementos
+browse.destinationPickerLocations	Ubicaciones
+browse.destinationPickerInto	En %@
+browse.destinationPickerAlreadyThere	Ya está en %@
+browse.destinationPickerIntoItself	Una carpeta no puede ir dentro de sí misma
+browse.destinationPickerNoRights	No puedes añadir estos elementos aquí
+browse.destinationPickerChooseFolder	Elige una carpeta
 browse.actionMove	Mover
 browse.actionPaste	Pegar
 browse.actionPasteCount	Pegar %lld elementos
@@ -183,7 +193,7 @@ uploads.actionUploadFromPhotos	Subir desde la galería
 uploads.actionTakePhoto	Hacer foto o vídeo
 uploads.cameraDeniedTitle	Se necesita acceso a la cámara
 uploads.cameraDeniedMessage	Permite el acceso a la cámara en Ajustes para hacer una foto o vídeo.
-uploads.destinationTitle	Subir a…
+uploads.destinationTitle	Subir a
 uploads.destinationConfirm	Subir aquí
 uploads.reviewTitleOne	Subir 1 archivo
 uploads.reviewTitleMany	Subir %lld archivos
@@ -342,6 +352,7 @@ createShare.permissionUpload	Subir archivos y carpetas
 createShare.versionsVisible	Mostrar las versiones de los archivos
 createShare.versionsVisibleHint	Quienes usan este enlace compartido ven las versiones anteriores de sus archivos y pueden restaurarlas si tienen permiso para editar.
 createShare.versionsDownload	Descargar versiones
+createShare.passwordAnyoneOnly	Solo para Cualquiera con el enlace. Las personas que elijas inician sesión en su lugar.
 editShare.title	Editar enlace de compartición
 editShare.save	Guardar cambios
 editShare.passwordKeepHint	Déjalo en blanco para mantener la contraseña actual
@@ -1344,6 +1355,7 @@ trash.deletedByUnknown	Desconocido
 trash.deletedBy	Eliminado por %@
 trash.restore	Restaurar
 trash.restoreTo	Restaurar en…
+trash.restoreToTitle	Restaurar en
 trash.restoreHere	Restaurar aquí
 trash.restoreFolder	Restaurar la carpeta entera
 trash.openLocation	Abrir ubicación original

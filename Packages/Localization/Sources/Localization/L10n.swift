@@ -181,12 +181,20 @@ public enum L10n {
         public static var deleteLinkedSharesOne: String { tr("browse.deleteLinkedSharesOne") }  // "This also removes 1 share link that points here."
         public static var deleteLinkedSharesUnavailable: String { tr("browse.deleteLinkedSharesUnavailable") }
         public static var deleteMessage: String { tr("browse.deleteMessage") }  // "This can't be undone."
+        public static func destinationPickerAlreadyThere(_ a0: CVarArg) -> String { tr("browse.destinationPickerAlreadyThere", a0) }
+        public static var destinationPickerChooseFolder: String { tr("browse.destinationPickerChooseFolder") }  // "Choose a folder"
         public static var destinationPickerConfirmCopy: String { tr("browse.destinationPickerConfirmCopy") }  // "Copy Here"
         public static var destinationPickerConfirmMove: String { tr("browse.destinationPickerConfirmMove") }  // "Move Here"
-        public static var destinationPickerCopyTitle: String { tr("browse.destinationPickerCopyTitle") }  // "Copy to…"
+        public static func destinationPickerCopyItems(_ a0: CVarArg) -> String { tr("browse.destinationPickerCopyItems", a0) }
+        public static var destinationPickerCopyTitle: String { tr("browse.destinationPickerCopyTitle") }  // "Copy To"
+        public static func destinationPickerInto(_ a0: CVarArg) -> String { tr("browse.destinationPickerInto", a0) }
+        public static var destinationPickerIntoItself: String { tr("browse.destinationPickerIntoItself") }  // "A folder can't go inside itself"
         public static var destinationPickerLoadFailed: String { tr("browse.destinationPickerLoadFailed") }  // "Couldn't load folders."
-        public static var destinationPickerMoveTitle: String { tr("browse.destinationPickerMoveTitle") }  // "Move to…"
+        public static var destinationPickerLocations: String { tr("browse.destinationPickerLocations") }  // "Locations"
+        public static func destinationPickerMoveItems(_ a0: CVarArg) -> String { tr("browse.destinationPickerMoveItems", a0) }
+        public static var destinationPickerMoveTitle: String { tr("browse.destinationPickerMoveTitle") }  // "Move To"
         public static var destinationPickerNoFolders: String { tr("browse.destinationPickerNoFolders") }  // "No folders here"
+        public static var destinationPickerNoRights: String { tr("browse.destinationPickerNoRights") }  // "You can't add these items here"
         public static var destinationPickerRecent: String { tr("browse.destinationPickerRecent") }  // "Recent"
         public static var destinationPickerReplaceTitle: String { tr("browse.destinationPickerReplaceTitle") }  // "Replace Which File?"
         public static func downloadAsTitle(_ a0: CVarArg) -> String { tr("browse.downloadAsTitle", a0) }
@@ -348,6 +356,7 @@ public enum L10n {
         public static var fieldExpires: String { tr("createShare.fieldExpires") }  // "Expires"
         public static var loadingUsers: String { tr("createShare.loadingUsers") }  // "Loading users…"
         public static var noOtherUsers: String { tr("createShare.noOtherUsers") }  // "No other users to share with."
+        public static var passwordAnyoneOnly: String { tr("createShare.passwordAnyoneOnly") }  // "Only for Anyone with link. People you pick sign in instead."
         public static var peopleCan: String { tr("createShare.peopleCan") }  // "People can"
         public static var permissionCreateFiles: String { tr("createShare.permissionCreateFiles") }  // "Create files"
         public static var permissionCreateFolders: String { tr("createShare.permissionCreateFolders") }  // "Create folders"
@@ -1266,6 +1275,7 @@ public enum L10n {
         public static var restoreFolder: String { tr("trash.restoreFolder") }  // "Restore Whole Folder"
         public static var restoreHere: String { tr("trash.restoreHere") }  // "Restore Here"
         public static var restoreTo: String { tr("trash.restoreTo") }  // "Restore To…"
+        public static var restoreToTitle: String { tr("trash.restoreToTitle") }  // "Restore To"
         public static func restored(_ a0: CVarArg) -> String { tr("trash.restored", a0) }
         public static var restoring: String { tr("trash.restoring") }  // "Restoring…"
         public static var searchPrompt: String { tr("trash.searchPrompt") }  // "Search Trash"
@@ -1405,8 +1415,8 @@ public enum L10n {
         public static var clear: String { tr("uploads.clear") }  // "Clear"
         public static var complete: String { tr("uploads.complete") }  // "Upload complete"
         public static func completeMany(_ a0: CVarArg) -> String { tr("uploads.completeMany", a0) }
-        public static var destinationConfirm: String { tr("uploads.destinationConfirm") }  // "Upload here"
-        public static var destinationTitle: String { tr("uploads.destinationTitle") }  // "Upload to…"
+        public static var destinationConfirm: String { tr("uploads.destinationConfirm") }  // "Upload Here"
+        public static var destinationTitle: String { tr("uploads.destinationTitle") }  // "Upload To"
         public static var discardConfirm: String { tr("uploads.discardConfirm") }  // "Discard"
         public static var discardMessage: String { tr("uploads.discardMessage") }  // "The files you added won't be uploaded."
         public static var discardTitle: String { tr("uploads.discardTitle") }  // "Discard upload?"

@@ -110,14 +110,28 @@ browse.archivePasswordInvalid	Nesprávné heslo, nebo je archiv poškozený.
 browse.progressCompressing	Komprimace…
 browse.offlineBannerDetail	Zobrazuje se uložená kopie z %@
 browse.actionCopy	Kopírovat
-browse.destinationPickerMoveTitle	Přesunout do…
+browse.destinationPickerMoveTitle	Přesunout do
 browse.destinationPickerConfirmMove	Přesunout sem
-browse.destinationPickerCopyTitle	Kopírovat do…
+browse.destinationPickerCopyTitle	Kopírovat do
 browse.destinationPickerConfirmCopy	Kopírovat sem
 browse.actionMoveTo	Přesunout do…
 browse.actionCopyTo	Kopírovat do…
 browse.destinationPickerNoFolders	Žádné složky
 browse.destinationPickerLoadFailed	Složky se nepodařilo načíst.
+browse.destinationPickerMoveItems#one	Přesunout %lld položku
+browse.destinationPickerMoveItems#few	Přesunout %lld položky
+browse.destinationPickerMoveItems#many	Přesunout %lld položky
+browse.destinationPickerMoveItems#other	Přesunout %lld položek
+browse.destinationPickerCopyItems#one	Kopírovat %lld položku
+browse.destinationPickerCopyItems#few	Kopírovat %lld položky
+browse.destinationPickerCopyItems#many	Kopírovat %lld položky
+browse.destinationPickerCopyItems#other	Kopírovat %lld položek
+browse.destinationPickerLocations	Umístění
+browse.destinationPickerInto	Do %@
+browse.destinationPickerAlreadyThere	Už je v %@
+browse.destinationPickerIntoItself	Složku nelze vložit do sebe sama
+browse.destinationPickerNoRights	Sem tyto položky přidat nemůžete
+browse.destinationPickerChooseFolder	Vyberte složku
 browse.actionMove	Přesunout
 browse.actionPaste	Vložit
 browse.actionPasteCount	Vložit položky (%lld)
@@ -197,7 +211,7 @@ uploads.actionUploadFromPhotos	Nahrát z galerie
 uploads.actionTakePhoto	Pořídit fotku nebo video
 uploads.cameraDeniedTitle	Je potřeba přístup k fotoaparátu
 uploads.cameraDeniedMessage	Povolte v Nastavení přístup k fotoaparátu, abyste mohli pořídit fotku nebo video.
-uploads.destinationTitle	Nahrát do…
+uploads.destinationTitle	Nahrát do
 uploads.destinationConfirm	Nahrát sem
 uploads.reviewTitleOne	Nahrát 1 soubor
 uploads.reviewTitleMany	Nahrát soubory (%lld)
@@ -367,6 +381,7 @@ createShare.permissionUpload	Nahrávat soubory a složky
 createShare.versionsVisible	Zobrazit verze souborů
 createShare.versionsVisibleHint	Uživatelé tohoto sdílení vidí starší verze jeho souborů a mohou je obnovit, pokud smějí upravovat.
 createShare.versionsDownload	Stahovat verze
+createShare.passwordAnyoneOnly	Jen pro Kdokoli s odkazem. Lidé, které vyberete, se místo toho přihlásí.
 editShare.title	Upravit odkaz ke sdílení
 editShare.save	Uložit změny
 editShare.passwordKeepHint	Nechte prázdné, aby zůstalo stávající heslo
@@ -1339,6 +1354,7 @@ trash.deletedByUnknown	Neznámý
 trash.deletedBy	Smazal(a): %@
 trash.restore	Obnovit
 trash.restoreTo	Obnovit do…
+trash.restoreToTitle	Obnovit do
 trash.restoreHere	Obnovit sem
 trash.restoreFolder	Obnovit celou složku
 trash.openLocation	Otevřít původní umístění

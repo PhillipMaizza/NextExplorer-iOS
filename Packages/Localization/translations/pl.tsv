@@ -104,9 +104,9 @@ browse.archivePasswordInvalid	Nieprawidłowe hasło lub archiwum jest uszkodzone
 browse.progressCompressing	Kompresowanie…
 browse.offlineBannerDetail	Wyświetlanie zapisanej kopii z %@
 browse.actionCopy	Kopiuj
-browse.destinationPickerMoveTitle	Przenieś do…
+browse.destinationPickerMoveTitle	Przenieś do
 browse.destinationPickerConfirmMove	Przenieś tutaj
-browse.destinationPickerCopyTitle	Kopiuj do…
+browse.destinationPickerCopyTitle	Kopiuj do
 browse.destinationPickerConfirmCopy	Kopiuj tutaj
 browse.actionMoveTo	Przenieś do…
 browse.actionCopyTo	Kopiuj do…
@@ -114,6 +114,20 @@ browse.destinationPickerNoFolders	Brak folderów tutaj
 browse.destinationPickerLoadFailed	Nie można wczytać folderów.
 browse.destinationPickerRecent	Ostatnie
 browse.destinationPickerReplaceTitle	Który plik zastąpić?
+browse.destinationPickerMoveItems#one	Przenieś %lld element
+browse.destinationPickerMoveItems#few	Przenieś %lld elementy
+browse.destinationPickerMoveItems#many	Przenieś %lld elementów
+browse.destinationPickerMoveItems#other	Przenieś %lld elementu
+browse.destinationPickerCopyItems#one	Kopiuj %lld element
+browse.destinationPickerCopyItems#few	Kopiuj %lld elementy
+browse.destinationPickerCopyItems#many	Kopiuj %lld elementów
+browse.destinationPickerCopyItems#other	Kopiuj %lld elementu
+browse.destinationPickerLocations	Lokalizacje
+browse.destinationPickerInto	Do %@
+browse.destinationPickerAlreadyThere	Już w %@
+browse.destinationPickerIntoItself	Folder nie może trafić do samego siebie
+browse.destinationPickerNoRights	Nie możesz tu dodać tych elementów
+browse.destinationPickerChooseFolder	Wybierz folder
 browse.actionMove	Przenieś
 browse.actionPaste	Wklej
 browse.actionPasteCount	Wklej %lld elementów
@@ -193,7 +207,7 @@ uploads.actionUploadFromPhotos	Prześlij z galerii
 uploads.actionTakePhoto	Zrób zdjęcie lub wideo
 uploads.cameraDeniedTitle	Wymagany dostęp do aparatu
 uploads.cameraDeniedMessage	Zezwól na dostęp do aparatu w Ustawieniach, aby zrobić zdjęcie lub wideo.
-uploads.destinationTitle	Prześlij do…
+uploads.destinationTitle	Prześlij do
 uploads.destinationConfirm	Prześlij tutaj
 uploads.reviewTitleOne	Prześlij 1 plik
 uploads.reviewTitleMany	Prześlij %lld plików
@@ -364,6 +378,7 @@ createShare.permissionUpload	Przesyłać pliki i foldery
 createShare.versionsVisible	Pokaż wersje plików
 createShare.versionsVisibleHint	Osoby korzystające z tego udostępnienia widzą wcześniejsze wersje jego plików i mogą je przywrócić, jeśli mają prawo edycji.
 createShare.versionsDownload	Pobierać wersje
+createShare.passwordAnyoneOnly	Tylko dla opcji Każdy z linkiem. Wybrane osoby logują się zamiast tego.
 editShare.title	Edytuj link do udostępniania
 editShare.save	Zapisz zmiany
 editShare.passwordKeepHint	Pozostaw puste, aby zachować obecne hasło
@@ -1392,6 +1407,7 @@ trash.deletedByUnknown	Nieznany
 trash.deletedBy	Usunięte przez: %@
 trash.restore	Przywróć
 trash.restoreTo	Przywróć do…
+trash.restoreToTitle	Przywróć do
 trash.restoreHere	Przywróć tutaj
 trash.restoreFolder	Przywróć cały folder
 trash.openLocation	Otwórz pierwotną lokalizację

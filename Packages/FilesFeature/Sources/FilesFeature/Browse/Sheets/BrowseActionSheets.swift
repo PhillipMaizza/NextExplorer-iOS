@@ -26,6 +26,11 @@ struct BrowseActionSheets: ViewModifier {
             .sheet(item: destinationPickerBinding, onDismiss: { isDestinationPickerOnScreen = false }) { pickerStore in
                 DestinationPickerView(store: pickerStore)
                     .onAppear { isDestinationPickerOnScreen = true }
+                #if os(macOS)
+                    .environment(\.macPickerItemTile, MacPickerItemTile { [serverURL = store.serverURL] item, size in
+                        AnyView(MacFileTile(item: item, serverURL: serverURL, size: size, shouldShowPlayBadge: false))
+                    })
+                #endif
             }
             .dsAlert(isPresented: deleteBinding) { deleteSheet }
             .dsAlert(isPresented: keptBinding) { keptSheet }

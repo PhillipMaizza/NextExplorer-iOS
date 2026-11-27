@@ -110,14 +110,28 @@ browse.archivePasswordInvalid	Неправильний пароль або ар�
 browse.progressCompressing	Стиснення…
 browse.offlineBannerDetail	Показано збережену копію від %@
 browse.actionCopy	Копіювати
-browse.destinationPickerMoveTitle	Перемістити до…
+browse.destinationPickerMoveTitle	Перемістити до
 browse.destinationPickerConfirmMove	Перемістити сюди
-browse.destinationPickerCopyTitle	Копіювати до…
+browse.destinationPickerCopyTitle	Копіювати до
 browse.destinationPickerConfirmCopy	Копіювати сюди
 browse.actionMoveTo	Перемістити до…
 browse.actionCopyTo	Копіювати до…
 browse.destinationPickerNoFolders	Тут немає папок
 browse.destinationPickerLoadFailed	Не вдалося завантажити папки.
+browse.destinationPickerMoveItems#one	Перемістити %lld елемент
+browse.destinationPickerMoveItems#few	Перемістити %lld елементи
+browse.destinationPickerMoveItems#many	Перемістити %lld елементів
+browse.destinationPickerMoveItems#other	Перемістити %lld елемента
+browse.destinationPickerCopyItems#one	Копіювати %lld елемент
+browse.destinationPickerCopyItems#few	Копіювати %lld елементи
+browse.destinationPickerCopyItems#many	Копіювати %lld елементів
+browse.destinationPickerCopyItems#other	Копіювати %lld елемента
+browse.destinationPickerLocations	Місця
+browse.destinationPickerInto	До %@
+browse.destinationPickerAlreadyThere	Вже в %@
+browse.destinationPickerIntoItself	Папку не можна вкласти в саму себе
+browse.destinationPickerNoRights	Сюди не можна додати ці елементи
+browse.destinationPickerChooseFolder	Виберіть папку
 browse.actionMove	Перемістити
 browse.actionPaste	Вставити
 browse.actionPasteCount	Вставити елементи (%lld)
@@ -197,7 +211,7 @@ uploads.actionUploadFromPhotos	Вивантажити з галереї
 uploads.actionTakePhoto	Зробити фото чи відео
 uploads.cameraDeniedTitle	Потрібен доступ до камери
 uploads.cameraDeniedMessage	Дозвольте доступ до камери в Налаштуваннях, щоб зробити фото чи відео.
-uploads.destinationTitle	Вивантажити до…
+uploads.destinationTitle	Вивантажити до
 uploads.destinationConfirm	Вивантажити сюди
 uploads.reviewTitleOne	Вивантажити 1 файл
 uploads.reviewTitleMany	Вивантажити файли (%lld)
@@ -367,6 +381,7 @@ createShare.permissionUpload	Вивантажувати файли й папки
 createShare.versionsVisible	Показувати версії файлів
 createShare.versionsVisibleHint	Користувачі цього спільного доступу бачать попередні версії його файлів і можуть відновлювати їх, якщо їм дозволено редагувати.
 createShare.versionsDownload	Завантажувати версії
+createShare.passwordAnyoneOnly	Лише для варіанта «Будь-хто з посиланням». Вибрані люди натомість входять в обліковий запис.
 editShare.title	Змінити посилання для спільного доступу
 editShare.save	Зберегти зміни
 editShare.passwordKeepHint	Залиште порожнім, щоб зберегти поточний пароль
@@ -1340,6 +1355,7 @@ trash.deletedByUnknown	Невідомо
 trash.deletedBy	Видалив: %@
 trash.restore	Відновити
 trash.restoreTo	Відновити в…
+trash.restoreToTitle	Відновити в
 trash.restoreHere	Відновити сюди
 trash.restoreFolder	Відновити всю папку
 trash.openLocation	Відкрити початкове розташування

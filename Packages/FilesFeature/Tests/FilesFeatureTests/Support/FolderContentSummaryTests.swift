@@ -17,12 +17,12 @@ struct FolderContentSummaryTests {
 
     @Test
     func crumbsNameEveryFolderOnThePathAndThePersonalRoot() {
-        #expect(FolderContentSummary.crumbs(for: "").isEmpty)
-        #expect(FolderContentSummary.crumbs(for: "Files/Documents") == [
+        #expect(PathCrumb.trail(for: "").isEmpty)
+        #expect(PathCrumb.trail(for: "Files/Documents") == [
             PathCrumb(title: "Files", path: "Files"),
             PathCrumb(title: "Documents", path: "Files/Documents"),
         ])
-        #expect(FolderContentSummary.crumbs(for: "personal/Documents").map(\.title) == [
+        #expect(PathCrumb.trail(for: "personal/Documents").map(\.title) == [
             L10n.Browse.myFiles,
             "Documents",
         ])
