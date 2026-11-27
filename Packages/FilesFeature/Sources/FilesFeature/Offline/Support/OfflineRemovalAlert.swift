@@ -74,7 +74,7 @@ extension View {
     ) -> some View {
         dsAlert(isPresented: Binding(get: { request != nil }, set: { _ in })) {
             DSAlertSheet(
-                icon: IconKit.availableOffline,
+                icon: .offline,
                 title: request?.title ?? "",
                 message: request?.message ?? L10n.Offline.removeItemMessage,
                 confirmTitle: L10n.Offline.removeConfirm,

@@ -248,7 +248,7 @@ struct FavoritesView: View {
         }
         .dsAlert(isPresented: bulkRemoveConfirmationBinding) {
             DSAlertSheet(
-                icon: IconKit.unfavorite,
+                icon: .unfavorite,
                 title: bulkRemoveConfirmationTitle,
                 message: L10n.Favorites.removeMessage,
                 confirmTitle: L10n.Common.remove,

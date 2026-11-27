@@ -308,7 +308,7 @@ extension View {
     func versionedFilesDeleteAlert(_ store: StoreOf<VersionedFilesFeature>) -> some View {
         dsAlert(isPresented: Binding(get: { store.confirmation != nil }, set: { _ in })) {
             DSAlertSheet(
-                icon: IconKit.delete,
+                icon: .delete,
                 title: Self.versionedFilesConfirmationTitle(store),
                 message: L10n.VersionedFiles.confirmMessage,
                 confirmTitle: L10n.VersionedFiles.confirmDelete,

@@ -36,7 +36,7 @@ public struct ClientCertificateSheet: View {
             }
             .dsAlert(isPresented: Binding(get: { store.isConfirmingRemoval }, set: { _ in })) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: L10n.ClientCertificate.removeTitle,
                     message: L10n.ClientCertificate.removeMessage(store.serverName),
                     confirmTitle: L10n.ClientCertificate.removeConfirm,

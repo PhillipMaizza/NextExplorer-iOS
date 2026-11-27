@@ -40,7 +40,7 @@ struct APITokensPresentations: ViewModifier {
             }
             .dsAlert(isPresented: Binding(get: { store.tokenPendingRevoke != nil }, set: { _ in })) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: L10n.ApiTokens.revokeTitle,
                     message: L10n.ApiTokens.revokeMessage(store.tokenPendingRevoke?.name ?? ""),
                     confirmTitle: L10n.ApiTokens.revokeConfirm,

@@ -5,8 +5,8 @@
 
     private enum Constants {
         static let width: CGFloat = 280
-        static let logoSize: CGFloat = .size56
-        static let logoRadius: CGFloat = .radiusMedium
+        static let tileSize: CGFloat = .size56
+        static let tileRadius: CGFloat = .radiusMedium
         static let glyphSize: CGFloat = .size24
         static let topPadding: CGFloat = .space24
         static let sidePadding: CGFloat = .space16
@@ -15,7 +15,7 @@
     }
 
     public struct MacAlertSheet<Accessory: View>: View {
-        let glyph: Image?
+        let icon: DSAlertIcon
         let title: String
         let message: String?
         let confirmTitle: String
@@ -30,7 +30,7 @@
         let onCancel: () -> Void
 
         public init(
-            glyph: Image? = nil,
+            icon: DSAlertIcon,
             title: String,
             message: String?,
             confirmTitle: String,
@@ -44,7 +44,7 @@
             onCancel: @escaping () -> Void,
             @ViewBuilder accessory: () -> Accessory
         ) {
-            self.glyph = glyph
+            self.icon = icon
             self.title = title
             self.message = message
             self.confirmTitle = confirmTitle
@@ -61,9 +61,14 @@
 
         public var body: some View {
             VStack(spacing: .space8) {
-                icon
-                    .frame(width: Constants.logoSize, height: Constants.logoSize)
-                    .clipShape(RoundedRectangle(cornerRadius: Constants.logoRadius, style: .continuous))
+                icon.image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.glyphSize, height: Constants.glyphSize)
+                    .foregroundStyle(isDestructive ? Color.macTagRed : Color.macTagBlue)
+                    .frame(width: Constants.tileSize, height: Constants.tileSize)
+                    .background(isDestructive ? Color.macTagRedFill : Color.macTagBlueFill)
+                    .clipShape(RoundedRectangle(cornerRadius: Constants.tileRadius, style: .continuous))
                     .padding(.bottom, .space4)
                     .accessibilityHidden(true)
                 Text(title)
@@ -89,6 +94,7 @@
                         .frame(maxWidth: .infinity, minHeight: Constants.buttonHeight)
                     }
                     .buttonStyle(.macDS(isDestructive ? .failure : .primary, size: .small))
+                    .keyboardShortcut(isDestructive ? nil : .defaultAction)
                     .disabled(isConfirmDisabled)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Alert.confirm)
                     if let neutralTitle, let onNeutral {
@@ -108,20 +114,6 @@
             .interactiveDismissDisabled()
         }
 
-        @ViewBuilder private var icon: some View {
-            if let glyph {
-                glyph
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Constants.glyphSize, height: Constants.glyphSize)
-                    .foregroundStyle(Color.macTagBlue)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.macTagBlueFill)
-            } else {
-                IconKit.logo.resizable()
-            }
-        }
-
         private func button(_ title: String, style: DSButtonStyle, action: @escaping () -> Void) -> some View {
             Button(action: action) {
                 Text(title).frame(maxWidth: .infinity, minHeight: Constants.buttonHeight)
@@ -132,6 +124,7 @@
 
     public extension MacAlertSheet where Accessory == EmptyView {
         init(
+            icon: DSAlertIcon,
             title: String,
             message: String?,
             confirmTitle: String,
@@ -144,6 +137,7 @@
             onCancel: @escaping () -> Void
         ) {
             self.init(
+                icon: icon,
                 title: title,
                 message: message,
                 confirmTitle: confirmTitle,
@@ -161,6 +155,7 @@
 
     #Preview("Alert") {
         MacAlertSheet(
+            icon: .delete,
             title: "Revoke Token?",
             message: "Anything using \"home automation\" will stop working right away. This can't be undone.",
             confirmTitle: "Revoke",
@@ -172,6 +167,7 @@
 
     #Preview("Alert with a third choice") {
         MacAlertSheet(
+            icon: .signOut,
             title: "Sign Out?",
             message: nil,
             confirmTitle: "Sign Out",
@@ -185,6 +181,7 @@
 
     #Preview("Alert working") {
         MacAlertSheet(
+            icon: .delete,
             title: "Empty the Trash?",
             message: "Everything in the trash is deleted for good.",
             confirmTitle: "Empty Trash",
@@ -197,7 +194,7 @@
 
     #Preview("Alert with a field") {
         MacAlertSheet(
-            glyph: IconKit.lock,
+            icon: .lock,
             title: "Password required",
             message: "This archive is protected. Enter its password to extract it.",
             confirmTitle: "Extract",

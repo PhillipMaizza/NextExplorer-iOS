@@ -19,6 +19,7 @@ public extension View {
             content.sheet(isPresented: isPresented) {
                 let sheet = alert()
                 MacAlertSheet(
+                    icon: sheet.icon,
                     title: sheet.title,
                     message: sheet.message,
                     confirmTitle: sheet.confirmTitle,
@@ -45,7 +46,7 @@ public extension View {
         .previewCanvas(.dialog)
         .dsAlert(isPresented: .constant(true)) {
             DSAlertSheet(
-                icon: IconKit.delete,
+                icon: .delete,
                 title: "Delete “report.pdf”?",
                 message: "This cannot be undone.",
                 confirmTitle: "Delete",

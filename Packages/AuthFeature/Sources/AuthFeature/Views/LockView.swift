@@ -47,7 +47,7 @@ public struct LockView: View {
         )
         .dsAlert(isPresented: Binding(get: { store.signOut != .idle }, set: { _ in })) {
             DSAlertSheet(
-                icon: IconKit.signOut,
+                icon: .signOut,
                 title: L10n.Settings.signOutAlertTitle,
                 message: L10n.Settings.signOutMessage,
                 confirmTitle: L10n.Settings.signOutButton,

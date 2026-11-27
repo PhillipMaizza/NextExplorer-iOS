@@ -32,8 +32,7 @@
 
         private var surface: some View {
             shape
-                .fill(Color.macCard)
-                .overlay { shape.strokeBorder(Color.macLine, lineWidth: .borderWidthHairline) }
+                .fill(Color.macRaisedSurface)
                 .elevation(.level4)
         }
 

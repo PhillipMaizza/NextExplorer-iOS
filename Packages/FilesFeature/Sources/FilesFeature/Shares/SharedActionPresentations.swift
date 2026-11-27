@@ -40,7 +40,7 @@ struct SharedActionPresentations: ViewModifier {
         #endif
             .dsAlert(isPresented: deleteConfirmationBinding) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: L10n.Shared.deleteTitle,
                     message: L10n.Shared.deleteMessage,
                     confirmTitle: L10n.Common.delete,

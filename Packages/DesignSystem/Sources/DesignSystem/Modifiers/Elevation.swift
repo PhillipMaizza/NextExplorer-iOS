@@ -44,9 +44,13 @@ public enum Elevation: CaseIterable {
 }
 
 public extension Elevation {
-    /// Default shadow opacity for `.elevation(_:alpha:)` when the call site doesn't need a
-    /// more discreet or more pronounced lift.
-    static let defaultAlpha: Double = 0.25
+    // Default shadow opacity for `.elevation(_:alpha:)` when the call site doesn't need a
+    // more discreet or more pronounced lift.
+    #if os(macOS)
+        static let defaultAlpha: Double = 0.12
+    #else
+        static let defaultAlpha: Double = 0.25
+    #endif
 }
 
 public extension View {

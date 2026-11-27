@@ -243,7 +243,7 @@ struct SettingsView: View {
             }
             .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: L10n.Settings.removeAllDownloadsTitle,
                     message: L10n.Settings.removeAllDownloadsMessage,
                     confirmTitle: L10n.Settings.removeAllDownloadsConfirm,
@@ -256,7 +256,7 @@ struct SettingsView: View {
             }
             .dsAlert(isPresented: isConfirmingClearCache) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: L10n.Settings.clearCacheTitle,
                     message: L10n.Settings.clearCacheMessage,
                     confirmTitle: L10n.Settings.clearCacheConfirm,
@@ -284,7 +284,7 @@ struct SettingsView: View {
             }
             .dsAlert(isPresented: isConfirmingRemoveOffline) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: L10n.Offline.removeConfirmTitle,
                     message: L10n.Offline.removeConfirmMessage,
                     confirmTitle: L10n.Offline.removeConfirm,

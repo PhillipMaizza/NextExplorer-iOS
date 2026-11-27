@@ -25,32 +25,50 @@
         }
     }
 
+    public enum MacButtonTone: CaseIterable, Sendable {
+        case neutral
+        case success
+        case accent
+
+        var outlineColor: Color? {
+            switch self {
+            case .neutral: nil
+            case .success: .positiveText
+            case .accent: .accentText
+            }
+        }
+    }
+
     extension DSButtonStyle {
         var macFill: Color {
-            self == .secondary ? .macSegment : backgroundColor
+            self == .secondary ? .macButtonRaised : backgroundColor
         }
 
-        func macForeground(isDestructive: Bool) -> Color {
+        func macForeground(isDestructive: Bool, tone: MacButtonTone) -> Color {
             switch self {
             case .primary: .onAccent
             case .success, .failure, .inverted: .white
-            case .secondary, .outline, .ghost: isDestructive ? .negativeText : .macChromeText
+            case .outline: isDestructive ? .negativeText : tone.outlineColor ?? .macChromeText
+            case .secondary, .ghost: isDestructive ? .negativeText : .macChromeText
             case .tertiary: isDestructive ? .negativeText : .accentText
             }
         }
 
-        var macBorder: Color {
-            self == .outline ? .macLine : .clear
+        func macBorder(isDestructive: Bool, tone: MacButtonTone) -> Color {
+            guard self == .outline else { return .clear }
+            return isDestructive ? .negativeText : tone.outlineColor ?? .macChromeDisabled
         }
     }
 
     public struct MacDSButtonStyle: ButtonStyle {
         let style: DSButtonStyle
         let size: DSButtonSize
+        let tone: MacButtonTone
 
-        public init(style: DSButtonStyle, size: DSButtonSize) {
+        public init(style: DSButtonStyle, size: DSButtonSize, tone: MacButtonTone = .neutral) {
             self.style = style
             self.size = size
+            self.tone = tone
         }
 
         public func makeBody(configuration: Configuration) -> some View {
@@ -59,14 +77,19 @@
                 isPressed: configuration.isPressed,
                 isDestructive: configuration.role == .destructive,
                 style: style,
-                size: size
+                size: size,
+                tone: tone
             )
         }
     }
 
     public extension ButtonStyle where Self == MacDSButtonStyle {
-        static func macDS(_ style: DSButtonStyle = .secondary, size: DSButtonSize = .medium) -> MacDSButtonStyle {
-            MacDSButtonStyle(style: style, size: size)
+        static func macDS(
+            _ style: DSButtonStyle = .secondary,
+            size: DSButtonSize = .medium,
+            tone: MacButtonTone = .neutral
+        ) -> MacDSButtonStyle {
+            MacDSButtonStyle(style: style, size: size, tone: tone)
         }
     }
 
@@ -76,16 +99,29 @@
         let isDestructive: Bool
         let style: DSButtonStyle
         let size: DSButtonSize
+        let tone: MacButtonTone
 
         var body: some View {
             label
                 .type(size.macTextType)
                 .lineLimit(1)
-                .foregroundStyle(style.macForeground(isDestructive: isDestructive))
+                .foregroundStyle(style.macForeground(isDestructive: isDestructive, tone: tone))
                 .padding(.horizontal, size.macPadding)
                 .macMinHeight(size.macHeight)
-                .background(MacButtonShape.pill.fill(style.macFill))
-                .overlay(MacButtonShape.pill.strokeBorder(style.macBorder, lineWidth: .borderWidthHairline))
+                .background {
+                    if style == .secondary {
+                        MacButtonShape.pill.fill(style.macFill)
+                            .elevation(.level1)
+                    } else {
+                        MacButtonShape.pill.fill(style.macFill)
+                    }
+                }
+                .overlay(
+                    MacButtonShape.pill.strokeBorder(
+                        style.macBorder(isDestructive: isDestructive, tone: tone),
+                        lineWidth: .borderWidthHairline
+                    )
+                )
                 .modifier(MacButtonInteraction(shape: MacButtonShape.pill, isPressed: isPressed))
         }
     }
@@ -184,12 +220,18 @@
                 }
             }
             HStack(spacing: .space8) {
+                ForEach(MacButtonTone.allCases, id: \.self) { tone in
+                    Button(L10n.Common.edit) {}.buttonStyle(.macDS(.outline, size: .small, tone: tone))
+                }
+                Button(L10n.Common.delete, role: .destructive) {}.buttonStyle(.macDS(.outline, size: .small))
+            }
+            HStack(spacing: .space8) {
                 Button(L10n.Common.save) {}.buttonStyle(.macDS(.primary)).disabled(true)
                 Button(L10n.Common.cancel) {}.buttonStyle(.macDS(.secondary)).disabled(true)
             }
         }
         .padding(.space24)
-        .background(Color.macCard)
+        .background(Color.macRow)
     }
 
     #Preview("Toolbar buttons") {

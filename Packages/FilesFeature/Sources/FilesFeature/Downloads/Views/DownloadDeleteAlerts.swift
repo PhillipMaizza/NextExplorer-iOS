@@ -36,7 +36,7 @@ private struct DownloadDeleteAlerts: ViewModifier {
         content
             .dsAlert(isPresented: deleteConfirmationBinding) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: deleteConfirmationTitle,
                     // Distinguishes this from every other delete confirmation in the app, which
                     // deletes on the server: this one only ever touches the local copy.
@@ -51,7 +51,7 @@ private struct DownloadDeleteAlerts: ViewModifier {
             }
             .dsAlert(isPresented: bulkDeleteConfirmationBinding) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: bulkDeleteConfirmationTitle,
                     message: L10n.Downloads.deleteBulkMessage,
                     confirmTitle: L10n.Common.delete,

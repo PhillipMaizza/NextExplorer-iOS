@@ -46,6 +46,8 @@
         static let macTagAmberFill = Color("MacTagAmberFill", bundle: .module)
         static let macTagGray = Color("MacTagGray", bundle: .module)
         static let macTagGrayFill = Color("MacTagGrayFill", bundle: .module)
+        static let macButtonRaised = Color("MacButtonRaised", bundle: .module)
+        static let macRaisedSurface = Color("MacRaisedSurface", bundle: .module)
         static let macTagBlue = Color("MacTagBlue", bundle: .module)
         static let macTagBlueFill = Color("MacTagBlueFill", bundle: .module)
         static let macChromeButton = Color.macChromeText.opacity(Constants.chromeButtonOpacity)

@@ -44,7 +44,7 @@ enum BrowseDeleteCopy {
     ) -> DSAlertSheet {
         let isTrashBound = impact(check)?.hasTrashBoundItems ?? false
         return DSAlertSheet(
-            icon: IconKit.delete,
+            icon: .delete,
             title: title,
             message: message(check),
             confirmTitle: isTrashBound ? L10n.Trash.moveToTrash : L10n.Common.delete,
@@ -87,7 +87,7 @@ enum BrowseDeleteCopy {
         onDismiss: @escaping () -> Void
     ) -> DSAlertSheet {
         DSAlertSheet(
-            icon: IconKit.warning,
+            icon: .warning,
             title: L10n.Trash.keptTitle,
             message: kept.map(keptLine).joined(separator: "\n"),
             confirmTitle: L10n.Trash.deletePermanently,

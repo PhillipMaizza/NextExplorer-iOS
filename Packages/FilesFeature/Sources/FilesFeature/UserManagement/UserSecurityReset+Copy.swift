@@ -87,7 +87,7 @@ struct UserRecoveryRow: Identifiable {
 func securityResetAlert(store: StoreOf<UserManagementFeature>) -> DSAlertSheet {
     let reset = store.securityResetToConfirm
     return DSAlertSheet(
-        icon: IconKit.shield,
+        icon: .shield,
         title: reset?.confirmTitle ?? "",
         message: reset.flatMap { $0.confirmMessage(for: store.detailUser?.displayLabel ?? "") },
         confirmTitle: reset?.actionTitle ?? "",

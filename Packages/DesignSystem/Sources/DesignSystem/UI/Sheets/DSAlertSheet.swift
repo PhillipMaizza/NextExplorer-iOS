@@ -38,7 +38,7 @@ public struct DSAlertSheet: View {
         }
     }
 
-    private let icon: Image
+    let icon: DSAlertIcon
     let title: String
     let message: String?
     let confirmTitle: String
@@ -53,7 +53,7 @@ public struct DSAlertSheet: View {
     @AccessibilityFocusState private var isPromptFocused: Bool
 
     public init(
-        icon: Image,
+        icon: DSAlertIcon,
         title: String,
         message: String? = nil,
         confirmTitle: String,
@@ -88,7 +88,7 @@ public struct DSAlertSheet: View {
         DSDynamicHeightSheet {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
-                    icon: icon,
+                    icon: icon.image,
                     tint: role.headerTint,
                     closeAccessibilityLabel: closeAccessibilityLabel,
                     onClose: onDismiss
@@ -148,7 +148,7 @@ public struct DSAlertSheet: View {
 #Preview("Standard") {
     Color.clear.sheet(isPresented: .constant(true)) {
         DSAlertSheet(
-            icon: IconKit.signOut,
+            icon: .signOut,
             title: "Sign Out?",
             message: "You'll need to sign in again to access your files.",
             confirmTitle: "Log Out",
@@ -161,7 +161,7 @@ public struct DSAlertSheet: View {
 #Preview("Destructive") {
     Color.clear.sheet(isPresented: .constant(true)) {
         DSAlertSheet(
-            icon: IconKit.delete,
+            icon: .delete,
             title: "Delete “vacation.jpg”?",
             message: "This can't be undone.",
             confirmTitle: "Delete",
@@ -175,7 +175,7 @@ public struct DSAlertSheet: View {
 #Preview("Three actions") {
     Color.clear.sheet(isPresented: .constant(true)) {
         DSAlertSheet(
-            icon: IconKit.warning,
+            icon: .warning,
             title: "Replace items?",
             message: "\"report.pdf\" already exists in this folder.",
             confirmTitle: "Replace",
@@ -191,7 +191,7 @@ public struct DSAlertSheet: View {
 #Preview("Loading") {
     Color.clear.sheet(isPresented: .constant(true)) {
         DSAlertSheet(
-            icon: IconKit.signOut,
+            icon: .signOut,
             title: "Sign Out?",
             message: "You'll need to sign in again to access your files.",
             confirmTitle: "Log Out",

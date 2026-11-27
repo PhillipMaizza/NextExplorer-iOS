@@ -48,7 +48,7 @@ struct TrashRestorePrompts: ViewModifier {
             lines.append(L10n.Trash.sharesChooseElsewhere)
         }
         return DSAlertSheet(
-            icon: IconKit.shareLink,
+            icon: .shareLink,
             title: L10n.Trash.sharesChooseTitle,
             message: lines.joined(separator: "\n\n"),
             confirmTitle: L10n.Trash.sharesKeep,

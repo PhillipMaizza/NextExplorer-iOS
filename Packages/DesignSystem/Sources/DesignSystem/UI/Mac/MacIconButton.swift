@@ -39,7 +39,6 @@
         let size: Size
         let tint: Color
         let action: () -> Void
-        @Environment(\.isEnabled) private var isEnabled
 
         public init(
             _ icon: Image,
@@ -59,18 +58,47 @@
 
         public var body: some View {
             Button(action: action) {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .fontWeight(size.weight)
-                    .macSquare(size.glyph)
-                    .foregroundStyle(isEnabled ? tint : Color.macChromeDisabled)
-                    .macSquare(size.side)
-                    .background(Circle().fill(isFilled ? Color.macSegment : Color.clear))
-                    .contentShape(Circle())
+                MacIconGlyph(icon, isFilled: isFilled, size: size, tint: tint)
             }
             .buttonStyle(.plain)
             .accessibilityLabelWithTooltip(label)
+        }
+    }
+
+    public struct MacIconGlyph: View {
+        let icon: Image
+        let isFilled: Bool
+        let size: MacIconButton.Size
+        let tint: Color
+        @Environment(\.isEnabled) private var isEnabled
+
+        public init(
+            _ icon: Image,
+            isFilled: Bool = true,
+            size: MacIconButton.Size = .regular,
+            tint: Color = .primaryDS
+        ) {
+            self.icon = icon
+            self.isFilled = isFilled
+            self.size = size
+            self.tint = tint
+        }
+
+        public var body: some View {
+            icon
+                .resizable()
+                .scaledToFit()
+                .fontWeight(size.weight)
+                .macSquare(size.glyph)
+                .foregroundStyle(isEnabled ? tint : Color.macChromeDisabled)
+                .macSquare(size.side)
+                .background {
+                    if isFilled {
+                        Circle().fill(Color.macButtonRaised)
+                            .elevation(.level1)
+                    }
+                }
+                .contentShape(Circle())
         }
     }
 

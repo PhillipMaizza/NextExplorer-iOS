@@ -104,7 +104,7 @@ struct AccountConfirmations: ViewModifier {
             }
             .dsAlert(isPresented: Binding(get: { shouldShowPrompts && store.isConfirmingSignOut }, set: { _ in })) {
                 DSAlertSheet(
-                    icon: IconKit.signOut,
+                    icon: .signOut,
                     title: L10n.Settings.signOutAlertTitle,
                     message: L10n.Settings.signOutMessage,
                     confirmTitle: L10n.Settings.signOutButton,
@@ -121,7 +121,7 @@ struct AccountConfirmations: ViewModifier {
                 set: { _ in }
             )) {
                 DSAlertSheet(
-                    icon: IconKit.signOut,
+                    icon: .signOut,
                     title: L10n.Settings.accountSignOutTitle,
                     message: L10n.Settings.accountSignOutMessage(store.accountPendingRemoval?.displayName ?? ""),
                     confirmTitle: L10n.Settings.signOutButton,
@@ -137,7 +137,7 @@ struct AccountConfirmations: ViewModifier {
                 set: { _ in }
             )) {
                 DSAlertSheet(
-                    icon: IconKit.warning,
+                    icon: .warning,
                     title: L10n.EditShare.discardTitle,
                     message: L10n.TextPreview.unsavedMessage,
                     confirmTitle: L10n.EditShare.discard,

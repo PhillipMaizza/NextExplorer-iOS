@@ -43,7 +43,7 @@ struct UploadPickers: ViewModifier {
         content
             .dsAlert(isPresented: $isCameraDeniedAlertPresented) {
                 DSAlertSheet(
-                    icon: IconKit.camera,
+                    icon: .camera,
                     title: L10n.Uploads.cameraDeniedTitle,
                     message: L10n.Uploads.cameraDeniedMessage,
                     confirmTitle: L10n.Common.openSettings,

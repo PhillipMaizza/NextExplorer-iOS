@@ -281,7 +281,7 @@ extension View {
     func activityLogClearAlert(_ store: StoreOf<ActivityLogFeature>) -> some View {
         dsAlert(isPresented: Binding(get: { store.clearPhase.isConfirming }, set: { _ in })) {
             DSAlertSheet(
-                icon: IconKit.delete,
+                icon: .delete,
                 title: L10n.ActivityLog.clearTitle,
                 message: L10n.ActivityLog.clearMessage,
                 confirmTitle: L10n.ActivityLog.clearConfirm,

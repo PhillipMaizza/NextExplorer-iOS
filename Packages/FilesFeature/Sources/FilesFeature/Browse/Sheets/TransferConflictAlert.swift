@@ -12,7 +12,7 @@ extension DSAlertSheet {
         onResolve: @escaping (BrowseFeature.TransferConflictChoice?) -> Void
     ) -> DSAlertSheet {
         DSAlertSheet(
-            icon: IconKit.warning,
+            icon: .warning,
             title: L10n.Browse.transferConflictTitle,
             message: transferConflictMessage(conflict),
             confirmTitle: L10n.Browse.transferConflictReplace,

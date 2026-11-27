@@ -121,7 +121,7 @@ enum TrashConfirmation {
             0
         }
         return DSAlertSheet(
-            icon: MenuIcon.delete.image,
+            icon: .delete,
             title: isEmpty ? L10n.Trash.confirmEmptyTitle : L10n.Trash.confirmDeleteTitle,
             message: isEmpty ? L10n.Trash.confirmEmptyMessage : L10n.Trash.confirmDeleteMessage(count),
             confirmTitle: isEmpty ? L10n.Trash.emptyTrash : L10n.Trash.deletePermanently,

@@ -130,6 +130,7 @@
             }
             .sheet(item: Binding(get: { store.tokenPendingRevoke }, set: { _ in })) { token in
                 MacAlertSheet(
+                    icon: .delete,
                     title: L10n.ApiTokens.revokeTitle,
                     message: L10n.ApiTokens.revokeMessage(token.name),
                     confirmTitle: L10n.ApiTokens.revokeConfirm,

@@ -57,7 +57,7 @@ struct UserDetailView: View {
         }
         .dsAlert(isPresented: removeVolumeAlertPresented) {
             DSAlertSheet(
-                icon: IconKit.drive,
+                icon: .drive,
                 title: L10n.UserDetail.removeVolumeTitle,
                 message: store.volumeToRemove.map { L10n.UserDetail.removeVolumeMessage($0.label) },
                 confirmTitle: L10n.Common.remove,
@@ -70,7 +70,7 @@ struct UserDetailView: View {
         }
         .dsAlert(isPresented: grantAdminAlertPresented) {
             DSAlertSheet(
-                icon: IconKit.shield,
+                icon: .shield,
                 title: L10n.UserDetail.grantAdminTitle,
                 message: store.userToGrantAdmin.map { L10n.UserDetail.grantAdminMessage($0.displayLabel) },
                 confirmTitle: L10n.UserDetail.roleGrantAdmin,
@@ -86,7 +86,7 @@ struct UserDetailView: View {
         }
         .dsAlert(isPresented: deleteAlertPresented) {
             DSAlertSheet(
-                icon: IconKit.delete,
+                icon: .delete,
                 title: L10n.UserDetail.removeUserTitle,
                 message: store.userToDelete.map { L10n.UserDetail.removeUserMessage($0.displayLabel) },
                 confirmTitle: L10n.Common.remove,

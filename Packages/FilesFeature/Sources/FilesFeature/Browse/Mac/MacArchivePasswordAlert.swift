@@ -16,7 +16,7 @@
 
         var body: some View {
             MacAlertSheet(
-                glyph: IconKit.lock,
+                icon: .lock,
                 title: L10n.Browse.archivePasswordTitle,
                 message: L10n.Browse.archivePasswordMessage,
                 confirmTitle: L10n.Browse.actionExtract,

@@ -76,7 +76,7 @@ struct ServerDetailsView: View {
             }
             .dsAlert(isPresented: $isCameraDeniedAlertPresented) {
                 DSAlertSheet(
-                    icon: IconKit.camera,
+                    icon: .camera,
                     title: L10n.ServerDetails.cameraDeniedTitle,
                     message: L10n.ServerDetails.cameraDeniedMessage,
                     confirmTitle: L10n.Common.openSettings,

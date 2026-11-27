@@ -36,6 +36,7 @@
                     MacGallerySection(title: "Feedback") { MacGalleryFeedback() }
                     MacGallerySection(title: "Alert") {
                         MacAlertSheet(
+                            icon: .delete,
                             title: "Revoke Token?",
                             message: "This can't be undone.",
                             confirmTitle: "Revoke",
@@ -113,7 +114,10 @@
                 }
                 HStack(spacing: .space8) {
                     Button(L10n.Common.save) {}.buttonStyle(.macDS(.primary)).disabled(true)
-                    Button(L10n.Common.edit) {}.buttonStyle(.macDS(.outline))
+                    ForEach(MacButtonTone.allCases, id: \.self) { tone in
+                        Button(L10n.Common.edit) {}.buttonStyle(.macDS(.outline, tone: tone))
+                    }
+                    Button(L10n.Common.delete, role: .destructive) {}.buttonStyle(.macDS(.outline))
                     Button {} label: { Label { Text(L10n.Common.more) } icon: { IconKit.moreOptions } }
                         .buttonStyle(.macToolbar)
                     Button {} label: { Label { Text(L10n.Common.download) } icon: { IconKit.upload } }

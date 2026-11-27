@@ -13,6 +13,7 @@
                 .sheet(isPresented: isPresented(\.versionToRestore)) {
                     let version = model.versionToRestore
                     MacAlertSheet(
+                        icon: .restore,
                         title: L10n.FileInfo.restoreTitle,
                         message: version.map { L10n.FileInfo.restoreMessage(VersionsModel.date($0.modifiedAt)) },
                         confirmTitle: L10n.FileInfo.restoreConfirm,
@@ -52,6 +53,7 @@
                 .sheet(isPresented: isPresented(\.versionToDelete)) {
                     let version = model.versionToDelete
                     MacAlertSheet(
+                        icon: .delete,
                         title: L10n.FileInfo.deleteTitle,
                         message: L10n.FileInfo.deleteMessage,
                         confirmTitle: L10n.Common.delete,
@@ -71,6 +73,7 @@
                 .sheet(isPresented: isPresented(\.replacement)) {
                     let replacement = model.replacement
                     MacAlertSheet(
+                        icon: .warning,
                         title: L10n.FileInfo.replaceTitle,
                         message: replacement.map {
                             L10n.FileInfo.replaceMessage(
@@ -92,6 +95,7 @@
                 }
                 .sheet(isPresented: $model.isConfirmingDeleteAll) {
                     MacAlertSheet(
+                        icon: .delete,
                         title: L10n.FileInfo.deleteAllTitle,
                         message: L10n.FileInfo.deleteMessage,
                         confirmTitle: L10n.Common.delete,

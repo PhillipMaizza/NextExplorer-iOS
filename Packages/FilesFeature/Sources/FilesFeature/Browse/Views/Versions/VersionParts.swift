@@ -95,7 +95,7 @@
                 .dsAlert(isPresented: isPresented(\.versionToRestore)) {
                     let version = model.versionToRestore
                     return DSAlertSheet(
-                        icon: IconKit.restore,
+                        icon: .restore,
                         title: L10n.FileInfo.restoreTitle,
                         message: version.map { L10n.FileInfo.restoreMessage(VersionsModel.date($0.modifiedAt)) },
                         confirmTitle: L10n.FileInfo.restoreConfirm,
@@ -112,7 +112,7 @@
                 .dsAlert(isPresented: isPresented(\.versionToDelete)) {
                     let version = model.versionToDelete
                     return DSAlertSheet(
-                        icon: IconKit.delete,
+                        icon: .delete,
                         title: L10n.FileInfo.deleteTitle,
                         message: L10n.FileInfo.deleteMessage,
                         confirmTitle: L10n.Common.delete,

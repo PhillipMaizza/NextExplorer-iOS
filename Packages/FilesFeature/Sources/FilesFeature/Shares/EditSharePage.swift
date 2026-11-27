@@ -63,7 +63,7 @@
             .task { store.send(.task) }
             .dsAlert(isPresented: discardBinding) {
                 DSAlertSheet(
-                    icon: IconKit.delete,
+                    icon: .delete,
                     title: L10n.EditShare.discardTitle,
                     message: L10n.EditShare.discardMessage,
                     confirmTitle: L10n.EditShare.discard,
