@@ -829,13 +829,18 @@ public struct BrowseFeature {
         }
         // An inspector open on an item that left this folder (deleted, moved away, gone in a
         // refresh) closes, rather than offering actions on a path that no longer exists.
-        .onChange(of: \.items) { _, items in
+        .onChange(of: \.items) { old, items in
             Reduce { state, _ in
+                state.selectedItemIDs.formIntersection(items.ids)
                 if state.isInfoShowingSelection {
                     return settleSelectionInfo(&state)
                 }
-                guard let shown = state.infoItem, shown.id != state.directoryPath, items[id: shown.id] == nil
-                else { return .none }
+                guard let shown = state.infoItem else { return .none }
+                if shown.id == state.directoryPath {
+                    guard old.count != items.count, let folder = state.folderItem(now: date.now) else { return .none }
+                    return loadInfo(&state, item: folder, settle: Constants.inspectorFollowDelay)
+                }
+                guard items[id: shown.id] == nil else { return .none }
                 return closeInfo(&state)
             }
         }

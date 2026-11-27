@@ -220,6 +220,7 @@ struct BrowseSelectionTests {
             $0.phase = .loaded
             $0.access = BrowseTestSupport.readOnlyAccess
             $0.items = []
+            $0.selectedItemIDs = []
         }
         favorites.open()
         await store.receive(\.favoritesResponse) {
