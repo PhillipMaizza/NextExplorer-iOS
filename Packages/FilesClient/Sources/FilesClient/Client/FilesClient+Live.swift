@@ -257,8 +257,8 @@ public extension FilesClient {
                     destination: destination, onProgress: onProgress
                 )
             },
-            compressItem: { serverURL, item in
-                try await service.compressItem(serverURL: serverURL, item: item)
+            compressItems: { serverURL, items in
+                try await service.compressItems(serverURL: serverURL, items: items)
             },
             createShareLink: { serverURL, request in
                 try await service.createShareLink(serverURL: serverURL, request: request)

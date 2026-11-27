@@ -7,17 +7,12 @@ import Foundation
 import Localization
 
 extension BrowseFeature {
-    func paste(_ state: inout State, keepItemsAfterCopy: Bool) -> Effect<Action> {
-        guard let clipboard = state.clipboard,
-              clipboard.canPaste(
-                  into: state.directoryPath,
-                  canReceive: state.access?.canReceive(clipboard.items) ?? false
-              )
-        else { return .none }
+    func paste(_ state: inout State, into destination: String, keepItemsAfterCopy: Bool) -> Effect<Action> {
+        guard let clipboard = state.clipboard, state.canPaste(into: destination) else { return .none }
         let shouldClearClipboard = clipboard.operation == .move || !keepItemsAfterCopy
         return runTransfer(&state, retry: TransferRetry(
             items: clipboard.items,
-            destination: state.directoryPath,
+            destination: destination,
             operation: clipboard.operation,
             shouldClearClipboard: shouldClearClipboard
         ))
@@ -29,9 +24,8 @@ extension BrowseFeature {
         guard !retry.items.isEmpty, !state.isPerformingFileAction else { return .none }
         guard retry.resolution == .ask else { return performTransfer(&state, retry: retry) }
 
-        // Paste always targets the folder that's already on screen, so its listing is right
-        // here in `state.items`: no round trip. A picker move can land anywhere else, so
-        // that case asks the server for the destination listing.
+        // A paste into the folder on screen has its listing right here in `state.items`: no
+        // round trip. Anywhere else asks the server for the destination listing.
         if retry.destination == state.directoryPath {
             return resolveTransfer(
                 &state,
@@ -168,5 +162,12 @@ extension BrowseFeature {
                 ? L10n.Browse.transferCopiedWithSkipped(moved, skipped)
                 : L10n.Browse.transferCopied(moved)
         }
+    }
+}
+
+extension BrowseFeature.State {
+    func canPaste(into destination: String) -> Bool {
+        guard let clipboard else { return false }
+        return clipboard.canPaste(into: destination, canReceive: access?.canReceive(clipboard.items) ?? false)
     }
 }

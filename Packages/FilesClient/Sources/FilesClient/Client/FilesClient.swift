@@ -196,7 +196,7 @@ public struct FilesClient: Sendable {
         _ destination: String,
         _ onProgress: @Sendable @escaping (Double) -> Void
     ) async throws -> Void
-    public var compressItem: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
+    public var compressItems: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> FileItem
     public var createShareLink: @Sendable (
         _ serverURL: URL, _ request: CreateShareLinkRequest
     ) async throws -> CreatedShare

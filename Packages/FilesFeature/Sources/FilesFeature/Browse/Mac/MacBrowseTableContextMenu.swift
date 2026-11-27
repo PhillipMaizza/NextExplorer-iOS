@@ -45,6 +45,17 @@
                 }
             } else if items.count == 1, let item = items.first {
                 fileActions(item)
+                if item.isDirectory, store.state.canPaste(into: item.id) {
+                    Button {
+                        store.send(
+                            .pasteIntoTapped(item, keepItemsAfterCopy: shouldKeepClipboard),
+                            animation: DSMotion.listDiff
+                        )
+                    } label: {
+                        Label { Text(L10n.Browse.actionPasteIntoFolder) } icon: { IconKit.paste }
+                    }
+                    .tint(.primaryDS)
+                }
             } else {
                 Section {
                     if actions(items).canCopy {
@@ -83,6 +94,24 @@
                             store.send(.bulkMoveTapped, animation: DSMotion.listDiff)
                         } label: {
                             Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
+                        }
+                        .tint(.primaryDS)
+                    }
+                    if actions(items).canCopy {
+                        Button {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.copySelectionToTapped)
+                        } label: {
+                            Label { Text(L10n.Browse.actionCopyTo) } icon: { IconKit.share }
+                        }
+                        .tint(.primaryDS)
+                    }
+                    if actions(items).canCompress {
+                        Button {
+                            store.send(.tableSelectionChanged(ids))
+                            store.send(.compressSelectionTapped)
+                        } label: {
+                            Label { Text(L10n.Browse.actionCompress) } icon: { IconKit.archiveDocument }
                         }
                         .tint(.primaryDS)
                     }

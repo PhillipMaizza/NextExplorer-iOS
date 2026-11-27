@@ -17,6 +17,7 @@ extension BrowseFeature {
             return loadInfo(&state, item: item)
 
         case let .permissionsTapped(item):
+            guard state.actions(for: item).canEditPermissions else { return .none }
             state.permissions = PermissionsFeature.State(serverURL: state.serverURL, item: item)
             return .none
 

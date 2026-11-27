@@ -194,7 +194,7 @@
             _ availability: SelectionActionsMenu.Availability,
             directoryPath _: String
         ) -> Bool {
-            availability.canDuplicate || availability.canMove || availability.canTransfer
+            availability.canDuplicate || availability.canMove || availability.canTransfer || availability.canCompress
         }
 
         var body: some View {
@@ -226,6 +226,11 @@
             if availability.canTransfer {
                 MacActionMenuButton(L10n.Browse.actionCopyTo, icon: IconKit.share) {
                     store.send(.copySelectionToTapped)
+                }
+            }
+            if availability.canCompress {
+                MacActionMenuButton(L10n.Browse.actionCompress, icon: IconKit.archiveDocument) {
+                    store.send(.compressSelectionTapped)
                 }
             }
             if offlineAction == .remove {

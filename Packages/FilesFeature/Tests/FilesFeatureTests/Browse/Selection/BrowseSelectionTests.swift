@@ -76,8 +76,13 @@ struct BrowseSelectionTests {
     @Test("Bulk delete shows the confirmation and checks the share impact of every selected item")
     func bulkDeleteTappedChecksShareImpactForEverySelectedItem() async {
         let checked = LockIsolated<[Set<String>]>([])
-        var state = selectingState(selected: [folder.id, file.id])
-        state.access = BrowseTestSupport.fullAccess
+        let inFolder = [
+            BrowseFixtures.folder(folder.name, in: TestFolder.documents),
+            BrowseFixtures.file(file.name, in: TestFolder.documents),
+        ]
+        var state = BrowseFixtures.state(TestFolder.documents, items: inFolder, access: BrowseTestSupport.fullAccess)
+        state.isSelecting = true
+        state.selectedItemIDs = Set(inFolder.map(\.id))
         let store = BrowseFixtures.store(state) {
             $0.filesClient.deleteImpact = { _, items in
                 checked.withValue { $0.append(Set(items.map(\.name))) }

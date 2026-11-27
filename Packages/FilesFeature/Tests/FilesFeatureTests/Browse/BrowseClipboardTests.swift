@@ -373,4 +373,43 @@ struct BrowseClipboardTests {
 
         await store.send(.duplicateSelectionTapped)
     }
+
+    @Test("Paste on a folder row checks that folder's listing for clashes, as the web's Paste on a folder does")
+    func pasteIntoAFolderRowChecksThatFolder() async {
+        let photos = BrowseFixtures.folder(TestFolder.photos, in: TestFolder.documents)
+        let clash = BrowseFixtures.file(incoming.name, in: photos.id)
+        let asked = LockIsolated<[String]>([])
+        var state = makeState()
+        state.items = [photos]
+        state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
+        #expect(state.canPaste(into: photos.id))
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.browse = { _, path in
+                asked.withValue { $0.append(path) }
+                return BrowseResult(items: [clash], access: BrowseTestSupport.fullAccess, path: path)
+            }
+        }
+        let retry = BrowseFeature.TransferRetry(
+            items: [incoming],
+            destination: photos.id,
+            operation: .copy,
+            shouldClearClipboard: false
+        )
+
+        await store.send(.pasteIntoTapped(
+            BrowseFixtures.folder("Elsewhere", in: TestFolder.inbox),
+            keepItemsAfterCopy: true
+        ))
+        await store.send(.pasteIntoTapped(photos, keepItemsAfterCopy: true)) {
+            $0.isPerformingFileAction = true
+            $0.transferProgress = 0
+            $0.pendingTransferRetry = retry
+        }
+        await store.receive(\.transferConflictCheckResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.transferProgress = nil
+            $0.transferConflict = BrowseFeature.TransferConflict(retry: retry, collidingItems: [clash])
+        }
+        #expect(asked.value == [photos.id])
+    }
 }

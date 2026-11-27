@@ -43,7 +43,7 @@ struct BrowseRootEmptyTests {
         state.isUserVolumesEnabled = true
         #expect(state.rootEmptyGuide == .browseRootUnassigned)
 
-        state.isAdmin = true
+        state.$isAdmin.withLock { $0 = true }
         #expect(state.rootEmptyGuide == .browseRootNoVolumes)
 
         #expect(BrowseFixtures.state(TestFolder.files, title: TestFolder.files).rootEmptyGuide == nil)

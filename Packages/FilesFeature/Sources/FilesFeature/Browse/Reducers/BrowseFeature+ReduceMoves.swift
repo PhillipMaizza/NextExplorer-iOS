@@ -139,7 +139,7 @@ extension BrowseFeature {
 
         case .copySelectionToTapped:
             let items = state.selectedItems
-            guard !items.isEmpty else { return .none }
+            guard state.actions(for: items).canCopy else { return .none }
             state.destinationPicker = DestinationPickerFeature.State(
                 serverURL: state.serverURL,
                 items: items,
@@ -149,7 +149,7 @@ extension BrowseFeature {
 
         case .bulkCopyTapped:
             let items = state.selectedItems
-            guard !items.isEmpty else { return .none }
+            guard state.actions(for: items).canCopy else { return .none }
             state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .copy) }
             state.clipboardStagedMessage = items.count == 1
                 ? L10n.Browse.clipboardCopiedOne(items[0].name)
@@ -170,7 +170,11 @@ extension BrowseFeature {
             return .none
 
         case let .pasteTapped(keepItemsAfterCopy):
-            return paste(&state, keepItemsAfterCopy: keepItemsAfterCopy)
+            return paste(&state, into: state.directoryPath, keepItemsAfterCopy: keepItemsAfterCopy)
+
+        case let .pasteIntoTapped(folder, keepItemsAfterCopy):
+            guard folder.isDirectory, state.items[id: folder.id] != nil else { return .none }
+            return paste(&state, into: folder.id, keepItemsAfterCopy: keepItemsAfterCopy)
 
         case let .tableSelectionChanged(ids):
             guard !state.isSelecting else { return .none }

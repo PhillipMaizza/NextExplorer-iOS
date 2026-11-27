@@ -160,7 +160,9 @@
 
         @Test("Copy To on the selection opens the copy picker for every selected item")
         func copyToOnTheSelectionOpensTheCopyPicker() async {
-            let store = BrowseFixtures.store(showingSelection())
+            var state = showingSelection()
+            state.access = BrowseTestSupport.fullAccess
+            let store = BrowseFixtures.store(state)
 
             await store.send(.copySelectionToTapped) {
                 $0.destinationPicker = DestinationPickerFeature.State(
