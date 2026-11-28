@@ -63,10 +63,16 @@
         @State var choice: ShareAccessChoice
         @State var permissions = SharePermissions(canDelete: false)
         let isDirectory: Bool
+        var isWritable = true
 
         var body: some View {
             VStack(alignment: .leading, spacing: .space16) {
-                MacShareAccessField(isDirectory: isDirectory, choice: $choice, permissions: $permissions)
+                MacShareAccessField(
+                    isDirectory: isDirectory,
+                    isWritable: isWritable,
+                    choice: $choice,
+                    permissions: $permissions
+                )
                 MacFormGroup { MacShareVersionsOptions(permissions: $permissions) }
             }
             .padding(.space24)
@@ -82,5 +88,9 @@
     #Preview("File, dark") {
         AccessFieldPreview(choice: .canDownload, isDirectory: false)
             .preferredColorScheme(.dark)
+    }
+
+    #Preview("Folder, read only path") {
+        AccessFieldPreview(choice: .canDownload, isDirectory: true, isWritable: false)
     }
 #endif

@@ -210,3 +210,7 @@ private func volumeSheetPreview(_ sheet: UserManagementFeature.VolumeSheetState)
         accessMode: .readonly
     ))
 }
+
+#Preview("Reserved label") {
+    volumeSheetPreview(UserManagementFeature.VolumeSheetState(userID: "u2", label: "Share", selectedPath: "/mnt/media"))
+}

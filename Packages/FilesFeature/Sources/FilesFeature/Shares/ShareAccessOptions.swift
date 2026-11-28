@@ -55,10 +55,16 @@
         @State var choice: ShareAccessChoice
         @State var permissions = SharePermissions(canDelete: false)
         let isDirectory: Bool
+        var isWritable = true
 
         var body: some View {
             List {
-                Section { ShareAccessOptions(isDirectory: isDirectory, choice: $choice, permissions: $permissions) }
+                Section { ShareAccessOptions(
+                    isDirectory: isDirectory,
+                    isWritable: isWritable,
+                    choice: $choice,
+                    permissions: $permissions
+                ) }
                 Section { ShareVersionsToggles(permissions: $permissions) }
             }
         }
@@ -71,5 +77,9 @@
     #Preview("File, dark") {
         ShareAccessPreview(choice: .canDownload, isDirectory: false)
             .preferredColorScheme(.dark)
+    }
+
+    #Preview("Folder, read only path") {
+        ShareAccessPreview(choice: .canDownload, isDirectory: true, isWritable: false)
     }
 #endif

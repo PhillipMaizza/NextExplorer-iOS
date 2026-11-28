@@ -185,6 +185,12 @@
         return MacCreateUserSheet(store: Store(initialState: state) { UserManagementFeature() })
     }
 
+    #Preview("Create user, username taken") {
+        var state = userSheetsState()
+        state.createSheet = UserManagementFeature.CreateUserState(username: "jamie", takenUsernames: ["jamie"])
+        return MacCreateUserSheet(store: Store(initialState: state) { UserManagementFeature() })
+    }
+
     #Preview("Create user error") {
         var state = userSheetsState()
         var sheet = UserManagementFeature.CreateUserState()

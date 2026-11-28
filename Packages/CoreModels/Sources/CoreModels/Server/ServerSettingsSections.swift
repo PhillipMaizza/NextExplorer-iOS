@@ -121,12 +121,12 @@ public struct ExcludedPaths: Equatable, Sendable, Decodable {
         environmentPaths = try container.decodeIfPresent([String].self, forKey: .environmentExcludedPaths) ?? []
     }
 
-    /// Adds a path the way the web page does: leading slashes dropped, blanks and duplicates
-    /// (including paths the environment already excludes) ignored, the list kept sorted.
     public static func normalized(_ rawPath: String) -> String? {
         AccessRule.normalizedRelativePath(rawPath.trimmingCharacters(in: .whitespacesAndNewlines))
     }
 
+    /// Adds a path the way the server stores it: normalized, blanks and duplicates (including
+    /// paths the environment already excludes) ignored, the list kept sorted.
     public func adding(_ rawPath: String) -> [String] {
         guard let path = Self.normalized(rawPath), !path.isEmpty, !paths.contains(path),
               !environmentPaths.contains(path)

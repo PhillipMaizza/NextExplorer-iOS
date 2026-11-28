@@ -99,9 +99,7 @@
         private var ownership: some View {
             VStack(alignment: .leading, spacing: .space4) {
                 ownershipFields
-                if let error = store.ownershipError {
-                    Text(error).type(.body3(.regular), style: .error)
-                }
+                MacFieldError(message: store.ownershipError)
             }
         }
 
@@ -120,7 +118,11 @@
     }
 
     @MainActor
-    private func permissionsPreview(_ permissions: FilePermissions?, isDirectory: Bool = false) -> some View {
+    private func permissionsPreview(
+        _ permissions: FilePermissions?,
+        isDirectory: Bool = false,
+        ownerDraft: String? = nil
+    ) -> some View {
         let item = FileItem(
             name: isDirectory ? "Projects" : "report.pdf",
             path: "Files/Developer",
@@ -138,6 +140,9 @@
             state.numericDraft = permissions.octalString
             state.ownerDraft = permissions.owner
             state.groupDraft = permissions.group
+        }
+        if let ownerDraft {
+            state.ownerDraft = ownerDraft
         }
         return MacPermissionsSheet(store: Store(initialState: state) { PermissionsFeature() } withDependencies: {
             $0.filesClient = .previewValue
@@ -168,6 +173,21 @@
                 isDirectory: true
             ),
             isDirectory: true
+        )
+    }
+
+    #Preview("Invalid owner") {
+        permissionsPreview(
+            FilePermissions(
+                path: "report.pdf",
+                mode: 0o100_644,
+                owner: "phillip",
+                group: "staff",
+                uid: 501,
+                gid: 20,
+                isDirectory: false
+            ),
+            ownerDraft: "-phillip"
         )
     }
 

@@ -242,7 +242,8 @@ private let previewFolder = FileItem(name: "Projects", path: "", dateModified: D
 private func previewState(
     item: FileItem = previewFile,
     permissions: FilePermissions? = nil,
-    actionError: String? = nil
+    actionError: String? = nil,
+    ownerDraft: String? = nil
 ) -> PermissionsFeature.State {
     var state = PermissionsFeature.State(serverURL: previewServerURL, item: item)
     if let permissions {
@@ -252,6 +253,9 @@ private func previewState(
         state.groupDraft = permissions.group
     }
     state.actionError = actionError
+    if let ownerDraft {
+        state.ownerDraft = ownerDraft
+    }
     return state
 }
 
@@ -272,6 +276,12 @@ private let folderPermissions = FilePermissions(
 #Preview("Directory") {
     permissionsPreview(previewState(item: previewFolder, permissions: folderPermissions)) {
         $0.fetchPermissions = { _, _ in folderPermissions }
+    }
+}
+
+#Preview("Invalid owner") {
+    permissionsPreview(previewState(permissions: filePermissions, ownerDraft: "-phillip")) {
+        $0.fetchPermissions = { _, _ in filePermissions }
     }
 }
 

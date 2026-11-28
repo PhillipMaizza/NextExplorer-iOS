@@ -271,6 +271,20 @@
         })
     }
 
+    #Preview("Search index, path outside the volumes") {
+        let value = SearchIndexSettings(isEnabled: true, excluded: ExcludedPaths(paths: ["Backups"]))
+        var state = SearchIndexSettingsFeature.State(serverURL: ServerSettingsPreview.serverURL)
+        state.loaded = value
+        state.draftPaths = value.excluded.paths
+        state.newPath = "../Backups"
+        state.phase = .loaded
+        return MacSearchIndexSettingsPane(store: Store(initialState: state) {
+            SearchIndexSettingsFeature()
+        } withDependencies: {
+            $0.filesClient.fetchSystemSettings = { _ in SystemSettings(searchIndex: value) }
+        })
+    }
+
     #Preview("Folder sizes") {
         let value = FolderSizeSettings(
             mode: .shallow,

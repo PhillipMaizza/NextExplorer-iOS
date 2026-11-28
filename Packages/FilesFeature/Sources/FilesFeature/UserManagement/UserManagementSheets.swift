@@ -167,6 +167,12 @@ private func sheetPreview(
     sheetPreview(CreateUserSheet.init) { $0.createSheet = UserManagementFeature.CreateUserState() }
 }
 
+#Preview("Create user: username taken") {
+    sheetPreview(CreateUserSheet.init) {
+        $0.createSheet = UserManagementFeature.CreateUserState(username: "jamie", takenUsernames: ["jamie"])
+    }
+}
+
 #Preview("Create user: error") {
     sheetPreview(CreateUserSheet.init) {
         var sheet = UserManagementFeature.CreateUserState()

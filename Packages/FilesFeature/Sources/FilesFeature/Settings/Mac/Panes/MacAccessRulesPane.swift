@@ -142,4 +142,15 @@
         return MacAccessRulesPane(store: Store(initialState: state) { AccessRulesFeature() })
             .previewCanvas(.settingsWindow)
     }
+
+    #Preview("Path outside the volumes") {
+        var state = AccessRulesFeature
+            .State(serverURL: URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/"))
+        let rule = AccessRule(id: "1", path: "../Reports", isRecursive: true, permission: .readOnly)
+        state.loaded = []
+        state.drafts = [rule]
+        state.phase = .loaded
+        return MacAccessRulesPane(store: Store(initialState: state) { AccessRulesFeature() })
+            .previewCanvas(.settingsWindow)
+    }
 #endif

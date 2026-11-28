@@ -165,6 +165,18 @@ private extension AccessRulesFeature.State {
     }
 }
 
+#Preview("Path outside the volumes") {
+    NavigationStack {
+        AccessRulesView(
+            store: Store(
+                initialState: .preview(rules: [
+                    AccessRule(id: "1", path: "../Reports", isRecursive: true, permission: .readOnly),
+                ])
+            ) { AccessRulesFeature() }
+        )
+    }
+}
+
 #Preview("Empty") {
     NavigationStack {
         AccessRulesView(
