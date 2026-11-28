@@ -116,11 +116,13 @@ struct BrowseListingFailureTests {
         let serverError = FilesClientError.server(statusCode: 500)
         let refused = FilesClientError.server(statusCode: 403)
         let answers = LockIsolated([serverError, refused])
+        let favorites = AsyncGate()
         let store = docsStore {
             $0.serveEmptyFolders()
             $0.filesClient.browse = { _, _ in
                 throw answers.withValue { $0.removeFirst() }
             }
+            $0.holdFavorites(favorites)
         }
 
         await store.send(.onAppear) {
@@ -132,6 +134,7 @@ struct BrowseListingFailureTests {
         await store.receive(\.offlineListingResolved) {
             $0.phase = .failed(serverError.userMessage)
         }
+        favorites.open()
         await store.receive(\.favoritesResponse) {
             $0.hasLoadedFavorites = true
         }

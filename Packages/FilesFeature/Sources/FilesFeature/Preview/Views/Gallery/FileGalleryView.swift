@@ -270,7 +270,6 @@ struct FileGalleryView: View {
             }
         #else
             pager
-                .ignoresSafeArea()
         #endif
     }
 

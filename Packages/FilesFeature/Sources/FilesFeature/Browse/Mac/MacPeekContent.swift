@@ -4,7 +4,6 @@
     import DesignSystem
     import FilesClient
     import Localization
-    import QuickLookThumbnailing
     import SwiftUI
 
     struct MacPeekContent: View {
@@ -26,7 +25,8 @@
                     return
                 }
                 let preview = Self.preview(of: item)
-                let isTooLarge = preview.isFetchedWhole && !isSavedOffline && item.size > Self.byteLimit
+                let isDownloaded = preview.isFetchedWhole || (preview == .media && !item.isNativelyPlayable)
+                let isTooLarge = isDownloaded && !isSavedOffline && item.size > Self.byteLimit
                 self = isTooLarge ? .summary : preview
             }
 
@@ -136,20 +136,7 @@
         }
 
         private static func previewable(_ url: URL) async -> URL? {
-            let size = await Task.detached(priority: .userInitiated) {
-                (try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? .zero
-            }.value
-            guard size > .zero else { return nil }
-            let request = QLThumbnailGenerator.Request(
-                fileAt: url,
-                size: CGSize(width: MacPeekMetrics.iconSize, height: MacPeekMetrics.iconSize),
-                scale: 1,
-                representationTypes: .all
-            )
-            guard let best = try? await QLThumbnailGenerator.shared.generateBestRepresentation(for: request),
-                  best.type != .icon
-            else { return nil }
-            return url
+            await QuickLookSupport.rendersContent(of: url) ? url : nil
         }
     }
 

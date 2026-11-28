@@ -89,7 +89,10 @@
 
         var body: some View {
             if item.isUnsupportedForPreview || item.isArchive {
-                FileSummaryView(item: item, message: nil)
+                FileSummaryView(item: item, message: nil) {
+                    MacOpenWithSplitButton(source: .local(fileURL))
+                        .fixedSize()
+                }
             } else if isText {
                 Group {
                     if let text {
@@ -132,6 +135,18 @@
             file: file,
             phase: .failed(L10n.Archive.entryEncrypted),
             files: [file, other],
+            onStep: { _ in },
+            onPick: { _ in }
+        )
+        .frame(width: MacPeekMetrics.previewWidth, height: MacPeekMetrics.previewHeight)
+    }
+
+    #Preview("Archive entry") {
+        let file = ArchiveListingEntry(path: "photos.zip", name: "photos.zip", isDirectory: false, size: 5_120)
+        ArchivePeekStage(
+            file: file,
+            phase: .loaded(URL(fileURLWithPath: "/System/Library/CoreServices/SystemVersion.plist")),
+            files: [file],
             onStep: { _ in },
             onPick: { _ in }
         )

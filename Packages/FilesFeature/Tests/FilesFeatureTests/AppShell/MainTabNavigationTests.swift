@@ -48,7 +48,9 @@ struct MainTabNavigationTests: MainTabTestSupport {
 
     @Test("Go to Folder opens the trimmed path in Browse and closes the dialog")
     func goToFolderOpensTheTrimmedPathInBrowse() async {
-        let store = makeStore(makeState { $0.selectedTab = .shared })
+        let store = makeStore(makeState { $0.selectedTab = .shared }) {
+            $0.filesClient.fetchMetadata = { _, path in GoToPathFixture.folder(path) }
+        }
 
         await store.send(.goToFolderPrompted) {
             $0.isGoToFolderPresented = true
@@ -57,6 +59,7 @@ struct MainTabNavigationTests: MainTabTestSupport {
             $0.isGoToFolderPresented = false
             $0.selectedTab = .browse
         }
+        await store.receive(\.browse.goToPath)
         await store.receive(\.browse.navigateToItem) {
             $0.browse.path[id: 0] = BrowseFeature.State(
                 serverURL: serverURL,
@@ -75,9 +78,12 @@ struct MainTabNavigationTests: MainTabTestSupport {
             title: TestFolder.files
         )
         let missing = TestFolder.files + "/Made Up"
-        let store = makeStore(makeState { $0.browse.path.append(files) })
+        let store = makeStore(makeState { $0.browse.path.append(files) }) {
+            $0.filesClient.fetchMetadata = { _, _ in throw URLError(.fileDoesNotExist) }
+        }
 
         await store.send(.goToFolderRequested(missing))
+        await store.receive(\.browse.goToPath)
         await store.receive(\.browse.navigateToItem) {
             $0.browse.path[id: 1] = BrowseFeature.State(
                 serverURL: serverURL,
@@ -90,6 +96,58 @@ struct MainTabNavigationTests: MainTabTestSupport {
         await store.receive(\.browse.goBack) {
             $0.browse.forwardStack = [$0.browse.path.removeLast()]
             $0.recentFolders = [TestFolder.files, missing]
+        }
+    }
+
+    @Test("Go to Folder with a file's path opens the folder holding it and opens the file")
+    func goToFolderWithAFilePathOpensItsFolderAndTheFile() async {
+        let file = TestPath.documentsReports + "/q3.pdf"
+        let store = makeStore {
+            $0.filesClient.fetchMetadata = { _, path in GoToPathFixture.file(path) }
+        }
+
+        await store.send(.goToFolderRequested(file))
+        await store.receive(\.browse.goToPath)
+        await store.receive(\.browse.navigateToItem) {
+            var reports = BrowseFeature.State(
+                serverURL: serverURL,
+                directoryPath: TestPath.documentsReports,
+                title: "Reports"
+            )
+            reports.reveal = .open(file)
+            $0.browse.path[id: 0] = reports
+            $0.recentFolders = [TestPath.documentsReports]
+        }
+    }
+
+    @Test("Go to Folder opens a folder by the server's spelling of its path")
+    func goToFolderOpensAFolderByTheServersSpellingOfItsPath() async {
+        let typed = "Cafe\u{0301}"
+        let served = "Caf\u{00E9}"
+        let store = makeStore {
+            $0.filesClient.fetchMetadata = { _, _ in GoToPathFixture.folder(served) }
+        }
+
+        await store.send(.goToFolderRequested(typed))
+        await store.receive(\.browse.goToPath)
+        await store.receive(\.browse.navigateToItem) {
+            $0.browse.path[id: 0] = BrowseFeature.State(serverURL: serverURL, directoryPath: served, title: served)
+            $0.recentFolders = [served]
+        }
+    }
+
+    @Test("Go to Folder with a file at the top level opens it in the root, by the server's spelling of its path")
+    func goToFolderWithATopLevelFileOpensItInTheRoot() async {
+        let typed = "Cafe\u{0301}.txt"
+        let served = "Caf\u{00E9}.txt"
+        let store = makeStore {
+            $0.filesClient.fetchMetadata = { _, _ in GoToPathFixture.file(served) }
+        }
+
+        await store.send(.goToFolderRequested(typed))
+        await store.receive(\.browse.goToPath)
+        await store.receive(\.browse.navigateToItem) {
+            $0.browse.root.reveal = .open(served)
         }
     }
 

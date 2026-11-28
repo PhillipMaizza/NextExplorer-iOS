@@ -10,7 +10,11 @@
         let onExtract: (([String]?) -> Void)?
         let onClose: () -> Void
 
-        @FocusState private var isFocused: Bool
+        @FocusState private var focusedKey: String?
+
+        private var focusKey: String {
+            store.entry?.path ?? store.path.joined(separator: "/")
+        }
 
         private var openedFile: ArchiveListingEntry? {
             store.entry.flatMap { opened in store.files.first { $0.path == opened.path } }
@@ -24,11 +28,12 @@
                 footer
             }
             .macPeekCardChrome()
-            .macKeyFocus($isFocused)
+            .macKeyFocus($focusedKey, equals: focusKey)
             .onAppear {
-                isFocused = true
+                focusedKey = focusKey
                 store.send(.task)
             }
+            .onChange(of: focusKey) { focusedKey = focusKey }
             .onDisappear { store.send(.closed) }
             .onKeyPress(.leftArrow) { step(-1) }
             .onKeyPress(.rightArrow) { step(1) }
@@ -70,7 +75,7 @@
         @ViewBuilder
         private var content: some View {
             if let message = store.phase.errorMessage {
-                FileSummaryView(item: store.archive, message: message)
+                unreadable(message)
             } else if store.phase != .loaded {
                 DSSpinner()
             } else if let entry = store.entry, let openedFile {
@@ -81,10 +86,12 @@
                     onStep: { store.send(.stepped($0)) },
                     onPick: { store.send(.fileOpened($0)) }
                 )
+            } else if store.entries.isEmpty, store.path.isEmpty {
+                unreadable(L10n.Archive.unreadable)
             } else if store.entries.isEmpty {
                 EmptyStateView(
                     icon: IconKit.folderFill,
-                    message: store.path.isEmpty ? L10n.Archive.unreadable : L10n.Archive.emptyFolder
+                    message: L10n.Archive.emptyFolder
                 )
             } else {
                 ArchivePeekGrid(
@@ -95,6 +102,21 @@
                         source: store.source
                     )
                 ) { store.send(.fileOpened($0)) }
+            }
+        }
+
+        private func unreadable(_ message: String) -> some View {
+            FileSummaryView(item: store.archive, message: message) {
+                MacOpenWithSplitButton(source: openSource)
+                    .fixedSize()
+            }
+        }
+
+        private var openSource: SystemShareSource {
+            switch store.source {
+            case .server: .remote(store.archive, serverURL: store.serverURL)
+            case let .local(url): .local(url)
+            case .unresolved: .unavailable
             }
         }
 
@@ -201,6 +223,22 @@
             ) {
                 ArchiveBrowserFeature()
             },
+            onExtract: { _ in },
+            onClose: {}
+        )
+        .padding(MacPeekMetrics.margin)
+        .frame(width: 960, height: 820)
+        .background(Color.macChrome)
+    }
+
+    #Preview("Unreadable archive") {
+        var state = ArchiveBrowserFeature.State(
+            archive: FileItem(name: "old.rar", path: "Files", dateModified: .distantPast, size: 7, kind: "rar"),
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
+        )
+        state.phase = .failed(L10n.Archive.unreadable)
+        return ArchivePeekCard(
+            store: Store(initialState: state) { EmptyReducer() },
             onExtract: { _ in },
             onClose: {}
         )

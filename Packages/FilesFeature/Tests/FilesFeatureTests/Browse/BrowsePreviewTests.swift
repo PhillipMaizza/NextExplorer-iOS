@@ -257,6 +257,8 @@ struct BrowsePreviewTests {
         await store.receive(\.textSaveResponse) {
             $0.savingTexts = [:]
             $0.textContent = "hello world"
+            $0.previewItem = BrowseFixtures.file(TestFile.notes, size: 10)
+                .changing(dateModified: MockDate.date, size: Int64("hello world".utf8.count))
         }
         #expect(saved.value == ["notes.txt: hello world"])
     }

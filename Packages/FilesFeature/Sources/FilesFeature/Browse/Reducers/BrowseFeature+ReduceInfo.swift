@@ -131,11 +131,14 @@ extension BrowseFeature {
         case let .textSaveResponse(path, .success(savedContent)):
             let isStillOpen = path == state.previewItem?.id
             state.savingTexts[path] = nil
+            let now = date.now
+            let size = Int64(savedContent.utf8.count)
             if isStillOpen {
                 state.textContent = savedContent
+                state.previewItem = state.previewItem?.changing(dateModified: now, size: size)
             }
             if let saved = state.items[id: path] {
-                state.items[id: path] = saved.changing(dateModified: date.now, size: Int64(savedContent.utf8.count))
+                state.items[id: path] = saved.changing(dateModified: now, size: size)
             }
             return .none
 

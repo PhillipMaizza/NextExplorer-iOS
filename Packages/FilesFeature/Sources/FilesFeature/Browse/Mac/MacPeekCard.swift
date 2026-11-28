@@ -91,12 +91,7 @@
 
         private var header: some View {
             HStack(spacing: .space12) {
-                MacFileTile(
-                    item: item,
-                    serverURL: serverURL,
-                    size: MacPeekMetrics.iconSize,
-                    shouldShowPlayBadge: false
-                )
+                MacFileTile(item: item, size: MacPeekMetrics.iconSize, shouldShowPlayBadge: false)
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(item.name)
                         .type(.subtitle2)

@@ -16,6 +16,9 @@ struct FilePreviewContainerView: View {
     var onDownload: (() -> Void)?
     var onDelete: (() -> Void)?
     var file: FileItem?
+    #if os(macOS)
+        @State private var renderCheck: RenderCheck?
+    #endif
 
     var body: some View {
         NavigationStack {
@@ -29,6 +32,7 @@ struct FilePreviewContainerView: View {
                     onDownload: onDownload,
                     onDelete: onDelete,
                     file: file,
+                    hasOpenWithPage: hasOpenWithPage,
                     onClose: onDismiss
                 )
         }
@@ -37,14 +41,49 @@ struct FilePreviewContainerView: View {
     @ViewBuilder
     private var content: some View {
         if let fileURL {
-            QuickLookPreview(url: fileURL)
-            #if os(iOS)
-                .ignoresSafeArea()
+            #if os(macOS)
+                macDocument(fileURL)
+            #else
+                QuickLookPreview(url: fileURL)
+                    .ignoresSafeArea()
             #endif
         } else {
             statusContent
         }
     }
+
+    private var hasOpenWithPage: Bool {
+        #if os(macOS)
+            renderCheck?.url == fileURL && renderCheck?.canRender == false && file != nil
+        #else
+            false
+        #endif
+    }
+
+    #if os(macOS)
+        private struct RenderCheck {
+            let url: URL
+            let canRender: Bool
+        }
+
+        private func macDocument(_ fileURL: URL) -> some View {
+            Group {
+                if renderCheck?.url != fileURL {
+                    DSSpinner()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else if hasOpenWithPage, let file {
+                    MacNoPreviewPage(item: file, source: .local(fileURL))
+                } else {
+                    QuickLookPreview(url: fileURL)
+                }
+            }
+            .task(id: fileURL) {
+                let canRender = await QuickLookSupport.rendersContent(of: fileURL)
+                guard !Task.isCancelled else { return }
+                renderCheck = RenderCheck(url: fileURL, canRender: canRender)
+            }
+        }
+    #endif
 
     @ViewBuilder
     private var statusContent: some View {

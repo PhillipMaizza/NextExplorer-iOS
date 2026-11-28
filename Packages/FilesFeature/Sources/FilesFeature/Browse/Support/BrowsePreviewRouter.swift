@@ -19,7 +19,7 @@ struct BrowsePreviewRouter: View {
     var onGalleryItemChange: (FileItem) -> Void = { _ in }
 
     #if os(macOS)
-        @FocusState private var isFocused: Bool
+        @FocusState private var focusedItemID: String?
     #endif
 
     var body: some View {
@@ -28,8 +28,9 @@ struct BrowsePreviewRouter: View {
             // the preview for the new file, so the image gallery starts on it too.
             routed
                 .id(item.id)
-                .macKeyFocus($isFocused)
-                .onAppear { isFocused = true }
+                .macKeyFocus($focusedItemID, equals: item.id)
+                .onAppear { focusedItemID = item.id }
+                .onChange(of: item.id) { focusedItemID = item.id }
                 .onKeyPress(.leftArrow) { step(by: -1) }
                 .onKeyPress(.rightArrow) { step(by: 1) }
                 .environment(\.previewOffline, offlineAction(for: item))

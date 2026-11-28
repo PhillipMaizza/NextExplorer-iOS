@@ -3,10 +3,6 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum Constants {
-    static let tileSize: CGFloat = 112
-}
-
 /// Full screen stand in for a file the app has no viewer for (`FileItem.isUnsupportedForPreview`)
 /// a font, a disk image, a `.webm` AVFoundation can't decode. Mirrors the Files app: the
 /// file's icon, name, type and size centered on screen, a `DSInfoCard` saying it can't be
@@ -16,7 +12,6 @@ private enum Constants {
 struct UnsupportedFilePreviewView: View {
     let item: FileItem
     let systemShare: SystemShareSource
-    @Environment(\.canExportPreview) private var canExport
     let onDismiss: () -> Void
     var onShareLink: (() -> Void)?
     var onRename: (() -> Void)?
@@ -41,18 +36,7 @@ struct UnsupportedFilePreviewView: View {
 
     private var content: some View {
         #if os(macOS)
-            VStack(spacing: .space12) {
-                MacFileTile(item: item, size: Constants.tileSize, shouldShowPlayBadge: false)
-                    .accessibilityHidden(true)
-                Text(L10n.UnsupportedPreview.noPreview(item.previewTypeText))
-                    .type(.body2(.regular), style: .secondary)
-                    .multilineTextAlignment(.center)
-                MacOpenWithSplitButton(source: canExport ? systemShare : .unavailable)
-                    .padding(.top, .space8)
-            }
-            .padding(.space24)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.macCard.ignoresSafeArea())
+            MacNoPreviewPage(item: item, source: systemShare)
         #else
             FileSummaryView(item: item, message: L10n.UnsupportedPreview.cannotOpen)
         #endif

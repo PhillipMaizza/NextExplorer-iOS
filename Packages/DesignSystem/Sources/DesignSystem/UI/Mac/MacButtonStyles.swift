@@ -216,6 +216,15 @@
                     .focusEffectDisabled()
             }
         }
+
+        func macKeyFocus<Value: Hashable>(_ focus: FocusState<Value?>.Binding, equals value: Value) -> some View {
+            background {
+                Color.clear
+                    .focusable()
+                    .focused(focus, equals: value)
+                    .focusEffectDisabled()
+            }
+        }
     }
 
     #Preview("Buttons") {

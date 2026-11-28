@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import FilesClient
 import Foundation
 import Localization
 
@@ -75,6 +76,7 @@ public struct BrowseTabFeature {
         /// A search hit: opens the folder (or the one holding the file, then selects and opens it) on top
         /// of the folders already open, so Back returns to the previous one.
         case navigateToItem(folder: String, title: String, revealing: String?)
+        case goToPath(String)
         /// Refetches the root folder and every pushed subfolder currently on the live
         /// navigation stack: sent when the app becomes active again after being backgrounded.
         case syncPathStack
@@ -131,8 +133,28 @@ public struct BrowseTabFeature {
     }
 
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.filesClient) var filesClient
+
+    private enum CancelID {
+        case goToPath
+    }
 
     public init() {}
+
+    static func navigation(toGoToPath path: String, metadata: FileMetadata?) -> Action {
+        guard let metadata else {
+            return .navigateToItem(folder: path, title: PersonalSpace.folderTitle(path), revealing: nil)
+        }
+        guard !metadata.isDirectory else {
+            return .navigateToItem(
+                folder: metadata.path,
+                title: PersonalSpace.folderTitle(metadata.path),
+                revealing: nil
+            )
+        }
+        let folder = (metadata.path as NSString).deletingLastPathComponent
+        return .navigateToItem(folder: folder, title: PersonalSpace.folderTitle(folder), revealing: metadata.path)
+    }
 
     public var body: some ReducerOf<Self> {
         Scope(state: \.root, action: \.root) {
@@ -342,6 +364,14 @@ public struct BrowseTabFeature {
                 guard let itemID else { return .none }
                 state.reveal(.open(itemID))
                 return .none
+
+            case let .goToPath(path):
+                let serverURL = state.root.serverURL
+                return .run { [filesClient] send in
+                    let metadata = try? await filesClient.fetchMetadata(serverURL, path)
+                    await send(Self.navigation(toGoToPath: path, metadata: metadata))
+                }
+                .cancellable(id: CancelID.goToPath, cancelInFlight: true)
 
             case .syncPathStack:
                 return .merge(

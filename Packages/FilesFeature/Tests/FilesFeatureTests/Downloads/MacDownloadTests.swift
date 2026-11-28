@@ -396,7 +396,7 @@ import TestUtils
             #expect(zip.fileName == "Trip.zip")
         }
 
-        @Test("Peek summarizes archives, binaries and large downloads unless saved offline, never streams")
+        @Test("Peek summarizes archives, binaries, large downloads and large libvlc media unless saved offline")
         func peekSummarizesArchivesBinariesAndLargeDownloads() {
             let tooLarge = MacPeekContent.Kind.byteLimit + 1
             let archive = FileItem(name: TestFile.archive, path: "", dateModified: MockDate.date, size: 10, kind: "zip")
@@ -408,6 +408,7 @@ import TestUtils
                 size: tooLarge,
                 kind: TestKind.video
             )
+            let film = FileItem(name: "film.mkv", path: "", dateModified: MockDate.date, size: tooLarge, kind: "mkv")
             let report = FileItem(
                 name: TestFile.report,
                 path: "",
@@ -435,6 +436,8 @@ import TestUtils
             #expect(MacPeekContent.Kind(report, isSavedOffline: false) == .summary)
             #expect(MacPeekContent.Kind(report, isSavedOffline: true) == .document)
             #expect(MacPeekContent.Kind(movie, isSavedOffline: false) == .media)
+            #expect(MacPeekContent.Kind(film, isSavedOffline: false) == .summary)
+            #expect(MacPeekContent.Kind(film, isSavedOffline: true) == .media)
             #expect(MacPeekContent.Kind(folder, isSavedOffline: false) == .folder)
             #expect(MacPeekContent.Kind(photo, isSavedOffline: false) == .image)
         }

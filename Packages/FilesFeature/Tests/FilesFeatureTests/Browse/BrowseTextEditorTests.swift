@@ -132,6 +132,7 @@ struct BrowseTextEditorTests {
         gate.open()
         await store.receive(\.textSaveResponse) {
             $0.items[id: notes.id] = afterSave(notes, "one")
+            $0.previewItem = afterSave(notes, "one")
             $0.savingTexts = [:]
             $0.textContent = "one"
         }
@@ -174,6 +175,7 @@ struct BrowseTextEditorTests {
         #expect(store.state.isSavingTextContent)
         await store.receive(\.textSaveResponse) {
             $0.items[id: other.id] = afterSave(other, "two")
+            $0.previewItem = afterSave(other, "two")
             $0.savingTexts[other.id] = nil
             $0.textContent = "two"
         }
@@ -252,6 +254,7 @@ struct BrowseTextEditorTests {
         }
         await store.receive(\.textSaveResponse) {
             $0.items[id: notes.id] = afterSave(notes, "mine")
+            $0.previewItem = afterSave(notes, "mine")
             $0.savingTexts = [:]
             $0.textContent = "mine"
         }
