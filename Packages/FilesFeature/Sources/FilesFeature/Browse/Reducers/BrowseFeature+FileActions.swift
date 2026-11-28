@@ -181,6 +181,9 @@ extension BrowseFeature {
             }
         }
         state.keptDeletes = result.kept
+        if !result.trashed.isEmpty {
+            recordUndo(&state, FileUndoEntry(.trashed(result.trashed)))
+        }
         if result.trashedCount > 0 {
             state.trashNotice = MovedToTrashNotice(
                 count: result.trashedCount,

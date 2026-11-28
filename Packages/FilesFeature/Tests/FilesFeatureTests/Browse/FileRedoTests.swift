@@ -42,9 +42,10 @@ struct FileRedoTests {
     private func store(
         undo: [FileUndoEntry] = [],
         redo: [FileUndoEntry] = [],
+        folder: String = TestFolder.docs,
         configure: (inout DependencyValues) -> Void = { _ in }
     ) -> TestStoreOf<BrowseFeature> {
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: folder, title: folder)
         state.phase = .loaded
         state.$undoStack.withLock { $0 = undo }
         state.$redoStack.withLock { $0 = redo }
@@ -102,6 +103,25 @@ struct FileRedoTests {
         await store.receive(.delegate(.directoryContentsChanged))
 
         #expect(renames.value == ["Photos/vacation.jpg>beach.jpg"])
+    }
+
+    @Test("Redoing a rename in the folder on screen selects the renamed item")
+    func redoingARenameOnScreenSelectsIt() async {
+        let entry = FileUndoEntry(.renamed(renamedPhoto, previousName: TestFile.vacationPhoto))
+        let store = store(redo: [entry], folder: TestFolder.photos) {
+            $0.filesClient.renameItem = { _, item, _ in item }
+        }
+
+        await store.send(.redoTapped) {
+            $0.$redoStack.withLock { $0 = [] }
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.redoResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.$undoStack.withLock { $0 = [entry] }
+            $0.reveal = .select(renamedPhoto.id)
+        }
+        await store.receive(.delegate(.directoryContentsChanged))
     }
 
     @Test

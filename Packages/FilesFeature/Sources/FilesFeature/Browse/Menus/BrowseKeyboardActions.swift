@@ -24,6 +24,8 @@
         public var canDelete = true
         public var canDuplicate = true
         public var canOpen = true
+        public var canUndo = true
+        public var canRedo = true
     }
 
     /// The visible Browse screen's sort, for the View menu's Sort By.

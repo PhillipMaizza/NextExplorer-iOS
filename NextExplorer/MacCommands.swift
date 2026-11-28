@@ -102,15 +102,13 @@
                     .keyboardShortcut("p")
                     .disabled(printPreview == nil)
             }
-            // Undo reverses the last file operation and Redo does the last undone one again while the
-            // file table has focus; otherwise both go down the responder chain (text fields, editor).
-            // Whether one is waiting is read by the reducer when the action lands, never from a copy
-            // made when the table last drew, which could still say no right after an undo.
             CommandGroup(replacing: .undoRedo) {
                 Button(L10n.Menu.undo) { perform(fileActions?.undo, fallback: Selector(("undo:"))) }
                     .keyboardShortcut("z")
+                    .disabled(!isSheetInFront && fileActions.map { !$0.canUndo } ?? false)
                 Button(L10n.Menu.redo) { perform(fileActions?.redo, fallback: Selector(("redo:"))) }
                     .keyboardShortcut("z", modifiers: [.command, .shift])
+                    .disabled(!isSheetInFront && fileActions.map { !$0.canRedo } ?? false)
             }
             CommandGroup(replacing: .pasteboard) {
                 Button(L10n.Browse.actionCut) { perform(fileActions?.cut, fallback: #selector(NSText.cut(_:))) }

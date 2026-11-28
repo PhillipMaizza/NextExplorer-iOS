@@ -2,7 +2,7 @@ import Foundation
 
 /// One file operation that ⌘Z can reverse, kept app wide (shared in memory under `sharedKey`,
 /// cleared on every session boundary with the clipboard). Only operations with a server side
-/// inverse are recorded; a delete has none (the server keeps no trash), so it is never here.
+/// inverse are recorded: a move to the trash is, a permanent delete never is.
 public struct FileUndoEntry: Equatable, Sendable {
     public static let sharedKey = "fileUndoStack"
     /// The undone operations ⇧⌘Z can redo, newest last; any new operation clears it.
@@ -19,6 +19,17 @@ public struct FileUndoEntry: Equatable, Sendable {
         case moved([MovedItem])
         /// A rename: undoing renames the item (at its new name) back.
         case renamed(FileItem, previousName: String)
+        case trashed([TrashedItem])
+    }
+
+    public struct TrashedItem: Equatable, Sendable {
+        public let item: FileItem
+        public let trashID: String
+
+        public init(item: FileItem, trashID: String) {
+            self.item = item
+            self.trashID = trashID
+        }
     }
 
     public struct MovedItem: Equatable, Sendable {
@@ -41,7 +52,7 @@ public struct FileUndoEntry: Equatable, Sendable {
     /// copy's source is not kept, so copies are undo only.
     public var isRedoable: Bool {
         switch kind {
-        case .moved, .renamed, .madeNew: true
+        case .moved, .renamed, .madeNew, .trashed: true
         case .created: false
         }
     }

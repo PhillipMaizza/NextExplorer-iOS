@@ -76,6 +76,14 @@ struct BrowseToastEvents: ViewModifier {
             }
             .onChange(of: store.trashNotice) { _, newValue in
                 guard let newValue else { return }
+                #if os(macOS)
+                    if store.undoStack.last?.isTrashing == true {
+                        toastMessage = .success(L10n.Trash.movedToTrash(newValue.count), actionTitle: L10n.Menu.undo) {
+                            store.send(.undoTapped, animation: DSMotion.listDiff)
+                        }
+                        return
+                    }
+                #endif
                 toastMessage = .success(L10n.Trash.movedToTrash(newValue.count), actionTitle: L10n.Trash.openTrash) {
                     store.send(.delegate(.openTrashTapped))
                 }

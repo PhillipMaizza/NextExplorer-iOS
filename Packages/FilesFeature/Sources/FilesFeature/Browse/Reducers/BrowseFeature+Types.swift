@@ -125,11 +125,18 @@ public extension BrowseFeature {
         public let removedIDs: [FileItem.ID]
         public let kept: [KeptDelete]
         public let trashedCount: Int
+        public let trashed: [FileUndoEntry.TrashedItem]
 
-        public init(removedIDs: [FileItem.ID], kept: [KeptDelete] = [], trashedCount: Int = 0) {
+        public init(
+            removedIDs: [FileItem.ID],
+            kept: [KeptDelete] = [],
+            trashedCount: Int = 0,
+            trashed: [FileUndoEntry.TrashedItem] = []
+        ) {
             self.removedIDs = removedIDs
             self.kept = kept
             self.trashedCount = trashedCount
+            self.trashed = trashed
         }
 
         /// Pairs the server's answers with the request by position, as it answers in order.
@@ -143,7 +150,8 @@ public extension BrowseFeature {
             self.init(
                 removedIDs: requested.map(\.id).filter { !keptIDs.contains($0) },
                 kept: kept,
-                trashedCount: outcome.trashedCount
+                trashedCount: outcome.trashedCount,
+                trashed: outcome.trashed(of: requested)
             )
         }
     }

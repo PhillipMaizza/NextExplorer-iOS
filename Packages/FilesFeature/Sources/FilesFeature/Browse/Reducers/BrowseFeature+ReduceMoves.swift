@@ -203,6 +203,7 @@ extension BrowseFeature {
             if entry.isRedoable {
                 state.$redoStack.withLock { $0.record(entry) }
             }
+            state.selectChanged(entry, isUndone: true)
             return contentsChanged(by: entry)
 
         case .redoTapped:
@@ -211,6 +212,7 @@ extension BrowseFeature {
         case let .redoResponse(.success(entry)):
             state.isPerformingFileAction = false
             state.$undoStack.withLock { $0.record(entry) }
+            state.selectChanged(entry, isUndone: false)
             return contentsChanged(by: entry)
 
         case let .undoResponse(.failure(error)), let .redoResponse(.failure(error)):
@@ -381,16 +383,38 @@ extension BrowseFeature {
 }
 
 extension FileUndoEntry {
+    var isTrashing: Bool {
+        if case .trashed = kind {
+            true
+        } else {
+            false
+        }
+    }
+
     var isFolderRelocation: Bool {
         switch kind {
         case let .moved(items): items.contains { $0.item.isDirectory }
         case let .renamed(item, _): item.isDirectory
+        case let .trashed(items): items.contains { $0.item.isDirectory }
         case .created, .madeNew: false
         }
     }
 }
 
 extension BrowseFeature.State {
+    mutating func selectChanged(_ entry: FileUndoEntry, isUndone: Bool) {
+        switch entry.kind {
+        case let .renamed(item, previousName) where item.path == directoryPath:
+            reveal = .select(isUndone ? item.changing(name: previousName).id : item.id)
+        case let .trashed(items) where isUndone:
+            if let restored = items.first(where: { $0.item.path == directoryPath }) {
+                reveal = .select(restored.item.id)
+            }
+        default:
+            break
+        }
+    }
+
     func folderItem(now: Date) -> FileItem? {
         let parts = directoryPath.split(separator: "/").map(String.init)
         guard let name = parts.last else { return nil }

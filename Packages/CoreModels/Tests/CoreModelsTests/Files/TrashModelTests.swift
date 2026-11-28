@@ -60,6 +60,15 @@ struct DeleteToTrashModelTests {
         #expect(outcome.kept(of: requested).map(\.name) == ["big"])
     }
 
+    @Test("the trashed items pair with the request by position and carry their trash id")
+    func trashedPairsByPosition() throws {
+        let outcome = try CoreModelsFixture.deleteOutcomeEachStatus.decode(DeleteOutcome.self)
+        let requested = ["a.txt", "b.txt", "c.txt", "big", "e.txt"].map {
+            FileItem(name: $0, path: "Files", dateModified: MockDate.date, size: 0, kind: "txt")
+        }
+        #expect(outcome.trashed(of: requested) == [.init(item: requested[0], trashID: "t1")])
+    }
+
     @Test("an older server's bare success reads as everything deleted")
     func legacyOutcome() throws {
         let outcome = try CoreModelsFixture.deleteOutcomeLegacySuccess.decode(DeleteOutcome.self)

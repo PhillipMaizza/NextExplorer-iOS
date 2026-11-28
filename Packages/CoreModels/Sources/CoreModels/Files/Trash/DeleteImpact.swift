@@ -125,6 +125,13 @@ public struct DeleteOutcome: Decodable, Equatable, Sendable {
         items.filter { $0.status == .kept }
     }
 
+    public func trashed(of requested: [FileItem]) -> [FileUndoEntry.TrashedItem] {
+        zip(requested, items).compactMap { item, entry in
+            guard entry.status == .trashed, let trashID = entry.trashItemID else { return nil }
+            return FileUndoEntry.TrashedItem(item: item, trashID: trashID)
+        }
+    }
+
     /// The requested items still on disk. The server answers in the order it was asked, so answers
     /// pair with requests by position.
     public func kept(of requested: [FileItem]) -> [FileItem] {
@@ -145,23 +152,27 @@ public struct DeleteOutcome: Decodable, Equatable, Sendable {
         public let reason: TrashRefusal?
         public let size: Int64?
         public let budgetBytes: Int64?
+        public let trashItemID: String?
 
         public init(
             path: String,
             status: Status,
             reason: TrashRefusal? = nil,
             size: Int64? = nil,
-            budgetBytes: Int64? = nil
+            budgetBytes: Int64? = nil,
+            trashItemID: String? = nil
         ) {
             self.path = path
             self.status = status
             self.reason = reason
             self.size = size
             self.budgetBytes = budgetBytes
+            self.trashItemID = trashItemID
         }
 
         private enum CodingKeys: String, CodingKey {
             case path, status, reason, size, budgetBytes
+            case trashItemID = "trashItemId"
         }
 
         public init(from decoder: Decoder) throws {
@@ -171,6 +182,7 @@ public struct DeleteOutcome: Decodable, Equatable, Sendable {
             reason = try container.decodeIfPresent(String.self, forKey: .reason).map(TrashRefusal.init(serverValue:))
             size = try container.decodeIfPresent(Int64.self, forKey: .size)
             budgetBytes = try container.decodeIfPresent(Int64.self, forKey: .budgetBytes)
+            trashItemID = try container.decodeIfPresent(String.self, forKey: .trashItemID)
         }
     }
 }

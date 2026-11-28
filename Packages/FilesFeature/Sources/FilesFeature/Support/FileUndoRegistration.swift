@@ -52,6 +52,7 @@
             switch entry.kind {
             case .moved: L10n.Browse.actionMove
             case .renamed: L10n.Browse.actionRename
+            case .trashed: L10n.Trash.moveToTrash
             case .created, .madeNew: ""
             }
         }

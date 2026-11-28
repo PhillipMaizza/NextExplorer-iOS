@@ -233,6 +233,7 @@ struct FileUndoTests {
         await store.receive(\.undoResponse.success) {
             $0.isPerformingFileAction = false
             $0.$redoStack.withLock { $0 = [FileUndoEntry(.renamed(renamedItem, previousName: TestFile.vacationPhoto))] }
+            $0.reveal = .select(original.id)
         }
         await store.receive(.delegate(.directoryContentsChanged))
         await store.finish()

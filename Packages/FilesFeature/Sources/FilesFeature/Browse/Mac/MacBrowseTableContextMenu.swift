@@ -248,7 +248,9 @@
                 canCut: selected.canMove,
                 canDelete: selected.canDelete,
                 canDuplicate: selected.canDuplicate,
-                canOpen: store.isPersonalSpaceSelected || store.singleSelectedItem != nil
+                canOpen: store.isPersonalSpaceSelected || store.singleSelectedItem != nil,
+                canUndo: !store.undoStack.isEmpty,
+                canRedo: !store.redoStack.isEmpty
             )
         }
     }

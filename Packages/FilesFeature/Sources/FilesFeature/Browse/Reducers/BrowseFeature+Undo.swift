@@ -3,6 +3,7 @@ import CoreModels
 import FilesClient
 import FolderPickerFeature
 import Foundation
+import NetworkClient
 
 extension BrowseFeature {
     /// A confirmed copy or move: show its outcome in this listing right away (the refresh that
@@ -73,6 +74,10 @@ extension BrowseFeature {
                     }
                 case let .renamed(item, previousName):
                     _ = try await filesClient.renameItem(serverURL, item, previousName)
+                case let .trashed(items):
+                    let result = try await filesClient
+                        .restoreTrash(serverURL, .items(items.map(\.trashID)), nil, .restore) { _ in }
+                    return try Self.restored(items, by: result)
                 }
                 return entry
             }))
@@ -107,10 +112,33 @@ extension BrowseFeature {
                     }
                 case let .renamed(item, previousName):
                     _ = try await filesClient.renameItem(serverURL, item.changing(name: previousName), item.name)
+                case let .trashed(trashed):
+                    let items = trashed.map(\.item)
+                    let outcome = try await filesClient.deleteItems(serverURL, items, false, nil)
+                    return FileUndoEntry(.trashed(outcome.trashed(of: items)))
                 }
                 return entry
             }))
         }
+    }
+
+    static func restored(
+        _ trashed: [FileUndoEntry.TrashedItem],
+        by result: TrashActionResult
+    ) throws -> FileUndoEntry {
+        let restored = trashed.compactMap { trashedItem -> FileUndoEntry.TrashedItem? in
+            guard let entry = result.items.first(where: { $0.key == trashedItem.trashID }),
+                  entry.status == .restored else { return nil }
+            let name = entry.restoredName ?? trashedItem.item.name
+            return FileUndoEntry.TrashedItem(item: trashedItem.item.changing(name: name), trashID: trashedItem.trashID)
+        }
+        guard !restored.isEmpty else {
+            throw FilesClientError.serverMessage(
+                statusCode: HTTPStatus.conflict.rawValue,
+                message: (result.failed.first?.status ?? .unknown).reason
+            )
+        }
+        return FileUndoEntry(.trashed(restored))
     }
 
     static func trimmedPath(_ path: String) -> String {
