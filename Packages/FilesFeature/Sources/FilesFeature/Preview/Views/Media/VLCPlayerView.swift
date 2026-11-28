@@ -72,24 +72,18 @@ struct VLCPlayerView: View {
         self.isEmbedded = isEmbedded
     }
 
-    @ViewBuilder
     private var chrome: some View {
-        if isEmbedded {
+        MediaPreviewChrome(
+            item: item,
+            serverURL: serverURL,
+            isEmbedded: isEmbedded,
+            onDismiss: onDismiss,
+            onShare: onShare,
+            onRename: onRename,
+            onDownload: onDownload,
+            onDelete: onDelete
+        ) {
             playerStack
-        } else {
-            NavigationStack {
-                playerStack
-                    .previewChrome(
-                        title: item.name,
-                        systemShare: .remote(item, serverURL: serverURL),
-                        onShareLink: onShare,
-                        onRename: onRename,
-                        onDownload: onDownload,
-                        onDelete: onDelete,
-                        file: item,
-                        onClose: onDismiss
-                    )
-            }
         }
     }
 
@@ -126,15 +120,32 @@ struct VLCPlayerView: View {
                     }
                 }
             } else {
-                VLCPlaybackControls(controller: controller)
-                    .opacity(areControlsVisible ? 1 : 0)
-                    .allowsHitTesting(areControlsVisible)
+                VLCPlaybackControls(controller: controller) { audioTile }
+                    .opacity(areControlsVisible || hasAudioTile ? 1 : 0)
+                    .allowsHitTesting(areControlsVisible || hasAudioTile)
                     .animation(
                         DSMotion.galleryFade,
                         value: areControlsVisible
                     )
             }
         }
+    }
+
+    private var hasAudioTile: Bool {
+        #if os(macOS)
+            item.isAudio
+        #else
+            false
+        #endif
+    }
+
+    @ViewBuilder
+    private var audioTile: some View {
+        #if os(macOS)
+            if hasAudioTile {
+                MacFileTile(item: item, serverURL: serverURL, size: .size64)
+            }
+        #endif
     }
 
     var body: some View {
@@ -213,31 +224,42 @@ struct VLCPlayerView: View {
     }
 #endif
 
+private extension VLCPlaybackControls where Artwork == EmptyView {
+    init(controller: VLCPlaybackController) {
+        self.init(controller: controller) { EmptyView() }
+    }
+}
+
 /// Transport controls (VLCKit ships no UI of its own): a centered play/pause toggle plus a
 /// bottom scrubber with elapsed / total time.
-private struct VLCPlaybackControls: View {
+private struct VLCPlaybackControls<Artwork: View>: View {
     @ObservedObject var controller: VLCPlaybackController
+    @ViewBuilder var artwork: Artwork
 
     var body: some View {
         VStack {
             Spacer()
 
-            // While buffering, the spinner stands in for the play/pause button rather than
-            // stacking on top of it.
-            if controller.isBuffering {
-                DSSpinner()
-                    .tint(Color.white)
-                    .allowsHitTesting(false)
-            } else {
-                Button {
-                    controller.togglePlayPause()
-                } label: {
-                    (controller.isPlaying ? IconKit.pause : IconKit.play)
-                        .font(.system(size: .size44, weight: .bold))
-                        .foregroundStyle(.white)
-                        .shadow(radius: VLCPlaybackConstants.playButtonShadowRadius)
+            VStack(spacing: .space16) {
+                artwork
+
+                // While buffering, the spinner stands in for the play/pause button rather than
+                // stacking on top of it.
+                if controller.isBuffering {
+                    DSSpinner()
+                        .tint(Color.white)
+                        .allowsHitTesting(false)
+                } else {
+                    Button {
+                        controller.togglePlayPause()
+                    } label: {
+                        (controller.isPlaying ? IconKit.pause : IconKit.play)
+                            .font(.system(size: .size44, weight: .bold))
+                            .foregroundStyle(.white)
+                            .shadow(radius: VLCPlaybackConstants.playButtonShadowRadius)
+                    }
+                    .accessibilityLabelWithTooltip(controller.isPlaying ? L10n.Media.pause : L10n.Media.play)
                 }
-                .accessibilityLabelWithTooltip(controller.isPlaying ? L10n.Media.pause : L10n.Media.play)
             }
 
             Spacer()

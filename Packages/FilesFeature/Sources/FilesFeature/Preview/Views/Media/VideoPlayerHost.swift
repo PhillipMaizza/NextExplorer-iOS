@@ -65,7 +65,9 @@ struct VideoPlayerHost: View {
 
     var body: some View {
         Group {
-            if shouldUseVLCFallback {
+            if shouldUseVLCFallback, !currentURL.isFileURL, isMac {
+                macLocalCopy
+            } else if shouldUseVLCFallback {
                 VLCPlayerView(
                     item: item,
                     url: currentURL,
@@ -95,6 +97,33 @@ struct VideoPlayerHost: View {
         // A new identity when the URL switches, so the player view reinitialises against the new
         // source (its `AVPlayer` is built once in `init`).
         .id(currentURL)
+    }
+
+    private var isMac: Bool {
+        #if os(macOS)
+            true
+        #else
+            false
+        #endif
+    }
+
+    @ViewBuilder
+    private var macLocalCopy: some View {
+        #if os(macOS)
+            MediaPreviewChrome(
+                item: item,
+                serverURL: serverURL,
+                isEmbedded: isEmbedded,
+                hasOpenWithPage: MacVLCLocalCopy.isTooLarge(item),
+                onDismiss: onDismiss,
+                onShare: onShare,
+                onRename: onRename,
+                onDownload: onDownload,
+                onDelete: onDelete
+            ) {
+                MacVLCLocalCopy(item: item, serverURL: serverURL) { currentURL = $0 }
+            }
+        #endif
     }
 
     private func handlePlaybackFailure() {

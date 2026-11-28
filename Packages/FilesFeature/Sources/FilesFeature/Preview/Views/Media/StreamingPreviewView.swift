@@ -119,24 +119,18 @@ struct StreamingPreviewView: View {
             }
     }
 
-    @ViewBuilder
     private var chrome: some View {
-        if isEmbedded {
+        MediaPreviewChrome(
+            item: item,
+            serverURL: serverURL,
+            isEmbedded: isEmbedded,
+            onDismiss: onDismiss,
+            onShare: onShare,
+            onRename: onRename,
+            onDownload: onDownload,
+            onDelete: onDelete
+        ) {
             playerStack
-        } else {
-            NavigationStack {
-                playerStack
-                    .previewChrome(
-                        title: item.name,
-                        systemShare: .remote(item, serverURL: serverURL),
-                        onShareLink: onShare,
-                        onRename: onRename,
-                        onDownload: onDownload,
-                        onDelete: onDelete,
-                        file: item,
-                        onClose: onDismiss
-                    )
-            }
         }
     }
 
