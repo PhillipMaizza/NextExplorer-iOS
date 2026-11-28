@@ -37,7 +37,7 @@ struct AccessRulesView: View {
                         store.send(.addRuleTapped, animation: DSMotion.listDiff)
                     }
 
-                    if let error = store.errorMessage ?? store.phase.errorMessage {
+                    if let error = store.errorMessage ?? store.pathError ?? store.phase.errorMessage {
                         DSErrorCard(error)
                     }
 

@@ -224,7 +224,7 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
             removeVolume: { _ in }
         )
 
-        await store.send(.addVolumeTapped) { $0.volumeSheet = .init(userID: "2") }
+        await store.send(.addVolumeTapped) { $0.volumeSheet = .init(userID: "2", otherVolumes: [projects]) }
         await store.send(.volumePathSelected("/srv/media")) {
             $0.volumeSheet?.selectedPath = "/srv/media"
             $0.volumeSheet?.label = "media"
@@ -307,5 +307,27 @@ struct UserManagementVolumeTests: UserManagementTestSupport {
             $0.toast = L10n.UserManagement.toastVolumeRemoved
         }
         #expect(calls.value == [.removeVolume(userID: "2", volumeID: TestETag.first)])
+    }
+
+    @Test(arguments: [("Share", false), (" VOLUMES ", false), ("personal", false), ("Shared", true), ("Media", true)])
+    func aLabelTheServerKeepsForItselfCannotBeAssigned(label: String, isAccepted: Bool) {
+        var sheet = UserManagementFeature.VolumeSheetState(userID: "2")
+        sheet.label = label
+        sheet.selectedPath = "/mnt/media"
+        #expect(sheet.isSubmitEnabled == isAccepted)
+        #expect((sheet.labelError == nil) == isAccepted)
+    }
+
+    @Test
+    func aVolumeCannotRepeatAnotherVolumesNameOrFolder() {
+        var sheet = UserManagementFeature.VolumeSheetState(userID: "2", otherVolumes: [projects])
+        sheet.label = " Projects "
+        sheet.selectedPath = "/srv/projects/"
+        #expect(sheet.labelError == L10n.UserDetail.volumeErrorLabelTaken)
+        #expect(sheet.pathError == L10n.UserDetail.volumeErrorPathTaken)
+        #expect(!sheet.isSubmitEnabled)
+        sheet.label = "projects"
+        sheet.selectedPath = "/srv/media"
+        #expect(sheet.isSubmitEnabled)
     }
 }

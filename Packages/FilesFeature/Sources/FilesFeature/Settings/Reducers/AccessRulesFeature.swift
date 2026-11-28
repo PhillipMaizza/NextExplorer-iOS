@@ -3,6 +3,7 @@ import CoreModels
 import FilesClient
 import FolderPickerFeature
 import Foundation
+import Localization
 
 /// An admin editing the server's path scoped access rules via `PATCH /api/settings`. Mirrors
 /// the web client's `SettingsAccessControl.vue`. The rule array is replaced wholesale on
@@ -32,7 +33,11 @@ public struct AccessRulesFeature {
         }
 
         var isSaveEnabled: Bool {
-            isDirty && !isSaving
+            isDirty && !isSaving && pathError == nil
+        }
+
+        var pathError: String? {
+            drafts.first { !$0.isBlank && !$0.isPathAccepted }.map { L10n.AccessRules.errorPath($0.path) }
         }
     }
 
@@ -133,13 +138,7 @@ public struct AccessRulesFeature {
                 state.isSaving = true
                 state.errorMessage = nil
                 let serverURL = state.serverURL
-                let rules = state.drafts
-                    .map { rule -> AccessRule in
-                        var trimmed = rule
-                        trimmed.path = rule.path.trimmingCharacters(in: .whitespacesAndNewlines)
-                        return trimmed
-                    }
-                    .filter { !$0.path.isEmpty }
+                let rules = state.drafts.elements.filter { !$0.isBlank }
                 let filesClient = filesClient
                 return .run { send in
                     try await send(.saveResponse(apiResult {

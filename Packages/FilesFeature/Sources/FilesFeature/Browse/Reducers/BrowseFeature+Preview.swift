@@ -140,7 +140,6 @@ extension BrowseFeature.State {
         #endif
     }
 
-    /// Whether the cover has what it needs to present: the gallery opens at once, but the file
     func canExtractOnServer(_ item: FileItem) -> Bool {
         archiveExtensions.contains(item.kind.lowercased())
     }
@@ -149,6 +148,11 @@ extension BrowseFeature.State {
         canExtractOnServer(item) || item.isZip
     }
 
+    func isWritable(_ item: FileItem) -> Bool {
+        access?.canWrite == true && item.readOnly == nil
+    }
+
+    /// Whether the cover has what it needs to present: the gallery opens at once, but the file
     /// tapped as a document or text waits for its first fetch so the cover zooms in on content.
     var isPreviewContentReady: Bool {
         guard let item = previewItem else { return false }

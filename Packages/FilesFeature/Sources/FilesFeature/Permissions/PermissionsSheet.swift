@@ -190,6 +190,9 @@ struct PermissionsSheet: View {
                 .autocorrectionDisabled()
             }
 
+            if let error = store.ownershipError {
+                Text(error).type(.body3(.regular), style: .error)
+            }
             Text(L10n.Permissions.ownershipNote).type(.body3(.regular), style: .tertiary)
         }
     }

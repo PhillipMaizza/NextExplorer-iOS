@@ -2,7 +2,7 @@ import Foundation
 
 public enum FileNameRule {
     public enum Problem: Equatable, Sendable {
-        /// `.` or `..`.
+        /// `.`, `..`, the trash zone's `.nextexplorer`, or a name holding a NUL.
         case reserved
         /// A `/` or `\`.
         case separators
@@ -12,7 +12,7 @@ public enum FileNameRule {
     /// purpose: callers show that by disabling their confirm button, not with an error.
     public static func problem(forTrimmed name: String) -> Problem? {
         guard !name.isEmpty else { return nil }
-        if name == "." || name == ".." {
+        if reservedNames.contains(name) || name.contains("\0") {
             return .reserved
         }
         if name.contains("/") || name.contains("\\") {
@@ -20,6 +20,8 @@ public enum FileNameRule {
         }
         return nil
     }
+
+    private static let reservedNames: Set<String> = [".", "..", ".nextexplorer"]
 
     public static func isAcceptable(trimmed name: String) -> Bool {
         !name.isEmpty && problem(forTrimmed: name) == nil

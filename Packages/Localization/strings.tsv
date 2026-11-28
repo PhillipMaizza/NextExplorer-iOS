@@ -647,6 +647,7 @@ versionedFiles.pageRange	%1$lld to %2$lld of %3$lld
 accessRules.navigationTitle	Folder Access Rules
 accessRules.subtitle	Override read and write access for specific paths.
 accessRules.addRule	Add Rule
+accessRules.errorPath	“%@” is not the path of a folder inside a volume.
 accessRules.empty	No access rules configured.
 accessRules.emptyHint	Add a rule to override access for a path.
 accessRules.pathLabel	Path
@@ -774,6 +775,7 @@ fileInfo.partialScan	Counted a partial scan: this folder is very large.
 
 # ---- permissions ----
 permissions.title	Permissions
+permissions.errorAccountName	Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”.
 permissions.titleFor	Permissions for “%@”
 permissions.sectionMode	Mode
 permissions.numericLabel	Numeric
@@ -857,6 +859,8 @@ userManagement.toastVolumeRemoved	Volume removed
 userManagement.errorEmailRequired	Email is required.
 userManagement.errorEmailInvalid	Enter a valid email address.
 userManagement.errorUsernameRequired	Username is required.
+userManagement.errorUsernameTaken	This username is already in use.
+userManagement.errorEmailTaken	This email is already in use.
 userManagement.errorPasswordTooShort	Use at least %lld characters.
 
 # ---- user detail ----
@@ -890,6 +894,9 @@ userDetail.dangerZoneRemoveUser	Remove User
 userDetail.volumesNone	No volumes assigned.
 userDetail.volumesNoneSubtitle	This user only sees the default shared space.
 userDetail.volumesAssign	Assign Volume
+userDetail.volumeErrorLabelTaken	This user already has a volume with this name.
+userDetail.volumeErrorPathTaken	This folder is already assigned to this user.
+userDetail.volumeErrorReservedLabel	The server keeps “%@” for itself. Choose another name.
 userDetail.volumesFootnote	Volumes give a user access to a directory outside the default shared space. Removing a volume never deletes files.
 userDetail.volumeEditAccessibility	Edit %@
 userDetail.volumeRemoveAccessibility	Remove %@

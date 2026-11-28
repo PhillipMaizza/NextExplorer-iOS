@@ -40,7 +40,10 @@
                     ) {
                         MacTextField(
                             L10n.FileInfo.renamePlaceholder,
-                            text: $model.renameDraft,
+                            text: Binding(
+                                get: { model.renameDraft },
+                                set: { model.renameDraft = FileVersion.cappedLabel($0) }
+                            ),
                             prompt: L10n.FileInfo.renamePlaceholder
                         )
                         .onSubmit {

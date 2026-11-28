@@ -48,13 +48,15 @@ struct ServerSettingsFuzzTests {
         }
     }
 
-    @Test("monkey test: a path is valid exactly when it is empty or absolute")
+    @Test("monkey test: a path is valid exactly when it is empty or absolute once trimmed, as the server reads it")
     func ffmpegPathFuzzing() {
         var rng = SplitMix64(seed: 0xFF3E_6001)
         for _ in 0 ..< 4000 {
             let ffmpeg = FuzzStrings.random(using: &rng, maxLength: 16)
             let ffprobe = FuzzStrings.random(using: &rng, maxLength: 16)
-            let expected = [ffmpeg, ffprobe].allSatisfy { $0.isEmpty || $0.hasPrefix("/") }
+            let expected = [ffmpeg, ffprobe].allSatisfy {
+                $0.isEmpty || $0.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("/")
+            }
             #expect(FFmpegSettings(ffmpegPath: ffmpeg, ffprobePath: ffprobe).isValid == expected)
         }
     }

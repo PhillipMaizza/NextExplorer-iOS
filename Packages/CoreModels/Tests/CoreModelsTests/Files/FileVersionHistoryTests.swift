@@ -61,4 +61,15 @@ struct FileVersionHistoryTests {
         #expect(!none.hasVersionActions)
         #expect(removeOnly.hasVersionActions)
     }
+
+    @Test("a version name is capped at the server's 200 UTF-16 units, never inside a character")
+    func aVersionNameIsCappedLikeTheServer() {
+        let max = FileVersion.maxLabelLength
+        #expect(FileVersion.cappedLabel(String(repeating: "a", count: max + 5)).utf16.count == max)
+        #expect(FileVersion.cappedLabel(String(repeating: "a", count: max - 1) + "\u{1F511}") == String(
+            repeating: "a",
+            count: max - 1
+        ))
+        #expect(FileVersion.cappedLabel("v1/final") == "v1/final")
+    }
 }

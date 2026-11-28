@@ -47,6 +47,10 @@ public extension FilesClientError {
         default: nil
         }
     }
+
+    var isBadRequest: Bool {
+        statusCode == HTTPStatus.badRequest.rawValue
+    }
 }
 
 extension FilesClientError {

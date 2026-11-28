@@ -25,7 +25,7 @@ struct CredentialRulesTests {
         #expect(!CredentialRules.isEmailShaped(TestUser.jane))
         #expect(!CredentialRules.isEmailShaped("jane@"))
         #expect(!CredentialRules.isEmailShaped("@example.com"))
-        #expect(!CredentialRules.isEmailShaped("jane@example"))
+        #expect(CredentialRules.isEmailShaped("admin@localhost"))
         #expect(!CredentialRules.isEmailShaped("jane @example.com"))
         #expect(!CredentialRules.isEmailShaped("jane@@example.com"))
         #expect(!CredentialRules.isEmailShaped("jane@exa mple.com"))
@@ -42,10 +42,10 @@ struct CredentialRulesTests {
         #expect(CredentialRules.isPasswordLongEnough("a much longer passphrase"))
     }
 
-    @Test("edge case: counts characters, not bytes")
-    func countsCharacters() {
-        // Six emoji = 6 characters even though each is multiple bytes.
-        #expect(CredentialRules.isPasswordLongEnough("😀😀😀😀😀😀"))
-        #expect(!CredentialRules.isPasswordLongEnough("😀😀😀😀😀"))
+    @Test("edge case: counts UTF-16 units like the server's JavaScript length")
+    func countsUTF16Units() {
+        #expect(CredentialRules.isPasswordLongEnough("abcd\u{1F600}"))
+        #expect(CredentialRules.isPasswordLongEnough("\u{1F600}\u{1F600}\u{1F600}"))
+        #expect(!CredentialRules.isPasswordLongEnough("abcd\u{E9}"))
     }
 }

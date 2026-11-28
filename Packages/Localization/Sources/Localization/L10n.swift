@@ -11,6 +11,7 @@ public enum L10n {
         public static var addRule: String { tr("accessRules.addRule") }  // "Add Rule"
         public static var empty: String { tr("accessRules.empty") }  // "No access rules configured."
         public static var emptyHint: String { tr("accessRules.emptyHint") }  // "Add a rule to override access for a path."
+        public static func errorPath(_ a0: CVarArg) -> String { tr("accessRules.errorPath", a0) }
         public static var navigationTitle: String { tr("accessRules.navigationTitle") }  // "Folder Access Rules"
         public static var pathLabel: String { tr("accessRules.pathLabel") }  // "Path"
         public static var pathPlaceholder: String { tr("accessRules.pathPlaceholder") }  // "Documents/Reports"
@@ -825,6 +826,7 @@ public enum L10n {
         public static var applyOwnership: String { tr("permissions.applyOwnership") }  // "Apply Ownership"
         public static var applyPermissions: String { tr("permissions.applyPermissions") }  // "Apply Permissions"
         public static var applyToEnclosed: String { tr("permissions.applyToEnclosed") }  // "Apply to enclosed items"
+        public static var errorAccountName: String { tr("permissions.errorAccountName") }
         public static var fieldGroup: String { tr("permissions.fieldGroup") }  // "Group"
         public static var fieldOwner: String { tr("permissions.fieldOwner") }  // "Owner"
         public static var numericLabel: String { tr("permissions.numericLabel") }  // "Numeric"
@@ -1511,6 +1513,9 @@ public enum L10n {
         public static var twoFactorReset: String { tr("userDetail.twoFactorReset") }  // "Reset"
         public static var twoFactorTitle: String { tr("userDetail.twoFactorTitle") }  // "Two Factor Authentication"
         public static func volumeEditAccessibility(_ a0: CVarArg) -> String { tr("userDetail.volumeEditAccessibility", a0) }
+        public static var volumeErrorLabelTaken: String { tr("userDetail.volumeErrorLabelTaken") }  // "This user already has a volume with this name."
+        public static var volumeErrorPathTaken: String { tr("userDetail.volumeErrorPathTaken") }  // "This folder is already assigned to this user."
+        public static func volumeErrorReservedLabel(_ a0: CVarArg) -> String { tr("userDetail.volumeErrorReservedLabel", a0) }
         public static func volumeRemoveAccessibility(_ a0: CVarArg) -> String { tr("userDetail.volumeRemoveAccessibility", a0) }
         public static var volumeSheetAccessMode: String { tr("userDetail.volumeSheetAccessMode") }  // "Access Mode"
         public static var volumeSheetDirectory: String { tr("userDetail.volumeSheetDirectory") }  // "Directory"
@@ -1540,8 +1545,10 @@ public enum L10n {
         public static var emptyList: String { tr("userManagement.emptyList") }  // "No users yet."
         public static var errorEmailInvalid: String { tr("userManagement.errorEmailInvalid") }  // "Enter a valid email address."
         public static var errorEmailRequired: String { tr("userManagement.errorEmailRequired") }  // "Email is required."
+        public static var errorEmailTaken: String { tr("userManagement.errorEmailTaken") }  // "This email is already in use."
         public static func errorPasswordTooShort(_ a0: CVarArg) -> String { tr("userManagement.errorPasswordTooShort", a0) }
         public static var errorUsernameRequired: String { tr("userManagement.errorUsernameRequired") }  // "Username is required."
+        public static var errorUsernameTaken: String { tr("userManagement.errorUsernameTaken") }  // "This username is already in use."
         public static var navigationTitle: String { tr("userManagement.navigationTitle") }  // "User Management"
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("userManagement.noSearchMatches", a0) }
         public static var searchPrompt: String { tr("userManagement.searchPrompt") }  // "Search users"

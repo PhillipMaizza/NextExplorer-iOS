@@ -83,11 +83,17 @@ public struct UserManagementFeature {
         public var isAdmin = false
         public var isSubmitting = false
         public var errorMessage: String?
+        var takenUsernames: Set<String> = []
+        var passwordEmails: Set<String> = []
 
         /// Inline field errors, shown only once the user has typed something. An empty field
         /// is "not yet filled in", not "wrong".
         var emailError: String? {
-            email.trimmed.isEmpty || CredentialRules.isEmailShaped(email) ? nil : L10n.UserManagement.errorEmailInvalid
+            if email.trimmed.isEmpty {
+                return nil
+            }
+            guard CredentialRules.isEmailShaped(email) else { return L10n.UserManagement.errorEmailInvalid }
+            return passwordEmails.contains(CredentialRules.emailKey(email)) ? L10n.UserManagement.errorEmailTaken : nil
         }
 
         var passwordError: String? {
@@ -96,9 +102,17 @@ public struct UserManagementFeature {
                 : L10n.UserManagement.errorPasswordTooShort(CredentialRules.minimumPasswordLength)
         }
 
+        var usernameError: String? {
+            takenUsernames.contains(CredentialRules.usernameKey(username))
+                ? L10n.UserManagement.errorUsernameTaken
+                : nil
+        }
+
         var isSubmitEnabled: Bool {
             CredentialRules.isEmailShaped(email)
                 && CredentialRules.isPasswordLongEnough(password)
+                && emailError == nil
+                && usernameError == nil
                 && !isSubmitting
         }
     }
@@ -131,13 +145,28 @@ public struct UserManagementFeature {
         public var accessMode: ShareAccessMode = .readwrite
         public var isSubmitting = false
         public var errorMessage: String?
+        var otherVolumes: [UserVolume] = []
 
         var isEditing: Bool {
             editingVolumeID != nil
         }
 
         var isSubmitEnabled: Bool {
-            !label.trimmed.isEmpty && !selectedPath.trimmed.isEmpty && !isSubmitting
+            !label.trimmed.isEmpty && !selectedPath.trimmed.isEmpty && !isSubmitting && labelError == nil
+                && pathError == nil
+        }
+
+        var labelError: String? {
+            if ReservedVolumeLabel.contains(label) {
+                return L10n.UserDetail.volumeErrorReservedLabel(label.trimmed)
+            }
+            return otherVolumes.contains { $0.label == label.trimmed } ? L10n.UserDetail.volumeErrorLabelTaken : nil
+        }
+
+        var pathError: String? {
+            guard !isEditing, !selectedPath.trimmed.isEmpty else { return nil }
+            let path = URL(fileURLWithPath: selectedPath).standardizedFileURL.path
+            return otherVolumes.contains { $0.path == path } ? L10n.UserDetail.volumeErrorPathTaken : nil
         }
     }
 
@@ -256,13 +285,27 @@ public struct UserManagementFeature {
             if editEmail.trimmed.isEmpty {
                 return L10n.UserManagement.errorEmailRequired
             }
-            return CredentialRules.isEmailShaped(editEmail) ? nil : L10n.UserManagement.errorEmailInvalid
+            guard CredentialRules.isEmailShaped(editEmail) else { return L10n.UserManagement.errorEmailInvalid }
+            let key = CredentialRules.emailKey(editEmail)
+            return otherUsers.contains { $0.email.map(CredentialRules.emailKey) == key }
+                ? L10n.UserManagement.errorEmailTaken
+                : nil
         }
 
         /// The server stores a blank username as `null`, which can't decode back, so the form
         /// refuses to submit an empty one.
         public var profileUsernameError: String? {
-            editUsername.trimmed.isEmpty ? L10n.UserManagement.errorUsernameRequired : nil
+            if editUsername.trimmed.isEmpty {
+                return L10n.UserManagement.errorUsernameRequired
+            }
+            let key = CredentialRules.usernameKey(editUsername)
+            return otherUsers.contains { CredentialRules.usernameKey($0.username) == key }
+                ? L10n.UserManagement.errorUsernameTaken
+                : nil
+        }
+
+        private var otherUsers: [User] {
+            users.filter { $0.id != detailUserID }
         }
 
         public var isProfileSaveEnabled: Bool {
@@ -608,7 +651,12 @@ public struct UserManagementFeature {
                 return .none
 
             case .createUserTapped:
-                state.createSheet = CreateUserState()
+                state.createSheet = CreateUserState(
+                    takenUsernames: Set(state.users.map { CredentialRules.usernameKey($0.username) }
+                        .filter { !$0.isEmpty }),
+                    passwordEmails: Set(state.users.filter(\.hasLocalPassword)
+                        .compactMap { $0.email.map(CredentialRules.emailKey) })
+                )
                 return .none
 
             case .createSheetDismissed:
@@ -713,7 +761,7 @@ public struct UserManagementFeature {
 
             case .addVolumeTapped:
                 guard let id = state.detailUserID else { return .none }
-                state.volumeSheet = VolumeSheetState(userID: id)
+                state.volumeSheet = VolumeSheetState(userID: id, otherVolumes: Array(state.volumes))
                 return .none
 
             case let .editVolumeTapped(volume):
@@ -722,7 +770,8 @@ public struct UserManagementFeature {
                     editingVolumeID: volume.id,
                     label: volume.label,
                     selectedPath: volume.path,
-                    accessMode: volume.accessMode
+                    accessMode: volume.accessMode,
+                    otherVolumes: state.volumes.filter { $0.id != volume.id }
                 )
                 return .none
 

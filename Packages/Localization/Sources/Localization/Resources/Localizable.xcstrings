@@ -926,6 +926,191 @@
         }
       }
     },
+    "accessRules.errorPath": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is not the path of a folder inside a volume."
+          }
+        }
+      }
+    },
     "accessRules.navigationTitle": {
       "extractionState": "manual",
       "localizations": {
@@ -142414,6 +142599,191 @@
         }
       }
     },
+    "permissions.errorAccountName": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use only letters, numbers, “.”, “-” and “_”, starting with a letter, a number or “_”."
+          }
+        }
+      }
+    },
     "permissions.fieldGroup": {
       "extractionState": "manual",
       "localizations": {
@@ -272202,6 +272572,561 @@
         }
       }
     },
+    "userDetail.volumeErrorLabelTaken": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This user already has a volume with this name."
+          }
+        }
+      }
+    },
+    "userDetail.volumeErrorPathTaken": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This folder is already assigned to this user."
+          }
+        }
+      }
+    },
+    "userDetail.volumeErrorReservedLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server keeps “%@” for itself. Choose another name."
+          }
+        }
+      }
+    },
     "userDetail.volumeRemoveAccessibility": {
       "extractionState": "manual",
       "localizations": {
@@ -277197,6 +278122,191 @@
         }
       }
     },
+    "userManagement.errorEmailTaken": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This email is already in use."
+          }
+        }
+      }
+    },
     "userManagement.errorPasswordTooShort": {
       "extractionState": "manual",
       "localizations": {
@@ -277563,6 +278673,191 @@
           "stringUnit": {
             "state": "translated",
             "value": "使用者名稱為必填項。"
+          }
+        }
+      }
+    },
+    "userManagement.errorUsernameTaken": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "cs": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "el": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "he": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "hu": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "id": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This username is already in use."
           }
         }
       }

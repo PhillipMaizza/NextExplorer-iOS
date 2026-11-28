@@ -37,6 +37,7 @@
                         prompt: L10n.UserManagement.createUsernamePlaceholder
                     )
                     .autocorrectionDisabled()
+                    MacFieldError(message: sheet?.usernameError)
                 }
                 MacFormSheetRow(L10n.Common.password) {
                     MacSecureField(

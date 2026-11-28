@@ -63,6 +63,14 @@ struct SharePermissionsTests {
         #expect(ShareAccessChoice.options(isDirectory: false, current: .custom).contains(.custom))
     }
 
+    @Test("A path that cannot be written offers only read only choices, as the server refuses a read-write link")
+    func readOnlyPathOffersNoEditing() {
+        for isDirectory in [true, false] {
+            let options = ShareAccessChoice.options(isDirectory: isDirectory, current: .canDownload, isWritable: false)
+            #expect(options == [.viewOnly, .canDownload])
+        }
+    }
+
     @Test("Versions are on by default for specific users and off for anyone with the link")
     func versionsDefaults() {
         #expect(SharePermissions.defaults(for: .users).showsVersions)

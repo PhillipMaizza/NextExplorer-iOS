@@ -32,7 +32,7 @@
                 confirmTitle: isEditing ? L10n.UserDetail.volumeSheetSaveEdit : L10n.UserDetail.volumeSheetSaveNew,
                 isConfirmEnabled: sheet?.isSubmitEnabled ?? false,
                 isWorking: sheet?.isSubmitting ?? false,
-                errorMessage: sheet?.errorMessage,
+                errorMessage: sheet?.errorMessage ?? sheet?.labelError ?? sheet?.pathError,
                 width: Metrics.width,
                 onCancel: { store.send(.volumeSheetDismissed) },
                 onConfirm: { store.send(.volumeSubmitTapped) }

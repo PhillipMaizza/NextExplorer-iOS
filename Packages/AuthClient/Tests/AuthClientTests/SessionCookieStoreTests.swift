@@ -418,6 +418,29 @@ struct SessionCookieStoreTests {
         store.install(stored)
         #expect(cookieStorage.cookies(for: serverURL)?.isEmpty ?? true)
     }
+
+    @Test("Locking another account on the active account's server keeps the active cookie")
+    func lockKeepsTheActiveCookieOnTheSameServer() throws {
+        let store = makeStore()
+        let serverURL = makeUniqueServerURL()
+        var other = try credentials(
+            serverURL: serverURL,
+            value: Constants.firstCookieValue,
+            username: TestUser.jane
+        )
+        other.requireSignIn = RequireSignIn()
+        try store.persist(other)
+        try store.persist(credentials(
+            serverURL: serverURL,
+            value: Constants.secondCookieValue,
+            username: TestAccount.username
+        ))
+
+        let unlocked = try store.lock { $0.requireSignIn != nil }
+
+        #expect(unlocked == [other])
+        #expect(cookieStorage.cookies(for: serverURL)?.map(\.value) == [Constants.secondCookieValue])
+    }
 }
 
 private enum Constants {

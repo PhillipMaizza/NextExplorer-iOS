@@ -31,6 +31,22 @@ struct FileItemDecodingTests {
         #expect(item.supportsThumbnail == true)
     }
 
+    @Test("an item an access rule keeps read only says so, and keeps it through the cache")
+    func readOnlyRoundTrips() throws {
+        let plain = try CoreModelsFixture.fileItemMissingSupportsThumbnail.decode(FileItem.self)
+        #expect(plain.readOnly == nil)
+        let locked = FileItem(
+            name: TestFolder.docs,
+            path: "",
+            dateModified: .distantPast,
+            size: 0,
+            kind: FileItem.directoryKind,
+            readOnly: "access"
+        )
+        let decoded = try JSONDecoder().decode(FileItem.self, from: JSONEncoder().encode(locked))
+        #expect(decoded.readOnly == "access")
+    }
+
     @Test("edge case: missing supportsThumbnail defaults to false")
     func missingSupportsThumbnailDefaultsFalse() throws {
         let item = try CoreModelsFixture.fileItemMissingSupportsThumbnail.decode(FileItem.self)

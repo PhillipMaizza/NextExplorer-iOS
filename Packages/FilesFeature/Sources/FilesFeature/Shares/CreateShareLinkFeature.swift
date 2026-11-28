@@ -27,6 +27,8 @@ public struct CreateShareLinkFeature {
         public var itemName: String
         public var itemPath: String
         public var isDirectory: Bool
+        public var isWritable: Bool
+        var shouldCheckWritability: Bool
 
         public var label: String
         public var accessChoice: ShareAccessChoice = .canDownload
@@ -57,11 +59,21 @@ public struct CreateShareLinkFeature {
             accessChoice.accessMode
         }
 
-        public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date) {
+        public init(
+            serverURL: URL,
+            itemName: String,
+            itemPath: String,
+            isDirectory: Bool,
+            isWritable: Bool = true,
+            shouldCheckWritability: Bool = false,
+            now: Date
+        ) {
             self.serverURL = serverURL
             self.itemName = itemName
             self.itemPath = itemPath
             self.isDirectory = isDirectory
+            self.isWritable = isWritable
+            self.shouldCheckWritability = shouldCheckWritability
             label = itemName
             expiresAt = now.addingTimeInterval(defaultExpiryDays * 24 * 60 * 60)
         }
@@ -104,6 +116,7 @@ public struct CreateShareLinkFeature {
     public enum Action: Equatable, Sendable {
         case onAppear
         case preferencesResponse(UserPreferences)
+        case writabilityResponse(Bool)
         case labelChanged(String)
         case accessChoiceChanged(ShareAccessChoice)
         case permissionsChanged(SharePermissions)
@@ -131,10 +144,29 @@ public struct CreateShareLinkFeature {
             case .onAppear:
                 let serverURL = state.serverURL
                 let filesClient = filesClient
+                let shouldCheckWritability = state.shouldCheckWritability
+                let folder = state.itemPath
+                let name = state.itemName
                 return .run { send in
-                    guard let preferences = try? await filesClient.fetchPreferences(serverURL) else { return }
-                    await send(.preferencesResponse(preferences))
+                    if let preferences = try? await filesClient.fetchPreferences(serverURL) {
+                        await send(.preferencesResponse(preferences))
+                    }
+                    guard shouldCheckWritability,
+                          let listing = try? await filesClient.browse(serverURL, folder) else { return }
+                    let item = listing.items.first { $0.name == name }
+                    await send(.writabilityResponse(listing.access.canWrite && item?.readOnly == nil))
                 }
+
+            case let .writabilityResponse(isWritable):
+                state.isWritable = isWritable
+                if !isWritable, state.accessChoice.accessMode == .readwrite {
+                    state.permissions = ShareAccessChoice.canDownload.applied(
+                        to: state.permissions,
+                        from: state.accessChoice
+                    )
+                    state.accessChoice = .canDownload
+                }
+                return .none
 
             case let .preferencesResponse(preferences):
                 // Match the web client: a user with a default expiration set gets expiry

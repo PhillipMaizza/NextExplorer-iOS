@@ -9,6 +9,11 @@ private enum Constants {
     static let verticalPadding: CGFloat = .space24
 }
 
+enum NameInputRule {
+    case fileName
+    case versionLabel
+}
+
 /// A one field name entry sheet shared by "Create Folder", "Create File" and "Rename": a `DSDynamicHeightSheet`
 /// with a single text field and a confirm button, sizing to its own content. The draft lives
 /// in this view's own `@State` rather than the store: a `TextField` bound through a TCA
@@ -25,6 +30,7 @@ struct NameInputSheet: View {
     let additionalRule: ((String) -> String?)?
     let hint: String?
     let shouldCapitalizeWords: Bool
+    let rule: NameInputRule
     let onConfirm: (String) -> Void
     let onCancel: () -> Void
 
@@ -42,6 +48,7 @@ struct NameInputSheet: View {
         additionalRule: ((String) -> String?)? = nil,
         hint: String? = nil,
         shouldCapitalizeWords: Bool = true,
+        rule: NameInputRule = .fileName,
         onConfirm: @escaping (String) -> Void,
         onCancel: @escaping () -> Void
     ) {
@@ -53,6 +60,7 @@ struct NameInputSheet: View {
         self.additionalRule = additionalRule
         self.hint = hint
         self.shouldCapitalizeWords = shouldCapitalizeWords
+        self.rule = rule
         self.onConfirm = onConfirm
         self.onCancel = onCancel
         isRenaming = !initialName.isEmpty
@@ -65,6 +73,7 @@ struct NameInputSheet: View {
 
     /// Inline reason the current name can't be used (a path separator, a reserved name), or `nil`.
     private var validationError: String? {
+        guard rule == .fileName else { return nil }
         if let error = FileNameValidation.errorMessage(forTrimmed: trimmedName) {
             return error
         }
@@ -75,7 +84,15 @@ struct NameInputSheet: View {
     }
 
     private var canSubmit: Bool {
-        FileNameValidation.isAcceptable(trimmed: trimmedName) && additionalRule?(trimmedName) == nil
+        guard rule == .fileName else { return true }
+        return FileNameValidation.isAcceptable(trimmed: trimmedName) && additionalRule?(trimmedName) == nil
+    }
+
+    private var nameBinding: Binding<String> {
+        Binding(
+            get: { name },
+            set: { name = rule == .versionLabel ? FileVersion.cappedLabel($0) : $0 }
+        )
     }
 
     var body: some View {
@@ -98,7 +115,7 @@ struct NameInputSheet: View {
                 onConfirm: submit
             ) {
                 MacFormSheetRow(L10n.Browse.renameNamePlaceholder) {
-                    MacTextField(placeholder, text: $name, prompt: placeholder, isInvalid: validationError != nil)
+                    MacTextField(placeholder, text: nameBinding, prompt: placeholder, isInvalid: validationError != nil)
                         .focused($isFieldFocused)
                         .autocorrectionDisabled()
                         .onSubmit(submit)
@@ -120,7 +137,7 @@ struct NameInputSheet: View {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(icon: icon, title: title, closeAccessibilityLabel: L10n.Common.close, onClose: onCancel)
                 VStack(alignment: .leading, spacing: .space8) {
-                    DSTextField(placeholder, text: $name, focused: $isFieldFocused)
+                    DSTextField(placeholder, text: nameBinding, focused: $isFieldFocused)
                         .textInputAutocapitalization(shouldCapitalizeWords ? .words : .never)
                         .autocorrectionDisabled()
                         .submitLabel(.done)

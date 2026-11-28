@@ -15,7 +15,7 @@
         @FocusState private var focusedRuleID: AccessRule.ID?
 
         private var errorMessage: String? {
-            store.errorMessage ?? store.phase.errorMessage
+            store.errorMessage ?? store.pathError ?? store.phase.errorMessage
         }
 
         private var showsEmptyGuide: Bool {

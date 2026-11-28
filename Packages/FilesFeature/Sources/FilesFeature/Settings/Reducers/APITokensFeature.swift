@@ -86,7 +86,7 @@ public struct APITokensFeature {
 
         public var isCreateEnabled: Bool {
             guard let form = createForm, !isWorking else { return false }
-            return APITokensFeature.isValid(name: form.name) && (!isPasswordRequired || !form.password.isEmpty)
+            return APITokensFeature.fitsLimit(name: form.name) && (!isPasswordRequired || !form.password.isEmpty)
         }
 
         public var isRenameEnabled: Bool {
@@ -128,10 +128,12 @@ public struct APITokensFeature {
 
     public init() {}
 
-    /// The server trims a name and cuts it at the limit, and refuses an empty one.
+    static func fitsLimit(name: String) -> Bool {
+        name.trimmingCharacters(in: .whitespacesAndNewlines).utf16.count <= APITokenLimits.maxNameLength
+    }
+
     static func isValid(name: String) -> Bool {
-        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        return !trimmed.isEmpty && trimmed.count <= APITokenLimits.maxNameLength
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && fitsLimit(name: name)
     }
 
     public var body: some ReducerOf<Self> {

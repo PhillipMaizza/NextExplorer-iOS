@@ -51,7 +51,8 @@
                     password: $store.password.sending(\.passwordChanged),
                     passwordPrompt: L10n.Common.password,
                     isExpiryOn: $store.isExpiryEnabled.sending(\.expiryEnabledChanged),
-                    expiresAt: $store.expiresAt.sending(\.expiresAtChanged)
+                    expiresAt: $store.expiresAt.sending(\.expiresAtChanged),
+                    isWritable: store.isWritable
                 )
             }
         }

@@ -220,6 +220,8 @@ struct BrowseActionSheets: ViewModifier {
                     itemName: item.name,
                     itemPath: item.path,
                     isDirectory: item.isDirectory,
+                    isWritable: store.state.isWritable(item),
+                    shouldCheckWritability: item.path != store.state.directoryPath,
                     now: date.now
                 )
             ) {

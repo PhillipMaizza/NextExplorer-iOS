@@ -162,6 +162,9 @@ struct SessionCookieStore: Sendable {
         for session in unlocked {
             deleteCookies(serverURL: session.serverBaseURL)
         }
+        if let active = stored.active {
+            install(active)
+        }
         return unlocked
     }
 

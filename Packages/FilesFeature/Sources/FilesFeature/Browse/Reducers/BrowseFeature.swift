@@ -71,6 +71,14 @@ public struct BrowseFeature {
         /// The size to show for each folder in this listing, by item id. Only folders the server has
         /// counted are here, and it is empty while the feature is off.
         public var folderSizes: [FileItem.ID: Int64] = [:]
+        public var excludedFolderSizeIDs: Set<FileItem.ID> = []
+        public var refusedFolderSizeRefreshIDs: Set<FileItem.ID> = []
+
+        public func offersFolderSizeRefresh(_ item: FileItem) -> Bool {
+            item.isDirectory && folderSizeMode != .off
+                && !excludedFolderSizeIDs.contains(item.id) && !refusedFolderSizeRefreshIDs.contains(item.id)
+        }
+
         /// Folders whose rescan was asked for and is still being read back.
         var refreshingFolderSizeIDs: Set<FileItem.ID> = []
         public var access: FileAccess?

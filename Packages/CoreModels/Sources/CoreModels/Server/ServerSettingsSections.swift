@@ -73,7 +73,9 @@ public struct FFmpegSettings: Equatable, Sendable, Codable {
 
     /// The server only accepts absolute paths; an empty field is allowed and clears the override.
     public var isValid: Bool {
-        [ffmpegPath, ffprobePath].allSatisfy { $0.isEmpty || $0.hasPrefix("/") }
+        [ffmpegPath, ffprobePath].allSatisfy {
+            $0.isEmpty || $0.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("/")
+        }
     }
 
     /// Encoded as `null` when empty, which is how the web page clears an override.

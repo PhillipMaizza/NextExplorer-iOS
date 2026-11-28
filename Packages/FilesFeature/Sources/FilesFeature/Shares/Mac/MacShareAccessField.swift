@@ -6,6 +6,7 @@
 
     struct MacShareAccessField: View {
         let isDirectory: Bool
+        var isWritable = true
         let choice: Binding<ShareAccessChoice>
         let permissions: Binding<SharePermissions>
 
@@ -13,7 +14,11 @@
             MacLabeledField(L10n.CreateShare.peopleCan) {
                 MacFormGroup {
                     ForEach(
-                        ShareAccessChoice.options(isDirectory: isDirectory, current: choice.wrappedValue),
+                        ShareAccessChoice.options(
+                            isDirectory: isDirectory,
+                            current: choice.wrappedValue,
+                            isWritable: isWritable
+                        ),
                         id: \.self
                     ) {
                         option in

@@ -3,6 +3,7 @@ import CoreModels
 import FilesClient
 import FolderPickerFeature
 import Foundation
+import Localization
 
 /// Drives the "Permissions" sheet (`PermissionsSheet`) for one file or folder: view the
 /// POSIX mode / owner / group from `GET /api/permissions/*`, then chmod and chown via
@@ -51,6 +52,15 @@ public struct PermissionsFeature {
 
         public var isDirty: Bool {
             (isModeDirty || isOwnershipDirty) && FilePermissions.grid(fromOctal: numericDraft) != nil
+                && ownershipError == nil
+        }
+
+        public var ownershipError: String? {
+            let isValid = [ownerDraft, groupDraft].allSatisfy { draft in
+                let name = draft.trimmingCharacters(in: .whitespacesAndNewlines)
+                return name.isEmpty || FilePermissions.isValidAccountName(name)
+            }
+            return isValid ? nil : L10n.Permissions.errorAccountName
         }
 
         public var isOwnershipDirty: Bool {

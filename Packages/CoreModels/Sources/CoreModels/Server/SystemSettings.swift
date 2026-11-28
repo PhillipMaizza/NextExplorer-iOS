@@ -59,6 +59,54 @@ public struct AccessRule: Equatable, Sendable, Codable, Identifiable {
         self.permission = permission
     }
 
+    public var isBlank: Bool {
+        path.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    public var isPathAccepted: Bool {
+        guard !isBlank, let normalized = Self.normalizedRelativePath(path) else { return false }
+        return !normalized.isEmpty
+    }
+
+    static func normalizedRelativePath(_ raw: String) -> String? {
+        guard !raw.isEmpty, raw != "/" else { return "" }
+        let slashed = raw.replacingOccurrences(of: "\\", with: "/")
+        let normalized = String(nodeNormalized(slashed).drop { $0 == "/" })
+        if normalized == "." {
+            return ""
+        }
+        if normalized == ".." || normalized.hasPrefix("../") {
+            return nil
+        }
+        return normalized
+    }
+
+    private static func nodeNormalized(_ path: String) -> String {
+        let isAbsolute = path.hasPrefix("/")
+        let hasTrailingSlash = path.hasSuffix("/")
+        var segments: [Substring] = []
+        for segment in path.split(separator: "/") {
+            switch segment {
+            case ".":
+                continue
+            case "..":
+                if let last = segments.last, last != ".." {
+                    segments.removeLast()
+                } else if !isAbsolute {
+                    segments.append(segment)
+                }
+            default:
+                segments.append(segment)
+            }
+        }
+        let joined = segments.joined(separator: "/")
+        if joined.isEmpty {
+            return isAbsolute ? "/" : (hasTrailingSlash ? "./" : ".")
+        }
+        let body = hasTrailingSlash ? joined + "/" : joined
+        return isAbsolute ? "/" + body : body
+    }
+
     private enum CodingKeys: String, CodingKey {
         case id, path
         case recursive

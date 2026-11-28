@@ -117,7 +117,7 @@ struct FileActionsMenu: View {
 
     @ViewBuilder
     private var editActions: some View {
-        if item.isDirectory, store.folderSizeMode != .off {
+        if store.state.offersFolderSizeRefresh(item) {
             Button {
                 store.send(.folderSizeRefreshTapped(item.id))
             } label: {

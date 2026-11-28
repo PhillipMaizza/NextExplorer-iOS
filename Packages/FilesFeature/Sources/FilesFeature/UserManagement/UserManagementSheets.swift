@@ -39,7 +39,11 @@ struct CreateUserSheet: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                     }
-                    LabeledField(L10n.UserManagement.createUsernameField, uppercased: false) {
+                    LabeledField(
+                        L10n.UserManagement.createUsernameField,
+                        error: sheet.usernameError,
+                        uppercased: false
+                    ) {
                         DSTextField(
                             L10n.UserManagement.createUsernamePlaceholder,
                             text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged)

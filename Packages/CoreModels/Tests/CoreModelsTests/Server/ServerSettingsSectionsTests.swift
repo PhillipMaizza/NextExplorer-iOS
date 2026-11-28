@@ -79,6 +79,8 @@ struct ServerSettingsSectionsTests {
         ("ffmpeg", "", false),
         ("", "bin/ffprobe", false),
         ("/a", "relative", false),
+        ("  /usr/bin/ffmpeg\n", "", true),
+        ("   ", "", false),
     ])
     func onlyAbsoluteOrEmptyPathsAreValid(ffmpeg: String, ffprobe: String, isValid: Bool) {
         #expect(FFmpegSettings(ffmpegPath: ffmpeg, ffprobePath: ffprobe).isValid == isValid)

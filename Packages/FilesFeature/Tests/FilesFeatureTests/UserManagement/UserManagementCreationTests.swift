@@ -22,7 +22,9 @@ struct UserManagementCreationTests: UserManagementTestSupport {
         let listed = makeUser(id: "9")
         let store = makeStore(loadedState([admin]), users: { [admin, listed] }, createUser: { created })
 
-        await store.send(.createUserTapped) { $0.createSheet = .init() }
+        await store.send(.createUserTapped) {
+            $0.createSheet = .init(takenUsernames: ["user1"], passwordEmails: ["user1@example.com"])
+        }
         await store.send(.createEmailChanged("new@example.com")) { $0.createSheet?.email = "new@example.com" }
         await store.send(.createUsernameChanged("  newbie  ")) { $0.createSheet?.username = "  newbie  " }
         await store.send(.createPasswordChanged("secret1")) { $0.createSheet?.password = "secret1" }
@@ -260,5 +262,35 @@ struct UserManagementCreationTests: UserManagementTestSupport {
 
         await store.send(.passwordSubmitTapped)
         #expect(calls.value.isEmpty)
+    }
+
+    @Test
+    func aNewAccountCannotTakeAUsernameOrAPasswordAccountsEmail() {
+        var sheet = UserManagementFeature.CreateUserState(
+            takenUsernames: ["user1"],
+            passwordEmails: ["user1@example.com"]
+        )
+        sheet.password = "secret1"
+        sheet.email = " USER1@example.com "
+        sheet.username = "User1"
+        #expect(sheet.emailError == L10n.UserManagement.errorEmailTaken)
+        #expect(sheet.usernameError == L10n.UserManagement.errorUsernameTaken)
+        #expect(!sheet.isSubmitEnabled)
+        sheet.email = "sso@example.com"
+        sheet.username = "user\u{C9}"
+        #expect(sheet.isSubmitEnabled)
+    }
+
+    @Test
+    func aProfileEditCannotTakeAnotherUsersUsernameOrEmail() {
+        var state = loadedState([makeUser(id: "1"), makeUser(id: "2")], detail: "2")
+        state.editUsername = "USER1"
+        state.editEmail = "user1@example.com"
+        #expect(state.profileUsernameError == L10n.UserManagement.errorUsernameTaken)
+        #expect(state.profileEmailError == L10n.UserManagement.errorEmailTaken)
+        state.editUsername = "user2"
+        state.editEmail = "user2@example.com"
+        #expect(state.profileUsernameError == nil)
+        #expect(state.profileEmailError == nil)
     }
 }

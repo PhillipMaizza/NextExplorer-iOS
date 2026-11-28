@@ -27,6 +27,8 @@ extension BrowseFeature {
         if mode == .off {
             state.folderSizes = [:]
             state.refreshingFolderSizeIDs = []
+            state.excludedFolderSizeIDs = []
+            state.refusedFolderSizeRefreshIDs = []
         }
         let jsonCacheStore = jsonCacheStore
         let serverURL = state.serverURL
@@ -67,6 +69,11 @@ extension BrowseFeature {
         case let .folderSizesResponse(attempt, sizes):
             for (id, entry) in sizes {
                 state.folderSizes[id] = entry.shownBytes
+                if entry.isExcluded {
+                    state.excludedFolderSizeIDs.insert(id)
+                } else {
+                    state.excludedFolderSizeIDs.remove(id)
+                }
             }
             let isSettling = sizes.values.contains(where: \.isDirty) || !state.refreshingFolderSizeIDs.isEmpty
             guard isSettling, attempt < Self.folderSizeRetryDelays.count else {
@@ -103,6 +110,9 @@ extension BrowseFeature {
 
         case let .folderSizeRefreshResponse(id, .failure(error)):
             state.refreshingFolderSizeIDs.remove(id)
+            if error.isBadRequest {
+                state.refusedFolderSizeRefreshIDs.insert(id)
+            }
             state.fileActionErrorMessage = error.userMessage
             return .none
 

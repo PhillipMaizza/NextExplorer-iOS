@@ -97,6 +97,20 @@ struct BrowseFolderSizeTests {
         }
     }
 
+    @Test("A folder the server leaves out of sizing is remembered, so its rescan is not offered")
+    func excludedFolderIsRemembered() async {
+        let store = BrowseFixtures.store(loadedState()) {
+            $0.filesClient.folderSizes = { _, paths in
+                Dictionary(uniqueKeysWithValues: paths.map { ($0, FolderSize(isExcluded: true)) })
+            }
+        }
+
+        await store.send(.folderSizesDue(attempt: 0))
+        await store.receive(\.folderSizesResponse) {
+            $0.excludedFolderSizeIDs = [docs.id]
+        }
+    }
+
     @Test("A refused rescan does not stop the read of another folder's rescan")
     func refusedRescanKeepsTheOthersPolling() async {
         let other = BrowseFixtures.folder("Other")
@@ -198,7 +212,7 @@ struct BrowseFolderSizeTests {
         #expect(refreshed.value == [docs.id])
     }
 
-    @Test("A refused rescan is reported and clears the waiting")
+    @Test("A refused rescan is reported, clears the waiting and is not offered again for that folder")
     func refusedRefreshIsReported() async {
         let store = BrowseFixtures.store(loadedState()) {
             $0.filesClient.refreshFolderSize = { _, _ in
@@ -211,8 +225,10 @@ struct BrowseFolderSizeTests {
         }
         await store.receive(\.folderSizeRefreshResponse) {
             $0.refreshingFolderSizeIDs = []
+            $0.refusedFolderSizeRefreshIDs = [docs.id]
             $0.fileActionErrorMessage = "Excluded."
         }
+        #expect(!store.state.offersFolderSizeRefresh(docs))
     }
 
     @Test("A rescan of a file, or with the feature off, is ignored")

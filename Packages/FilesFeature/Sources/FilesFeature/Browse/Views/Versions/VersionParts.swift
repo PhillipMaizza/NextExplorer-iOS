@@ -135,6 +135,7 @@
                         confirmTitle: L10n.Common.save,
                         initialName: model.renameDraft,
                         isBusy: false,
+                        rule: .versionLabel,
                         onConfirm: { name in
                             model.renameDraft = name
                             model.renameConfirmed(version)

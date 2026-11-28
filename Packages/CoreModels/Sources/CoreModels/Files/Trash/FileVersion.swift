@@ -65,6 +65,17 @@ public struct FileVersionText: Decodable, Equatable, Sendable {
 }
 
 public struct FileVersion: Decodable, Equatable, Identifiable, Sendable {
+    public static let maxLabelLength = 200
+
+    public static func cappedLabel(_ text: String) -> String {
+        var capped = ""
+        for character in text {
+            guard capped.utf16.count + character.utf16.count <= maxLabelLength else { break }
+            capped.append(character)
+        }
+        return capped
+    }
+
     public let id: String
     public let size: Int64
     /// When the file had this content.

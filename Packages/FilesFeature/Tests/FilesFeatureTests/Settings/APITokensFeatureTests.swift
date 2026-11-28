@@ -184,13 +184,10 @@ struct APITokensFeatureTests {
     }
 
     @Test
-    func createNeedsANameAndThePassword() async {
+    func createNeedsThePasswordButNoName() async {
         let store = makeStore()
 
         await store.send(.newTokenTapped) { $0.createForm = APITokensFeature.CreateForm() }
-        #expect(!store.state.isCreateEnabled)
-
-        await store.send(.nameChanged("ci")) { $0.createForm?.name = "ci" }
         #expect(!store.state.isCreateEnabled)
 
         await store.send(.passwordChanged(TestAccount.password)) { $0.createForm?.password = TestAccount.password }
@@ -217,6 +214,8 @@ struct APITokensFeatureTests {
         NameCase(name: "  ci  ", isValid: true),
         NameCase(name: String(repeating: "a", count: 60), isValid: true),
         NameCase(name: String(repeating: "a", count: 61), isValid: false),
+        NameCase(name: String(repeating: "a", count: 58) + "\u{1F511}", isValid: true),
+        NameCase(name: String(repeating: "a", count: 59) + "\u{1F511}", isValid: false),
     ])
     func aBlankOrTooLongNameIsRefused(_ testCase: NameCase) {
         #expect(APITokensFeature.isValid(name: testCase.name) == testCase.isValid)
@@ -328,7 +327,11 @@ struct APITokensFeatureTests {
     func submittingAnInvalidFormSendsNothing() async {
         let store = makeStore()
 
-        await openedForm(store, name: TestValue.blank, password: TestAccount.password)
+        await openedForm(
+            store,
+            name: String(repeating: "a", count: APITokenLimits.maxNameLength + 1),
+            password: TestAccount.password
+        )
         await store.send(.createSubmitted)
 
         #expect(createCalls.value.isEmpty)

@@ -97,6 +97,15 @@
         }
 
         private var ownership: some View {
+            VStack(alignment: .leading, spacing: .space4) {
+                ownershipFields
+                if let error = store.ownershipError {
+                    Text(error).type(.body3(.regular), style: .error)
+                }
+            }
+        }
+
+        private var ownershipFields: some View {
             HStack(spacing: .space12) {
                 MacLabeledField(L10n.Permissions.fieldOwner) {
                     MacTextField(L10n.Permissions.fieldOwner, text: $store.ownerDraft.sending(\.ownerDraftChanged))

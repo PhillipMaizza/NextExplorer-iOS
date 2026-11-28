@@ -3,6 +3,7 @@ import CoreModels
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import Localization
 import Testing
 import TestUtils
 
@@ -138,7 +139,7 @@ struct AccessRulesFeatureTests {
     }
 
     @Test
-    func saveTrimsEmptyPathRowsAndSendsTheRest() async {
+    func saveDropsBlankRowsAndSendsTheRestAsWrittenLikeTheServerKeepsThem() async {
         let sent = LockIsolated<[[AccessRule]]>([])
         let echoed = [rule("srv-a", "Reports")]
         let store = makeStore(
@@ -159,7 +160,14 @@ struct AccessRulesFeatureTests {
             $0.drafts = IdentifiedArray(uniqueElements: echoed)
         }
         await store.receive(.delegate(.saved))
-        #expect(sent.value == [[AccessRule(id: "a", path: "Reports", isRecursive: true, permission: .readOnly)]])
+        #expect(sent.value == [[AccessRule(id: "a", path: "  Reports  ", isRecursive: true, permission: .readOnly)]])
+    }
+
+    @Test(arguments: ["/", "..", "../x", "a/../.."])
+    func aPathTheServerRefusesTurnsSaveOffAndSaysWhy(path: String) {
+        let state = loadedState(drafts: [rule("a", path)])
+        #expect(!state.isSaveEnabled)
+        #expect(state.pathError == L10n.AccessRules.errorPath(path))
     }
 
     @Test

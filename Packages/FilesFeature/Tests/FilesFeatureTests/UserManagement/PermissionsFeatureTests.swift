@@ -170,6 +170,22 @@ struct PermissionsFeatureTests {
         #expect(!store.state.isDirty)
     }
 
+    @Test(arguments: [
+        ("www-data", true),
+        ("_svc.1", true),
+        ("John Doe", false),
+        ("-root", false),
+        (".hidden", false),
+        ("caf\u{E9}", false)
+    ])
+    func anOwnerTheServerRefusesTurnsSaveOff(name: String, isAccepted: Bool) async {
+        let store = makeStore(loadedState(permissions()))
+
+        await store.send(.ownerDraftChanged(name)) { $0.ownerDraft = name }
+        #expect(store.state.isDirty == isAccepted)
+        #expect((store.state.ownershipError == nil) == isAccepted)
+    }
+
     private func stateShowingAnError() -> PermissionsFeature.State {
         var state = loadedState(permissions())
         state.actionError = TestValue.outdated

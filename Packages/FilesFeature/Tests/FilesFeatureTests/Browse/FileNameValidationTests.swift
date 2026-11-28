@@ -12,11 +12,12 @@ struct FileNameValidationTests {
         #expect(!FileNameValidation.isAcceptable(trimmed: "a/b"))
     }
 
-    @Test("edge case: the reserved . and .. names are rejected")
+    @Test("edge case: the names the server reserves are rejected: ., .., the trash zone and a NUL")
     func reservedRejected() {
-        #expect(FileNameValidation.errorMessage(forTrimmed: ".") == L10n.Browse.nameErrorReserved)
-        #expect(FileNameValidation.errorMessage(forTrimmed: "..") == L10n.Browse.nameErrorReserved)
-        #expect(!FileNameValidation.isAcceptable(trimmed: ".."))
+        for name in [".", "..", ".nextexplorer", "a\u{0}b"] {
+            #expect(FileNameValidation.errorMessage(forTrimmed: name) == L10n.Browse.nameErrorReserved, "\(name)")
+            #expect(!FileNameValidation.isAcceptable(trimmed: name))
+        }
     }
 
     @Test("empty is not an error message (the disabled button expresses that), but is not acceptable")

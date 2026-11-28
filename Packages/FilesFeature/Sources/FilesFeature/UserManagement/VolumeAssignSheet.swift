@@ -38,7 +38,7 @@ struct VolumeAssignSheet: View {
                 )
 
                 if let sheet {
-                    if let error = sheet.errorMessage {
+                    if let error = sheet.errorMessage ?? sheet.labelError ?? sheet.pathError {
                         DSErrorCard(error)
                     }
 

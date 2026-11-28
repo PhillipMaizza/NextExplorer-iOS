@@ -123,6 +123,7 @@ struct CreateShareLinkSheet: View {
                 section(L10n.CreateShare.peopleCan) {
                     ShareAccessOptions(
                         isDirectory: store.isDirectory,
+                        isWritable: store.isWritable,
                         choice: $store.accessChoice.sending(\.accessChoiceChanged),
                         permissions: $store.permissions.sending(\.permissionsChanged)
                     )
@@ -346,17 +347,21 @@ struct CreateShareLinkSheet: View {
     }()
 }
 
+private func previewState() -> CreateShareLinkFeature.State {
+    CreateShareLinkFeature.State(
+        serverURL: sharedPreviewServerURL,
+        itemName: "Electricity",
+        itemPath: "Documents/Bills",
+        isDirectory: true,
+        now: .now
+    )
+}
+
 #Preview("Form") {
     Color.clear.sheet(isPresented: .constant(true)) {
         CreateShareLinkSheet(
             store: Store(
-                initialState: CreateShareLinkFeature.State(
-                    serverURL: sharedPreviewServerURL,
-                    itemName: "Electricity",
-                    itemPath: "Documents/Bills",
-                    isDirectory: true,
-                    now: .now
-                )
+                initialState: previewState()
             ) {
                 CreateShareLinkFeature()
             } withDependencies: {
@@ -371,13 +376,7 @@ struct CreateShareLinkSheet: View {
         CreateShareLinkSheet(
             store: Store(
                 initialState: {
-                    var state = CreateShareLinkFeature.State(
-                        serverURL: sharedPreviewServerURL,
-                        itemName: "Electricity",
-                        itemPath: "Documents/Bills",
-                        isDirectory: true,
-                        now: .now
-                    )
+                    var state = previewState()
                     state.step = .created(CreatedShare(
                         share: Share(
                             id: "s1", shareToken: "UrkLIGIHMF", ownerId: "u",

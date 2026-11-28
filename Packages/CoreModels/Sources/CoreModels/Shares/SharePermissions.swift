@@ -93,8 +93,15 @@ public enum ShareAccessChoice: CaseIterable, Hashable, Sendable {
         }
     }
 
-    public static func options(isDirectory: Bool, current: ShareAccessChoice) -> [ShareAccessChoice] {
-        isDirectory || current == .custom ? allCases : [.viewOnly, .canDownload, .canEdit]
+    public static func options(
+        isDirectory: Bool,
+        current: ShareAccessChoice,
+        isWritable: Bool = true
+    ) -> [ShareAccessChoice] {
+        let options: [ShareAccessChoice] = isDirectory || current == .custom
+            ? allCases
+            : [.viewOnly, .canDownload, .canEdit]
+        return isWritable ? options : options.filter { $0.accessMode == .readonly }
     }
 
     public var accessMode: ShareAccessMode {

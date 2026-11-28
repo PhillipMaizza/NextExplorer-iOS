@@ -201,6 +201,37 @@ struct CreateShareLinkFeatureTests {
     // MARK: Default expiration
 
     @Test
+    func aHitFromAnotherFolderLearnsItIsReadOnlyAndDropsEditing() async {
+        var state = makeState()
+        state.shouldCheckWritability = true
+        state.accessChoice = .canEdit
+        let locked = FileItem(
+            name: FilesFeatureTestValue.reportName,
+            path: TestFolder.documents,
+            dateModified: now,
+            size: 1,
+            kind: TestKind.pdf,
+            readOnly: "access"
+        )
+        let store = TestStore(initialState: state) {
+            CreateShareLinkFeature()
+        } withDependencies: {
+            $0.filesClient.fetchPreferences = { _ in UserPreferences() }
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [locked], access: BrowseTestSupport.fullAccess, path: TestFolder.documents)
+            }
+        }
+
+        await store.send(.onAppear)
+        await store.receive(\.preferencesResponse)
+        await store.receive(\.writabilityResponse) {
+            $0.isWritable = false
+            $0.accessChoice = .canDownload
+            $0.permissions = ShareAccessChoice.canDownload.applied(to: state.permissions, from: .canEdit)
+        }
+    }
+
+    @Test
     func onAppearAppliesTheUsersDefaultShareExpiration() async {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "UTC")!
@@ -280,5 +311,24 @@ struct CreateShareLinkFeatureTests {
         #expect(state.directLink?.absoluteString == "\(TestHost.serverURLString)/api/share/TOK123/file?mode=download")
         state.directLinkMode = .auto
         #expect(state.directLink?.absoluteString == "\(TestHost.serverURLString)/api/share/TOK123/file")
+    }
+
+    @Test(arguments: [
+        (true, nil as String?, true),
+        (true, "access", false),
+        (false, nil, false),
+    ])
+    func aLinkMayEditOnlyWhatTheServerLetsBeWritten(folderCanWrite: Bool, readOnly: String?, isWritable: Bool) {
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: TestFolder.docs, title: TestFolder.docs)
+        state.access = folderCanWrite ? BrowseTestSupport.fullAccess : BrowseTestSupport.readOnlyAccess
+        let item = FileItem(
+            name: TestFolder.archive,
+            path: TestFolder.docs,
+            dateModified: now,
+            size: 0,
+            kind: FileItem.directoryKind,
+            readOnly: readOnly
+        )
+        #expect(state.isWritable(item) == isWritable)
     }
 }

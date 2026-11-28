@@ -64,6 +64,10 @@ public struct FilePermissions: Decodable, Equatable, Sendable {
         self.isDirectory = isDirectory
     }
 
+    public static func isValidAccountName(_ name: String) -> Bool {
+        name.range(of: #"^[a-zA-Z0-9_][a-zA-Z0-9._-]*$"#, options: .regularExpression) != nil
+    }
+
     /// Just the nine permission bits, file type bits masked off.
     public var permissionBits: Int {
         mode & 0o777

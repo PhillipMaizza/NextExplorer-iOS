@@ -58,7 +58,7 @@ public extension FileAccess {
     }
 
     var canCompress: Bool {
-        canCreateFile
+        canCreateFile && canDownload
     }
 
     var canExtract: Bool {

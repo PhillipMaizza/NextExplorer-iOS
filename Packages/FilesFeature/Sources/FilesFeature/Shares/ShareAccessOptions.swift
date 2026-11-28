@@ -6,12 +6,17 @@
 
     struct ShareAccessOptions: View {
         let isDirectory: Bool
+        var isWritable = true
         let choice: Binding<ShareAccessChoice>
         let permissions: Binding<SharePermissions>
 
         var body: some View {
             EditShareChoices(
-                options: ShareAccessChoice.options(isDirectory: isDirectory, current: choice.wrappedValue),
+                options: ShareAccessChoice.options(
+                    isDirectory: isDirectory,
+                    current: choice.wrappedValue,
+                    isWritable: isWritable
+                ),
                 selection: choice.wrappedValue,
                 title: \.title,
                 hint: { [isDirectory] in $0.hint(isDirectory: isDirectory) },

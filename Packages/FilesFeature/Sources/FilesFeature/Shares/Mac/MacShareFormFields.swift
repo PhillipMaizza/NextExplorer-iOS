@@ -28,14 +28,20 @@
         let passwordPrompt: String
         let isExpiryOn: Binding<Bool>
         let expiresAt: Binding<Date>
+        var isWritable = true
         @ViewBuilder var link: () -> Link
 
         var body: some View {
             MacSheetSubject(name: itemName, isDirectory: isDirectory, location: location, label: label)
             link()
             HStack(alignment: .top, spacing: MacShareFormMetrics.columnSpacing) {
-                MacShareAccessField(isDirectory: isDirectory, choice: accessChoice, permissions: permissions)
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                MacShareAccessField(
+                    isDirectory: isDirectory,
+                    isWritable: isWritable,
+                    choice: accessChoice,
+                    permissions: permissions
+                )
+                .frame(maxWidth: .infinity, alignment: .topLeading)
                 VStack(alignment: .leading, spacing: MacFormSheetMetrics.spacing) {
                     MacLabeledField(L10n.CreateShare.sectionWhoCanAccess) {
                         MacSegmentedPicker(
@@ -102,7 +108,8 @@
             password: Binding<String>,
             passwordPrompt: String,
             isExpiryOn: Binding<Bool>,
-            expiresAt: Binding<Date>
+            expiresAt: Binding<Date>,
+            isWritable: Bool = true
         ) {
             self.init(
                 itemName: itemName,
@@ -120,7 +127,8 @@
                 password: password,
                 passwordPrompt: passwordPrompt,
                 isExpiryOn: isExpiryOn,
-                expiresAt: expiresAt
+                expiresAt: expiresAt,
+                isWritable: isWritable
             ) { EmptyView() }
         }
     }

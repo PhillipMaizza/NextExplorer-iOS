@@ -94,10 +94,11 @@ struct FileAccessActionTests {
         write: Bool = false,
         delete: Bool = false,
         folder: Bool = false,
-        file: Bool = false
+        file: Bool = false,
+        download: Bool = true
     ) -> FileAccess {
         FileAccess(
-            canRead: true, canWrite: write, canUpload: false, canDelete: delete, canShare: false, canDownload: true,
+            canRead: true, canWrite: write, canUpload: false, canDelete: delete, canShare: false, canDownload: download,
             canCreateFolder: folder, canCreateFile: file
         )
     }
@@ -119,7 +120,9 @@ struct FileAccessActionTests {
         #expect(!access(write: true).canReceive([file]))
     }
 
-    @Test("Move needs write and delete, like the web menu; extract needs both create rights; compress needs new files")
+    @Test(
+        "Move needs write and delete, like the web menu; extract needs both create rights; compress needs new files and the right to download what it packs"
+    )
     func moveExtractCompress() {
         #expect(access(write: true, delete: true).canMove)
         #expect(!access(delete: true).canMove)
@@ -127,5 +130,6 @@ struct FileAccessActionTests {
         #expect(!access(file: true).canExtract)
         #expect(access(file: true).canCompress)
         #expect(!access(write: true, folder: true).canCompress)
+        #expect(!access(file: true, download: false).canCompress)
     }
 }

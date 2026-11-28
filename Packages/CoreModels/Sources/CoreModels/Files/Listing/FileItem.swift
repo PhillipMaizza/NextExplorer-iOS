@@ -11,6 +11,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     public let size: Int64
     public let kind: String
     public let supportsThumbnail: Bool
+    public let readOnly: String?
 
     public static let directoryKind = "directory"
     /// The kind the server reports for a file with no extension, or an overlong one.
@@ -226,7 +227,8 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         dateModified: Date,
         size: Int64,
         kind: String,
-        supportsThumbnail: Bool = false
+        supportsThumbnail: Bool = false,
+        readOnly: String? = nil
     ) {
         self.name = name
         self.path = path
@@ -234,6 +236,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         self.size = size
         self.kind = kind
         self.supportsThumbnail = supportsThumbnail
+        self.readOnly = readOnly
     }
 
     public func changing(
@@ -253,7 +256,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case name, path, dateModified, size, kind, supportsThumbnail
+        case name, path, dateModified, size, kind, supportsThumbnail, readOnly
     }
 
     public init(from decoder: Decoder) throws {
@@ -266,6 +269,7 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         size = try container.decodeIfPresent(Int64.self, forKey: .size) ?? 0
         kind = try container.decode(String.self, forKey: .kind)
         supportsThumbnail = try container.decodeIfPresent(Bool.self, forKey: .supportsThumbnail) ?? false
+        readOnly = try? container.decodeIfPresent(String.self, forKey: .readOnly)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -276,5 +280,6 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         try container.encode(size, forKey: .size)
         try container.encode(kind, forKey: .kind)
         try container.encode(supportsThumbnail, forKey: .supportsThumbnail)
+        try container.encodeIfPresent(readOnly, forKey: .readOnly)
     }
 }

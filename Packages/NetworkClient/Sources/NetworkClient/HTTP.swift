@@ -26,6 +26,7 @@ public struct HTTPStatus: RawRepresentable, Hashable, Sendable {
     public static let noContent = HTTPStatus(rawValue: 204)
     public static let partialContent = HTTPStatus(rawValue: 206)
     public static let notModified = HTTPStatus(rawValue: 304)
+    public static let badRequest = HTTPStatus(rawValue: 400)
     public static let unauthorized = HTTPStatus(rawValue: 401)
     public static let forbidden = HTTPStatus(rawValue: 403)
     public static let notFound = HTTPStatus(rawValue: 404)
