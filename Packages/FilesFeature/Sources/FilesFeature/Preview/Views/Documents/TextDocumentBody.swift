@@ -23,6 +23,9 @@ struct TextDocumentBody: View {
     var onEscape: (() -> Void)?
 
     @State private var renderedMarkdownHTML = ""
+    #if os(macOS)
+        @State private var pretty: PrettyVersion?
+    #endif
     @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
     @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
     @Dependency(\.filesClient) private var filesClient
@@ -70,7 +73,12 @@ struct TextDocumentBody: View {
             // Tree sitter highlighting (Runestone) whether or not editing: it helps reading as much
             // as writing.
             #if os(macOS)
-                CodeEditorView(kind: kind, text: $text, isEditable: isEditing, onEscape: onEscape)
+                if !isEditing, let pretty, pretty.source == text {
+                    CodeEditorView(kind: kind, text: .constant(pretty.text), isEditable: false, onEscape: onEscape)
+                } else {
+                    CodeEditorView(kind: kind, text: $text, isEditable: isEditing, onEscape: onEscape)
+                        .task(id: isEditing ? nil : text) { await prettyPrint() }
+                }
             #else
                 CodeEditorView(
                     kind: kind,
@@ -87,6 +95,24 @@ struct TextDocumentBody: View {
             #endif
         }
     }
+
+    #if os(macOS)
+        private struct PrettyVersion {
+            let source: String
+            let text: String
+        }
+
+        private func prettyPrint() async {
+            guard !isEditing else { return }
+            let source = text
+            let kind = kind
+            let formatted = await Task.detached(priority: .userInitiated) {
+                PrettyText.format(source, kind: kind)
+            }.value
+            guard !Task.isCancelled, let formatted else { return }
+            pretty = PrettyVersion(source: source, text: formatted)
+        }
+    #endif
 
     /// Downloads a same folder asset (`downloadRawFile` has no extension restriction, unlike
     /// `previewFile`'s `GET /api/preview`) for both the HTML and the Markdown page.

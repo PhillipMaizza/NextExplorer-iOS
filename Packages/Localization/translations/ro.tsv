@@ -517,6 +517,9 @@ archive.passwordProtected	Această arhivă este protejată cu parolă.
 archive.tooManyEntries	Această arhivă conține prea multe elemente pentru a fi deschisă.
 archive.entryEncrypted	Acest fișier este criptat și nu poate fi previzualizat.
 gallery.loadFailed	Nu s-a putut încărca această imagine.
+gallery.loadFailedTitle	%@ nu a putut fi încărcat
+gallery.decodeFailed	Fișierul poate fi deteriorat sau într-un format pe care acest Mac nu îl poate citi.
+gallery.checkConnection	Verifică conexiunea și încearcă din nou.
 textPreview.saved	Salvat
 textPreview.loadFailed	Nu s-a putut încărca acest fișier. Verifică conexiunea și încearcă din nou.
 userManagement.navigationTitle	Gestionarea utilizatorilor
@@ -779,8 +782,6 @@ browse.clipboardCutMany	%lld elemente gata de mutat
 menu.enclosingFolder	Dosarul părinte
 common.more	Mai multe
 openWith.print	Tipărește…
-menu.newWindow	Fereastră nouă
-browse.actionOpenInNewWindow	Deschide în fereastră nouă
 select.slideTipTitle	Glisează pentru a selecta
 select.slideTipMessage	Glisează un deget lateral peste elemente pentru a selecta mai multe deodată.
 settings.rowAppearance	Aspect

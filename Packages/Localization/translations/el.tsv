@@ -705,6 +705,9 @@ archive.passwordProtected	Αυτό το αρχείο συμπίεσης προσ
 archive.tooManyEntries	Αυτό το αρχείο συμπίεσης περιέχει πάρα πολλά στοιχεία για να ανοίξει.
 archive.entryEncrypted	Αυτό το αρχείο είναι κρυπτογραφημένο και δεν μπορεί να προβληθεί.
 gallery.loadFailed	Δεν ήταν δυνατή η φόρτωση αυτής της εικόνας.
+gallery.loadFailedTitle	Δεν ήταν δυνατή η φόρτωση του %@
+gallery.decodeFailed	Το αρχείο μπορεί να είναι κατεστραμμένο ή σε μορφή που δεν διαβάζει αυτό το Mac.
+gallery.checkConnection	Ελέγξτε τη σύνδεση και δοκιμάστε ξανά.
 textPreview.saved	Αποθηκεύτηκε
 textPreview.loadFailed	Δεν ήταν δυνατή η φόρτωση αυτού του αρχείου. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.
 textPreview.unsavedTitle	Αποθήκευση αλλαγών στο «%@»;
@@ -1016,8 +1019,6 @@ browse.clipboardCutMany	%lld στοιχεία έτοιμα για μετακίν
 menu.enclosingFolder	Περιέχων φάκελος
 common.more	Περισσότερα
 openWith.print	Εκτύπωση…
-menu.newWindow	Νέο παράθυρο
-browse.actionOpenInNewWindow	Άνοιγμα σε νέο παράθυρο
 select.slideTipTitle	Σύρετε για επιλογή
 select.slideTipMessage	Σύρετε ένα δάχτυλο πλάγια πάνω από στοιχεία για να επιλέξετε πολλά μαζί.
 settings.rowAppearance	Εμφάνιση

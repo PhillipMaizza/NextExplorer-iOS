@@ -103,6 +103,7 @@
 
     struct MacOpenWithSplitButton: View {
         @State private var model: MacOpenWithModel
+        @Environment(\.macPreviewDownload) private var download
 
         init(source: SystemShareSource) {
             _model = State(initialValue: MacOpenWithModel(source: source))
@@ -129,6 +130,9 @@
                     MacPopupMenu(L10n.OpenWith.openWith, valueLabel: L10n.OpenWith.openWith) {
                         appItems(others)
                     }
+                } else if apps != nil, !model.canViewAsText, let download {
+                    Button(L10n.Common.download, action: download.perform)
+                        .buttonStyle(.macDS(.primary))
                 }
                 if model.canViewAsText {
                     Button(L10n.OpenWith.viewAsText) { model.viewAsText() }
@@ -199,6 +203,12 @@
 
     #Preview("Buttons") {
         MacOpenWithSplitButton(source: .local(URL(fileURLWithPath: "/System/Library/CoreServices/SystemVersion.plist")))
+            .padding(.space24)
+    }
+
+    #Preview("No apps, Download") {
+        MacOpenWithSplitButton(source: .local(URL(fileURLWithPath: "/tmp/database.sqlite")))
+            .environment(\.macPreviewDownload, MacPreviewDownload {})
             .padding(.space24)
     }
 

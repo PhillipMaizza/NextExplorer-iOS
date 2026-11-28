@@ -504,6 +504,9 @@ archive.passwordProtected	Det här arkivet är skyddat med ett lösenord.
 archive.tooManyEntries	Det här arkivet innehåller för många objekt för att öppnas.
 archive.entryEncrypted	Den här filen är krypterad och kan inte förhandsvisas.
 gallery.loadFailed	Det gick inte att läsa in den här bilden.
+gallery.loadFailedTitle	Det gick inte att läsa in %@
+gallery.decodeFailed	Filen kan vara skadad eller i ett format som den här datorn inte kan läsa.
+gallery.checkConnection	Kontrollera anslutningen och försök igen.
 textPreview.saved	Sparad
 textPreview.loadFailed	Det gick inte att läsa in den här filen. Kontrollera anslutningen och försök igen.
 userManagement.navigationTitle	Användarhantering
@@ -766,8 +769,6 @@ browse.clipboardCutMany	%lld objekt redo att flyttas
 menu.enclosingFolder	Omslutande mapp
 common.more	Mer
 openWith.print	Skriv ut …
-menu.newWindow	Nytt fönster
-browse.actionOpenInNewWindow	Öppna i nytt fönster
 select.slideTipTitle	Svep för att välja
 select.slideTipMessage	Svep med ett finger i sidled över objekt för att välja flera på en gång.
 settings.rowAppearance	Utseende

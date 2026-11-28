@@ -31,6 +31,9 @@
                     onSelect: { store.send(.tableSelectionChanged([$0.id])) },
                     onOpen: onOpen,
                     onShare: item.map { store.state.actions(for: $0).canShare } ?? false ? onShare : nil,
+                    onDownload: item.map { store.state.actions(for: $0).canDownload } ?? false
+                        ? { _ in store.send(.bulkDownloadTapped) }
+                        : nil,
                     showsMore: item.map { !store.state.inspectorMoreRows(for: $0).isEmpty } ?? false,
                     more: more
                 ))
@@ -50,6 +53,7 @@
         let onSelect: (FileItem) -> Void
         var onOpen: ((FileItem) -> Void)?
         var onShare: ((FileItem) -> Void)?
+        var onDownload: ((FileItem) -> Void)?
         var showsMore = true
         var isListFocused: FocusState<Bool>.Binding?
         @ViewBuilder let more: (FileItem) -> More
@@ -102,6 +106,10 @@
                     onClose: { isPeeking = false },
                     showsMore: showsMore,
                     more: { more(item) }
+                )
+                .environment(
+                    \.macPreviewDownload,
+                    onDownload.map { download in MacPreviewDownload { download(item) } }
                 ),
                 owner: ObjectIdentifier(owner)
             ) { isPeeking = false }

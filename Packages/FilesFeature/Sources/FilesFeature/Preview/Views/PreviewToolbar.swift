@@ -27,6 +27,7 @@ extension View {
         hasFrostedBars: Bool = false,
         hasBottomBar: Bool = true,
         file: FileItem? = nil,
+        hasOpenWithPage: Bool = false,
         onClose: @escaping () -> Void
     ) -> some View {
         modifier(PreviewChrome(
@@ -35,6 +36,7 @@ extension View {
             hasFrostedBars: hasFrostedBars,
             hasBottomBar: hasBottomBar,
             file: file,
+            hasOpenWithPage: hasOpenWithPage,
             title: title,
             systemShare: systemShare,
             onShareLink: onShareLink,
@@ -61,6 +63,7 @@ private struct PreviewChrome: ViewModifier {
     let hasBottomBar: Bool
     /// The file on screen, which names the save action: a photo or video goes to Photos.
     let file: FileItem?
+    let hasOpenWithPage: Bool
     @Environment(\.previewOffline) private var environmentOffline
     @Environment(\.canExportPreview) private var canExport
     let title: String?
@@ -120,7 +123,9 @@ private struct PreviewChrome: ViewModifier {
         #if os(macOS)
             // A sheet on the Mac shows no NavigationStack toolbar, so the chrome is a bar of its
             // own across the top, like Preview's title bar.
-            content.safeAreaInset(edge: .top, spacing: 0) { macBar }
+            content
+                .safeAreaInset(edge: .top, spacing: 0) { macBar }
+                .environment(\.macPreviewDownload, onDownload.map(MacPreviewDownload.init))
         #else
             content
                 .navigationTitle(title ?? "")
@@ -244,7 +249,7 @@ private struct PreviewChrome: ViewModifier {
                     MacIconButton(IconKit.rename, label: L10n.Common.edit, action: onEdit)
                 }
                 if hasSystemShare {
-                    if file?.isUnsupportedForPreview != true {
+                    if file?.isUnsupportedForPreview != true, !hasOpenWithPage {
                         MacOpenWithMenu(source: shareSource)
                     }
                     SystemShareButton(source: shareSource)

@@ -806,6 +806,9 @@ archive.entryEncrypted	This file is encrypted and can't be previewed.
 
 # ---- image gallery / text preview ----
 gallery.loadFailed	Couldn't load this image.
+gallery.loadFailedTitle	Couldn't load %@
+gallery.decodeFailed	The file may be damaged or in a format this Mac can't read.
+gallery.checkConnection	Check the connection and try again.
 textPreview.saved	Saved
 textPreview.loadFailed	Couldn't load this file. Check your connection and try again.
 textPreview.unsavedTitle	Save changes to “%@”?
@@ -1198,8 +1201,6 @@ browse.clipboardCutMany	%lld items ready to move
 menu.enclosingFolder	Enclosing Folder
 common.more	More
 openWith.print	Print…
-menu.newWindow	New Window
-browse.actionOpenInNewWindow	Open in New Window
 select.slideTipTitle	Slide to Select
 select.slideTipMessage	Slide a finger sideways across items to select several at once.
 

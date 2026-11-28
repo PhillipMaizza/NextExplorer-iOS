@@ -705,6 +705,9 @@ archive.passwordProtected	Ez az archívum jelszóval védett.
 archive.tooManyEntries	Ez az archívum túl sok elemet tartalmaz a megnyitáshoz.
 archive.entryEncrypted	Ez a fájl titkosított, és nem tekinthető meg.
 gallery.loadFailed	Ezt a képet nem sikerült betölteni.
+gallery.loadFailedTitle	%@ nem tölthető be
+gallery.decodeFailed	Lehet, hogy a fájl sérült, vagy olyan formátumú, amelyet ez a Mac nem tud olvasni.
+gallery.checkConnection	Ellenőrizd a kapcsolatot, és próbáld újra.
 textPreview.saved	Mentve
 textPreview.loadFailed	Ezt a fájlt nem sikerült betölteni. Ellenőrizze a kapcsolatot, és próbálja újra.
 textPreview.unsavedTitle	Menti a módosításokat a(z) „%@” fájlban?
@@ -1016,8 +1019,6 @@ browse.clipboardCutMany	%lld elem készen áll az áthelyezésre
 menu.enclosingFolder	Tartalmazó mappa
 common.more	Továbbiak
 openWith.print	Nyomtatás…
-menu.newWindow	Új ablak
-browse.actionOpenInNewWindow	Megnyitás új ablakban
 select.slideTipTitle	Kijelölés csúsztatással
 select.slideTipMessage	Csúsztasd az ujjad oldalirányban az elemeken, hogy egyszerre többet jelölj ki.
 settings.rowAppearance	Megjelenés

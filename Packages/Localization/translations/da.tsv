@@ -705,6 +705,9 @@ archive.passwordProtected	Dette arkiv er beskyttet med en adgangskode.
 archive.tooManyEntries	Dette arkiv indeholder for mange emner til at blive åbnet.
 archive.entryEncrypted	Denne fil er krypteret og kan ikke vises.
 gallery.loadFailed	Billedet kunne ikke indlæses.
+gallery.loadFailedTitle	Kunne ikke indlæse %@
+gallery.decodeFailed	Filen kan være beskadiget eller i et format, denne Mac ikke kan læse.
+gallery.checkConnection	Tjek forbindelsen, og prøv igen.
 textPreview.saved	Gemt
 textPreview.loadFailed	Filen kunne ikke indlæses. Tjek din forbindelse, og prøv igen.
 textPreview.unsavedTitle	Gem ændringer i “%@”?
@@ -1016,8 +1019,6 @@ browse.clipboardCutMany	%lld emner klar til flytning
 menu.enclosingFolder	Overordnet mappe
 common.more	Mere
 openWith.print	Udskriv…
-menu.newWindow	Nyt vindue
-browse.actionOpenInNewWindow	Åbn i nyt vindue
 select.slideTipTitle	Stryg for at vælge
 select.slideTipMessage	Stryg en finger sidelæns hen over emner for at vælge flere på én gang.
 settings.rowAppearance	Udseende

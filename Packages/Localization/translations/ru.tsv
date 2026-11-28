@@ -530,6 +530,9 @@ archive.passwordProtected	Этот архив защищён паролем.
 archive.tooManyEntries	В этом архиве слишком много объектов, чтобы его открыть.
 archive.entryEncrypted	Этот файл зашифрован, и его нельзя просмотреть.
 gallery.loadFailed	Не удалось загрузить это изображение.
+gallery.loadFailedTitle	Не удалось загрузить %@
+gallery.decodeFailed	Файл может быть повреждён или иметь формат, который этот Mac не может прочитать.
+gallery.checkConnection	Проверьте подключение и повторите попытку.
 textPreview.saved	Сохранено
 textPreview.loadFailed	Не удалось загрузить этот файл. Проверьте соединение и повторите попытку.
 userManagement.navigationTitle	Управление пользователями
@@ -792,8 +795,6 @@ browse.clipboardCutMany	Объектов готово к перемещению:
 menu.enclosingFolder	Родительская папка
 common.more	Еще
 openWith.print	Напечатать…
-menu.newWindow	Новое окно
-browse.actionOpenInNewWindow	Открыть в новом окне
 select.slideTipTitle	Выбор смахиванием
 select.slideTipMessage	Проведите пальцем в сторону по объектам, чтобы выбрать сразу несколько.
 settings.rowAppearance	Оформление

@@ -504,6 +504,9 @@ archive.passwordProtected	Dieses Archiv ist mit einem Passwort geschützt.
 archive.tooManyEntries	Dieses Archiv enthält zu viele Objekte, um es zu öffnen.
 archive.entryEncrypted	Diese Datei ist verschlüsselt und kann nicht angezeigt werden.
 gallery.loadFailed	Dieses Bild konnte nicht geladen werden.
+gallery.loadFailedTitle	%@ konnte nicht geladen werden
+gallery.decodeFailed	Die Datei ist möglicherweise beschädigt oder in einem Format, das dieser Mac nicht lesen kann.
+gallery.checkConnection	Überprüfe die Verbindung und versuche es erneut.
 textPreview.saved	Gesichert
 textPreview.loadFailed	Diese Datei konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.
 userManagement.navigationTitle	Benutzerverwaltung
@@ -766,8 +769,6 @@ browse.clipboardCutMany	%lld Objekte zum Verschieben bereit
 menu.enclosingFolder	Übergeordneter Ordner
 common.more	Mehr
 openWith.print	Drucken …
-menu.newWindow	Neues Fenster
-browse.actionOpenInNewWindow	In neuem Fenster öffnen
 select.slideTipTitle	Zum Auswählen wischen
 select.slideTipMessage	Wische mit einem Finger seitlich über Objekte, um mehrere auf einmal auszuwählen.
 settings.rowAppearance	Erscheinungsbild

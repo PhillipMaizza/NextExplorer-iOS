@@ -504,6 +504,9 @@ archive.passwordProtected	यह आर्काइव पासवर्ड स
 archive.tooManyEntries	इस आर्काइव में खोलने के लिए बहुत अधिक आइटम हैं।
 archive.entryEncrypted	यह फ़ाइल एन्क्रिप्टेड है और इसका पूर्वावलोकन नहीं किया जा सकता।
 gallery.loadFailed	यह छवि लोड नहीं कर सके।
+gallery.loadFailedTitle	%@ लोड नहीं हो सका
+gallery.decodeFailed	फ़ाइल खराब हो सकती है या ऐसे फ़ॉर्मैट में हो सकती है जिसे यह Mac नहीं पढ़ सकता।
+gallery.checkConnection	कनेक्शन जाँचें और फिर से कोशिश करें।
 textPreview.saved	सहेजा गया
 textPreview.loadFailed	यह फ़ाइल लोड नहीं कर सके। अपना कनेक्शन जांचें और पुनः प्रयास करें।
 userManagement.navigationTitle	उपयोगकर्ता प्रबंधन
@@ -766,8 +769,6 @@ browse.clipboardCutMany	%lld आइटम ले जाने के लिए �
 menu.enclosingFolder	मूल फ़ोल्डर
 common.more	और
 openWith.print	प्रिंट करें…
-menu.newWindow	नई विंडो
-browse.actionOpenInNewWindow	नई विंडो में खोलें
 select.slideTipTitle	चुनने के लिए स्लाइड करें
 select.slideTipMessage	एक साथ कई आइटम चुनने के लिए उन पर उंगली को बगल की ओर स्लाइड करें।
 settings.rowAppearance	रूप-रंग

@@ -44,6 +44,34 @@ private enum GalleryImagePhase {
             false
         }
     }
+
+    static func loadFailure(_ error: Error) -> Self {
+        .failed((error as? FilesClientError)?.userMessage ?? FailureCopy.unreachable)
+    }
+
+    static var decodeFailure: Self {
+        .failed(FailureCopy.undecodable)
+    }
+}
+
+private enum FailureCopy {
+    #if os(macOS)
+        static var unreachable: String {
+            L10n.Gallery.checkConnection
+        }
+
+        static var undecodable: String {
+            L10n.Gallery.decodeFailed
+        }
+    #elseif os(iOS)
+        static var unreachable: String {
+            L10n.Gallery.loadFailed
+        }
+
+        static var undecodable: String {
+            L10n.Gallery.loadFailed
+        }
+    #endif
 }
 
 struct ImageGalleryPage: View {
@@ -64,6 +92,27 @@ struct ImageGalleryPage: View {
     @Dependency(\.connectivity) private var connectivity
 
     @Environment(\.displayScale) private var displayScale
+    #if os(macOS)
+        @Environment(\.macPeekFallback) private var peekFallback
+    #endif
+
+    @ViewBuilder
+    private func failure(_ message: String) -> some View {
+        #if os(macOS)
+            if peekFallback == nil {
+                MacLoadFailedPage(item: item, message: message, onRetry: retry)
+            } else {
+                PreviewErrorView(message: message, onRetry: retry)
+            }
+        #elseif os(iOS)
+            PreviewErrorView(message: message, onRetry: retry)
+        #endif
+    }
+
+    private func retry() {
+        phase = .loading
+        attempt += 1
+    }
 
     /// Decode ceiling for a still image. Generous enough that `ZoomableScrollView`'s 4x zoom
     /// still looks sharp, without ever holding a full 48MP bitmap resident. Sized off the
@@ -153,10 +202,7 @@ struct ImageGalleryPage: View {
                 .scaleEffect(phase.isFinal ? 1 : Constants.settleFromScale)
                 .animation(DSMotion.galleryFade, value: phase.isFinal)
             case let .failed(message):
-                PreviewErrorView(message: message) {
-                    phase = .loading
-                    attempt += 1
-                }
+                failure(message)
             case .loading:
                 EmptyView()
             }
@@ -194,7 +240,7 @@ struct ImageGalleryPage: View {
             } catch {
                 noteSessionExpiry(error)
                 if !Task.isCancelled {
-                    phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed)
+                    phase = .loadFailure(error)
                 }
             }
             return
@@ -230,7 +276,7 @@ struct ImageGalleryPage: View {
             if Task.isCancelled {
                 return
             }
-            phase = decoded.map(GalleryImagePhase.loaded) ?? .failed(L10n.Gallery.loadFailed)
+            phase = decoded.map(GalleryImagePhase.loaded) ?? .decodeFailure
             return
         case .download:
             await decodeViaPreviewFile(target: target)
@@ -271,11 +317,11 @@ struct ImageGalleryPage: View {
             if Task.isCancelled {
                 return
             }
-            phase = decoded.map(GalleryImagePhase.loaded) ?? .failed(L10n.Gallery.loadFailed)
+            phase = decoded.map(GalleryImagePhase.loaded) ?? .decodeFailure
         } catch {
             noteSessionExpiry(error)
             if !Task.isCancelled {
-                phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed)
+                phase = .loadFailure(error)
             }
         }
     }

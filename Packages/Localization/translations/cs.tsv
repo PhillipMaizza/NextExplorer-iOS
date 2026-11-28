@@ -731,6 +731,9 @@ archive.passwordProtected	Tento archiv je chráněn heslem.
 archive.tooManyEntries	Tento archiv obsahuje příliš mnoho položek na otevření.
 archive.entryEncrypted	Tento soubor je zašifrovaný a nelze jej zobrazit.
 gallery.loadFailed	Tento obrázek se nepodařilo načíst.
+gallery.loadFailedTitle	%@ se nepodařilo načíst
+gallery.decodeFailed	Soubor může být poškozený nebo ve formátu, který tento Mac neumí přečíst.
+gallery.checkConnection	Zkontrolujte připojení a zkuste to znovu.
 textPreview.saved	Uloženo
 textPreview.loadFailed	Tento soubor se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.
 textPreview.unsavedTitle	Uložit změny v „%@“?
@@ -1042,8 +1045,6 @@ browse.clipboardCutMany	Položky připravené k přesunu: %lld
 menu.enclosingFolder	Nadřazená složka
 common.more	Více
 openWith.print	Tisk…
-menu.newWindow	Nové okno
-browse.actionOpenInNewWindow	Otevřít v novém okně
 select.slideTipTitle	Výběr tažením
 select.slideTipMessage	Přejeďte prstem do strany přes položky a vyberete jich několik najednou.
 settings.rowAppearance	Vzhled

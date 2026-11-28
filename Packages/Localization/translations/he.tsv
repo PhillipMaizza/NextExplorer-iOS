@@ -718,6 +718,9 @@ archive.passwordProtected	הארכיון הזה מוגן בסיסמה.
 archive.tooManyEntries	הארכיון הזה מכיל יותר מדי פריטים לפתיחה.
 archive.entryEncrypted	הקובץ הזה מוצפן ולא ניתן להציג אותו.
 gallery.loadFailed	לא ניתן היה לטעון את התמונה הזו.
+gallery.loadFailedTitle	לא ניתן לטעון את %@
+gallery.decodeFailed	ייתכן שהקובץ פגום או בפורמט שה‑Mac הזה לא יכול לקרוא.
+gallery.checkConnection	בדקו את החיבור ונסו שוב.
 textPreview.saved	נשמר
 textPreview.loadFailed	לא ניתן היה לטעון את הקובץ הזה. בדקו את החיבור ונסו שוב.
 textPreview.unsavedTitle	לשמור את השינויים ב-“%@”?
@@ -1029,8 +1032,6 @@ browse.clipboardCutMany	%lld פריטים מוכנים להעברה
 menu.enclosingFolder	תיקייה מכילה
 common.more	עוד
 openWith.print	הדפסה…
-menu.newWindow	חלון חדש
-browse.actionOpenInNewWindow	פתיחה בחלון חדש
 select.slideTipTitle	החלקה לבחירה
 select.slideTipMessage	החליקו אצבע לרוחב על פריטים כדי לבחור כמה בבת אחת.
 settings.rowAppearance	מראה

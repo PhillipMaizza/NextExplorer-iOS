@@ -692,6 +692,9 @@ archive.passwordProtected	Tệp nén này được bảo vệ bằng mật khẩ
 archive.tooManyEntries	Tệp nén này chứa quá nhiều mục để mở.
 archive.entryEncrypted	Tệp này đã được mã hóa và không thể xem trước.
 gallery.loadFailed	Không thể tải ảnh này.
+gallery.loadFailedTitle	Không thể tải %@
+gallery.decodeFailed	Tệp có thể bị hỏng hoặc ở định dạng mà máy Mac này không đọc được.
+gallery.checkConnection	Kiểm tra kết nối rồi thử lại.
 textPreview.saved	Đã lưu
 textPreview.loadFailed	Không thể tải tệp này. Hãy kiểm tra kết nối và thử lại.
 textPreview.unsavedTitle	Lưu thay đổi cho “%@”?
@@ -1003,8 +1006,6 @@ browse.clipboardCutMany	%lld mục sẵn sàng để di chuyển
 menu.enclosingFolder	Thư mục chứa
 common.more	Thêm
 openWith.print	In…
-menu.newWindow	Cửa sổ mới
-browse.actionOpenInNewWindow	Mở trong cửa sổ mới
 select.slideTipTitle	Trượt để chọn
 select.slideTipMessage	Trượt ngón tay ngang qua các mục để chọn nhiều mục cùng lúc.
 settings.rowAppearance	Giao diện

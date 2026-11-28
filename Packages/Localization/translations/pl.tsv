@@ -530,6 +530,9 @@ archive.passwordProtected	To archiwum jest chronione hasłem.
 archive.tooManyEntries	To archiwum zawiera zbyt wiele elementów, aby je otworzyć.
 archive.entryEncrypted	Ten plik jest zaszyfrowany i nie można wyświetlić jego podglądu.
 gallery.loadFailed	Nie można wczytać tego obrazu.
+gallery.loadFailedTitle	Nie można wczytać %@
+gallery.decodeFailed	Plik może być uszkodzony lub zapisany w formacie, którego ten Mac nie potrafi odczytać.
+gallery.checkConnection	Sprawdź połączenie i spróbuj ponownie.
 textPreview.saved	Zapisano
 textPreview.loadFailed	Nie można wczytać tego pliku. Sprawdź połączenie i spróbuj ponownie.
 userManagement.navigationTitle	Zarządzanie użytkownikami
@@ -792,8 +795,6 @@ browse.clipboardCutMany	%lld elementów gotowych do przeniesienia
 menu.enclosingFolder	Folder nadrzędny
 common.more	Więcej
 openWith.print	Drukuj…
-menu.newWindow	Nowe okno
-browse.actionOpenInNewWindow	Otwórz w nowym oknie
 select.slideTipTitle	Przesuń, aby zaznaczyć
 select.slideTipMessage	Przesuń palcem w bok po elementach, aby zaznaczyć kilka naraz.
 settings.rowAppearance	Wygląd

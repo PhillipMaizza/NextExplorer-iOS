@@ -503,6 +503,9 @@ archive.passwordProtected	Questo archivio è protetto da password.
 archive.tooManyEntries	Questo archivio contiene troppi elementi per essere aperto.
 archive.entryEncrypted	Questo file è crittografato e non può essere visualizzato.
 gallery.loadFailed	Impossibile caricare questa immagine.
+gallery.loadFailedTitle	Impossibile caricare %@
+gallery.decodeFailed	Il file potrebbe essere danneggiato o in un formato che questo Mac non riesce a leggere.
+gallery.checkConnection	Controlla la connessione e riprova.
 textPreview.saved	Salvato
 textPreview.loadFailed	Impossibile caricare questo file. Controlla la connessione e riprova.
 userManagement.navigationTitle	Gestione utenti
@@ -766,8 +769,6 @@ browse.clipboardCutMany	%lld elementi pronti da spostare
 menu.enclosingFolder	Cartella superiore
 common.more	Altro
 openWith.print	Stampa…
-menu.newWindow	Nuova finestra
-browse.actionOpenInNewWindow	Apri in una nuova finestra
 select.slideTipTitle	Scorri per selezionare
 select.slideTipMessage	Fai scorrere un dito di lato sugli elementi per selezionarne più di uno alla volta.
 settings.rowAppearance	Aspetto

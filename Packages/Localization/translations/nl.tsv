@@ -504,6 +504,9 @@ archive.passwordProtected	Dit archief is beveiligd met een wachtwoord.
 archive.tooManyEntries	Dit archief bevat te veel onderdelen om te openen.
 archive.entryEncrypted	Dit bestand is versleuteld en kan niet worden bekeken.
 gallery.loadFailed	Kan deze afbeelding niet laden.
+gallery.loadFailedTitle	Kan %@ niet laden
+gallery.decodeFailed	Het bestand is mogelijk beschadigd of heeft een formaat dat deze Mac niet kan lezen.
+gallery.checkConnection	Controleer de verbinding en probeer het opnieuw.
 textPreview.saved	Bewaard
 textPreview.loadFailed	Kan dit bestand niet laden. Controleer je verbinding en probeer het opnieuw.
 userManagement.navigationTitle	Gebruikersbeheer
@@ -766,8 +769,6 @@ browse.clipboardCutMany	%lld onderdelen klaar om te verplaatsen
 menu.enclosingFolder	Bovenliggende map
 common.more	Meer
 openWith.print	Druk af…
-menu.newWindow	Nieuw venster
-browse.actionOpenInNewWindow	Open in nieuw venster
 select.slideTipTitle	Veeg om te selecteren
 select.slideTipMessage	Veeg met een vinger zijwaarts over onderdelen om er meerdere tegelijk te selecteren.
 settings.rowAppearance	Weergave

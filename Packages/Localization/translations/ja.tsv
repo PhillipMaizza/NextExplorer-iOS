@@ -491,6 +491,9 @@ archive.passwordProtected	このアーカイブはパスワードで保護され
 archive.tooManyEntries	このアーカイブは項目が多すぎて開けません。
 archive.entryEncrypted	このファイルは暗号化されているためプレビューできません。
 gallery.loadFailed	この画像を読み込めませんでした。
+gallery.loadFailedTitle	%@を読み込めませんでした
+gallery.decodeFailed	ファイルが破損しているか、このMacで読み取れない形式の可能性があります。
+gallery.checkConnection	接続を確認して、もう一度お試しください。
 textPreview.saved	保存しました
 textPreview.loadFailed	このファイルを読み込めませんでした。接続を確認して再試行してください。
 userManagement.navigationTitle	ユーザ管理
@@ -753,8 +756,6 @@ browse.clipboardCutMany	%lld項目を移動する準備ができました
 menu.enclosingFolder	内包しているフォルダ
 common.more	その他
 openWith.print	プリント…
-menu.newWindow	新規ウインドウ
-browse.actionOpenInNewWindow	新規ウインドウで開く
 select.slideTipTitle	スライドして選択
 select.slideTipMessage	項目の上で指を横にスライドすると、まとめて選択できます。
 settings.rowAppearance	外観

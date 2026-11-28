@@ -705,6 +705,9 @@ archive.passwordProtected	Bu arşiv parola ile korunuyor.
 archive.tooManyEntries	Bu arşiv açılamayacak kadar çok öğe içeriyor.
 archive.entryEncrypted	Bu dosya şifreli ve önizlenemiyor.
 gallery.loadFailed	Bu görsel yüklenemedi.
+gallery.loadFailedTitle	%@ yüklenemedi
+gallery.decodeFailed	Dosya hasarlı olabilir veya bu Mac'in okuyamadığı bir biçimde olabilir.
+gallery.checkConnection	Bağlantıyı kontrol edip yeniden deneyin.
 textPreview.saved	Kaydedildi
 textPreview.loadFailed	Bu dosya yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin.
 textPreview.unsavedTitle	“%@” içindeki değişiklikler kaydedilsin mi?
@@ -1016,8 +1019,6 @@ browse.clipboardCutMany	%lld öğe taşımaya hazır
 menu.enclosingFolder	Üst Klasör
 common.more	Daha Fazla
 openWith.print	Yazdır…
-menu.newWindow	Yeni Pencere
-browse.actionOpenInNewWindow	Yeni Pencerede Aç
 select.slideTipTitle	Seçmek için kaydırın
 select.slideTipMessage	Birden fazla öğeyi aynı anda seçmek için parmağınızı öğelerin üzerinde yana kaydırın.
 settings.rowAppearance	Görünüm

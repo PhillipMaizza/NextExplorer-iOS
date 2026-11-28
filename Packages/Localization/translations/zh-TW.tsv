@@ -491,6 +491,9 @@ archive.passwordProtected	此壓縮檔受密碼保護。
 archive.tooManyEntries	此壓縮檔包含的項目過多，無法開啟。
 archive.entryEncrypted	此檔案已加密，無法預覽。
 gallery.loadFailed	無法載入此圖像。
+gallery.loadFailedTitle	無法載入「%@」
+gallery.decodeFailed	檔案可能已損毀，或格式是這台 Mac 無法讀取的。
+gallery.checkConnection	請檢查連線，然後再試一次。
 textPreview.saved	已儲存
 textPreview.loadFailed	無法載入此檔案。請檢查連線後重試。
 userManagement.navigationTitle	使用者管理
@@ -753,8 +756,6 @@ browse.clipboardCutMany	%lld 個項目已準備移動
 menu.enclosingFolder	上層檔案夾
 common.more	更多
 openWith.print	列印⋯
-menu.newWindow	新增視窗
-browse.actionOpenInNewWindow	在新視窗中打開
 select.slideTipTitle	滑動選取
 select.slideTipMessage	用手指橫向滑過項目，即可一次選取多個。
 settings.rowAppearance	外觀

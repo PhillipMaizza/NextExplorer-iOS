@@ -705,6 +705,9 @@ archive.passwordProtected	Tämä arkisto on suojattu salasanalla.
 archive.tooManyEntries	Tässä arkistossa on liian monta kohdetta avattavaksi.
 archive.entryEncrypted	Tämä tiedosto on salattu, eikä sitä voi esikatsella.
 gallery.loadFailed	Kuvaa ei voitu ladata.
+gallery.loadFailedTitle	Kohdetta %@ ei voitu ladata
+gallery.decodeFailed	Tiedosto voi olla vioittunut tai muodossa, jota tämä Mac ei pysty lukemaan.
+gallery.checkConnection	Tarkista yhteys ja yritä uudelleen.
 textPreview.saved	Tallennettu
 textPreview.loadFailed	Tiedostoa ei voitu ladata. Tarkista yhteytesi ja yritä uudelleen.
 textPreview.unsavedTitle	Tallennetaanko muutokset kohteeseen “%@”?
@@ -1016,8 +1019,6 @@ browse.clipboardCutMany	%lld kohdetta on valmiina siirrettäväksi
 menu.enclosingFolder	Sisältävä kansio
 common.more	Lisää
 openWith.print	Tulosta…
-menu.newWindow	Uusi ikkuna
-browse.actionOpenInNewWindow	Avaa uudessa ikkunassa
 select.slideTipTitle	Valitse pyyhkäisemällä
 select.slideTipMessage	Pyyhkäise sormella sivuttain kohteiden yli valitaksesi useita kerralla.
 settings.rowAppearance	Ulkoasu

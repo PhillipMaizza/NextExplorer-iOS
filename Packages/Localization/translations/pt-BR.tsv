@@ -717,6 +717,9 @@ archive.passwordProtected	Este arquivo compactado está protegido por senha.
 archive.tooManyEntries	Este arquivo compactado tem itens demais para ser aberto.
 archive.entryEncrypted	Este arquivo está criptografado e não pode ser visualizado.
 gallery.loadFailed	Não foi possível carregar esta imagem.
+gallery.loadFailedTitle	Não foi possível carregar %@
+gallery.decodeFailed	O arquivo pode estar danificado ou em um formato que este Mac não consegue ler.
+gallery.checkConnection	Verifique a conexão e tente novamente.
 textPreview.saved	Salvo
 textPreview.loadFailed	Não foi possível carregar este arquivo. Verifique a conexão e tente novamente.
 textPreview.unsavedTitle	Salvar alterações em “%@”?
@@ -966,8 +969,6 @@ browse.clipboardCutMany	%lld itens prontos para mover
 menu.enclosingFolder	Pasta superior
 common.more	Mais
 openWith.print	Imprimir…
-menu.newWindow	Nova janela
-browse.actionOpenInNewWindow	Abrir em nova janela
 select.slideTipTitle	Deslize para selecionar
 select.slideTipMessage	Deslize um dedo de lado sobre os itens para selecionar vários de uma vez.
 settings.rowAppearance	Aparência

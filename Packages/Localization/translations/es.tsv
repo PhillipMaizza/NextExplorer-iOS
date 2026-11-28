@@ -503,6 +503,9 @@ archive.passwordProtected	Este archivo comprimido está protegido con contraseñ
 archive.tooManyEntries	Este archivo comprimido contiene demasiados elementos para abrirlo.
 archive.entryEncrypted	Este archivo está cifrado y no se puede previsualizar.
 gallery.loadFailed	No se pudo cargar esta imagen.
+gallery.loadFailedTitle	No se ha podido cargar %@
+gallery.decodeFailed	Puede que el archivo esté dañado o en un formato que este Mac no puede leer.
+gallery.checkConnection	Comprueba la conexión e inténtalo de nuevo.
 textPreview.saved	Guardado
 textPreview.loadFailed	No se pudo cargar este archivo. Comprueba tu conexión e inténtalo de nuevo.
 userManagement.navigationTitle	Gestión de usuarios
@@ -766,8 +769,6 @@ browse.clipboardCutMany	%lld elementos listos para mover
 menu.enclosingFolder	Carpeta contenedora
 common.more	Más
 openWith.print	Imprimir…
-menu.newWindow	Nueva ventana
-browse.actionOpenInNewWindow	Abrir en una ventana nueva
 select.slideTipTitle	Desliza para seleccionar
 select.slideTipMessage	Desliza un dedo de lado sobre los elementos para seleccionar varios a la vez.
 settings.rowAppearance	Apariencia

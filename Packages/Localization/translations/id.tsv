@@ -692,6 +692,9 @@ archive.passwordProtected	Arsip ini dilindungi kata sandi.
 archive.tooManyEntries	Arsip ini berisi terlalu banyak item untuk dibuka.
 archive.entryEncrypted	File ini dienkripsi dan tidak dapat dipratinjau.
 gallery.loadFailed	Tidak dapat memuat gambar ini.
+gallery.loadFailedTitle	Tidak dapat memuat %@
+gallery.decodeFailed	File mungkin rusak atau dalam format yang tidak dapat dibaca Mac ini.
+gallery.checkConnection	Periksa koneksi lalu coba lagi.
 textPreview.saved	Tersimpan
 textPreview.loadFailed	Tidak dapat memuat file ini. Periksa koneksi Anda dan coba lagi.
 textPreview.unsavedTitle	Simpan perubahan pada “%@”?
@@ -1003,8 +1006,6 @@ browse.clipboardCutMany	%lld item siap dipindahkan
 menu.enclosingFolder	Folder Induk
 common.more	Lainnya
 openWith.print	Cetak…
-menu.newWindow	Jendela Baru
-browse.actionOpenInNewWindow	Buka di Jendela Baru
 select.slideTipTitle	Geser untuk Memilih
 select.slideTipMessage	Geser jari ke samping melintasi item untuk memilih beberapa sekaligus.
 settings.rowAppearance	Tampilan

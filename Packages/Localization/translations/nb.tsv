@@ -705,6 +705,9 @@ archive.passwordProtected	Dette arkivet er beskyttet med et passord.
 archive.tooManyEntries	Dette arkivet inneholder for mange elementer til å åpnes.
 archive.entryEncrypted	Denne filen er kryptert og kan ikke forhåndsvises.
 gallery.loadFailed	Kunne ikke laste dette bildet.
+gallery.loadFailedTitle	Kunne ikke laste inn %@
+gallery.decodeFailed	Filen kan være skadet eller i et format denne Macen ikke kan lese.
+gallery.checkConnection	Sjekk tilkoblingen og prøv igjen.
 textPreview.saved	Lagret
 textPreview.loadFailed	Kunne ikke laste denne filen. Sjekk tilkoblingen og prøv igjen.
 textPreview.unsavedTitle	Lagre endringer i «%@»?
@@ -1016,8 +1019,6 @@ browse.clipboardCutMany	%lld elementer er klare til å flyttes
 menu.enclosingFolder	Overordnet mappe
 common.more	Mer
 openWith.print	Skriv ut…
-menu.newWindow	Nytt vindu
-browse.actionOpenInNewWindow	Åpne i nytt vindu
 select.slideTipTitle	Sveip for å velge
 select.slideTipMessage	Sveip en finger sidelengs over objekter for å velge flere samtidig.
 settings.rowAppearance	Utseende

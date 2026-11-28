@@ -1,0 +1,2 @@
+{ "app": "X", "features": ["a","b"],
+  "limits": { "mb": 512, "on": true } }

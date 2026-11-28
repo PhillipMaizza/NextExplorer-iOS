@@ -692,6 +692,9 @@ archive.passwordProtected	ไฟล์บีบอัดนี้ได้รั
 archive.tooManyEntries	ไฟล์บีบอัดนี้มีรายการมากเกินไปที่จะเปิด
 archive.entryEncrypted	ไฟล์นี้ถูกเข้ารหัสและไม่สามารถแสดงตัวอย่างได้
 gallery.loadFailed	ไม่สามารถโหลดรูปภาพนี้ได้
+gallery.loadFailedTitle	โหลด %@ ไม่ได้
+gallery.decodeFailed	ไฟล์อาจเสียหายหรืออยู่ในรูปแบบที่ Mac เครื่องนี้อ่านไม่ได้
+gallery.checkConnection	ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
 textPreview.saved	บันทึกแล้ว
 textPreview.loadFailed	ไม่สามารถโหลดไฟล์นี้ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
 textPreview.unsavedTitle	บันทึกการเปลี่ยนแปลงใน “%@” หรือไม่
@@ -1003,8 +1006,6 @@ browse.clipboardCutMany	%lld รายการพร้อมย้าย
 menu.enclosingFolder	โฟลเดอร์ที่บรรจุ
 common.more	เพิ่มเติม
 openWith.print	พิมพ์…
-menu.newWindow	หน้าต่างใหม่
-browse.actionOpenInNewWindow	เปิดในหน้าต่างใหม่
 select.slideTipTitle	เลื่อนเพื่อเลือก
 select.slideTipMessage	เลื่อนนิ้วไปด้านข้างผ่านรายการเพื่อเลือกหลายรายการพร้อมกัน
 settings.rowAppearance	รูปลักษณ์

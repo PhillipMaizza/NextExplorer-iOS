@@ -503,6 +503,9 @@ archive.passwordProtected	Este arquivo está protegido por palavra-passe.
 archive.tooManyEntries	Este arquivo contém demasiados itens para ser aberto.
 archive.entryEncrypted	Este ficheiro está encriptado e não pode ser pré-visualizado.
 gallery.loadFailed	Não foi possível carregar esta imagem.
+gallery.loadFailedTitle	Não foi possível carregar %@
+gallery.decodeFailed	O ficheiro pode estar danificado ou num formato que este Mac não consegue ler.
+gallery.checkConnection	Verifique a ligação e tente novamente.
 textPreview.saved	Guardado
 textPreview.loadFailed	Não foi possível carregar este ficheiro. Verifique a ligação e tente novamente.
 userManagement.navigationTitle	Gestão de utilizadores
@@ -766,8 +769,6 @@ browse.clipboardCutMany	%lld itens prontos para mover
 menu.enclosingFolder	Pasta superior
 common.more	Mais
 openWith.print	Imprimir…
-menu.newWindow	Nova janela
-browse.actionOpenInNewWindow	Abrir em nova janela
 select.slideTipTitle	Deslize para selecionar
 select.slideTipMessage	Deslize um dedo de lado sobre os itens para selecionar vários de uma só vez.
 settings.rowAppearance	Aparência

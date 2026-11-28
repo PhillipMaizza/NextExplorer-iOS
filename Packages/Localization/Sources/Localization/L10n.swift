@@ -149,7 +149,6 @@ public enum L10n {
         public static var actionNewFile: String { tr("browse.actionNewFile") }  // "Create File"
         public static var actionNewFolder: String { tr("browse.actionNewFolder") }  // "Create Folder"
         public static var actionOpenInBrowser: String { tr("browse.actionOpenInBrowser") }  // "Open in Browser"
-        public static var actionOpenInNewWindow: String { tr("browse.actionOpenInNewWindow") }  // "Open in New Window"
         public static var actionPaste: String { tr("browse.actionPaste") }  // "Paste"
         public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
         public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
@@ -629,7 +628,10 @@ public enum L10n {
         public static var unavailable: String { tr("folderSizeSettings.unavailable") }  // "Folder size settings are only available to administrators."
     }
     public enum Gallery {
+        public static var checkConnection: String { tr("gallery.checkConnection") }  // "Check the connection and try again."
+        public static var decodeFailed: String { tr("gallery.decodeFailed") }  // "The file may be damaged or in a format this Mac can't read."
         public static var loadFailed: String { tr("gallery.loadFailed") }  // "Couldn't load this image."
+        public static func loadFailedTitle(_ a0: CVarArg) -> String { tr("gallery.loadFailedTitle", a0) }
     }
     public enum Grid {
         public static func perRow(_ a0: CVarArg) -> String { tr("grid.perRow", a0) }
@@ -754,7 +756,6 @@ public enum L10n {
         public static var goToFolderPlaceholder: String { tr("menu.goToFolderPlaceholder") }  // "Documents/Reports"
         public static var goToFolderTitle: String { tr("menu.goToFolderTitle") }  // "Go to the folder:"
         public static var hideInspector: String { tr("menu.hideInspector") }  // "Hide Inspector"
-        public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
         public static var quitTransfersConfirm: String { tr("menu.quitTransfersConfirm") }  // "Quit"
         public static var quitTransfersMessage: String { tr("menu.quitTransfersMessage") }
         public static var quitTransfersTitle: String { tr("menu.quitTransfersTitle") }  // "Quit NextExplorer?"
