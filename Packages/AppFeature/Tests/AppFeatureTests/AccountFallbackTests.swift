@@ -35,7 +35,7 @@ extension AppSuites {
             loaded.mainTab.browse.root.isTrashAvailable = true
             state.destination = .authenticated(loaded)
             let store = makeStore(state) {
-                $0.authClient.setDisplayName = { _, _ in }
+                $0.authClient.setProfile = { _, _, _ in }
                 $0.authClient.listSessions = { [] }
             }
 
@@ -162,6 +162,73 @@ extension AppSuites {
             }
             await store.receive(\.accountsRefreshed)
             await store.finish()
+        }
+
+        struct ProfileCase: Sendable, CustomTestStringConvertible {
+            let name: String
+            let displayName: String?
+            let roles: [String]
+            let expectedSave: String?
+
+            var testDescription: String {
+                name
+            }
+        }
+
+        @Test(
+            "A session check keeps the account's stored name and role in step with the server",
+            arguments: [
+                ProfileCase(
+                    name: "renamed and promoted",
+                    displayName: "Alice Example",
+                    roles: [UserRole.admin],
+                    expectedSave: "Alice Example true"
+                ),
+                ProfileCase(
+                    name: "promoted only",
+                    displayName: nil,
+                    roles: [UserRole.admin],
+                    expectedSave: " true"
+                ),
+                ProfileCase(
+                    name: "unchanged",
+                    displayName: nil,
+                    roles: [],
+                    expectedSave: nil
+                ),
+            ]
+        )
+        func validationKeepsTheStoredProfileInStep(_ profileCase: ProfileCase) async {
+            let renamed = User(
+                id: AppFixtures.userA.id,
+                username: TestUser.alice,
+                email: nil,
+                displayName: profileCase.displayName,
+                roles: profileCase.roles
+            )
+            let calls = LockIsolated<[String]>([])
+            let store = makeStore(AppFeature.State(destination: .authenticated(AuthenticatedFeature.State(
+                serverURL: AppFixtures.serverA,
+                user: AppFixtures.userA
+            )))) {
+                $0.authClient.setProfile = { id, name, isAdmin in
+                    calls.withValue { $0.append("\(id) \(name ?? "") \(isAdmin)") }
+                }
+                $0.authClient.listSessions = {
+                    calls.withValue { $0.append("list") }
+                    return []
+                }
+            }
+
+            await store.send(.sessionValidationResponse(.success(renamed), credentialsA)) {
+                $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                $0.destination = AppFixtures.confirmed(AppFixtures.serverA, renamed)
+            }
+            await store.receive(\.accountsRefreshed)
+            await store.finish()
+
+            let saves = profileCase.expectedSave.map { ["\(AppFixtures.accountA) \($0)"] } ?? []
+            #expect(calls.value == saves + ["list"])
         }
     }
 }

@@ -104,9 +104,14 @@
             HStack(alignment: .center, spacing: .space12) {
                 AvatarView.person(store.activeAccount.displayName, size: Metrics.headerAvatar)
                 VStack(alignment: .leading, spacing: .space2) {
-                    Text(store.activeAccount.displayName)
-                        .type(.body1(.bold))
-                        .lineLimit(1)
+                    HStack(spacing: .space8) {
+                        Text(store.activeAccount.displayName)
+                            .type(.body1(.bold))
+                            .lineLimit(1)
+                        if store.user.isAdmin {
+                            MacChip.admin()
+                        }
+                    }
                     if let subtitle = store.user.email ?? store.activeAccount.serverSubtitle {
                         Text(subtitle)
                             .type(.body3(.regular))
@@ -116,10 +121,6 @@
                     }
                 }
                 Spacer(minLength: .zero)
-                if store.user.isAdmin {
-                    MacChip(text: L10n.Settings.sectionAdmin, tone: .amber)
-                        .frame(maxHeight: .infinity, alignment: .top)
-                }
             }
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, .space12)
@@ -205,10 +206,15 @@
                 HStack(spacing: .space12) {
                     AvatarView.person(account.displayName, size: Metrics.rowAvatar)
                     VStack(alignment: .leading, spacing: .zero) {
-                        Text(account.displayName)
-                            .type(.body2(.semibold))
-                            .foregroundStyle(Color.primaryDS)
-                            .lineLimit(1)
+                        HStack(spacing: .space4) {
+                            Text(account.displayName)
+                                .type(.body2(.semibold))
+                                .foregroundStyle(Color.primaryDS)
+                                .lineLimit(1)
+                            if account.isAdmin {
+                                MacAdminMark()
+                            }
+                        }
                         if let server = account.serverSubtitle {
                             Text(server)
                                 .type(.body3(.regular))
@@ -241,6 +247,7 @@
                 ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
                 : L10n.Common.pair(account.displayName, account.serverHost))
                 .accessibilityAddTraits(account.isActive ? .isSelected : [])
+                .accessibilityValue(account.isAdmin ? L10n.UserManagement.badgeAdmin : "")
                 .accessibilityAction(named: L10n.Settings.accountSignOut, onRemove)
         }
     }

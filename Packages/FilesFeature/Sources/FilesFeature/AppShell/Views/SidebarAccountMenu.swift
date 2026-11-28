@@ -147,12 +147,22 @@ import SwiftUI
                 AvatarView.person(account.displayName, size: Metrics.avatarSize)
                     .opacity(account.isActive ? 1 : Metrics.inactiveOpacity)
                 VStack(alignment: .leading, spacing: .space2) {
-                    Text(account.displayName)
-                        .type(
-                            .body2(account.isActive ? .bold : .regular),
-                            style: account.isActive ? .primaryOnSurface : .secondary
-                        )
-                        .lineLimit(1)
+                    HStack(spacing: .space4) {
+                        Text(account.displayName)
+                            .type(
+                                .body2(account.isActive ? .bold : .regular),
+                                style: account.isActive ? .primaryOnSurface : .secondary
+                            )
+                            .lineLimit(1)
+                        if account.isAdmin {
+                            IconKit.shield
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: .iconXSmall, height: .iconXSmall)
+                                .foregroundStyle(Color.accent)
+                                .accessibilityHidden(true)
+                        }
+                    }
                     // Shrinks a long host to fit before falling back to truncating it.
                     if let server = account.serverSubtitle {
                         Text(server)
@@ -201,6 +211,7 @@ import SwiftUI
                 ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
                 : L10n.Common.pair(account.displayName, account.serverHost))
                 .accessibilityAddTraits(account.isActive ? .isSelected : .isButton)
+                .accessibilityValue(account.isAdmin ? L10n.UserManagement.badgeAdmin : "")
                 // The tap gesture is pointer only; VoiceOver's press switches like a click does.
                 .accessibilityAction {
                     if !account.isActive {

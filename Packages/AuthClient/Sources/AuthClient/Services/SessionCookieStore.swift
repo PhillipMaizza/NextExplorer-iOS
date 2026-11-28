@@ -174,9 +174,9 @@ struct SessionCookieStore: Sendable {
         try saveStored(stored)
     }
 
-    func setDisplayName(_ displayName: String?, id: String) throws {
+    func setProfile(displayName: String?, isAdmin: Bool, id: String) throws {
         var stored = try loadForChange()
-        stored.setDisplayName(displayName, id: id)
+        stored.setProfile(displayName: displayName, isAdmin: isAdmin, id: id)
         try saveStored(stored)
     }
 

@@ -93,7 +93,7 @@
                     .lineLimit(1)
                     Spacer(minLength: .space8)
                     if user.isAdmin {
-                        MacChip(text: L10n.UserManagement.badgeAdmin, tone: .amber)
+                        MacChip.admin(size: .regular)
                     }
                 }
                 .foregroundStyle(Color.macChromeText)

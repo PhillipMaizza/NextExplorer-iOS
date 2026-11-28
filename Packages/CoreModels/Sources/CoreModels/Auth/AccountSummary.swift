@@ -12,6 +12,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
     public var isActive: Bool
     public var email: String?
     public var fullName: String?
+    public var isAdmin: Bool
     public var authMode: AuthMode
     public var requireSignIn: RequireSignIn?
     public var isLocked: Bool
@@ -23,6 +24,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
         isActive: Bool,
         email: String? = nil,
         fullName: String? = nil,
+        isAdmin: Bool = false,
         authMode: AuthMode = .local,
         requireSignIn: RequireSignIn? = nil,
         isLocked: Bool = false
@@ -33,6 +35,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
         self.isActive = isActive
         self.email = email
         self.fullName = fullName
+        self.isAdmin = isAdmin
         self.authMode = authMode
         self.requireSignIn = requireSignIn
         self.isLocked = isLocked
@@ -46,6 +49,7 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
             isActive: isActive,
             email: credentials.email,
             fullName: credentials.displayName,
+            isAdmin: credentials.isAdmin,
             authMode: credentials.authMode,
             requireSignIn: credentials.requireSignIn,
             isLocked: credentials.isLocked

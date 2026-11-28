@@ -331,7 +331,7 @@ public struct AppFeature {
                     userID: user.id
                 )
                 let accounts = Effect<Action>.concatenate(
-                    renameStoredAccount(credentials, to: user.displayName),
+                    storeProfile(credentials, of: user),
                     refreshAccounts
                 )
                 if case var .authenticated(current) = state.destination,
@@ -649,10 +649,12 @@ public struct AppFeature {
         }
     }
 
-    func renameStoredAccount(_ credentials: SessionCredentials, to displayName: String?) -> Effect<Action> {
-        guard credentials.displayName != displayName else { return .none }
+    func storeProfile(_ credentials: SessionCredentials, of user: User) -> Effect<Action> {
+        guard credentials.displayName != user.displayName || credentials.isAdmin != user.isAdmin else { return .none }
         let authClient = authClient
-        return .run { _ in try? await authClient.setDisplayName(credentials.accountID, displayName) }
+        return .run { _ in
+            try? await authClient.setProfile(credentials.accountID, user.displayName, user.isAdmin)
+        }
     }
 
     private static func summaries(_ sessions: [SessionCredentials], activeID: String?) -> [AccountSummary] {

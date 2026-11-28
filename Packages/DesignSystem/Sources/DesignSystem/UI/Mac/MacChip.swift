@@ -140,6 +140,31 @@
         }
     }
 
+    public extension MacChip {
+        static func admin(size: Size = .small) -> MacChip {
+            MacChip(
+                text: L10n.UserManagement.badgeAdmin,
+                tone: .amber,
+                size: size,
+                icon: IconKit.macShield
+            )
+        }
+    }
+
+    public struct MacAdminMark: View {
+        public init() {}
+
+        public var body: some View {
+            IconKit.macShield
+                .resizable()
+                .scaledToFit()
+                .macSquare(.iconXSmall)
+                .foregroundStyle(Color.macTagAmber)
+                .help(L10n.UserManagement.badgeAdmin)
+                .accessibilityLabel(L10n.UserManagement.badgeAdmin)
+        }
+    }
+
     public struct MacIconChip: View {
         private typealias Size = MacChip.Size
         private let icon: Image
@@ -174,6 +199,8 @@
             MacChip(text: L10n.ActivityLog.outcomeRefused, tone: .red)
             MacChip(text: L10n.ServerTools.notUsed, tone: .gray)
             MacChip(text: L10n.ServerTools.notUsed, tone: .amber, size: .small)
+            MacChip.admin()
+            MacAdminMark()
             MacChip(text: L10n.UserManagement.badgeAdmin, tone: .amber)
             MacChip(text: L10n.Shared.anyoneWithLink, tone: .gray, icon: IconKit.web)
         }

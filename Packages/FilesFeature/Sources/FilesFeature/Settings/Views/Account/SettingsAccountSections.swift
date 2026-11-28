@@ -176,6 +176,7 @@ extension SettingsFeature.State {
             guard account.isActive else { return account }
             var current = account
             current.email = user.email ?? account.email
+            current.isAdmin = user.isAdmin
             return current
         }
     }
@@ -190,7 +191,8 @@ extension SettingsFeature.State {
             username: user.username,
             serverURL: serverURL,
             isActive: true,
-            email: user.email
+            email: user.email,
+            isAdmin: user.isAdmin
         )
     }
 }

@@ -21,6 +21,6 @@ public extension AuthClient {
         lockSessions: { _ in [] },
         endSession: { _ in },
         setRequireSignIn: { _, _ in },
-        setDisplayName: { _, _ in }
+        setProfile: { _, _, _ in }
     )
 }

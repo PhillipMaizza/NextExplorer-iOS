@@ -108,9 +108,14 @@
                 HStack(spacing: .space12) {
                     AvatarView.person(account.displayName, size: Metrics.avatarSize)
                     VStack(alignment: .leading, spacing: .space2) {
-                        Text(account.displayName)
-                            .type(.body2(.semibold))
-                            .lineLimit(1)
+                        HStack(spacing: .space8) {
+                            Text(account.displayName)
+                                .type(.body2(.semibold))
+                                .lineLimit(1)
+                            if account.isAdmin {
+                                MacChip.admin()
+                            }
+                        }
                         if let server = account.serverSubtitle {
                             Text(server)
                                 .type(.body3(.regular), style: .secondary)

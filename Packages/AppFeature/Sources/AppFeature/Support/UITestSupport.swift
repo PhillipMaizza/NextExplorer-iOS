@@ -271,7 +271,11 @@
             client.clearAllSessions = { sessions.clearAll() }
             client.lockSessions = { shouldLock in sessions.lock(where: shouldLock) }
             client.setRequireSignIn = { id, requireSignIn in sessions.setRequireSignIn(requireSignIn, id: id) }
-            client.setDisplayName = { id, displayName in sessions.setDisplayName(displayName, id: id) }
+            client.setProfile = { id, displayName, isAdmin in sessions.setProfile(
+                displayName: displayName,
+                isAdmin: isAdmin,
+                id: id
+            ) }
             switch auth {
             case .loggedOut:
                 client.restoreSession = { nil }
@@ -513,8 +517,8 @@
             locked { stored.setRequireSignIn(requireSignIn, id: id) }
         }
 
-        func setDisplayName(_ displayName: String?, id: String) {
-            locked { stored.setDisplayName(displayName, id: id) }
+        func setProfile(displayName: String?, isAdmin: Bool, id: String) {
+            locked { stored.setProfile(displayName: displayName, isAdmin: isAdmin, id: id) }
         }
     }
 

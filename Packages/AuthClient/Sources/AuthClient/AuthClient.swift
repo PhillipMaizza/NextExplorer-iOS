@@ -49,7 +49,7 @@ public struct AuthClient: Sendable {
     ) async throws -> [SessionCredentials]
     public var endSession: @Sendable (_ credentials: SessionCredentials) async -> Void
     public var setRequireSignIn: @Sendable (_ accountID: String, _ requireSignIn: RequireSignIn?) async throws -> Void
-    public var setDisplayName: @Sendable (_ accountID: String, _ displayName: String?) async throws -> Void
+    public var setProfile: @Sendable (_ accountID: String, _ displayName: String?, _ isAdmin: Bool) async throws -> Void
 }
 
 public enum OIDCBrowserSession: Sendable {

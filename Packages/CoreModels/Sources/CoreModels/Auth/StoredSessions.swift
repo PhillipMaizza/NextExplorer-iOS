@@ -49,9 +49,10 @@ public struct StoredSessions: Codable, Equatable, Sendable {
         sessions[index].requireSignIn = requireSignIn
     }
 
-    public mutating func setDisplayName(_ displayName: String?, id: String) {
+    public mutating func setProfile(displayName: String?, isAdmin: Bool, id: String) {
         guard let index = sessions.firstIndex(where: { $0.accountID == id }) else { return }
         sessions[index].displayName = displayName
+        sessions[index].isAdmin = isAdmin
     }
 
     /// Removes an account. If it was active, the first remaining account becomes active (or `nil`
