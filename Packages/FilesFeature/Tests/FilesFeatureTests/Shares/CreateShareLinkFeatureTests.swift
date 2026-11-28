@@ -231,6 +231,37 @@ struct CreateShareLinkFeatureTests {
         }
     }
 
+    @Test(
+        "A folder is asked about itself: a volume at the top can be shared for editing though the top is not writable"
+    )
+    func aFolderLearnsItsOwnWritability() async {
+        let asked = LockIsolated<[String]>([])
+        let store = TestStore(initialState: CreateShareLinkFeature.State(
+            serverURL: serverURL,
+            itemName: TestFolder.files,
+            itemPath: "",
+            isDirectory: true,
+            isWritable: false,
+            shouldCheckWritability: true,
+            now: now
+        )) {
+            CreateShareLinkFeature()
+        } withDependencies: {
+            $0.filesClient.fetchPreferences = { _ in UserPreferences() }
+            $0.filesClient.browse = { _, path in
+                asked.withValue { $0.append(path) }
+                return BrowseResult(items: [], access: BrowseTestSupport.fullAccess, path: path)
+            }
+        }
+
+        await store.send(.onAppear)
+        await store.receive(\.preferencesResponse)
+        await store.receive(\.writabilityResponse) {
+            $0.isWritable = true
+        }
+        #expect(asked.value == [TestFolder.files])
+    }
+
     @Test
     func onAppearAppliesTheUsersDefaultShareExpiration() async {
         var calendar = Calendar(identifier: .gregorian)

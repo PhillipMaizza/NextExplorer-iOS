@@ -72,7 +72,7 @@ struct PreviewHostActions: ViewModifier {
                             itemPath: item.path,
                             isDirectory: item.isDirectory,
                             isWritable: host.state.isWritable(item),
-                            shouldCheckWritability: item.path != host.state.directoryPath,
+                            shouldCheckWritability: item.isDirectory || item.path != host.state.directoryPath,
                             now: date.now
                         )
                     ) {

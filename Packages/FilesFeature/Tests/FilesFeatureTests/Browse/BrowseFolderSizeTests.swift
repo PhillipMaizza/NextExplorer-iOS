@@ -231,6 +231,27 @@ struct BrowseFolderSizeTests {
         #expect(!store.state.offersFolderSizeRefresh(docs))
     }
 
+    @Test("A refusal is forgotten when the listing reloads, since one like \"not ready\" passes")
+    func refusedRefreshIsOfferedAgainAfterAReload() async {
+        var state = loadedState()
+        state.refusedFolderSizeRefreshIDs = [docs.id]
+        let store = BrowseFixtures.store(state) {
+            $0.filesClient.folderSizes = { _, _ in [:] }
+        }
+
+        await store.send(.itemsResponse(.success(BrowseResult(
+            items: [docs, notesFile],
+            access: BrowseTestSupport.fullAccess,
+            path: store.state.directoryPath
+        )))) {
+            $0.refusedFolderSizeRefreshIDs = []
+        }
+        await store.receive(\.folderSizesResponse)
+        await store.receive(\.offlineAvailabilityComputed)
+
+        #expect(store.state.offersFolderSizeRefresh(docs))
+    }
+
     @Test("A rescan of a file, or with the feature off, is ignored")
     func refreshIgnoredWhenNotAFolderOrOff() async {
         let store = BrowseFixtures.store(loadedState()) {

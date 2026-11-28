@@ -117,6 +117,7 @@ extension BrowseFeature {
                 uniquingIDsWith: { first, _ in first }
             )
             state.access = Self.shownAccess(result.access, isNarrowed: state.isKeptOffline)
+            state.refusedFolderSizeRefreshIDs = []
             state.shareName = result.shareInfo?.name
             let isShareRoot = ReceivedShareSpace.shareRoot(of: state.directoryPath) == state.directoryPath
             if isShareRoot, let shareName = state.shareName {

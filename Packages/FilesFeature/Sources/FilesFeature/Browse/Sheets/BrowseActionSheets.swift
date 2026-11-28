@@ -221,7 +221,7 @@ struct BrowseActionSheets: ViewModifier {
                     itemPath: item.path,
                     isDirectory: item.isDirectory,
                     isWritable: store.state.isWritable(item),
-                    shouldCheckWritability: item.path != store.state.directoryPath,
+                    shouldCheckWritability: item.isDirectory || item.path != store.state.directoryPath,
                     now: date.now
                 )
             ) {

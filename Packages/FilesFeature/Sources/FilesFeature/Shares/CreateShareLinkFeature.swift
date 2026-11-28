@@ -145,16 +145,23 @@ public struct CreateShareLinkFeature {
                 let serverURL = state.serverURL
                 let filesClient = filesClient
                 let shouldCheckWritability = state.shouldCheckWritability
+                let isDirectory = state.isDirectory
                 let folder = state.itemPath
                 let name = state.itemName
+                let source = state.sourcePath
                 return .run { send in
                     if let preferences = try? await filesClient.fetchPreferences(serverURL) {
                         await send(.preferencesResponse(preferences))
                     }
-                    guard shouldCheckWritability,
-                          let listing = try? await filesClient.browse(serverURL, folder) else { return }
-                    let item = listing.items.first { $0.name == name }
-                    await send(.writabilityResponse(listing.access.canWrite && item?.readOnly == nil))
+                    guard shouldCheckWritability else { return }
+                    if isDirectory {
+                        guard let listing = try? await filesClient.browse(serverURL, source) else { return }
+                        await send(.writabilityResponse(listing.access.canWrite))
+                    } else {
+                        guard let listing = try? await filesClient.browse(serverURL, folder) else { return }
+                        let item = listing.items.first { $0.name == name }
+                        await send(.writabilityResponse(listing.access.canWrite && item?.readOnly == nil))
+                    }
                 }
 
             case let .writabilityResponse(isWritable):
