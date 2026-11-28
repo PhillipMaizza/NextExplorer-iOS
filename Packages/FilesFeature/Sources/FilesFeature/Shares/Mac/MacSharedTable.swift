@@ -204,10 +204,9 @@
                         .labelStyle(.titleAndIcon)
                 }
             } primaryAction: { ids in
-                if let share = receivedShare(for: ids, in: rows) {
-                    onOpen(share)
-                }
+                open(ids, in: rows)
             }
+            .macOpenShortcut(isEnabled: isFocused) { open(selection, in: rows) }
             // Escape deselects, which closes the inspector.
             .onExitCommand {
                 if store.editPopover != nil {
@@ -317,6 +316,12 @@
             return share
         }
 
+        private func open(_ ids: Set<MacSharedRow.ID>, in rows: [MacSharedRow]) {
+            if let share = receivedShare(for: ids, in: rows) {
+                onOpen(share)
+            }
+        }
+
         private func receivedShare(for ids: Set<MacSharedRow.ID>, in rows: [MacSharedRow]) -> Share? {
             guard !isByMe, !isLoading, ids.count == 1, let id = ids.first, let row = Self.row(id, in: rows)
             else { return nil }
@@ -332,15 +337,7 @@
         }
 
         private static func row(_ id: MacSharedRow.ID, in rows: [MacSharedRow]) -> MacSharedRow? {
-            for row in rows {
-                if row.id == id {
-                    return row
-                }
-                if let child = row.children?.first(where: { $0.id == id }) {
-                    return child
-                }
-            }
-            return nil
+            rows.lazy.compactMap { $0.id == id ? $0 : $0.children?.first { $0.id == id } }.first
         }
 
         private static func allIDs(of rows: [MacSharedRow]) -> [MacSharedRow.ID] {

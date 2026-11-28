@@ -68,10 +68,9 @@
                     }
                 }
             } primaryAction: { ids in
-                if ids.count == 1, let entry = entries(ids).first {
-                    store.send(.entryTapped(entry))
-                }
+                open(ids)
             }
+            .macOpenShortcut(isEnabled: isFocused) { open(selection) }
             .labelStyle(.titleAndIcon)
             .macBoardTable()
             .backgroundGradient()
@@ -88,6 +87,12 @@
 
         private var dateFormat: DateDisplayFormat {
             DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
+        }
+
+        private func open(_ ids: Set<TrashEntry.ID>) {
+            if ids.count == 1, let entry = entries(ids).first {
+                store.send(.entryTapped(entry))
+            }
         }
 
         private func entries(_ ids: Set<TrashEntry.ID>) -> [TrashEntry] {

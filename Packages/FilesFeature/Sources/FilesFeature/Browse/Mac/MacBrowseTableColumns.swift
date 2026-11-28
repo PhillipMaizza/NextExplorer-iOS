@@ -1,5 +1,6 @@
 #if os(macOS)
     import DesignSystem
+    import Localization
     import SwiftUI
 
     enum MacBrowseTableMetrics {
@@ -57,6 +58,32 @@
         func macBrowseTableWidth(_ width: Binding<CGFloat>) -> some View {
             frame(minWidth: .zero, maxWidth: .infinity)
                 .onGeometryChange(for: CGFloat.self, of: \.size.width) { width.wrappedValue = $0 }
+        }
+
+        func macOpenShortcut(isEnabled: Bool, open: @escaping () -> Void) -> some View {
+            modifier(MacOpenShortcut(isEnabled: isEnabled, open: open))
+        }
+    }
+
+    private final class MacOpenAction {
+        var run: () -> Void = {}
+    }
+
+    private struct MacOpenShortcut: ViewModifier {
+        let isEnabled: Bool
+        let open: () -> Void
+        @State private var action = MacOpenAction()
+
+        func body(content: Content) -> some View {
+            action.run = open
+            return content.background {
+                Button(L10n.Browse.open) { action.run() }
+                    .keyboardShortcut(.downArrow, modifiers: .command)
+                    .disabled(!isEnabled)
+                    .opacity(0)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
         }
     }
 #endif

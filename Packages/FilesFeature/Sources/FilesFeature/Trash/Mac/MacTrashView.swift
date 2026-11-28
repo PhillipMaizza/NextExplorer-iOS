@@ -183,10 +183,9 @@
                 menu(for: ids)
                     .labelStyle(.titleAndIcon)
             } primaryAction: { ids in
-                if ids.count == 1, let id = ids.first, let item = store.items[id: id] {
-                    store.send(.itemTapped(item))
-                }
+                open(ids)
             }
+            .macOpenShortcut(isEnabled: isFocused) { open(selection) }
             .onDeleteCommand { store.send(.deletePermanentlyTapped(items(selection))) }
             .macBoardTable()
             .macBrowseTableWidth($width)
@@ -239,6 +238,12 @@
                 RemovableMenuButton(title: L10n.Trash.deletePermanently, icon: MenuIcon.delete.image, isRemoval: true) {
                     store.send(.deletePermanentlyTapped(picked))
                 }
+            }
+        }
+
+        private func open(_ ids: Set<TrashItem.ID>) {
+            if ids.count == 1, let id = ids.first, let item = store.items[id: id] {
+                store.send(.itemTapped(item))
             }
         }
 

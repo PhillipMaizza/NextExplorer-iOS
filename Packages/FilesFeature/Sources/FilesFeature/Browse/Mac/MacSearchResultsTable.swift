@@ -24,6 +24,7 @@
 
         @State private var selection: Set<SearchResultItem.ID> = []
         @State private var sortOrder: [KeyPathComparator<SearchResultItem>] = []
+        @FocusState private var isFocused: Bool
 
         private var results: [SearchResultItem] {
             sections.onDevice + sections.remote + elsewhere + lanes.flatMap(\.rows)
@@ -104,10 +105,16 @@
                         .labelStyle(.titleAndIcon)
                 }
             }, primaryAction: { ids in
-                guard ids.count == 1, let result = results.first(where: { $0.id == ids.first }) else { return }
-                onOpen(result)
+                open(ids)
             })
             .macBoardTable()
+            .focused($isFocused)
+            .macOpenShortcut(isEnabled: isFocused) { open(selection) }
+        }
+
+        private func open(_ ids: Set<SearchResultItem.ID>) {
+            guard ids.count == 1, let result = results.first(where: { $0.id == ids.first }) else { return }
+            onOpen(result)
         }
 
         private func sorted(_ results: [SearchResultItem]) -> [SearchResultItem] {

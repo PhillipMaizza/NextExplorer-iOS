@@ -150,10 +150,9 @@
                 menu(for: ids)
                     .labelStyle(.titleAndIcon)
             } primaryAction: { ids in
-                if ids.count == 1, let row = row(for: ids.first, in: rows) {
-                    open(row)
-                }
+                open(ids, in: rows)
             }
+            .macOpenShortcut(isEnabled: isFocused) { open(selection, in: rows) }
             .macBoardTable(showsHeaders: !rows.isEmpty)
             .macBrowseTableWidth($width)
             // The table's scroll view otherwise draws its header material up under the pinned title.
@@ -246,6 +245,12 @@
             switch row {
             case let .pinned(usage): MacInspectorLocation.trail(parent: usage.parentPath)
             case .saved: L10n.Offline.sectionSavedEarlier
+            }
+        }
+
+        private func open(_ ids: Set<MacOfflineTableRow.ID>, in rows: [MacOfflineTableRow]) {
+            if ids.count == 1, let row = row(for: ids.first, in: rows) {
+                open(row)
             }
         }
 

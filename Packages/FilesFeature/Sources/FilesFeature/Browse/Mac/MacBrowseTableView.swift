@@ -195,17 +195,10 @@
             }
             // Finder's ⌘↓ opens the selection. A key equivalent, since the table takes arrow
             // keys before `onKeyPress` sees them; live only while the table has focus.
-            .background {
-                Button(L10n.Browse.open) {
-                    if selection.count == 1 {
-                        keyboardActions.open()
-                    }
+            .macOpenShortcut(isEnabled: isFocused) {
+                if selection.count == 1 {
+                    keyboardActions.open()
                 }
-                .keyboardShortcut(.downArrow, modifiers: .command)
-                .disabled(!isFocused)
-                .opacity(0)
-                .allowsHitTesting(false)
-                .accessibilityHidden(true)
             }
             .onDeleteCommand {
                 if renamingItemID == nil {

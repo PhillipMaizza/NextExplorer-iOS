@@ -89,10 +89,9 @@
                         .labelStyle(.titleAndIcon)
                 }
             } primaryAction: { ids in
-                if ids.count == 1, let favorite = favorite(for: ids.first) {
-                    store.send(.rowTapped(favorite))
-                }
+                open(ids)
             }
+            .macOpenShortcut(isEnabled: isFocused) { open(selection) }
             .macBoardTable(showsHeaders: !favorites.isEmpty)
             .macBrowseTableWidth($width)
             // The table's scroll view otherwise draws its header material up under the pinned title.
@@ -129,6 +128,12 @@
             }
             .onChange(of: selection) { _, ids in
                 store.send(.tableSelectionChanged(ids))
+            }
+        }
+
+        private func open(_ ids: Set<Favorite.ID>) {
+            if ids.count == 1, let favorite = favorite(for: ids.first) {
+                store.send(.rowTapped(favorite))
             }
         }
 
