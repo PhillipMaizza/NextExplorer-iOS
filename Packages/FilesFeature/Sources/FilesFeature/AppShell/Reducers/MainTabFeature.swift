@@ -64,8 +64,6 @@ public struct MainTabFeature {
         #if os(macOS)
             /// Where the last Mac save landed, revealed by the confirmation's Show in Finder.
             public var lastSavedDownloadURL: URL?
-            /// The latest folder change, for the extra Browse windows to reload.
-            public var folderWindowSync = FolderWindowSync()
         #endif
 
         public init(serverURL: URL, user: User) {
@@ -144,11 +142,6 @@ public struct MainTabFeature {
         case spotlightOpened
         case spotlight(PresentationAction<SpotlightFeature.Action>)
         case recentFoldersCleared
-        #if os(macOS)
-            /// An extra Browse window changed these folders; the main window and the other
-            /// windows reload what they show of them.
-            case folderWindowChanged(FolderContentsChange, origin: UUID)
-        #endif
         /// Sent when the scene becomes active again after being backgrounded: `BrowseTabFeature`
         /// refetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
         /// deliberately no ops once a folder already has items loaded.
@@ -352,8 +345,7 @@ public struct MainTabFeature {
                         return Self.open(path, title: (path as NSString).lastPathComponent, in: &state)
                     }
                     state.selectedTab = .browse
-                    let title = PersonalSpace.folderTitle(path)
-                    return .send(.browse(.navigateToItem(folder: path, title: title, revealing: nil)))
+                    return .send(.browse(.goToPath(path)))
 
                 case .spotlightToggled where state.spotlight != nil:
                     state.spotlight = nil
@@ -658,16 +650,6 @@ public struct MainTabFeature {
                     state.recentFolders = []
                     return .none
 
-                #if os(macOS)
-                    case let .folderWindowChanged(change, origin):
-                        state.folderWindowSync.broadcast(change, from: origin)
-                        return .merge(
-                            BrowseTabFeature.refresh(for: change).map(Action.browse),
-                            BrowseTabFeature.refresh(for: change).map(Action.sharedBrowse),
-                            FavoritesFeature.refresh(for: change).map(Action.favorites)
-                        )
-                #endif
-
                 case .browse, .sharedBrowse, .favorites, .shared, .downloads, .settings, .trash, .uploads,
                      .downloadQueue, .offline, .offlineManage, .delegate,
                      .deviceExportFinished, .deviceShareFinished:
@@ -725,7 +707,7 @@ public struct MainTabFeature {
             }
             #if os(macOS)
                 Reduce { state, action in
-                    Self.syncFolderWindows(&state, after: action)
+                    Self.syncSections(after: action, in: state)
                 }
             #endif
         }

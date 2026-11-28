@@ -7,7 +7,6 @@ enum MenuIcon {
     case openWith
     case viewAsText
     case print
-    case newWindow
     case getInfo
     case permissions
     case openInBrowser
@@ -43,7 +42,6 @@ enum MenuIcon {
             case .openWith: IconKit.macOpenWith
             case .viewAsText: IconKit.macDocument
             case .print: IconKit.macPrint
-            case .newWindow: IconKit.macNewWindow
             case .getInfo: IconKit.macInfo
             case .permissions: IconKit.macLock
             case .openInBrowser: IconKit.macGlobe
@@ -77,7 +75,6 @@ enum MenuIcon {
         switch self {
         case let .open(isDirectory): isDirectory ? IconKit.folder : IconKit.document
         case .openLocation, .newFolder: IconKit.folder
-        case .newWindow: IconKit.newWindow
         case .openWith: IconKit.openInApp
         case .viewAsText: IconKit.document
         case .print: IconKit.print

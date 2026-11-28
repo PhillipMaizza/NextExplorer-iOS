@@ -48,12 +48,26 @@ extension MainTabTestSupport {
         }
     }
 
-    /// A finished change in this window is broadcast to the extra Mac windows.
-    func broadcastFolders(_ state: inout MainTabFeature.State, _ folders: [String]) {
-        #if os(macOS)
-            state.folderWindowSync = FolderWindowSync(revision: 1, change: .folders(folders), origin: nil)
-        #endif
+    typealias Source = MainTabSource
+}
+
+enum GoToPathFixture {
+    static func metadata(_ path: String, kind: String) -> FileMetadata {
+        FileMetadata(
+            path: path,
+            name: (path as NSString).lastPathComponent,
+            kind: kind,
+            size: .zero,
+            dateModified: MockDate.date,
+            dateCreated: MockDate.date
+        )
     }
 
-    typealias Source = MainTabSource
+    static func folder(_ path: String) -> FileMetadata {
+        metadata(path, kind: "directory")
+    }
+
+    static func file(_ path: String) -> FileMetadata {
+        metadata(path, kind: "pdf")
+    }
 }

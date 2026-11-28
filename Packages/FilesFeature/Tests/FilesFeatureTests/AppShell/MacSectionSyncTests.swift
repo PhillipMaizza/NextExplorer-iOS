@@ -10,7 +10,7 @@ import TestUtils
 
     @MainActor
     @Suite(.isolatedDependencies)
-    struct MacFolderWindowSyncTests {
+    struct MacSectionSyncTests {
         private let serverURL = BrowseTestSupport.serverURL
         private let user = User.janeDoeFixture
 
@@ -54,7 +54,7 @@ import TestUtils
         )
 
         @Test(
-            "A finished edit reloads its own folder in the other windows, a move or undo reloads everything, a failure reloads nothing",
+            "A finished edit reloads its own folder in the other section, a move or undo reloads everything, a failure reloads nothing",
             arguments: [
                 ChangeCase(
                     name: "rename",
@@ -128,15 +128,15 @@ import TestUtils
                 ChangeCase(name: "a refresh", action: .refreshButtonTapped, expected: nil),
             ]
         )
-        func whichActionsChangeWhatTheOtherWindowsShow(_ changeCase: ChangeCase) {
+        func whichActionsChangeWhatTheOtherSectionShows(_ changeCase: ChangeCase) {
             #expect(BrowseFeature
                 .folderContentsChange(after: changeCase.action, directoryPath: TestFolder.docs) == changeCase.expected)
         }
 
-        // MARK: Broadcasting from the main window
+        // MARK: Browse and Favorites on the same folder
 
-        @Test("A rename in the main window is broadcast to the other windows and reloads the Favorites copy")
-        func aRenameInTheMainWindowIsBroadcastToTheOtherWindows() async {
+        @Test("A rename in Browse reloads the Favorites copy of that folder")
+        func aRenameInBrowseReloadsTheFavoritesCopy() async {
             let renamed = FileItem(
                 name: TestFile.bText,
                 path: "",
@@ -154,13 +154,12 @@ import TestUtils
                     renamed,
                     previousName: TestFile.aText
                 ))] }
-                $0.folderWindowSync = FolderWindowSync(revision: 1, change: .folders([""]), origin: nil)
             }
             await store.receive(\.favorites.refreshDirectory)
         }
 
-        @Test("A failed change in the main window is not broadcast")
-        func aFailedChangeIsNotBroadcast() async {
+        @Test("A failed change reloads nothing")
+        func aFailedChangeReloadsNothing() async {
             let store = makeStore()
 
             await store.send(.browse(.root(.renameResponse(.failure(.offline))))) {
@@ -168,8 +167,8 @@ import TestUtils
             }
         }
 
-        @Test("A change in a pushed Favorites folder is broadcast and reloads the Browse screens showing that folder")
-        func aChangeInAFavoritesFolderIsBroadcastAndReloadsBrowse() async {
+        @Test("A change in a pushed Favorites folder reloads the Browse screens showing that folder")
+        func aChangeInAFavoritesFolderReloadsBrowse() async {
             let folder = FileItem(
                 name: "New",
                 path: TestFolder.docs,
@@ -202,7 +201,6 @@ import TestUtils
                 $0.favorites.path[id: pushedID]?.scrollTargetID = folder.id
                 $0.favorites.path[id: pushedID]?.$undoStack.withLock { $0 = [FileUndoEntry(.madeNew(folder))] }
                 $0.favorites.path[id: pushedID]?.createdFolderIDs = [folder.id]
-                $0.folderWindowSync = FolderWindowSync(revision: 1, change: .folders([TestFolder.docs]), origin: nil)
             }
             await store.receive(\.browse.refreshDirectory)
             await store.receive(\.browse.path[id: browseID].refreshButtonTapped) {
@@ -218,46 +216,8 @@ import TestUtils
             }
         }
 
-        @Test("A change from another window is recorded with its origin, and reloads the folder shown here")
-        func aChangeFromAnotherWindowReloadsHereAndKeepsItsOrigin() async {
-            let origin = UUID(0)
-            let listing = AsyncGate()
-            let store = makeStore {
-                $0.browse.path.append(BrowseFeature.State(
-                    serverURL: serverURL,
-                    directoryPath: TestFolder.photos,
-                    title: TestFolder.photos
-                ))
-            } configure: {
-                $0.holdFolderListings([TestFolder.photos: listing])
-            }
-            let id = store.state.browse.path.ids[0]
-
-            await store.send(.folderWindowChanged(.folders([TestFolder.photos]), origin: origin)) {
-                $0.folderWindowSync = FolderWindowSync(
-                    revision: 1,
-                    change: .folders([TestFolder.photos]),
-                    origin: origin
-                )
-            }
-            await store.receive(\.browse.refreshDirectory)
-            await store.receive(\.sharedBrowse.refreshDirectory)
-            await store.receive(\.favorites.refreshDirectory)
-            await store.receive(\.browse.path[id: id].refreshButtonTapped) {
-                $0.browse.path[id: id]?.phase = .loading
-            }
-            listing.open()
-            await store.receive(\.browse.path[id: id].itemsResponse.success) {
-                $0.browse.path[id: id]?.phase = .loaded
-                $0.browse.path[id: id]?.access = BrowseTestSupport.readOnlyAccess
-            }
-            await store.receive(\.browse.path[id: id].favoritesResponse) {
-                $0.browse.path[id: id]?.hasLoadedFavorites = true
-            }
-        }
-
-        @Test("Finished uploads are broadcast, folders sorted, so any window on those folders reloads")
-        func finishedUploadsAreBroadcastSoAnyWindowOnThatFolderReloads() async {
+        @Test("Finished uploads reload each changed folder in every section")
+        func finishedUploadsReloadEachChangedFolder() async {
             let store = makeStore()
 
             await store.send(.uploads(.delegate(.queueFinished(UploadsFeature.FinishSummary(
@@ -270,11 +230,6 @@ import TestUtils
                     message: L10n.Uploads.completeMany(2),
                     openDestination: "Docs"
                 )
-                $0.folderWindowSync = FolderWindowSync(
-                    revision: 1,
-                    change: .folders([TestFolder.archive, TestFolder.docs]),
-                    origin: nil
-                )
             }
             await store.receive(\.browse.refreshDirectory)
             await store.receive(\.sharedBrowse.refreshDirectory)
@@ -285,8 +240,8 @@ import TestUtils
             await store.receive(\.offline.uploadsLanded)
         }
 
-        @Test("An upload that changed nothing is not broadcast")
-        func anUploadThatChangedNothingIsNotBroadcast() async {
+        @Test("An upload that changed nothing reloads nothing")
+        func anUploadThatChangedNothingReloadsNothing() async {
             let store = makeStore()
 
             await store.send(.uploads(.delegate(.queueFinished(UploadsFeature.FinishSummary(

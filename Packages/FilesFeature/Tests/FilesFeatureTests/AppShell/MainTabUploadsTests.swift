@@ -62,7 +62,6 @@ struct MainTabUploadsTests: MainTabTestSupport {
                 message: L10n.Uploads.completeMany(2),
                 openDestination: TestPath.documentsReports
             )
-            broadcastFolders(&$0, [TestPath.documentsReports])
         }
         await store.receive(\.browse.refreshDirectory)
         await store.receive(\.sharedBrowse.refreshDirectory)
@@ -98,7 +97,6 @@ struct MainTabUploadsTests: MainTabTestSupport {
 
         await store.send(.uploads(.delegate(.queueFinished(summary)))) {
             $0.uploadToast = MainTabFeature.UploadToast(message: L10n.Uploads.complete, openDestination: nil)
-            broadcastFolders(&$0, [TestFolder.inbox])
         }
         await store.receive(\.browse.refreshDirectory)
         await store.receive(\.sharedBrowse.refreshDirectory)
@@ -132,7 +130,6 @@ struct MainTabUploadsTests: MainTabTestSupport {
 
         await store.send(.uploads(.delegate(.queueFinished(summary)))) {
             $0.uploadToast = MainTabFeature.UploadToast(message: L10n.Uploads.complete, openDestination: "Archive/2026")
-            broadcastFolders(&$0, ["Archive/2026"])
         }
         await store.receive(\.browse.refreshDirectory)
         await store.receive(\.sharedBrowse.refreshDirectory)

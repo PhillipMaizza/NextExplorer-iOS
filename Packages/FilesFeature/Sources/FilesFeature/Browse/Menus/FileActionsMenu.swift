@@ -19,7 +19,6 @@ struct FileActionsMenu: View {
     var onOpenWithFailed: (String) -> Void = { _ in }
 
     #if os(macOS)
-        @Environment(\.openWindow) private var openWindow
         @Dependency(\.offlineFileStore) private var offlineFileStore
     #endif
 
@@ -37,20 +36,10 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
             .keyboardShortcut("o")
-            if item.isDirectory {
-                Button {
-                    openWindow(value: FolderWindowRoute(path: item.id, title: item.name))
-                } label: {
-                    Label { Text(L10n.Browse.actionOpenInNewWindow) } icon: { MenuIcon.newWindow.image }
-                }
-                .tint(.primaryDS)
-                Divider()
-            } else {
-                if actions.canExport {
-                    MacOpenWithMenuItems(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
-                }
-                Divider()
+            if !item.isDirectory, actions.canExport {
+                MacOpenWithMenuItems(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
             }
+            Divider()
         #endif
         // Explicit `.tint`: the Browse tree runs under `.tint(Color.accent)`, which would
         // otherwise cascade into the menu and color every icon/label gold instead of the

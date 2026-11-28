@@ -13,33 +13,6 @@ import TestUtils
     struct MacSecondPassTests {
         private let serverURL = BrowseTestSupport.serverURL
 
-        // MARK: Go to Folder in an extra window
-
-        @Test("Go to Folder in an extra window opens the trimmed path there, not in the main window")
-        func goToFolderInAnExtraWindowOpensThereNotInTheMainWindow() async {
-            let store = TestStore(initialState: FolderWindowFeature.State(serverURL: serverURL)) {
-                FolderWindowFeature { _ in }
-            }
-
-            await store.send(.goToFolderRequested(" /Photos/2026/ "))
-            await store.receive(\.browse.navigateToItem) {
-                $0.browse.path[id: 0] = BrowseFeature.State(
-                    serverURL: serverURL,
-                    directoryPath: "Photos/2026",
-                    title: "2026"
-                )
-            }
-        }
-
-        @Test("A Go to Folder path with nothing left after trimming does nothing")
-        func anEmptyGoToFolderPathDoesNothing() async {
-            let store = TestStore(initialState: FolderWindowFeature.State(serverURL: serverURL)) {
-                FolderWindowFeature { _ in }
-            }
-
-            await store.send(.goToFolderRequested(" / "))
-        }
-
         // MARK: Rows dragged in from another window
 
         private func dropTarget(canWrite: Bool = true) -> BrowseFeature.State {

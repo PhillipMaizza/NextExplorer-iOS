@@ -163,18 +163,6 @@ struct NextExplorerApp: App {
         .commands { IOSKeyboardCommands(store: Self.store) }
         #endif
         #if os(macOS)
-            WindowGroup(id: FolderWindowRoute.windowID, for: FolderWindowRoute.self) { $route in
-                if let route {
-                    MacFolderWindow(route: route, mainStore: Self.store)
-                        .macFrostedWindow()
-                        .appAppearance(appearanceMode)
-                }
-            }
-            .defaultSize(width: MacWindow.folderWindowWidth, height: MacWindow.folderWindowHeight)
-            // Never reopened at launch: a restored window would come back empty (or under
-            // another account) instead of from the live session.
-            .restorationBehavior(.disabled)
-
             Window(L10n.Menu.about, id: MacAboutView.windowID) {
                 MacAboutView(onTip: { Self.openTipJar() })
                     .containerBackground(Color.macCard, for: .window)
@@ -200,8 +188,6 @@ struct NextExplorerApp: App {
         static let minHeight: CGFloat = 520
         static let defaultWidth: CGFloat = 1180
         static let defaultHeight: CGFloat = 780
-        static let folderWindowWidth: CGFloat = 960
-        static let folderWindowHeight: CGFloat = 640
         static let externalEvents: Set<String> = ["*"]
     }
 #endif

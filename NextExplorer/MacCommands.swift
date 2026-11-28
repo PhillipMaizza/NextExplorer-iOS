@@ -30,8 +30,6 @@
         @FocusedValue(\.browseViewOptions) private var viewOptions
         /// Present while an image preview is on screen.
         @FocusedValue(\.previewZoom) private var previewZoom
-        /// Present while an extra Browse window is in front; the Go menu then moves that window.
-        @FocusedValue(\.folderWindowCommands) private var folderWindow
         @FocusedValue(\.browseCreateAvailability) private var createAvailability
         @Environment(\.openWindow) private var openWindow
         /// Read by `body`, so every menu title is rebuilt in a newly chosen language.
@@ -56,19 +54,11 @@
             CommandGroup(after: .appInfo) {
                 RateAppButton()
             }
-            // New Window opens a lightweight Browse window (MacFolderWindow); the main
-            // window stays the only one owning uploads, sync and the session.
             CommandGroup(replacing: .newItem) {
-                Button(L10n.Menu.newWindow) { openBrowseWindow() }
-                    .keyboardShortcut("n")
-                Divider()
-                Button(L10n.Browse.actionNewFolder) { sendToFrontWindow(
-                    { $0.newFolder() },
-                    otherwise: .newFolderRequested
-                ) }
-                .keyboardShortcut(BrowseShortcut.newFolder)
-                .disabled(createAvailability?.canCreateFolder == false)
-                Button(L10n.Browse.actionNewFile) { sendToFrontWindow({ $0.newFile() }, otherwise: .newFileRequested) }
+                Button(L10n.Browse.actionNewFolder) { sendUnlessSheet(.newFolderRequested) }
+                    .keyboardShortcut(BrowseShortcut.newFolder)
+                    .disabled(createAvailability?.canCreateFolder == false)
+                Button(L10n.Browse.actionNewFile) { sendUnlessSheet(.newFileRequested) }
                     .keyboardShortcut(BrowseShortcut.newFile)
                     .disabled(createAvailability?.canCreateFile == false)
                 Divider()
@@ -175,19 +165,16 @@
                     if let archiveFolderBack {
                         archiveFolderBack()
                     } else {
-                        sendToFrontWindow({ $0.back() }, otherwise: .backRequested)
+                        sendUnlessSheet(.backRequested)
                     }
                 }
                 .keyboardShortcut("[", modifiers: .command, localization: .withoutMirroring)
-                Button(L10n.Menu.forward) { sendToFrontWindow({ $0.forward() }, otherwise: .forwardRequested) }
+                Button(L10n.Menu.forward) { sendUnlessSheet(.forwardRequested) }
                     .keyboardShortcut("]", modifiers: .command, localization: .withoutMirroring)
-                Button(L10n.Menu.enclosingFolder) { sendToFrontWindow(
-                    { $0.enclosingFolder() },
-                    otherwise: .enclosingFolderRequested
-                ) }
-                .keyboardShortcut(.upArrow)
+                Button(L10n.Menu.enclosingFolder) { sendUnlessSheet(.enclosingFolderRequested) }
+                    .keyboardShortcut(.upArrow)
                 Divider()
-                Button(L10n.Menu.goToFolder) { sendToFrontWindow({ $0.goToFolder() }, otherwise: .goToFolderPrompted) }
+                Button(L10n.Menu.goToFolder) { sendUnlessSheet(.goToFolderPrompted) }
                     .keyboardShortcut("g", modifiers: [.command, .shift])
                 recentFoldersMenu
                 Divider()
@@ -254,11 +241,6 @@
             )
         }
 
-        private func openBrowseWindow() {
-            guard case .authenticated = store.destination else { return }
-            openWindow(value: FolderWindowRoute(path: "", title: L10n.Browse.navigationTitle))
-        }
-
         /// File table actions when the table has focus, otherwise the standard text action down
         /// the responder chain (search field, rename sheet, editor).
         private func perform(_ fileAction: (() -> Void)?, fallback: Selector) {
@@ -269,17 +251,9 @@
             }
         }
 
-        /// An extra Browse window in front gets the command; otherwise the main window does.
-        private func sendToFrontWindow(
-            _ folderAction: (FolderWindowCommands) -> Void,
-            otherwise action: MainTabFeature.Action
-        ) {
+        private func sendUnlessSheet(_ action: MainTabFeature.Action) {
             guard !isSheetInFront else { return }
-            if let folderWindow {
-                folderAction(folderWindow)
-            } else {
-                send(action)
-            }
+            send(action)
         }
 
         private var isSheetInFront: Bool {
