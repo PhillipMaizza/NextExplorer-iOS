@@ -104,6 +104,9 @@ extension BrowseFeature {
 
         case let .renameResponse(.failure(error)):
             state.isPerformingFileAction = false
+            if state.shouldRenameInTable {
+                state.renameSheetItem = nil
+            }
             state.fileActionErrorMessage = error.userMessage
             return refetchAfterAmbiguousFailure(&state, error)
 

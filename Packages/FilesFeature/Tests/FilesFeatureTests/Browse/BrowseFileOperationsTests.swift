@@ -63,7 +63,7 @@ struct BrowseFileOperationsTests {
         #expect(requested.value == ["vacation.jpg to beach.jpg"])
     }
 
-    @Test("A failed rename shows a readable message and leaves the item as it was")
+    @Test("A failed rename shows a readable message, leaves the item as it was and ends the Mac's in place rename")
     func renameConfirmedFailureSurfacesAReadableErrorMessageAndLeavesTheItemUnchanged() async {
         let store = BrowseFixtures.store(renamingState()) {
             $0.filesClient.renameItem = { _, _, _ in throw FilesClientError.server(statusCode: 409) }
@@ -75,6 +75,9 @@ struct BrowseFileOperationsTests {
         await store.receive(\.renameResponse.failure) {
             $0.isPerformingFileAction = false
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 409).userMessage
+            #if os(macOS)
+                $0.renameSheetItem = nil
+            #endif
         }
     }
 
