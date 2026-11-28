@@ -111,6 +111,31 @@ struct BrowseListingFailureTests {
         }
     }
 
+    @Test("A folder gone on a refresh drops its rows for the missing folder guide, with no toast")
+    func aFolderGoneOnARefreshDropsItsRows() async {
+        let gone = FilesClientError.server(statusCode: 404)
+        let favorites = AsyncGate()
+        let store = BrowseFixtures.store(BrowseFixtures.loadedState(TestPath.docsLowercase, items: [savedItem])) {
+            $0.serveEmptyFolders()
+            $0.filesClient.browse = { _, _ in throw gone }
+            $0.holdFavorites(favorites)
+        }
+
+        await store.send(.refreshButtonTapped) {
+            $0.phase = .loading
+        }
+        await store.receive(\.itemsResponse.failure) {
+            $0.listingFailure = .folderMissing
+            $0.items = []
+            $0.access = nil
+            $0.phase = .failed(gone.userMessage)
+        }
+        favorites.open()
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
+    }
+
     @Test("A server error with nothing saved fails, and Try Again clears the failure")
     func aServerErrorWithNothingSavedFailsUntilRetried() async {
         let serverError = FilesClientError.server(statusCode: 500)

@@ -108,7 +108,7 @@ extension BrowseFeature {
     /// already showing live items keeps them and reports the error as a toast, like the Favorites and
     /// Shares tabs, rather than blanking the list.
     func failItemsLoad(_ state: inout State, _ error: FilesClientError) -> Effect<Action> {
-        if state.isShowingCachePaint || state.dataSource != .live {
+        if state.isShowingCachePaint || state.dataSource != .live || state.listingFailure == .folderMissing {
             state.isShowingCachePaint = false
             state.dataSource = .live
             state.items = []
