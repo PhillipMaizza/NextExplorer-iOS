@@ -336,6 +336,18 @@ struct FolderSizeSettingsFeatureTests {
         #expect(!store.state.isDirty)
     }
 
+    @Test(arguments: ["..", "../Backups", "Files/../../x"])
+    func aPathOutsideTheVolumesIsRefusedBeforeTheServerRefusesTheWholeSave(raw: String) async {
+        let store = store(state: loadedState(settings(paths: ["a"])))
+
+        await store.send(.newPathChanged(raw)) { $0.newPath = raw }
+        #expect(store.state.newPathError == L10n.AccessRules.errorPath(raw))
+        #expect(!store.state.isAddEnabled)
+        await store.send(.addPathTapped)
+
+        #expect(store.state.draftPaths == ["a"])
+    }
+
     @Test
     func addingAnEmptyFieldChangesNothing() async {
         let store = store(state: loadedState(settings(paths: ["a"])))

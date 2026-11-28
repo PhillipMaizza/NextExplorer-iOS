@@ -62,6 +62,7 @@
         let displayedPaths: [String]
         let checkedPaths: [String]
         @Binding var newPath: String
+        let isAddEnabled: Bool
         let isEnabled: Bool
         let onAdd: () -> Void
         let onToggle: (String) -> Void
@@ -94,7 +95,7 @@
                 } control: {
                     Button(addTitle, action: onAdd)
                         .buttonStyle(.macDS(.secondary, size: .small))
-                        .disabled(newPath.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .disabled(!isAddEnabled)
                 }
             }
             .disabled(!isEnabled)

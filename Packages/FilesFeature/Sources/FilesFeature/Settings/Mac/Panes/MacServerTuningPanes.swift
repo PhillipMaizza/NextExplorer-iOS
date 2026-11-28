@@ -139,11 +139,12 @@
                     displayedPaths: store.displayedPaths,
                     checkedPaths: store.draftPaths,
                     newPath: $store.newPath.sending(\.newPathChanged),
+                    isAddEnabled: store.isAddEnabled,
                     isEnabled: store.isEnabled,
                     onAdd: { store.send(.addPathTapped, animation: DSMotion.listDiff) },
                     onToggle: { store.send(.pathToggled($0), animation: DSMotion.stateFade) }
                 )
-                if let error = store.errorMessage {
+                if let error = store.newPathError ?? store.errorMessage {
                     MacNote(error, kind: .error)
                 }
             }
@@ -193,11 +194,12 @@
                     displayedPaths: store.displayedPaths,
                     checkedPaths: store.draftPaths,
                     newPath: $store.newPath.sending(\.newPathChanged),
+                    isAddEnabled: store.isAddEnabled,
                     isEnabled: store.mode != .off,
                     onAdd: { store.send(.addPathTapped, animation: DSMotion.listDiff) },
                     onToggle: { store.send(.pathToggled($0), animation: DSMotion.stateFade) }
                 )
-                if let error = store.errorMessage {
+                if let error = store.newPathError ?? store.errorMessage {
                     MacNote(error, kind: .error)
                 }
             }

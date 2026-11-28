@@ -1,4 +1,5 @@
 import CoreModels
+import Localization
 
 /// The list of excluded folders the search index and folder size pages edit, which behaves the
 /// same way on both: a draft beside what the server has, an add field, and a Save and Discard.
@@ -29,7 +30,17 @@ extension ExcludedPathsForm {
         isDirty && !isSaving
     }
 
+    var newPathError: String? {
+        let path = newPath.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !path.isEmpty && ExcludedPaths.normalized(path) == nil ? L10n.AccessRules.errorPath(path) : nil
+    }
+
+    var isAddEnabled: Bool {
+        ExcludedPaths.normalized(newPath).map { !$0.isEmpty } ?? false
+    }
+
     mutating func addNewPath() {
+        guard newPathError == nil else { return }
         draftPaths = ExcludedPaths(paths: draftPaths, environmentPaths: environmentPaths).adding(newPath)
         newPath = ""
     }

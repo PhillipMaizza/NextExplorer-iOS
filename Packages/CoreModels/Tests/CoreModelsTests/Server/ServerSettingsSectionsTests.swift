@@ -111,6 +111,21 @@ struct ServerSettingsSectionsTests {
         #expect(excluded.adding(raw) == [Constants.alphaPath])
     }
 
+    @Test(arguments: [
+        ("./Files/zz", "Files/zz" as String?),
+        ("Files//zz/", "Files/zz/"),
+        ("Files\\zz", "Files/zz"),
+        ("Files/a/../..", ""),
+        ("..", nil),
+        ("../x", nil),
+        ("Files/../../x", nil),
+    ])
+    func excludedPathsAreNormalizedLikeTheServerStoresThem(raw: String, expected: String?) {
+        #expect(ExcludedPaths.normalized(raw) == expected)
+        let added = ExcludedPaths().adding(raw)
+        #expect(added == (expected.map { $0.isEmpty ? [] : [$0] } ?? []))
+    }
+
     // MARK: Patch
 
     @Test
