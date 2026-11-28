@@ -59,16 +59,20 @@ extension BrowseFeature.State {
         item.path == directoryPath || item.id == directoryPath ? access : nil
     }
 
+    private var mayAddBeforeAccess: Bool {
+        !shouldShowDeviceContent && phase.errorMessage == nil
+    }
+
     var canUploadHere: Bool {
-        !directoryPath.isEmpty && (access?.canUpload ?? !shouldShowDeviceContent)
+        !directoryPath.isEmpty && (access?.canUpload ?? mayAddBeforeAccess)
     }
 
     var canCreateFileHere: Bool {
-        access?.canCreateFile ?? !shouldShowDeviceContent
+        access?.canCreateFile ?? mayAddBeforeAccess
     }
 
     var canCreateFolderHere: Bool {
-        access?.canCreateFolder ?? !shouldShowDeviceContent
+        access?.canCreateFolder ?? mayAddBeforeAccess
     }
 
     /// The `+` appears when anything can be added here: an upload, a new folder or a new file.

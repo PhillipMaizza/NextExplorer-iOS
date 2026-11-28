@@ -39,6 +39,14 @@ struct BrowseSelectionGateTests {
         #expect(!state.canUploadHere)
     }
 
+    @Test("A folder that failed to load offers nothing to add, since its access never landed")
+    func aFailedFolderOffersNothingToAdd() {
+        var state = BrowseFixtures.state(TestPath.docsLowercase)
+        state.phase = .failed("gone")
+        #expect(!state.canAddHere)
+        #expect(!state.canUploadHere)
+    }
+
     @Test("The root holds no files of its own, so it offers no upload even when access allows one")
     func theRootOffersNoUpload() {
         var state = BrowseFixtures.state(TestPath.root)

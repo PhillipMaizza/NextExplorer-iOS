@@ -136,6 +136,16 @@ struct BrowseListingFailureTests {
         }
     }
 
+    @Test("New Folder and New File from the keyboard do nothing in a folder that failed to load")
+    func aFailedFolderIgnoresNewItemShortcuts() async {
+        var state = BrowseFixtures.state(TestPath.docsLowercase, title: TestFolder.docs)
+        state.phase = .failed(FilesClientError.server(statusCode: 404).userMessage)
+        let store = BrowseFixtures.store(state)
+
+        await store.send(.newFolderTapped)
+        await store.send(.newFileTapped)
+    }
+
     @Test("A server error with nothing saved fails, and Try Again clears the failure")
     func aServerErrorWithNothingSavedFailsUntilRetried() async {
         let serverError = FilesClientError.server(statusCode: 500)

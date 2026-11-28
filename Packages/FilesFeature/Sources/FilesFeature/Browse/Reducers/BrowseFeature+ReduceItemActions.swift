@@ -110,7 +110,7 @@ extension BrowseFeature {
         case .newFolderTapped:
             // The menu hides it where the folder refuses new folders; a keyboard shortcut
             // must not get past that either.
-            guard state.access?.canCreateFolder ?? true else { return .none }
+            guard state.canCreateFolderHere else { return .none }
             state.isNewFolderSheetPresented = true
             return .none
 
@@ -140,7 +140,7 @@ extension BrowseFeature {
             return .none
 
         case .newFileTapped:
-            guard state.access?.canCreateFile ?? true else { return .none }
+            guard state.canCreateFileHere else { return .none }
             state.isNewFileSheetPresented = true
             let serverURL = state.serverURL
             let filesClient = filesClient
